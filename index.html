@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAME de Campo - Teste de Velocidade Wi-Fi</title>
+    <style>
+        :root {
+            --bg-color: #111815;
+            --card-bg: #1c2621;
+            --primary: #22c55e;
+            --primary-hover: #16a34a;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #2e3b34;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+        .info-badge {
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .metric-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 10px;
+        }
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .metric-unit {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-top: 2px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            height: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .status-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            min-height: 20px;
+        }
+        .btn {
+            background-color: var(--primary);
+            color: #052e16;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-save {
+            background-color: #3b82f6;
+            color: #ffffff;
+            margin-top: 12px;
+            display: none;
+        }
+        .btn-save:hover:not(:disabled) {
+            background-color: #2563eb;
+        }
+        .toast {
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>CAME de CAMPO</h1>
+        <p>Validação de Rede & Velocidade Wi-Fi</p>
+    </div>
+
+    <div class="info-badge" id="wifiBadge">
+        Ponto: <strong id="wifiName">Ponto Local</strong> • Recompensa: <strong>+2 Créditos</strong>
+    </div>
+
+    <div class="metrics">
+        <div class="metric-box">
+            <div class="metric-label">Download</div>
+            <div class="metric-value" id="downVal">--</div>
+            <div class="metric-unit">Mbps</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-label">Upload (Envio)</div>
+            <div class="metric-value" id="upVal">--</div>
+            <div class="metric-unit">Mbps</div>
+        </div>
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="status-text" id="statusText">Toque abaixo para medir a banda real da rede.</div>
+
+    <button class="btn" id="startBtn" onclick="iniciarTeste()">Iniciar Teste de Velocidade</button>
+    <button class="btn btn-save" id="saveBtn" onclick="enviarParaPlanilha()">Salvar Resultado (+2 Créditos)</button>
+
+    <div class="toast" id="toastMsg"></div>
+</div>
+
+<script>
+    // =========================================================================
+    // CONFIGURAÇÃO DO WEBHOOK (APPS SCRIPT DO GOOGLE SHEETS)
+    // Cole abaixo a URL do seu Google Apps Script publicado como App da Web
+    // =========================================================================
+    const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec;
+
+    // Lê parâmetros passados pelo AppSheet na URL (ex: ?id_wifi=WFI-001&user=everton@gmail.com&local=Posto+Shell)
+    const urlParams = new URLSearchParams(window.location.search);
+    const idWifi = urlParams.get('id_wifi') || 'WFI-001';
+    const idUsuario = urlParams.get('user') || 'USR-001';
+    const nomeLocal = urlParams.get('local') || 'Ponto Selecionado';
+
+    document.getElementById('wifiName').textContent = nomeLocal;
+
+    let downloadMbps = 0;
+    let uploadMbps = 0;
+
+    async function medirDownload() {
+        const statusText = document.getElementById('statusText');
+        const progressBar = document.getElementById('progressBar');
+        statusText.textContent = "Testando velocidade de Download...";
+        progressBar.style.width = "25%";
+
+        // Utiliza arquivo público de teste via Cloudflare Speedtest (10MB)
+        const testUrl = "https://speed.cloudflare.com/__down?bytes=10000000&r=" + Math.random();
+        const startTime = performance.now();
+        
+        const response = await fetch(testUrl, { cache: "no-store" });
+        const blob = await response.blob();
+        const endTime = performance.now();
+
+        const durationSeconds = (endTime - startTime) / 1000;
+        const bitsLoaded = blob.size * 8;
+        const speedBps = bitsLoaded / durationSeconds;
+        downloadMbps = (speedBps / (1024 * 1024)).toFixed(1);
+
+        document.getElementById('downVal').textContent = downloadMbps;
+        progressBar.style.width = "55%";
+    }
+
+    async function medirUpload() {
+        const statusText = document.getElementById('statusText');
+        const progressBar = document.getElementById('progressBar');
+        statusText.textContent = "Testando velocidade de Upload (Crucial para fotos)...";
+        progressBar.style.width = "75%";
+
+        // Gera pacote de 3MB em memória para envio real via POST
+        const payloadSize = 3 * 1024 * 1024;
+        const dummyData = new Uint8Array(payloadSize);
+        const uploadUrl = "https://speed.cloudflare.com/__up";
+
+        const startTime = performance.now();
+        await fetch(uploadUrl, {
+            method: "POST",
+            body: dummyData,
+            mode: "no-cors"
+        });
+        const endTime = performance.now();
+
+        const durationSeconds = (endTime - startTime) / 1000;
+        const bitsSent = payloadSize * 8;
+        const speedBps = bitsSent / durationSeconds;
+        uploadMbps = (speedBps / (1024 * 1024)).toFixed(1);
+
+        document.getElementById('upVal').textContent = uploadMbps;
+        progressBar.style.width = "100%";
+    }
+
+    async function iniciarTeste() {
+        const startBtn = document.getElementById('startBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const toastMsg = document.getElementById('toastMsg');
+
+        startBtn.disabled = true;
+        saveBtn.style.display = "none";
+        toastMsg.style.display = "none";
+        progressContainer.style.display = "block";
+
+        try {
+            await medirDownload();
+            await medirUpload();
+
+            document.getElementById('statusText').textContent = "Teste concluído! Salve para validar a rede e ganhar créditos.";
+            startBtn.textContent = "Refazer Teste";
+            startBtn.disabled = false;
+            saveBtn.style.display = "block";
+        } catch (err) {
+            document.getElementById('statusText').textContent = "Erro de conexão durante o teste. Verifique o Wi-Fi.";
+            startBtn.disabled = false;
+            console.error(err);
+        }
+    }
+
+    async function enviarParaPlanilha() {
+        const saveBtn = document.getElementById('saveBtn');
+        const toastMsg = document.getElementById('toastMsg');
+
+        if (GOOGLE_SCRIPT_URL === https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec) {
+            toastMsg.style.display = "block";
+            toastMsg.textContent = "Simulação OK! Configure a URL do Apps Script no código para gravar na planilha.";
+            saveBtn.style.display = "none";
+            return;
+        }
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Gravando no Banco de Dados...";
+
+        const payload = {
+            id_wifi: idWifi,
+            id_usuario: idUsuario,
+            download_mbps: parseFloat(downloadMbps),
+            upload_mbps: parseFloat(uploadMbps)
+        };
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            saveBtn.style.display = "none";
+            toastMsg.style.display = "block";
+            toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos adicionados à sua carteira.";
+        } catch (error) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Tentar Salvar Novamente";
+            alert("Erro ao enviar dados para a planilha.");
+        }
+    }
+</script>
+
+</body>
+</html>
