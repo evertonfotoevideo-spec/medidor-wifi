@@ -10,19 +10,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
-            /* Tema Inspirado na Foco Radical (Preto Profundo + Amarelo/Âmbar Vibrante + Grafite) */
-            --bg-color: #0b0b0c;
-            --card-bg: #141416;
-            --primary: #facc15;
-            --primary-hover: #eab308;
-            --primary-text: #111111;
-            --secondary: #f97316;
-            --secondary-hover: #ea580c;
-            --text-main: #f8fafc;
-            --text-muted: #a1a1aa;
-            --border: #27272a;
-            --input-bg: #1c1c1f;
-            --accent-glow: rgba(250, 204, 21, 0.16);
+            /* Tema Fundo Amarelo Vibrante com Detalhes Pretos */
+            --bg-color: #facc15;
+            --card-bg: #fef08a;
+            --primary: #111111;
+            --primary-hover: #27272a;
+            --primary-text: #facc15;
+            --secondary: #18181b;
+            --secondary-hover: #000000;
+            --text-main: #111111;
+            --text-muted: #3f3f46;
+            --border: #111111;
+            --input-bg: #ffffff;
+            --accent-glow: rgba(17, 17, 17, 0.10);
         }
         * {
             box-sizing: border-box;
@@ -47,7 +47,7 @@
             padding: 14px;
             width: 100%;
             max-width: 560px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 10px 28px rgba(17, 17, 17, 0.25);
         }
         /* Cabeçalho Compacto + Menu Vertical Suspenso do Usuário */
         .top-navbar {
@@ -105,7 +105,7 @@
             right: 0;
             top: calc(100% + 6px);
             width: 215px;
-            background-color: #18181b;
+            background-color: #fef9c3;
             border: 1px solid var(--primary);
             border-radius: 12px;
             box-shadow: 0 14px 30px rgba(0, 0, 0, 0.85);
@@ -116,7 +116,7 @@
         }
         .user-menu-header {
             padding: 10px 12px;
-            background-color: #111113;
+            background-color: #111111;
             border-bottom: 1px solid var(--border);
             font-size: 0.72rem;
             color: var(--text-muted);
@@ -220,7 +220,7 @@
             font-weight: 800;
         }
         .filter-drawer {
-            background-color: #18181b;
+            background-color: #fef9c3;
             border: 1px solid var(--primary);
             border-radius: 12px;
             padding: 12px;
@@ -570,7 +570,7 @@
             display: block;
         }
         .qr-payload-box {
-            background: #0d0d0f;
+            background: #ffffff;
             border: 1px solid var(--border);
             border-radius: 6px;
             padding: 6px 8px;
@@ -581,8 +581,8 @@
             margin-top: 6px;
         }
         .btn-mini {
-            background-color: #27272a;
-            color: var(--text-main);
+            background-color: #111111;
+            color: #facc15;
             border: 1px solid #3f3f46;
             border-radius: 6px;
             padding: 6px 10px;
@@ -597,7 +597,7 @@
         .security-banner {
             background-color: rgba(250, 204, 21, 0.1);
             border: 1px solid rgba(250, 204, 21, 0.35);
-            color: #fde047;
+            color: #111111;
             border-radius: 8px;
             padding: 8px 10px;
             font-size: 0.72rem;
@@ -614,7 +614,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #111113;
+            background-color: #111111;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 6px 10px;
@@ -700,8 +700,8 @@
             cursor: pointer;
         }
         .btn-quick.alt {
-            background-color: #27272a;
-            color: var(--text-main);
+            background-color: #111111;
+            color: #facc15;
             border: 1px solid #3f3f46;
         }
         .leaflet-popup-content {
@@ -743,7 +743,7 @@
             cursor: pointer;
         }
         .popup-btn.nav {
-            background-color: #18181b;
+            background-color: #fef9c3;
             color: #facc15 !important;
         }
         .profile-card {
@@ -929,7 +929,8 @@
                         Conectado como
                         <strong id="userMenuFullName">Usuário</strong>
                     </div>
-                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('perfil')">💳 Carteira & Pontos</button>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('dados_usuario')">👤 Dados do Usuário</button>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('meus_wifis')">📶 Meus Wi-Fis Cadastrados</button>
                     <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
@@ -941,7 +942,6 @@
             <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
             <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
             <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
-            <button type="button" class="tab-btn" id="tabPerfilBtn" onclick="mudarAba('perfil'); carregarPerfilUsuario();">👤 Perfil</button>
         </div>
 
         <!-- ================================================================= -->
@@ -1016,7 +1016,7 @@
 
             <!-- Sincronização em Tempo Real + Pacote Offline -->
             <div style="display:flex; gap:6px; margin-bottom:10px;">
-                <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; border-color:var(--primary); color:var(--primary);" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
+                <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; background:#111111; color:#facc15;" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
                 <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade</button>
                 <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
             </div>
@@ -1025,7 +1025,7 @@
             <div class="qr-card" id="mapaQrCard">
                 <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
                 <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
-                <div style="font-size: 0.72rem; color: #fde047; margin-top: 3px;" id="mapaHorarioInfo"></div>
+                <div style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
 
                 <!-- Status ao Vivo & Centroide Colaborativo -->
                 <div class="live-status-bar">
@@ -1192,52 +1192,73 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 4: MEUS DADOS E MEUS PONTOS (ACESSADA PELO MENU DO USUÁRIO)   -->
+        <!-- TELA DO MENU DO USUÁRIO (SEÇÕES SEPARADAS POR CLIQUE)             -->
         <!-- ================================================================= -->
         <div id="abaPerfil" class="hidden">
-            <div class="saldo-destaque">
-                <div class="label">Saldo Disponível na Carteira</div>
-                <div class="valor" id="perfilSaldo">--</div>
-                <div class="sub">Créditos para desbloquear senhas de Wi-Fi</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong id="tituloSecaoUsuario" style="font-size:0.95rem; color:var(--primary); text-transform:uppercase;">👤 Dados do Usuário</strong>
+                <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
             </div>
 
-            <div class="mini-stats">
-                <div class="mini-stat-box">
-                    <div class="num" id="perfilQtdCadastrados">0</div>
-                    <div class="txt">Wi-Fis Cadastrados (+10)</div>
-                </div>
-                <div class="mini-stat-box">
-                    <div class="num" id="perfilQtdTestes">0</div>
-                    <div class="txt">Testes Realizados (+2)</div>
-                </div>
-            </div>
-
-            <div class="profile-card">
-                <div class="profile-row">
-                    <span>Nome / Perfil:</span>
-                    <strong id="perfilNome">--</strong>
-                </div>
-                <div class="profile-row">
-                    <span>E-mail de Acesso:</span>
-                    <strong id="perfilEmail">--</strong>
-                </div>
-                <div class="profile-row">
-                    <span>Plano Atual:</span>
-                    <strong id="perfilPlano" style="color: var(--primary);">Gratuito</strong>
+            <!-- SEÇÃO A: DADOS DO USUÁRIO + ATUALIZAR SENHA -->
+            <div id="secaoDadosUsuario" class="hidden">
+                <div class="profile-card">
+                    <div class="form-group">
+                        <label for="editUserEmail">E-mail de Acesso</label>
+                        <input type="email" id="editUserEmail" readonly style="opacity:0.75; cursor:not-allowed;">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserNome">Nome ou @Instagram</label>
+                        <input type="text" id="editUserNome" placeholder="Seu nome de exibição">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserNovaSenha">Nova Senha (deixe em branco para manter a atual)</label>
+                        <input type="password" id="editUserNovaSenha" placeholder="Digite uma nova senha (mín. 4 dígitos)">
+                    </div>
+                    <div class="profile-row" style="margin-bottom:10px;">
+                        <span>Plano Atual:</span>
+                        <strong id="perfilPlano" style="color: var(--primary);">Gratuito</strong>
+                    </div>
+                    <button type="button" class="btn" id="btnSalvarDadosUsuario" onclick="salvarDadosProprioUsuario()">💾 Salvar Dados e Senha</button>
+                    <div class="toast" id="dadosUsuarioToast"></div>
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 6px;">
-                <label>Meus Pontos de Wi-Fi Cadastrados</label>
-                <div class="my-wifi-list" id="meusWifisLista">
-                    <div style="color: var(--text-muted); text-align: center; padding: 10px;">Carregando seus pontos...</div>
+            <!-- SEÇÃO B: CARTEIRA & PONTOS -->
+            <div id="secaoCarteiraPontos" class="hidden">
+                <div class="saldo-destaque">
+                    <div class="label">Saldo Disponível na Carteira</div>
+                    <div class="valor" id="perfilSaldo">--</div>
+                    <div class="sub">Créditos para desbloquear senhas de Wi-Fi</div>
                 </div>
+
+                <div class="mini-stats">
+                    <div class="mini-stat-box">
+                        <div class="num" id="perfilQtdCadastrados">0</div>
+                        <div class="txt">Wi-Fis Cadastrados (+10)</div>
+                    </div>
+                    <div class="mini-stat-box">
+                        <div class="num" id="perfilQtdTestes">0</div>
+                        <div class="txt">Testes Realizados (+2)</div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meu Saldo</button>
             </div>
 
-            <button type="button" class="btn" style="margin-top: 10px;" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meus Pontos</button>
+            <!-- SEÇÃO C: MEUS WI-FIS CADASTRADOS -->
+            <div id="secaoMeusWifis" class="hidden">
+                <div class="form-group" style="margin-bottom: 6px;">
+                    <label>Meus Pontos de Wi-Fi Cadastrados</label>
+                    <div class="my-wifi-list" id="meusWifisLista" style="max-height:320px;">
+                        <div style="color: var(--text-muted); text-align: center; padding: 10px;">Carregando seus pontos...</div>
+                    </div>
+                </div>
+                <button type="button" class="btn" style="margin-top: 10px;" onclick="carregarPerfilUsuario()">🔄 Sincronizar Meus Pontos</button>
+            </div>
 
-            <!-- PAINEL ADMINISTRADOR -->
-            <div id="adminPanelBox" style="margin-top:16px; padding:12px; background:#111113; border:1px solid var(--primary); border-radius:12px;">
+            <!-- SEÇÃO D: PAINEL ADMINISTRADOR -->
+            <div id="adminPanelBox" class="hidden" style="padding:12px; background:#fef9c3; border:2px solid #111111; border-radius:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <strong style="color:var(--primary); font-size:0.86rem;">🛡️ Administração de Pontos & Usuários</strong>
                     <span id="adminBadgeStatus" style="font-size:0.7rem; background:var(--accent-glow); color:var(--primary); padding:2px 8px; border-radius:10px;">Modo Admin</span>
@@ -1377,17 +1398,96 @@
     function abrirOpcaoMenuUsuario(opcao) {
         fecharMenuUsuario();
         mudarAba('perfil');
-        if (opcao === 'meus_wifis') {
-            setTimeout(() => {
-                const el = document.getElementById('meusWifisLista');
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 150);
+
+        const secDados = document.getElementById('secaoDadosUsuario');
+        const secCarteira = document.getElementById('secaoCarteiraPontos');
+        const secWifis = document.getElementById('secaoMeusWifis');
+        const secAdmin = document.getElementById('adminPanelBox');
+        const titulo = document.getElementById('tituloSecaoUsuario');
+
+        [secDados, secCarteira, secWifis, secAdmin].forEach(el => {
+            if (el) el.classList.add('hidden');
+        });
+
+        if (opcao === 'dados_usuario') {
+            if (titulo) titulo.textContent = "👤 Dados do Usuário";
+            if (secDados) secDados.classList.remove('hidden');
+            if (usuarioLogado) {
+                document.getElementById('editUserEmail').value = usuarioLogado.email || "";
+                document.getElementById('editUserNome').value = usuarioLogado.nome || "";
+                document.getElementById('editUserNovaSenha').value = "";
+            }
+        } else if (opcao === 'carteira') {
+            if (titulo) titulo.textContent = "💳 Carteira & Pontos";
+            if (secCarteira) secCarteira.classList.remove('hidden');
+        } else if (opcao === 'meus_wifis') {
+            if (titulo) titulo.textContent = "📶 Meus Wi-Fis Cadastrados";
+            if (secWifis) secWifis.classList.remove('hidden');
         } else if (opcao === 'admin') {
-            setTimeout(() => {
-                const el = document.getElementById('adminPanelBox');
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 150);
+            if (titulo) titulo.textContent = "🛡️ Painel Admin";
+            if (secAdmin && ehUsuarioAdmin()) secAdmin.classList.remove('hidden');
         }
+    }
+
+    async function salvarDadosProprioUsuario() {
+        if (!usuarioLogado) return;
+        const novoNome = document.getElementById('editUserNome').value.trim();
+        const novaSenha = document.getElementById('editUserNovaSenha').value.trim();
+        const toast = document.getElementById('dadosUsuarioToast');
+        const btn = document.getElementById('btnSalvarDadosUsuario');
+
+        if (!novoNome) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Informe seu nome de exibição.";
+            return;
+        }
+        if (novaSenha && novaSenha.length < 4) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "A nova senha deve ter pelo menos 4 caracteres.";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Salvando...";
+
+        try {
+            const resp = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "atualizar_dados_usuario",
+                    id_usuario: usuarioLogado.email,
+                    nome: novoNome,
+                    nova_senha: novaSenha
+                })
+            });
+            const data = await resp.json();
+            toast.style.display = "block";
+            if (data.status === "ok") {
+                usuarioLogado.nome = novoNome;
+                localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
+                const primeiroNome = novoNome.split("(")[0].trim().split(" ")[0];
+                document.getElementById('userDisplay').textContent = primeiroNome;
+                document.getElementById('userMenuFullName').textContent = novoNome;
+                document.getElementById('editUserNovaSenha').value = "";
+                toast.className = "toast";
+                toast.textContent = novaSenha
+                    ? "✅ Nome e senha atualizados com sucesso!"
+                    : "✅ Nome atualizado com sucesso!";
+            } else {
+                toast.className = "toast error";
+                toast.textContent = data.message || "Não foi possível atualizar os dados.";
+            }
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro de conexão ao salvar dados.";
+        }
+
+        btn.disabled = false;
+        btn.textContent = "💾 Salvar Dados e Senha";
     }
 
     function alternarJanelaFiltros(forcarEstado = null) {
@@ -1601,7 +1701,7 @@
                 btn.textContent = "🎯 Centralizar Pino Aqui";
             },
             10000,
-            5
+            10
         );
     }
 
@@ -2163,14 +2263,22 @@
         document.getElementById('userMenuFullName').textContent = nomeCompleto;
 
         const isAdm = ehUsuarioAdmin();
-        const adminBox = document.getElementById('adminPanelBox');
         const menuAdminItem = document.getElementById('menuAdminItem');
-        if (adminBox) adminBox.classList.toggle('hidden', !isAdm);
         if (menuAdminItem) menuAdminItem.classList.toggle('hidden', !isAdm);
 
         inicializarOuAtualizarMapa();
         await carregarListaWifis();
         renderizarAlfinetesNoMapa(false);
+
+        // No Windows (ou dispositivos sem GPS preciso), foca automaticamente no último ponto cadastrado se não houver GPS travado
+        if (userLatAtual === null && listaWifisCache.length > 0 && mapInstance) {
+            const ultimoPonto = listaWifisCache[listaWifisCache.length - 1];
+            const coordsUlt = obterCoordenadasCentroideWifi(ultimoPonto);
+            if (coordsUlt) {
+                mapInstance.setView([coordsUlt.lat, coordsUlt.lng], 15);
+            }
+        }
+
         iniciarRastreamentoGpsAltaPrecisao(false);
         carregarPerfilUsuario();
 
@@ -2243,7 +2351,7 @@
     let cadPinMap = null;
     let cadPinMarker = null;
 
-    function obterPosicaoAltaPrecisao(onProgress, onFinal, timeoutMs = 12000, alvoRaioMetros = 5) {
+    function obterPosicaoAltaPrecisao(onProgress, onFinal, timeoutMs = 12000, alvoRaioMetros = 10) {
         if (!navigator.geolocation) {
             if (onFinal) onFinal(null, "GPS não suportado neste navegador.");
             return;
@@ -2321,17 +2429,17 @@
 
                     const mapStatus = document.getElementById('mapGpsStatus');
                     const nearStatus = document.getElementById('nearGpsStatus');
-                    const badgeAcc = acc <= 5
+                    const badgeAcc = acc <= 10
                         ? `🎯 Precisão máxima: ±${acc.toFixed(1)}m`
-                        : `📡 Calibrando GPS: ±${Math.round(acc)}m (aguardando ≤5m...)`;
+                        : `📡 Calibrando GPS: ±${Math.round(acc)}m (aguardando ≤10m...)`;
 
                     if (mapStatus) {
                         mapStatus.textContent = badgeAcc;
-                        mapStatus.style.color = acc <= 5 ? "#22c55e" : "#facc15";
+                        mapStatus.style.color = acc <= 10 ? "#22c55e" : "#facc15";
                     }
                     if (nearStatus) {
                         nearStatus.textContent = badgeAcc;
-                        nearStatus.style.color = acc <= 5 ? "#22c55e" : "#facc15";
+                        nearStatus.style.color = acc <= 10 ? "#22c55e" : "#facc15";
                     }
 
                     if (mapInstance) {
@@ -2355,7 +2463,7 @@
         if (userMarker) mapInstance.removeLayer(userMarker);
         if (userAccuracyCircle) mapInstance.removeLayer(userAccuracyCircle);
 
-        const corCirculo = acc <= 5 ? "#facc15" : "#f97316";
+        const corCirculo = acc <= 10 ? "#facc15" : "#f97316";
         userAccuracyCircle = L.circle([uLat, uLng], {
             radius: Math.max(acc, 3),
             color: corCirculo,
@@ -2560,7 +2668,7 @@
                 btnNear.textContent = "📍 Detectar Wi-Fi Atual";
             },
             10000,
-            5
+            10
         );
     }
 
@@ -2719,7 +2827,7 @@
 
         if (navigator.geolocation) {
             btnAtualizar.disabled = true;
-            mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 5m)...";
+            mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 10m)...";
             mapStatus.style.color = "#facc15";
 
             obterPosicaoAltaPrecisao(
@@ -2835,8 +2943,8 @@
         }
 
         gpsBtn.disabled = true;
-        gpsBtn.textContent = "Calibrando ≤5m...";
-        gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 5m)...";
+        gpsBtn.textContent = "Calibrando ≤10m...";
+        gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 10m)...";
         gpsStatus.style.color = "#facc15";
 
         obterPosicaoAltaPrecisao(
@@ -2916,7 +3024,7 @@
                 gpsBtn.textContent = "📍 Auto-Preencher Local";
             },
             12000,
-            5
+            10
         );
     }
 
@@ -2925,8 +3033,10 @@
     // =========================================================================
     async function carregarPerfilUsuario() {
         if (!usuarioLogado) return;
-        document.getElementById('perfilNome').textContent = usuarioLogado.nome;
-        document.getElementById('perfilEmail').textContent = usuarioLogado.email;
+        const elNome = document.getElementById('editUserNome');
+        const elEmail = document.getElementById('editUserEmail');
+        if (elNome) elNome.value = usuarioLogado.nome || "";
+        if (elEmail) elEmail.value = usuarioLogado.email || "";
 
         const btn = document.getElementById('btnAtualizarPerfil');
         btn.disabled = true;
@@ -2969,19 +3079,37 @@
         btn.textContent = "🔄 Atualizar Meus Pontos";
     }
 
+    function mesclarVelocidadesLocais(lista) {
+        let velMap = {};
+        try { velMap = JSON.parse(localStorage.getItem('clickcontrol_vel_overrides') || "{}"); } catch (e) {}
+        return lista.map(w => {
+            const ov = velMap[w.id];
+            const dSheet = parseFloat(w.down_mbps || w.med_down || 0);
+            const uSheet = parseFloat(w.up_mbps || w.med_up || 0);
+            if (ov && (dSheet === 0 && uSheet === 0)) {
+                w.down_mbps = ov.down;
+                w.up_mbps = ov.up;
+                w.med_down = ov.down;
+                w.med_up = ov.up;
+            }
+            return w;
+        });
+    }
+
     async function carregarListaWifis() {
         try {
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`, { cache: "no-store" });
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
-                // Filtra WFI-001 caso venha da planilha
-                listaWifisCache = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
+                const filtrados = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
+                listaWifisCache = mesclarVelocidadesLocais(filtrados);
                 await resolverCoordenadasFaltantes();
                 const ordenada = obterListaFiltradaEOrdenada();
                 preencherSelectsComLista(ordenada, document.getElementById('selectWifiMapa')?.value || null);
                 renderizarAlfinetesNoMapa(true);
             }
         } catch (e) {
+            listaWifisCache = mesclarVelocidadesLocais(listaWifisCache);
             const ordenada = obterListaFiltradaEOrdenada();
             preencherSelectsComLista(ordenada);
             renderizarAlfinetesNoMapa(true);
@@ -3297,7 +3425,7 @@
             startBtn.disabled = false;
 
             if (localStorage.getItem(getStorageKey()) === "true") {
-                document.getElementById('statusText').textContent = "Teste concluído! Atualize a velocidade do ponto na nuvem.";
+                document.getElementById('statusText').textContent = "Teste concluído! Atualize a velocidade do pino no mapa.";
                 saveBtn.textContent = "Atualizar Velocidade no Mapa (0 pts extras)";
                 saveBtn.style.display = "block";
             } else {
@@ -3337,45 +3465,44 @@
             aoTrocarWifi();
             toastMsg.style.display = "block";
 
+            const dNovo = Number((parseFloat(downloadMbps) || 0).toFixed(1));
+            const uNovo = Number((parseFloat(uploadMbps) || 0).toFixed(1));
+
+            let velMap = {};
+            try { velMap = JSON.parse(localStorage.getItem('clickcontrol_vel_overrides') || "{}"); } catch (e) {}
+            velMap[idWifi] = { down: dNovo, up: uNovo };
+            localStorage.setItem('clickcontrol_vel_overrides', JSON.stringify(velMap));
+
+            const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
+            if (pontoLocal) {
+                pontoLocal.down_mbps = dNovo;
+                pontoLocal.up_mbps = uNovo;
+                pontoLocal.med_down = dNovo;
+                pontoLocal.med_up = uNovo;
+            }
+
             if (result.status === "duplicate") {
                 toastMsg.className = "toast";
-                toastMsg.textContent = "✅ Velocidade atualizada no mapa (crédito de 1ª avaliação já resgatado).";
-                const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
-                if (pontoLocal) {
-                    pontoLocal.down_mbps = Number(parseFloat(downloadMbps).toFixed(1));
-                    pontoLocal.up_mbps = Number(parseFloat(uploadMbps).toFixed(1));
-                }
-                renderizarAlfinetesNoMapa(true);
-                atualizarCardQrDoMapa(idWifi);
+                toastMsg.textContent = "✅ Velocidade atualizada no pino e na nuvem (crédito de 1ª avaliação já resgatado).";
             } else {
                 toastMsg.className = "toast";
                 toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
-
-                const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
-                if (pontoLocal) {
-                    const dNovo = parseFloat(downloadMbps) || 0;
-                    const uNovo = parseFloat(uploadMbps) || 0;
-                    const dAnt = parseFloat(pontoLocal.down_mbps || pontoLocal.med_down || 0);
-                    const uAnt = parseFloat(pontoLocal.up_mbps || pontoLocal.med_up || 0);
-                    pontoLocal.down_mbps = dAnt > 0 ? Number(((dAnt + dNovo) / 2).toFixed(1)) : dNovo;
-                    pontoLocal.up_mbps = uAnt > 0 ? Number(((uAnt + uNovo) / 2).toFixed(1)) : uNovo;
-                    pontoLocal.med_down = pontoLocal.down_mbps;
-                    pontoLocal.med_up = pontoLocal.up_mbps;
-                }
-
-                await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true);
-                await carregarListaWifis();
-
-                const pontoPosSync = listaWifisCache.find(w => w.id === idWifi);
-                if (pontoPosSync && (!parseFloat(pontoPosSync.down_mbps) && !parseFloat(pontoPosSync.med_down))) {
-                    pontoPosSync.down_mbps = parseFloat(downloadMbps) || 0;
-                    pontoPosSync.up_mbps = parseFloat(uploadMbps) || 0;
-                }
-
-                renderizarAlfinetesNoMapa(true);
-                atualizarCardQrDoMapa(idWifi);
-                carregarPerfilUsuario();
             }
+
+            await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true);
+            await carregarListaWifis();
+
+            const pontoPosSync = listaWifisCache.find(w => w.id === idWifi);
+            if (pontoPosSync && (!parseFloat(pontoPosSync.down_mbps) && !parseFloat(pontoPosSync.med_down))) {
+                pontoPosSync.down_mbps = dNovo;
+                pontoPosSync.up_mbps = uNovo;
+                pontoPosSync.med_down = dNovo;
+                pontoPosSync.med_up = uNovo;
+            }
+
+            renderizarAlfinetesNoMapa(true);
+            atualizarCardQrDoMapa(idWifi);
+            carregarPerfilUsuario();
         } catch (error) {
             saveBtn.disabled = false;
             saveBtn.textContent = "Tentar Salvar Novamente";
