@@ -2238,9 +2238,22 @@
             if (onFinal) onFinal(pos, erroMsg);
         };
 
+        const tentarFallbackBaixaPrecisao = () => {
+            navigator.geolocation.getCurrentPosition(
+                (posFallback) => concluir(posFallback, null),
+                (errFallback) => {
+                    if (melhorPos) concluir(melhorPos, null);
+                    else concluir(null, errFallback && errFallback.code === 1
+                        ? "Permissão de localização bloqueada no navegador."
+                        : "Não foi possível obter GPS automático. Digite o endereço abaixo que localizamos no mapa.");
+                },
+                { enableHighAccuracy: false, maximumAge: 60000, timeout: 7000 }
+            );
+        };
+
         const timer = setTimeout(() => {
             if (melhorPos) concluir(melhorPos, null);
-            else concluir(null, "Tempo esgotado ao aguardar sinal fino de GPS.");
+            else tentarFallbackBaixaPrecisao();
         }, timeoutMs);
 
         watchId = navigator.geolocation.watchPosition(
@@ -2257,12 +2270,11 @@
                 }
             },
             () => {
-                if (!melhorPos) {
-                    clearTimeout(timer);
-                    concluir(null, "Permissão de GPS negada ou sinal indisponível.");
-                }
+                clearTimeout(timer);
+                if (melhorPos) concluir(melhorPos, null);
+                else tentarFallbackBaixaPrecisao();
             },
-            { enableHighAccuracy: true, maximumAge: 0, timeout: timeoutMs }
+            { enableHighAccuracy: true, maximumAge: 10000, timeout: timeoutMs }
         );
     }
 
@@ -2363,18 +2375,40 @@
         return R * c;
     }
 
+    async function geocodificarEnderecoEmEtapas(enderecoTexto, cidadeTexto) {
+        const endLimpo = String(enderecoTexto || "").replace(/\([^)]*\)/g, "").trim();
+        const cidLimpa = String(cidadeTexto || "").trim();
+        const ruaSemNumero = endLimpo.split(",")[0].split("-")[0].trim();
+
+        const tentativas = [
+            `${endLimpo}, ${cidLimpa}, Brasil`,
+            ruaSemNumero && cidLimpa ? `${ruaSemNumero}, ${cidLimpa}, Brasil` : "",
+            cidLimpa ? `${cidLimpa}, Brasil` : ""
+        ].filter((q, idx, arr) => q && q !== ", , Brasil" && arr.indexOf(q) === idx);
+
+        for (const q of tentativas) {
+            try {
+                const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`, {
+                    headers: { "Accept-Language": "pt-BR" }
+                });
+                const results = await resp.json();
+                if (results && results.length > 0) {
+                    return `${parseFloat(results[0].lat).toFixed(6)}, ${parseFloat(results[0].lon).toFixed(6)}`;
+                }
+            } catch (e) {}
+        }
+        return null;
+    }
+
     async function resolverCoordenadasFaltantes() {
         for (let i = 0; i < listaWifisCache.length; i++) {
             const w = listaWifisCache[i];
             if (!extrairCoordenadas(w.lat_long) && (w.lat_long || w.cidade)) {
-                const query = encodeURIComponent(`${w.lat_long || ''}, ${w.cidade || ''}, Brasil`);
-                try {
-                    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`);
-                    const results = await resp.json();
-                    if (results && results.length > 0) {
-                        w.lat_long = `${results[0].lat}, ${results[0].lon}`;
-                    }
-                } catch (e) {}
+                const coordResolvida = await geocodificarEnderecoEmEtapas(w.lat_long, w.cidade);
+                if (coordResolvida) {
+                    w.endereco = w.endereco || w.lat_long;
+                    w.lat_long = coordResolvida;
+                }
             }
         }
     }
@@ -2913,7 +2947,7 @@
 
     async function carregarListaWifis() {
         try {
-            const res = await fetch(GOOGLE_SCRIPT_URL + "?acao=listar_wifis");
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`);
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
                 // Filtra WFI-001 caso venha da planilha
@@ -2931,7 +2965,7 @@
     async function cadastrarNovoWifi() {
         const nomeLocal = document.getElementById('cadNomeLocal').value.trim();
         const cidade = document.getElementById('cadCidade').value.trim();
-        const localizacao = document.getElementById('cadLocalizacao').value.trim();
+        let localizacao = document.getElementById('cadLocalizacao').value.trim();
         const ssid = document.getElementById('cadSsid').value.trim();
         const senha = document.getElementById('cadSenha').value.trim();
         const horarioSinal = document.getElementById('cadHorarioSinal').value.trim();
@@ -2945,19 +2979,41 @@
             return;
         }
 
+        cadSaveBtn.disabled = true;
+        cadSaveBtn.textContent = "Localizando pino e salvando...";
+        cadToast.style.display = "block";
+        cadToast.className = "toast";
+        cadToast.textContent = "⏳ Validando coordenadas e gravando na rede...";
+
+        // Garante que sempre haja coordenadas (lat, lng) anexadas para o pino aparecer no mapa
+        let coordExistente = extrairCoordenadas(localizacao);
+        if (!coordExistente) {
+            if (ultimaCoordGPS) {
+                localizacao = `${localizacao} (${ultimaCoordGPS})`;
+                coordExistente = extrairCoordenadas(localizacao);
+            } else {
+                const geoResolvido = await geocodificarEnderecoEmEtapas(localizacao, cidade);
+                if (geoResolvido) {
+                    localizacao = `${localizacao} (${geoResolvido})`;
+                    coordExistente = extrairCoordenadas(localizacao);
+                } else if (userLatAtual !== null && userLngAtual !== null) {
+                    localizacao = `${localizacao} (${userLatAtual.toFixed(6)}, ${userLngAtual.toFixed(6)})`;
+                    coordExistente = extrairCoordenadas(localizacao);
+                }
+            }
+        }
+
         const qrLinkGerado = gerarUrlImagemQR(ssid, senha, 280);
         const listaComodidades = Object.keys(comodidadesCadastro).filter(k => comodidadesCadastro[k]);
-
-        cadSaveBtn.disabled = true;
-        cadSaveBtn.textContent = "Salvando Ponto e QR Code...";
 
         try {
             const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
+                redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     acao: "cadastrar_wifi",
-                    id_usuario: usuarioLogado.email,
+                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
                     nome_local: nomeLocal,
                     cidade_uf: cidade,
                     lat_long: localizacao,
@@ -2975,9 +3031,30 @@
                 localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
             }
 
+            // Insere imediatamente no cache local para garantir exibição instantânea no mapa
+            const novoPontoObj = {
+                id: novoId,
+                local: nomeLocal,
+                endereco: localizacao.replace(/\([^)]*\)/g, "").trim(),
+                cidade: cidade,
+                lat_long: localizacao,
+                ssid: ssid,
+                senha: senha,
+                down_mbps: 0,
+                up_mbps: 0,
+                status: "Funcionando",
+                comodidades: listaComodidades,
+                horario_sinal: horarioSinal,
+                ultima_validacao: "Agora",
+                cadastrado_por: usuarioLogado ? usuarioLogado.email : ""
+            };
+
+            listaWifisCache = listaWifisCache.filter(w => w.id !== novoId);
+            listaWifisCache.unshift(novoPontoObj);
+
             cadToast.style.display = "block";
             cadToast.className = "toast";
-            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos na carteira.<br><a href="${qrLinkGerado}" target="_blank" style="color:var(--primary);font-weight:700;">🔗 Abrir Link do QR Code de Conexão</a>`;
+            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos na carteira. Abrindo pino no mapa...`;
 
             document.getElementById('cadNomeLocal').value = "";
             document.getElementById('cadLocalizacao').value = "";
@@ -2986,15 +3063,41 @@
             document.getElementById('cadHorarioSinal').value = "";
             document.getElementById('cadQrPreviewBox').classList.add('hidden');
             document.getElementById('cadFotoPreviewContainer').classList.add('hidden');
+            document.getElementById('cadMiniMapWrap').classList.add('hidden');
             fotoCadastroBase64 = "";
+            ultimaCoordGPS = null;
 
+            // Sincroniza em segundo plano e atualiza o mapa imediatamente
             await carregarListaWifis();
-            selecionarWifiMaisProximo(false);
+            if (!listaWifisCache.some(w => w.id === novoId)) {
+                listaWifisCache.unshift(novoPontoObj);
+            }
+
+            limparTodosFiltrosMapa();
+            mudarAba('mapa');
+
+            setTimeout(() => {
+                const ordenada = obterListaFiltradaEOrdenada();
+                preencherSelectsComLista(ordenada, novoId);
+                document.getElementById('selectWifiMapa').value = novoId;
+                document.getElementById('selectWifi').value = novoId;
+                renderizarAlfinetesNoMapa(false);
+                atualizarCardQrDoMapa(novoId);
+                if (coordExistente && mapInstance) {
+                    mapInstance.setView([coordExistente.lat, coordExistente.lng], 18);
+                    if (wifiMarkersLayer) {
+                        wifiMarkersLayer.eachLayer(layer => {
+                            if (layer.wifiId === novoId) layer.openPopup();
+                        });
+                    }
+                }
+            }, 250);
+
             carregarPerfilUsuario();
         } catch (error) {
             cadToast.style.display = "block";
             cadToast.className = "toast error";
-            cadToast.textContent = "Erro ao salvar o novo ponto na planilha.";
+            cadToast.textContent = "Erro ao salvar o novo ponto na planilha. Verifique sua conexão.";
         }
 
         cadSaveBtn.disabled = false;
