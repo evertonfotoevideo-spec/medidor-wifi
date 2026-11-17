@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAME de Campo - Teste de Velocidade Wi-Fi</title>
+    <title>Click Control - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
             --bg-color: #111815;
             --card-bg: #1c2621;
             --primary: #22c55e;
             --primary-hover: #16a34a;
+            --secondary: #3b82f6;
+            --secondary-hover: #2563eb;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border: #2e3b34;
+            --input-bg: #141c18;
         }
         * {
             box-sizing: border-box;
@@ -28,30 +32,161 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 14px;
         }
         .container {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 24px;
+            padding: 18px;
             width: 100%;
-            max-width: 420px;
+            max-width: 500px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            text-align: center;
         }
         .header {
-            margin-bottom: 20px;
+            text-align: center;
+            margin-bottom: 14px;
         }
         .header h1 {
             color: var(--primary);
-            font-size: 1.4rem;
+            font-size: 1.45rem;
             letter-spacing: 0.5px;
         }
         .header p {
             color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 3px;
+        }
+        .user-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 0.78rem;
+        }
+        .user-bar span {
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 260px;
+        }
+        .user-bar strong {
+            color: var(--primary);
+        }
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            cursor: pointer;
+        }
+        .btn-logout:hover {
+            color: #f87171;
+            border-color: #f87171;
+        }
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 14px;
+            background-color: var(--input-bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 4px;
+            border-radius: 8px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: #052e16;
+        }
+        .auth-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .auth-link {
+            background: none;
+            border: none;
+            color: var(--text-muted);
             font-size: 0.85rem;
-            margin-top: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            padding-bottom: 4px;
+        }
+        .auth-link.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+        .gps-row {
+            display: flex;
+            gap: 8px;
+        }
+        .gps-row input, .gps-row select {
+            flex: 1;
+        }
+        .btn-gps {
+            background-color: var(--secondary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-gps:hover:not(:disabled) {
+            background-color: var(--secondary-hover);
+        }
+        .btn-gps:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         .info-badge {
             background-color: rgba(34, 197, 94, 0.1);
@@ -59,45 +194,51 @@
             color: var(--primary);
             padding: 8px 12px;
             border-radius: 8px;
-            font-size: 0.8rem;
-            margin-bottom: 20px;
-            display: inline-block;
+            font-size: 0.78rem;
+            margin-bottom: 14px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .info-badge.locked {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
         }
         .metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
         .metric-box {
-            background-color: var(--bg-color);
+            background-color: var(--input-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 16px 10px;
+            padding: 12px 10px;
+            text-align: center;
         }
         .metric-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .metric-value {
-            font-size: 1.8rem;
+            font-size: 1.65rem;
             font-weight: 700;
             color: var(--text-main);
         }
         .metric-unit {
-            font-size: 0.8rem;
+            font-size: 0.76rem;
             color: var(--primary);
-            margin-top: 2px;
         }
         .progress-container {
             width: 100%;
-            background-color: var(--bg-color);
+            background-color: var(--input-bg);
             border-radius: 8px;
             height: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             overflow: hidden;
             display: none;
         }
@@ -105,21 +246,22 @@
             height: 100%;
             width: 0%;
             background-color: var(--primary);
-            transition: width 0.3s ease;
+            transition: width 0.2s ease;
         }
         .status-text {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 20px;
-            min-height: 20px;
+            margin-bottom: 14px;
+            text-align: center;
+            min-height: 18px;
         }
         .btn {
             background-color: var(--primary);
             color: #052e16;
             border: none;
             border-radius: 10px;
-            padding: 14px 20px;
-            font-size: 1rem;
+            padding: 12px 16px;
+            font-size: 0.92rem;
             font-weight: 700;
             width: 100%;
             cursor: pointer;
@@ -128,27 +270,419 @@
         .btn:hover:not(:disabled) {
             background-color: var(--primary-hover);
         }
-        .btn:active:not(:disabled) {
-            transform: scale(0.98);
-        }
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
         .btn-save {
-            background-color: #3b82f6;
+            background-color: var(--secondary);
             color: #ffffff;
-            margin-top: 12px;
+            margin-top: 10px;
             display: none;
         }
         .btn-save:hover:not(:disabled) {
-            background-color: #2563eb;
+            background-color: var(--secondary-hover);
         }
         .toast {
-            margin-top: 16px;
-            font-size: 0.85rem;
+            margin-top: 12px;
+            font-size: 0.8rem;
             color: var(--primary);
+            text-align: center;
             display: none;
+            line-height: 1.4;
+        }
+        .toast.warning {
+            color: #fbbf24;
+        }
+        .toast.error {
+            color: #f87171;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .helper-text {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+        /* Controles de Prioridade Download / Upload e Filtros */
+        .prio-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background-color: var(--input-bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+        .prio-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 7px 6px;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .prio-btn.active {
+            background-color: var(--secondary);
+            color: #fff;
+        }
+        .filter-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .filter-pill {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s;
+        }
+        .filter-pill.active {
+            background-color: rgba(34, 197, 94, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        /* Legenda de Cores de Velocidade */
+        .speed-legend {
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .speed-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .dot-c {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid #fff;
+        }
+        /* Estilo do Mapa Miniatura */
+        #miniMap {
+            width: 100%;
+            height: 260px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            z-index: 1;
+        }
+        /* Caixa de QR Code / Conexão Rápida e Galeria do Local */
+        .qr-card {
+            background-color: var(--input-bg);
+            border: 1px solid rgba(34, 197, 94, 0.45);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .qr-card img.qr-img {
+            width: 145px;
+            height: 145px;
+            border-radius: 8px;
+            background: #fff;
+            padding: 6px;
+            margin: 8px auto;
+            display: block;
+        }
+        .qr-payload-box {
+            background: #0d1310;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #9ca3af;
+            word-break: break-all;
+            margin-top: 6px;
+        }
+        .btn-mini {
+            background-color: #2e3b34;
+            color: var(--text-main);
+            border: 1px solid #3f5248;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .btn-mini:hover {
+            background-color: #3a4b42;
+        }
+        /* Banner de Segurança de Rede */
+        .security-banner {
+            background-color: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.72rem;
+            line-height: 1.35;
+            margin: 8px 0;
+            text-align: left;
+        }
+        .security-banner.open-net {
+            background-color: rgba(239, 68, 68, 0.14);
+            border-color: rgba(239, 68, 68, 0.45);
+            color: #fca5a5;
+        }
+        /* Status Ao Vivo */
+        .live-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #101714;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin: 8px 0;
+            font-size: 0.72rem;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .status-pill-live {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .status-pill-live.warn {
+            color: #f87171;
+        }
+        /* Galeria de Fotos do Local */
+        .gallery-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 6px 0;
+            margin-top: 8px;
+            justify-content: center;
+        }
+        .gallery-thumb {
+            width: 78px;
+            height: 58px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .gallery-thumb:hover {
+            border-color: var(--primary);
+        }
+        .amenities-badges {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+        .amenity-tag {
+            background-color: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            color: #93c5fd;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        /* Cadastro Ultra-Rápido (1 Clique / Foto QR) */
+        .quick-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(34, 197, 94, 0.12));
+            border: 1px dashed rgba(59, 130, 246, 0.5);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .quick-box h4 {
+            font-size: 0.82rem;
+            color: #93c5fd;
+            margin-bottom: 4px;
+        }
+        .quick-box p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .btn-quick {
+            background-color: var(--secondary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 9px 8px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-quick.alt {
+            background-color: #2e3b34;
+            border: 1px solid #3f5248;
+        }
+        /* Popup customizado do Leaflet */
+        .leaflet-popup-content {
+            color: #111815;
+            font-size: 0.78rem;
+            line-height: 1.35;
+            text-align: center;
+            min-width: 195px;
+        }
+        .popup-qr-img {
+            width: 110px;
+            height: 110px;
+            margin: 5px auto;
+            display: block;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 3px;
+            background: #fff;
+        }
+        .popup-photo-img {
+            width: 100%;
+            max-height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-top: 5px;
+            border: 1px solid #d1d5db;
+        }
+        .popup-btn {
+            display: inline-block;
+            background-color: #16a34a;
+            color: #fff !important;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.7rem;
+            padding: 5px 9px;
+            border-radius: 6px;
+            margin-top: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .popup-btn.nav {
+            background-color: #2563eb;
+        }
+        /* Cartão de Perfil e Saldo */
+        .profile-card {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82rem;
+        }
+        .profile-row:last-child {
+            border-bottom: none;
+        }
+        .profile-row span {
+            color: var(--text-muted);
+        }
+        .profile-row strong {
+            color: var(--text-main);
+        }
+        .saldo-destaque {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.12));
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .saldo-destaque .label {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .saldo-destaque .valor {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 4px 0;
+        }
+        .saldo-destaque .sub {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+        .mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .mini-stat-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .mini-stat-box .num {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .mini-stat-box .txt {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .my-wifi-list {
+            max-height: 165px;
+            overflow-y: auto;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 0.78rem;
+        }
+        .my-wifi-item {
+            padding: 7px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .my-wifi-item:last-child {
+            border-bottom: none;
+        }
+        .my-wifi-item strong {
+            color: var(--primary);
+        }
+        .my-wifi-item small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
     </style>
 </head>
@@ -156,105 +690,2017 @@
 
 <div class="container">
     <div class="header">
-        <h1>CAME de CAMPO</h1>
-        <p>Validação de Rede & Velocidade Wi-Fi</p>
+        <h1 id="appTitle">CLICK CONTROL</h1>
+        <p>Gestão & Rede Colaborativa de Wi-Fi</p>
     </div>
 
-    <div class="info-badge" id="wifiBadge">
-        Ponto: <strong id="wifiName">Ponto Local</strong> • Recompensa: <strong>+2 Créditos</strong>
-    </div>
-
-    <div class="metrics">
-        <div class="metric-box">
-            <div class="metric-label">Download</div>
-            <div class="metric-value" id="downVal">--</div>
-            <div class="metric-unit">Mbps</div>
+    <!-- ===================================================================== -->
+    <!-- TELA 1: LOGIN E CADASTRO COM SENHA                                    -->
+    <!-- ===================================================================== -->
+    <div id="loginScreen">
+        <div class="auth-toggle">
+            <button type="button" class="auth-link active" id="modeLoginBtn" onclick="alternarModoAuth('login')">Entrar na Conta</button>
+            <button type="button" class="auth-link" id="modeRegisterBtn" onclick="alternarModoAuth('register')">Criar Nova Conta</button>
         </div>
-        <div class="metric-box">
-            <div class="metric-label">Upload (Envio)</div>
-            <div class="metric-value" id="upVal">--</div>
-            <div class="metric-unit">Mbps</div>
+
+        <div class="form-group hidden" id="groupNome">
+            <label for="authNome">Seu Nome ou @Instagram *</label>
+            <input type="text" id="authNome" placeholder="Ex: Everton Martins (@everton.fotoevideo)">
+        </div>
+
+        <div class="form-group">
+            <label for="authEmail">Seu E-mail *</label>
+            <input type="email" id="authEmail" placeholder="seuemail@gmail.com">
+        </div>
+
+        <div class="form-group">
+            <label for="authSenha">Sua Senha *</label>
+            <input type="password" id="authSenha" placeholder="Digite sua senha de acesso" onkeydown="if(event.key==='Enter') processarAuth()">
+        </div>
+
+        <button type="button" class="btn" id="authSubmitBtn" onclick="processarAuth()">Entrar no Aplicativo</button>
+        <div class="toast" id="loginToast"></div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TELA 2: PAINEL PRINCIPAL (LOGADO)                                     -->
+    <!-- ===================================================================== -->
+    <div id="appScreen" class="hidden">
+        <div class="user-bar">
+            <span>Fotógrafo: <strong id="userDisplay">Usuario</strong></span>
+            <button type="button" class="btn-logout" onclick="sair()">Sair</button>
+        </div>
+
+        <div class="tabs">
+            <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
+            <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
+            <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
+            <button type="button" class="tab-btn" id="tabPerfilBtn" onclick="mudarAba('perfil')">👤 Perfil</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 1: TESTAR VELOCIDADE DO WI-FI                                 -->
+        <!-- ================================================================= -->
+        <div id="abaTestar" class="hidden">
+            <div class="form-group">
+                <label for="selectWifi">Ponto de Wi-Fi Selecionado</label>
+                <div class="gps-row">
+                    <select id="selectWifi" onchange="aoTrocarWifi()">
+                        <option value="WFI-001">WFI-001 - Café da Praça (Florianópolis)</option>
+                    </select>
+                    <button type="button" class="btn-gps" id="btnNearGps" onclick="selecionarWifiMaisProximo(true)" title="Detectar ponto mais próximo">📍 Perto</button>
+                </div>
+                <div class="helper-text" id="nearGpsStatus">Use a aba "🗺️ Mapa" para ver os alfinetes coloridos por velocidade, filtros e QR Code.</div>
+            </div>
+
+            <div class="info-badge" id="wifiBadge">
+                <span id="rewardLabel">Recompensa: <strong>+2 Créditos</strong> (1x por ponto)</span>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-box">
+                    <div class="metric-label">Download</div>
+                    <div class="metric-value" id="downVal">--</div>
+                    <div class="metric-unit">Mbps</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">Upload (Envio)</div>
+                    <div class="metric-value" id="upVal">--</div>
+                    <div class="metric-unit">Mbps</div>
+                </div>
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="status-text" id="statusText">Toque abaixo para medir a banda real da rede.</div>
+
+            <button type="button" class="btn" id="startBtn" onclick="iniciarTeste()">Iniciar Teste de Velocidade</button>
+            <button type="button" class="btn btn-save" id="saveBtn" onclick="enviarTesteParaPlanilha()">Salvar Resultado (+2 Créditos)</button>
+            <div class="toast" id="toastMsg"></div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 2: MAPA DE PROXIMIDADE, CORES POR VELOCIDADE E FILTROS        -->
+        <!-- ================================================================= -->
+        <div id="abaMapa">
+            <!-- Botão para Priorizar Velocidade de Download ou Upload -->
+            <div class="prio-switch">
+                <button type="button" class="prio-btn active" id="prioDownBtn" onclick="definirPrioridade('download')">⬇️ Priorizar Download</button>
+                <button type="button" class="prio-btn" id="prioUpBtn" onclick="definirPrioridade('upload')">⬆️ Priorizar Upload (Envio)</button>
+            </div>
+
+            <!-- Filtros de Comodidades do Local -->
+            <div class="filter-pills">
+                <div class="filter-pill" id="filtroEstac" onclick="alternarFiltro('estacionamento')">🚗 Estacionamento</div>
+                <div class="filter-pill" id="filtroMesas" onclick="alternarFiltro('mesas')">🪑 Mesas</div>
+                <div class="filter-pill" id="filtroTomadas" onclick="alternarFiltro('tomadas')">🔌 Tomadas</div>
+                <div class="filter-pill" id="filtroSinalRua" onclick="alternarFiltro('sinal_rua')">📡 Sinal no Carro</div>
+            </div>
+
+            <!-- Legenda das 5 cores de velocidade -->
+            <div class="speed-legend">
+                <span><i class="dot-c" style="background:#ef4444;"></i> &lt;10</span>
+                <span><i class="dot-c" style="background:#f97316;"></i> 10-20</span>
+                <span><i class="dot-c" style="background:#eab308;"></i> 20-40</span>
+                <span><i class="dot-c" style="background:#3b82f6;"></i> 40-100</span>
+                <span><i class="dot-c" style="background:#22c55e;"></i> &gt;100 Mbps</span>
+            </div>
+
+            <div id="miniMap"></div>
+            <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando apenas os melhores pontos da região.</div>
+
+            <div class="form-group" style="margin-top: 4px;">
+                <label for="selectWifiMapa">Ponto de Wi-Fi (Ordenado por Proximidade & Prioridade)</label>
+                <div class="gps-row">
+                    <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
+                    <button type="button" class="btn-gps" id="btnAtualizarMapa" onclick="atualizarPosicaoMapa(true)">📍 Perto</button>
+                </div>
+                <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
+            </div>
+
+            <!-- Pacote Offline da Cidade -->
+            <div style="display:flex; gap:6px; margin-bottom:10px;">
+                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade Offline</button>
+                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Cache Offline</button>
+            </div>
+
+            <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
+            <div class="qr-card" id="mapaQrCard">
+                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
+                <div style="font-size: 0.72rem; color: #93c5fd; margin-top: 3px;" id="mapaHorarioInfo"></div>
+
+                <!-- Status ao Vivo & Centroide Colaborativo -->
+                <div class="live-status-bar">
+                    <span class="status-pill-live" id="mapaLiveStatus">🟢 Funcionando agora</span>
+                    <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('conectou')">👍 Conectou</button>
+                        <button type="button" class="btn-mini" id="btnCalibrarCentro" style="margin-top:0; padding:4px 8px; background:#1d4ed8; color:#fff;" onclick="calibrarCentroPinoAgora()">🎯 Centralizar Pino Aqui</button>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
+                    </div>
+                </div>
+                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#93c5fd;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
+
+                <!-- Banner de Segurança da Rede -->
+                <div class="security-banner" id="mapaSecurityBanner">
+                    🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa para subir fotos no Foco Radical com proteção.
+                </div>
+
+                <!-- Tags de Comodidades do Ponto -->
+                <div class="amenities-badges" id="mapaAmenities"></div>
+
+                <!-- Galeria de Fotos do Local + Botão para Adicionar Foto -->
+                <div class="gallery-strip" id="mapaGaleriaStrip"></div>
+                <div>
+                    <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
+                    <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
+                </div>
+
+                <img id="mapaQrImg" class="qr-img" src="" alt="QR Code Wi-Fi">
+                <div class="qr-payload-box" id="mapaQrLinkText">WIFI:T:WPA;S:...;P:...;;</div>
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                    <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:#2563eb; color:#fff;">🧭 Ir até lá (Maps/Waze)</a>
+                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Abrir QR Code</a>
+                    <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi Selecionado</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 3: CADASTRAR NOVO PONTO DE WI-FI (MODO EXPRESSO SEM PREGUIÇA)  -->
+        <!-- ================================================================= -->
+        <div id="abaCadastrar" class="hidden">
+            <!-- Atalhos de Preenchimento em 1 Toque -->
+            <div class="quick-box">
+                <h4>⚡ Cadastro Expresso (Zero Digitação)</h4>
+                <p>Puxe o endereço + nome do lugar pelo GPS ou leia a foto do QR Code da parede:</p>
+                <div class="quick-actions">
+                    <button type="button" class="btn-quick" id="gpsBtn" onclick="pegarEnderecoPorGPS()">📍 Auto-Preencher Local</button>
+                    <button type="button" class="btn-quick alt" onclick="document.getElementById('inputLerQrFoto').click()">📷 Ler QR Code Wi-Fi</button>
+                </div>
+                <input type="file" id="inputLerQrFoto" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
+                <div class="helper-text" id="gpsStatus" style="margin-top:6px;">Toque em "Auto-Preencher Local" para detectar comércio, rua e cidade.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="cadNomeLocal">Nome do Estabelecimento / Local *</label>
+                <input type="text" id="cadNomeLocal" placeholder="Ex: Posto Ipiranga Beira-Rio">
+            </div>
+
+            <div class="form-group">
+                <label for="cadLocalizacao">Endereço Completo (Rua, Número) ou GPS *</label>
+                <input type="text" id="cadLocalizacao" placeholder="Preenchido pelo botão GPS acima">
+                <div id="cadMiniMapWrap" class="hidden" style="margin-top:8px;">
+                    <div id="cadMiniMap" style="width:100%;height:165px;border-radius:10px;border:1px solid var(--primary);z-index:1;"></div>
+                    <div class="helper-text" id="cadPinHint" style="color:#22c55e;">🎯 Arraste o pino exato até a porta do estabelecimento se necessário.</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cadCidade">Cidade - UF *</label>
+                <input type="text" id="cadCidade" placeholder="Ex: São Bento do Sul - SC">
+            </div>
+
+            <div class="form-group">
+                <label for="cadSsid">Nome da Rede Wi-Fi (SSID) *</label>
+                <input type="text" id="cadSsid" placeholder="Nome exato da rede Wi-Fi" oninput="atualizarPreviewQrCadastro()">
+            </div>
+
+            <div class="form-group">
+                <label for="cadSenha">Senha do Wi-Fi (ou deixe "Aberta") *</label>
+                <div class="gps-row">
+                    <input type="text" id="cadSenha" placeholder="Ex: cafe2026" oninput="atualizarPreviewQrCadastro()">
+                    <button type="button" class="btn-gps" style="background:#2e3b34;" onclick="marcarRedeAberta()">🔓 Aberta</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cadHorarioSinal">Horário de Funcionamento / Acesso</label>
+                <input type="text" id="cadHorarioSinal" placeholder="Ex: 24h no estacionamento | 06h às 22h (exige consumo)">
+            </div>
+
+            <!-- Comodidades do Local (Toque Único) -->
+            <div class="form-group">
+                <label>Estrutura do Local para Trabalhar / Editar (Opcional)</label>
+                <div class="filter-pills">
+                    <div class="filter-pill" id="cadPillEstac" onclick="alternarComodidadeCadastro('estacionamento')">🚗 Estacionamento</div>
+                    <div class="filter-pill" id="cadPillMesas" onclick="alternarComodidadeCadastro('mesas')">🪑 Mesas</div>
+                    <div class="filter-pill" id="cadPillTomadas" onclick="alternarComodidadeCadastro('tomadas')">🔌 Tomadas</div>
+                    <div class="filter-pill" id="cadPillSinalRua" onclick="alternarComodidadeCadastro('sinal_rua')">📡 Sinal no Carro</div>
+                </div>
+            </div>
+
+            <!-- Foto do Lugar (Opcional) -->
+            <div class="form-group">
+                <label>Foto do Local / Ambiente (Opcional)</label>
+                <input type="file" id="cadFotoLugar" accept="image/*" onchange="processarFotoCadastro(event)">
+                <div id="cadFotoPreviewContainer" class="hidden" style="margin-top:6px; text-align:center;">
+                    <img id="cadFotoPreviewImg" src="" style="max-height:90px; border-radius:8px; border:1px solid var(--border);">
+                </div>
+            </div>
+
+            <!-- Pré-visualização ao vivo do QR Code gerado -->
+            <div class="qr-card hidden" id="cadQrPreviewBox">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">QR Code Automático Gerado</div>
+                <img id="cadQrPreviewImg" class="qr-img" src="" alt="Preview QR Code">
+                <div class="qr-payload-box" id="cadQrPreviewLink"></div>
+                <a id="cadQrOpenUrl" href="#" target="_blank" class="btn-mini" style="display:inline-block; text-decoration:none;">🔗 Abrir Link do QR Code</a>
+            </div>
+
+            <button type="button" class="btn" id="cadSaveBtn" onclick="cadastrarNovoWifi()">Salvar Novo Wi-Fi (+10 Créditos)</button>
+            <div class="toast" id="cadToast"></div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 4: MEUS DADOS E MEUS PONTOS (CARTEIRA)                        -->
+        <!-- ================================================================= -->
+        <div id="abaPerfil" class="hidden">
+            <div class="saldo-destaque">
+                <div class="label">Saldo Disponível na Carteira</div>
+                <div class="valor" id="perfilSaldo">--</div>
+                <div class="sub">Créditos para desbloquear senhas de Wi-Fi</div>
+            </div>
+
+            <div class="mini-stats">
+                <div class="mini-stat-box">
+                    <div class="num" id="perfilQtdCadastrados">0</div>
+                    <div class="txt">Wi-Fis Cadastrados (+10)</div>
+                </div>
+                <div class="mini-stat-box">
+                    <div class="num" id="perfilQtdTestes">0</div>
+                    <div class="txt">Testes Realizados (+2)</div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-row">
+                    <span>Nome / Perfil:</span>
+                    <strong id="perfilNome">--</strong>
+                </div>
+                <div class="profile-row">
+                    <span>E-mail de Acesso:</span>
+                    <strong id="perfilEmail">--</strong>
+                </div>
+                <div class="profile-row">
+                    <span>Plano Atual:</span>
+                    <strong id="perfilPlano" style="color: var(--primary);">Gratuito</strong>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 6px;">
+                <label>Meus Pontos de Wi-Fi Cadastrados</label>
+                <div class="my-wifi-list" id="meusWifisLista">
+                    <div style="color: var(--text-muted); text-align: center; padding: 10px;">Carregando seus pontos...</div>
+                </div>
+            </div>
+
+            <button type="button" class="btn" style="margin-top: 10px;" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meus Pontos</button>
         </div>
     </div>
-
-    <div class="progress-container" id="progressContainer">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <div class="status-text" id="statusText">Toque abaixo para medir a banda real da rede.</div>
-
-    <button class="btn" id="startBtn" onclick="iniciarTeste()">Iniciar Teste de Velocidade</button>
-    <button class="btn btn-save" id="saveBtn" onclick="enviarParaPlanilha()">Salvar Resultado (+2 Créditos)</button>
-
-    <div class="toast" id="toastMsg"></div>
 </div>
 
+<!-- Leaflet JS & jsQR (para leitura instantânea de QR Code da parede) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
 <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
+
+    let modoAuth = 'login';
+    let usuarioLogado = null;
+
+    // Cache inicial com velocidades, comodidades, horários e fotos
+    let listaWifisCache = [
+        {
+            id: "WFI-001", local: "Café da Praça", cidade: "Florianópolis - SC",
+            ssid: "CafeDaPraca_WiFi", senha: "cafe2026", lat_long: "-27.5969, -48.5495",
+            down_mbps: 125.4, up_mbps: 68.2,
+            comodidades: ["mesas", "tomadas"],
+            horario_sinal: "07h às 20h • Exige consumo no local",
+            status: "Funcionando", ultima_validacao: "Hoje 08:30",
+            fotos: ["https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=75"]
+        },
+        {
+            id: "WFI-002", local: "Posto Shell BR-101", cidade: "Itajaí - SC",
+            ssid: "Shell_Clientes", senha: "Aberta", lat_long: "-26.9078, -48.6619",
+            down_mbps: 18.5, up_mbps: 8.4,
+            comodidades: ["estacionamento", "mesas", "sinal_rua"],
+            horario_sinal: "24h • Sinal chega forte no estacionamento",
+            status: "Funcionando", ultima_validacao: "Ontem 19:15",
+            fotos: ["https://images.unsplash.com/photo-1527018601619-a508a2be00cd?w=400&q=75"]
+        },
+        {
+            id: "WFI-003", local: "Padaria Central", cidade: "São Bento do Sul - SC",
+            ssid: "PadariaCentral_5G", senha: "paoquente", lat_long: "-26.2503, -49.3786",
+            down_mbps: 54.0, up_mbps: 32.5,
+            comodidades: ["estacionamento", "mesas", "tomadas", "sinal_rua"],
+            horario_sinal: "06h às 21h • Pega no estacionamento em frente",
+            status: "Funcionando", ultima_validacao: "Hoje 06:45",
+            fotos: ["https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=75"]
+        }
+    ];
+
+    let ultimaCoordGPS = null;
+    let userLatAtual = null;
+    let userLngAtual = null;
+    let linkQrAtualMapa = "";
+
+    // Estado de Prioridade (download vs upload) e Filtros do Mapa
+    let prioridadeVelocidade = 'download';
+    let filtrosAtivos = {
+        estacionamento: false,
+        mesas: false,
+        tomadas: false,
+        sinal_rua: false
+    };
+
+    // Estado do Cadastro Rápido
+    let comodidadesCadastro = {
+        estacionamento: false,
+        mesas: false,
+        tomadas: false,
+        sinal_rua: false
+    };
+    let fotoCadastroBase64 = "";
+
+    // Variáveis do Mapa Leaflet
+    let mapInstance = null;
+    let userMarker = null;
+    let wifiMarkersLayer = null;
+
+
     // =========================================================================
-    // CONFIGURAÇÃO DO WEBHOOK (APPS SCRIPT DO GOOGLE SHEETS)
-    // Cole abaixo a URL do seu Google Apps Script publicado como App da Web
+    // CENTROIDE DINÂMICO DE CONEXÃO (MÉDIA PONDERADA POR PRECISÃO GPS)
     // =========================================================================
-    const GOOGLE_SCRIPT_URL = https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec;
+    function obterAmostrasPosicaoWifi(idWifi) {
+        const key = `clickcontrol_samples_${idWifi}`;
+        try {
+            return JSON.parse(localStorage.getItem(key) || "[]");
+        } catch (e) {
+            return [];
+        }
+    }
 
-    // Lê parâmetros passados pelo AppSheet na URL (ex: ?id_wifi=WFI-001&user=everton@gmail.com&local=Posto+Shell)
-    const urlParams = new URLSearchParams(window.location.search);
-    const idWifi = urlParams.get('id_wifi') || 'WFI-001';
-    const idUsuario = urlParams.get('user') || 'USR-001';
-    const nomeLocal = urlParams.get('local') || 'Ponto Selecionado';
+    function calcularCentroidePonderado(ponto) {
+        const amostras = obterAmostrasPosicaoWifi(ponto.id);
+        const coordBase = extrairCoordenadas(ponto.lat_long);
+        const todas = [];
 
-    document.getElementById('wifiName').textContent = nomeLocal;
+        if (coordBase) {
+            // Amostra original do cadastro (peso base com accuracy = 25m se não houver precisão salva)
+            const accBase = parseFloat(ponto.precisao_cadastro || 25);
+            todas.push({ lat: coordBase.lat, lng: coordBase.lng, acc: accBase });
+        }
 
+        amostras.forEach(a => {
+            if (a && typeof a.lat === "number" && typeof a.lng === "number") {
+                todas.push({ lat: a.lat, lng: a.lng, acc: Math.max(parseFloat(a.acc) || 10, 2) });
+            }
+        });
+
+        if (todas.length === 0) return null;
+        if (todas.length === 1) {
+            return { lat: todas[0].lat, lng: todas[0].lng, totalAmostras: 1, raioMedio: todas[0].acc };
+        }
+
+        // Média ponderada pelo inverso da variância (1 / acc^2): amostras de <= 5m têm peso muito maior
+        let somaPeso = 0;
+        let somaLat = 0;
+        let somaLng = 0;
+
+        todas.forEach(item => {
+            const peso = 1 / Math.pow(Math.max(item.acc, 2), 2);
+            somaPeso += peso;
+            somaLat += item.lat * peso;
+            somaLng += item.lng * peso;
+        });
+
+        return {
+            lat: somaLat / somaPeso,
+            lng: somaLng / somaPeso,
+            totalAmostras: todas.length,
+            raioMedio: Math.min(...todas.map(t => t.acc))
+        };
+    }
+
+    function obterCoordenadasCentroideWifi(ponto) {
+        const c = calcularCentroidePonderado(ponto);
+        if (!c) return null;
+        return { lat: c.lat, lng: c.lng, totalAmostras: c.totalAmostras, raioMedio: c.raioMedio };
+    }
+
+    async function registrarAmostraConexaoWifi(idWifi, origem = "conexao", silencioso = true) {
+        if (!idWifi || userLatAtual === null || userLngAtual === null) return;
+        const acc = isFinite(melhorPrecisaoAtual) ? melhorPrecisaoAtual : 10;
+
+        // Só aceita amostras com precisão <= 35m para não contaminar o centroide
+        if (acc > 35) return;
+
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+
+        const coordAtual = obterCoordenadasCentroideWifi(ponto);
+        // Trava de segurança: só agrega se o usuário estiver dentro de 180m do ponto (evita deslocar pino se alguém clicar de longe em casa)
+        if (coordAtual) {
+            const distKm = calcularDistanciaKm(userLatAtual, userLngAtual, coordAtual.lat, coordAtual.lng);
+            if (distKm > 0.18) {
+                if (!silencioso) {
+                    alert(`Você está a ${Math.round(distKm * 1000)}m deste ponto. Aproxime-se da rede para calibrar o centro do pino.`);
+                }
+                return;
+            }
+        }
+
+        const key = `clickcontrol_samples_${idWifi}`;
+        const amostras = obterAmostrasPosicaoWifi(idWifi);
+        const userEmail = usuarioLogado ? usuarioLogado.email : "anon";
+
+        // Atualiza a amostra mais recente deste usuário ou adiciona nova
+        const idxExistente = amostras.findIndex(a => a.usuario === userEmail && a.origem === origem);
+        const novaAmostra = {
+            lat: Number(userLatAtual.toFixed(6)),
+            lng: Number(userLngAtual.toFixed(6)),
+            acc: Number(acc.toFixed(1)),
+            usuario: userEmail,
+            origem: origem,
+            ts: Date.now()
+        };
+
+        if (idxExistente >= 0) {
+            amostras[idxExistente] = novaAmostra;
+        } else {
+            amostras.push(novaAmostra);
+        }
+
+        localStorage.setItem(key, JSON.stringify(amostras));
+
+        // Recalcula o novo centroide e atualiza no cache local + planilha
+        const novoCentro = calcularCentroidePonderado(ponto);
+        if (novoCentro) {
+            ponto.lat_long = `${novoCentro.lat.toFixed(6)}, ${novoCentro.lng.toFixed(6)}`;
+            renderizarAlfinetesNoMapa(true);
+            atualizarCardQrDoMapa(idWifi);
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({
+                        acao: "registrar_amostra_posicao",
+                        id_wifi: idWifi,
+                        id_usuario: userEmail,
+                        lat: novaAmostra.lat,
+                        lng: novaAmostra.lng,
+                        precisao_m: novaAmostra.acc,
+                        novo_centro_lat_long: ponto.lat_long,
+                        total_amostras: novoCentro.totalAmostras
+                    })
+                });
+            } catch (e) {}
+        }
+    }
+
+    async function calibrarCentroPinoAgora() {
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        if (!idWifi) return;
+        const btn = document.getElementById('btnCalibrarCentro');
+        btn.disabled = true;
+        btn.textContent = "Calibrando...";
+
+        obterPosicaoAltaPrecisao(
+            null,
+            async (posFinal) => {
+                if (posFinal) {
+                    userLatAtual = posFinal.coords.latitude;
+                    userLngAtual = posFinal.coords.longitude;
+                    melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
+                    atualizarMarcadorUsuarioNoMapa(userLatAtual, userLngAtual, melhorPrecisaoAtual);
+                    await registrarAmostraConexaoWifi(idWifi, "calibracao_manual", false);
+                }
+                btn.disabled = false;
+                btn.textContent = "🎯 Centralizar Pino Aqui";
+            },
+            10000,
+            5
+        );
+    }
+
+    // =========================================================================
+    // REGRAS DE CORES POR VELOCIDADE (VERMELHO, LARANJA, AMARELO, AZUL, VERDE)
+    // =========================================================================
+    function obterVelocidadeAtiva(w) {
+        const down = parseFloat(w.down_mbps || w.med_down || w.ult_down || 0);
+        const up = parseFloat(w.up_mbps || w.med_up || w.ult_up || 0);
+        return prioridadeVelocidade === 'upload' ? up : down;
+    }
+
+    function obterCorPorVelocidade(mbps) {
+        const v = parseFloat(mbps) || 0;
+        if (v < 10) return { hex: "#ef4444", nome: "Vermelho (<10 Mbps)", texto: "#ffffff" };
+        if (v < 20) return { hex: "#f97316", nome: "Laranja (10-20 Mbps)", texto: "#ffffff" };
+        if (v < 40) return { hex: "#eab308", nome: "Amarelo (20-40 Mbps)", texto: "#111815" };
+        if (v <= 100) return { hex: "#3b82f6", nome: "Azul (40-100 Mbps)", texto: "#ffffff" };
+        return { hex: "#22c55e", nome: "Verde (>100 Mbps)", texto: "#052e16" };
+    }
+
+    function definirPrioridade(tipo) {
+        prioridadeVelocidade = tipo;
+        document.getElementById('prioDownBtn').classList.toggle('active', tipo === 'download');
+        document.getElementById('prioUpBtn').classList.toggle('active', tipo === 'upload');
+        renderizarAlfinetesNoMapa();
+    }
+
+    function alternarFiltro(chave) {
+        filtrosAtivos[chave] = !filtrosAtivos[chave];
+        const mapBtnId = {
+            estacionamento: 'filtroEstac',
+            mesas: 'filtroMesas',
+            tomadas: 'filtroTomadas',
+            sinal_rua: 'filtroSinalRua'
+        };
+        document.getElementById(mapBtnId[chave]).classList.toggle('active', filtrosAtivos[chave]);
+        renderizarAlfinetesNoMapa();
+    }
+
+    // =========================================================================
+    // GERADOR PADRÃO DE QR CODE WI-FI (CONEXÃO AUTOMÁTICA) - SINTAXE CORRIGIDA
+    // =========================================================================
+    function escaparCampoWifi(str) {
+        return String(str || "").replace(/([\\;,:"])/g, "\\$1");
+    }
+
+    function gerarPayloadWifiQR(ssid, senha) {
+        const s = escaparCampoWifi(ssid || "Rede_WiFi");
+        const pRaw = String(senha || "").trim();
+        const isAberta = !pRaw || pRaw.toLowerCase() === "aberta" || pRaw.toLowerCase() === "sem senha" || pRaw === "-";
+        if (isAberta) {
+            return `WIFI:T:nopass;S:${s};;`;
+        }
+        const p = escaparCampoWifi(pRaw);
+        return `WIFI:T:WPA;S:${s};P:${p};;`;
+    }
+
+
+    function conectarPeloLinkQr(ssid, senha) {
+        const pontoMatch = listaWifisCache.find(w => (w.ssid || w.local) === ssid);
+        if (pontoMatch) {
+            registrarAmostraConexaoWifi(pontoMatch.id, "conexao_qr", true);
+        }
+        const payload = gerarPayloadWifiQR(ssid, senha);
+        const qrUrl = gerarUrlImagemQR(ssid, senha, 320);
+        const isAberta = !senha || senha.toLowerCase() === "aberta" || senha.toLowerCase() === "sem senha" || senha === "-";
+
+        if (!isAberta && navigator.clipboard) {
+            navigator.clipboard.writeText(senha).catch(() => {});
+        }
+
+        let modal = document.getElementById('modalConexaoWifi');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'modalConexaoWifi';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = `
+            <div style="background:#1c2621;border:2px solid #22c55e;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f3f4f6;box-shadow:0 15px 35px rgba(0,0,0,0.7);">
+                <div style="font-size:1rem;font-weight:800;color:#22c55e;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
+                <div style="font-size:0.85rem;font-weight:700;margin-bottom:2px;">Rede: ${ssid}</div>
+                <div style="font-size:0.8rem;color:#9ca3af;margin-bottom:10px;">Senha: <strong style="color:#fff;">${isAberta ? 'Rede Aberta' : senha}</strong> ${!isAberta ? '(copiada!)' : ''}</div>
+                <img src="${qrUrl}" alt="QR Code Wi-Fi" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
+                <div style="font-size:0.72rem;color:#9ca3af;margin-bottom:10px;word-break:break-all;background:#111815;padding:6px;border-radius:6px;border:1px solid #2e3b34;">${payload}</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <a href="${payload}" style="background:#22c55e;color:#052e16;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;">⚡ Conectar Agora (Link Wi-Fi)</a>
+                    <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#2e3b34;color:#f3f4f6;border:1px solid #3f5248;font-weight:600;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;">Fechar</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function gerarUrlImagemQR(ssid, senha, tamanho = 260) {
+        const payload = gerarPayloadWifiQR(ssid, senha);
+        return `https://api.qrserver.com/v1/create-qr-code/?size=${tamanho}x${tamanho}&margin=10&data=${encodeURIComponent(payload)}`;
+    }
+
+    function atualizarPreviewQrCadastro() {
+        const ssid = document.getElementById('cadSsid').value.trim();
+        const senha = document.getElementById('cadSenha').value.trim();
+        const box = document.getElementById('cadQrPreviewBox');
+
+        if (!ssid) {
+            box.classList.add('hidden');
+            return;
+        }
+
+        const qrUrl = gerarUrlImagemQR(ssid, senha, 260);
+        const wifiPayloadCad = gerarPayloadWifiQR(ssid, senha);
+        box.classList.remove('hidden');
+        document.getElementById('cadQrPreviewImg').src = qrUrl;
+        document.getElementById('cadQrPreviewLink').textContent = wifiPayloadCad;
+        const cadOpenBtn = document.getElementById('cadQrOpenUrl');
+        cadOpenBtn.href = wifiPayloadCad;
+        cadOpenBtn.onclick = (e) => { e.preventDefault(); conectarPeloLinkQr(ssid, senha); };
+    }
+
+    // =========================================================================
+    // GALERIA DE FOTOS, STATUS AO VIVO, SEGURANÇA E DETALHES DO PONTO NO MAPA
+    // =========================================================================
+    function obterFotosLocal(ponto) {
+        const keyLocal = `clickcontrol_fotos_${ponto.id}`;
+        let salvasLocal = [];
+        try {
+            salvasLocal = JSON.parse(localStorage.getItem(keyLocal) || "[]");
+        } catch (e) {}
+        const daPlanilha = Array.isArray(ponto.fotos) ? ponto.fotos : (ponto.foto_url ? [ponto.foto_url] : []);
+        return [...daPlanilha, ...salvasLocal];
+    }
+
+    function obterComodidadesLocal(ponto) {
+        if (Array.isArray(ponto.comodidades)) return ponto.comodidades;
+        if (typeof ponto.comodidades === "string" && ponto.comodidades.trim()) {
+            return ponto.comodidades.split(",").map(s => s.trim().toLowerCase());
+        }
+        return [];
+    }
+
+    function atualizarCardQrDoMapa(idWifi) {
+        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
+        if (!ponto) return;
+
+        const ssid = ponto.ssid || ponto.local;
+        const senha = ponto.senha || "";
+        const qrUrl = gerarUrlImagemQR(ssid, senha, 280);
+        linkQrAtualMapa = qrUrl;
+
+        const down = parseFloat(ponto.down_mbps || ponto.med_down || 0);
+        const up = parseFloat(ponto.up_mbps || ponto.med_up || 0);
+        const velTexto = (down > 0 || up > 0) ? ` • ⬇️ ${down.toFixed(1)} / ⬆️ ${up.toFixed(1)} Mbps` : "";
+
+        document.getElementById('mapaQrTitle').textContent = `${ponto.local} (Rede: ${ssid})`;
+        document.getElementById('mapaQrSub').textContent = (senha ? `Senha: ${senha}` : `Escaneie para conectar`) + velTexto;
+        document.getElementById('mapaHorarioInfo').textContent = ponto.horario_sinal ? `🕒 ${ponto.horario_sinal}` : "";
+        const wifiPayloadCard = gerarPayloadWifiQR(ssid, senha);
+        linkQrAtualMapa = wifiPayloadCard;
+        document.getElementById('mapaQrImg').src = qrUrl;
+        document.getElementById('mapaQrLinkText').textContent = wifiPayloadCard;
+        const btnQrCard = document.getElementById('mapaQrDownloadLink');
+        btnQrCard.href = wifiPayloadCard;
+        btnQrCard.onclick = (e) => { e.preventDefault(); conectarPeloLinkQr(ssid, senha); };
+
+        // Link de Rota Direta (Google Maps / Waze)
+        const coords = obterCoordenadasCentroideWifi(ponto);
+        const navBtn = document.getElementById('mapaNavGpsLink');
+        if (coords) {
+            navBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`;
+            navBtn.style.display = "inline-block";
+        } else {
+            navBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ponto.local + " " + ponto.cidade)}`;
+        }
+
+        // Status ao Vivo
+        const liveEl = document.getElementById('mapaLiveStatus');
+        const st = String(ponto.status || "Funcionando");
+        const valData = ponto.ultima_validacao ? ` (${ponto.ultima_validacao})` : "";
+        if (st.toLowerCase().includes("desatualizada") || st.toLowerCase().includes("verificação")) {
+            liveEl.className = "status-pill-live warn";
+            liveEl.textContent = `🔴 ${st}${valData}`;
+        } else {
+            liveEl.className = "status-pill-live";
+            liveEl.textContent = `🟢 ${st}${valData}`;
+        }
+        const centroInfo = calcularCentroidePonderado(ponto);
+        const centroEl = document.getElementById('mapaCentroideInfo');
+        if (centroEl && centroInfo) {
+            centroEl.textContent = centroInfo.totalAmostras > 1
+                ? `🎯 Pino centralizado por ${centroInfo.totalAmostras} conexões reais (precisão até ±${centroInfo.raioMedio.toFixed(1)}m).`
+                : `📍 Posição inicial (1 amostra). Conecte-se ou toque em "Centralizar Pino Aqui" para refinar.`;
+        }
+
+        // Banner de Segurança Dinâmico (Rede Aberta vs Rede com Senha)
+        const secBanner = document.getElementById('mapaSecurityBanner');
+        const isAberta = !senha || senha.toLowerCase() === "aberta" || senha.toLowerCase() === "sem senha";
+        if (isAberta) {
+            secBanner.className = "security-banner open-net";
+            secBanner.innerHTML = `⚠️ <strong>Rede Aberta (Sem Senha):</strong> Tráfego não criptografado. Use <strong>VPN obrigatória</strong> antes de fazer login no Foco Radical ou abrir apps financeiros.`;
+        } else {
+            secBanner.className = "security-banner";
+            secBanner.innerHTML = `🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa e mantenha o compartilhamento de arquivos do notebook desativado.`;
+        }
+
+        // Comodidades
+        const amenitiesDiv = document.getElementById('mapaAmenities');
+        amenitiesDiv.innerHTML = "";
+        const coms = obterComodidadesLocal(ponto);
+        const labelsCom = {
+            estacionamento: "🚗 Estacionamento",
+            mesas: "🪑 Mesas",
+            tomadas: "🔌 Tomadas",
+            sinal_rua: "📡 Sinal no Carro"
+        };
+        coms.forEach(c => {
+            if (labelsCom[c]) {
+                const span = document.createElement('span');
+                span.className = 'amenity-tag';
+                span.textContent = labelsCom[c];
+                amenitiesDiv.appendChild(span);
+            }
+        });
+
+        // Galeria de Fotos
+        const galeriaDiv = document.getElementById('mapaGaleriaStrip');
+        galeriaDiv.innerHTML = "";
+        const fotos = obterFotosLocal(ponto);
+        if (fotos.length > 0) {
+            fotos.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'gallery-thumb';
+                img.title = 'Toque para ampliar';
+                img.onclick = () => window.open(src, '_blank');
+                galeriaDiv.appendChild(img);
+            });
+        } else {
+            galeriaDiv.innerHTML = `<span style="font-size:0.7rem; color:var(--text-muted);">Sem fotos ainda. Adicione uma foto do ambiente abaixo!</span>`;
+        }
+    }
+
+    async function validarStatusAoVivo(tipo) {
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+
+        const agoraStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        if (tipo === 'conectou') {
+            ponto.status = "Funcionando";
+            ponto.ultima_validacao = `Hoje ${agoraStr}`;
+            registrarAmostraConexaoWifi(idWifi, "validacao_conectou", true);
+        } else {
+            ponto.alertas_senha = (Number(ponto.alertas_senha) || 0) + 1;
+            ponto.status = ponto.alertas_senha >= 2 ? "Senha Desatualizada" : "Em Verificação";
+        }
+        atualizarCardQrDoMapa(idWifi);
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "validar_status_wifi",
+                    id_wifi: idWifi,
+                    tipo: tipo,
+                    id_usuario: usuarioLogado ? usuarioLogado.email : ""
+                })
+            });
+        } catch (e) {}
+    }
+
+    function baixarPacoteOfflineCidade() {
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
+        const cidadeAlvo = ponto ? ponto.cidade : "Todas";
+        const pacote = listaWifisCache.filter(w => !cidadeAlvo || w.cidade === cidadeAlvo);
+
+        localStorage.setItem('clickcontrol_offline_pack', JSON.stringify({
+            cidade: cidadeAlvo,
+            data: new Date().toLocaleString('pt-BR'),
+            wifis: pacote
+        }));
+        alert(`✅ Pacote Offline salvo! ${pacote.length} ponto(s) de "${cidadeAlvo}" disponíveis mesmo sem internet.`);
+    }
+
+    function carregarPacoteOffline() {
+        const raw = localStorage.getItem('clickcontrol_offline_pack');
+        if (!raw) {
+            alert("Nenhum pacote offline salvo ainda. Selecione uma cidade e toque em 'Salvar Cidade Offline'.");
+            return;
+        }
+        const pack = JSON.parse(raw);
+        listaWifisCache = pack.wifis;
+        const ordenada = obterListaFiltradaEOrdenada();
+        preencherSelectsComLista(ordenada);
+        alert(`📂 Cache Offline carregado: ${pack.cidade} (Salvo em ${pack.data}).`);
+    }
+
+    function adicionarFotoAoLocalAtual(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        comprimirImagemParaBase64(file, 640, 0.72, (base64Img) => {
+            const keyLocal = `clickcontrol_fotos_${idWifi}`;
+            let existentes = [];
+            try { existentes = JSON.parse(localStorage.getItem(keyLocal) || "[]"); } catch (e) {}
+            existentes.push(base64Img);
+            localStorage.setItem(keyLocal, JSON.stringify(existentes));
+            atualizarCardQrDoMapa(idWifi);
+            renderizarAlfinetesNoMapa();
+        });
+    }
+
+    function comprimirImagemParaBase64(file, maxWidth, quality, callback) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const scale = Math.min(1, maxWidth / img.width);
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function copiarLinkQrMapa() {
+        if (!linkQrAtualMapa) return;
+        navigator.clipboard.writeText(linkQrAtualMapa).then(() => {
+            alert("Link do QR Code copiado!");
+        }).catch(() => {
+            prompt("Copie o link do QR Code abaixo:", linkQrAtualMapa);
+        });
+    }
+
+    // =========================================================================
+    // CADASTRO ULTRA-RÁPIDO (AUTO-PREENCHER COMÉRCIO/GPS + LER QR CODE DA PAREDE)
+    // =========================================================================
+    function marcarRedeAberta() {
+        document.getElementById('cadSenha').value = "Aberta";
+        atualizarPreviewQrCadastro();
+    }
+
+    function alternarComodidadeCadastro(chave) {
+        comodidadesCadastro[chave] = !comodidadesCadastro[chave];
+        const mapId = {
+            estacionamento: 'cadPillEstac',
+            mesas: 'cadPillMesas',
+            tomadas: 'cadPillTomadas',
+            sinal_rua: 'cadPillSinalRua'
+        };
+        document.getElementById(mapId[chave]).classList.toggle('active', comodidadesCadastro[chave]);
+    }
+
+    function processarFotoCadastro(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        comprimirImagemParaBase64(file, 640, 0.72, (b64) => {
+            fotoCadastroBase64 = b64;
+            document.getElementById('cadFotoPreviewImg').src = b64;
+            document.getElementById('cadFotoPreviewContainer').classList.remove('hidden');
+        });
+    }
+
+    function lerQrCodeDeImagem(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const gpsStatus = document.getElementById('gpsStatus');
+        gpsStatus.textContent = "Lendo QR Code da foto...";
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const maxDim = 900;
+                const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(img.width * scale);
+                canvas.height = Math.round(img.height * scale);
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                if (typeof jsQR === "undefined") {
+                    gpsStatus.textContent = "⚠️ Leitor de QR Code indisponível offline.";
+                    return;
+                }
+
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
+
+                if (code && code.data) {
+                    const txt = code.data.trim();
+                    const matchSsid = txt.match(/S:([^;]+)/i);
+                    const matchPass = txt.match(/P:([^;]+)/i);
+                    if (matchSsid) {
+                        document.getElementById('cadSsid').value = matchSsid[1].replace(/\\([\\;,:"])/g, "$1");
+                        document.getElementById('cadSenha').value = matchPass ? matchPass[1].replace(/\\([\\;,:"])/g, "$1") : "Aberta";
+                        atualizarPreviewQrCadastro();
+                        gpsStatus.textContent = "✅ Rede e senha extraídas automaticamente do QR Code!";
+                        gpsStatus.style.color = "#22c55e";
+                    } else {
+                        gpsStatus.textContent = "⚠️ QR Code lido (" + txt.slice(0, 30) + "), mas não contém dados de Wi-Fi.";
+                        gpsStatus.style.color = "#fbbf24";
+                    }
+                } else {
+                    gpsStatus.textContent = "⚠️ Não foi possível identificar um QR Code nítido na foto.";
+                    gpsStatus.style.color = "#fbbf24";
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // =========================================================================
+    // AUTENTICAÇÃO E SESSÃO
+    // =========================================================================
+    function alternarModoAuth(modo) {
+        modoAuth = modo;
+        const groupNome = document.getElementById('groupNome');
+        const submitBtn = document.getElementById('authSubmitBtn');
+        const loginToast = document.getElementById('loginToast');
+        loginToast.style.display = "none";
+
+        if (modo === 'register') {
+            groupNome.classList.remove('hidden');
+            submitBtn.textContent = "Criar Conta e Entrar";
+            document.getElementById('modeRegisterBtn').classList.add('active');
+            document.getElementById('modeLoginBtn').classList.remove('active');
+        } else {
+            groupNome.classList.add('hidden');
+            submitBtn.textContent = "Entrar no Aplicativo";
+            document.getElementById('modeLoginBtn').classList.add('active');
+            document.getElementById('modeRegisterBtn').classList.remove('active');
+        }
+    }
+
+    function verificarSessao() {
+        try {
+            const savedUser = localStorage.getItem('clickcontrol_user');
+            if (savedUser) {
+                usuarioLogado = JSON.parse(savedUser);
+                mostrarApp();
+            }
+        } catch (e) {}
+    }
+
+    async function processarAuth() {
+        const nome = document.getElementById('authNome').value.trim();
+        const email = document.getElementById('authEmail').value.trim().toLowerCase();
+        const senha = document.getElementById('authSenha').value.trim();
+        const loginToast = document.getElementById('loginToast');
+        const submitBtn = document.getElementById('authSubmitBtn');
+
+        loginToast.style.display = "none";
+
+        if (!email || !email.includes('@') || !senha) {
+            loginToast.style.display = "block";
+            loginToast.className = "toast error";
+            loginToast.textContent = "Preencha seu e-mail e senha corretamente.";
+            return;
+        }
+
+        if (modoAuth === 'register' && !nome) {
+            loginToast.style.display = "block";
+            loginToast.className = "toast error";
+            loginToast.textContent = "Informe seu nome ou @Instagram para criar a conta.";
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = modoAuth === 'register' ? "Criando conta..." : "Verificando senha...";
+
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: modoAuth === 'register' ? "cadastrar_usuario" : "login_usuario",
+                    id_usuario: email,
+                    nome: nome,
+                    senha: senha
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.status === "ok") {
+                usuarioLogado = { nome: result.nome || nome, email: email };
+                localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
+                mostrarApp();
+            } else {
+                loginToast.style.display = "block";
+                loginToast.className = "toast error";
+                loginToast.textContent = result.message || "E-mail ou senha inválidos.";
+            }
+        } catch (e) {
+            loginToast.style.display = "block";
+            loginToast.className = "toast error";
+            loginToast.textContent = "Erro de conexão com o Google Apps Script. Verifique se implantou como 'Qualquer pessoa'.";
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
+    }
+
+    async function mostrarApp() {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        document.getElementById('userDisplay').textContent = usuarioLogado.nome;
+        setTimeout(() => {
+            inicializarOuAtualizarMapa();
+        }, 80);
+        await carregarListaWifis();
+        iniciarRastreamentoGpsAltaPrecisao(false);
+        carregarPerfilUsuario();
+    }
+
+    function sair() {
+        localStorage.removeItem('clickcontrol_user');
+        usuarioLogado = null;
+        document.getElementById('authSenha').value = "";
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function mudarAba(aba) {
+        const abas = ['testar', 'mapa', 'cadastrar', 'perfil'];
+        abas.forEach(nome => {
+            const div = document.getElementById('aba' + nome.charAt(0).toUpperCase() + nome.slice(1));
+            const btn = document.getElementById('tab' + nome.charAt(0).toUpperCase() + nome.slice(1) + 'Btn');
+            if (nome === aba) {
+                div.classList.remove('hidden');
+                btn.classList.add('active');
+            } else {
+                div.classList.add('hidden');
+                btn.classList.remove('active');
+            }
+        });
+
+        if (aba === 'mapa') {
+            setTimeout(() => {
+                inicializarOuAtualizarMapa();
+            }, 100);
+        } else if (aba === 'perfil') {
+            carregarPerfilUsuario();
+        }
+    }
+
+
+    let gpsWatchId = null;
+    let melhorPrecisaoAtual = Infinity;
+    let userAccuracyCircle = null;
+    let cadPinMap = null;
+    let cadPinMarker = null;
+
+    function obterPosicaoAltaPrecisao(onProgress, onFinal, timeoutMs = 12000, alvoRaioMetros = 5) {
+        if (!navigator.geolocation) {
+            if (onFinal) onFinal(null, "GPS não suportado neste navegador.");
+            return;
+        }
+
+        let melhorPos = null;
+        let finalizado = false;
+        let watchId = null;
+
+        const concluir = (pos, erroMsg = null) => {
+            if (finalizado) return;
+            finalizado = true;
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+            if (onFinal) onFinal(pos, erroMsg);
+        };
+
+        const timer = setTimeout(() => {
+            if (melhorPos) {
+                concluir(melhorPos, null);
+            } else {
+                concluir(null, "Tempo esgotado ao aguardar sinal fino de GPS.");
+            }
+        }, timeoutMs);
+
+        watchId = navigator.geolocation.watchPosition(
+            (pos) => {
+                const acc = pos.coords.accuracy || 999;
+                if (!melhorPos || acc < (melhorPos.coords.accuracy || 999)) {
+                    melhorPos = pos;
+                }
+                if (onProgress) onProgress(melhorPos);
+
+                if (acc <= alvoRaioMetros) {
+                    clearTimeout(timer);
+                    concluir(melhorPos, null);
+                }
+            },
+            (err) => {
+                if (!melhorPos) {
+                    clearTimeout(timer);
+                    concluir(null, "Permissão de GPS negada ou sinal indisponível.");
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: timeoutMs
+            }
+        );
+    }
+
+    function iniciarRastreamentoGpsAltaPrecisao(forcarReset = false) {
+        if (!navigator.geolocation) return;
+        if (forcarReset && gpsWatchId !== null) {
+            navigator.geolocation.clearWatch(gpsWatchId);
+            gpsWatchId = null;
+            melhorPrecisaoAtual = Infinity;
+        }
+        if (gpsWatchId !== null) return;
+
+        gpsWatchId = navigator.geolocation.watchPosition(
+            async (pos) => {
+                const acc = pos.coords.accuracy || 999;
+                // Aceita imediatamente se for a primeira leitura ou se melhorar/mantiver precisão <= 15m
+                if (userLatAtual === null || acc <= melhorPrecisaoAtual || acc <= 10) {
+                    if (acc < melhorPrecisaoAtual) melhorPrecisaoAtual = acc;
+                    userLatAtual = pos.coords.latitude;
+                    userLngAtual = pos.coords.longitude;
+
+                    const mapStatus = document.getElementById('mapGpsStatus');
+                    const nearStatus = document.getElementById('nearGpsStatus');
+                    const badgeAcc = acc <= 5
+                        ? `🎯 Precisão máxima: ±${acc.toFixed(1)}m`
+                        : `📡 Calibrando GPS: ±${Math.round(acc)}m (aguardando ≤5m...)`;
+
+                    if (mapStatus) {
+                        mapStatus.textContent = badgeAcc;
+                        mapStatus.style.color = acc <= 5 ? "#22c55e" : "#fbbf24";
+                    }
+                    if (nearStatus) {
+                        nearStatus.textContent = badgeAcc;
+                        nearStatus.style.color = acc <= 5 ? "#22c55e" : "#fbbf24";
+                    }
+
+                    if (mapInstance) {
+                        atualizarMarcadorUsuarioNoMapa(userLatAtual, userLngAtual, acc);
+                    }
+                    // Se o usuário acabou de logar/abrir e está a <= 80m de uma rede conhecida, registra sua posição no centroide dela
+                    if (acc <= 15 && listaWifisCache.length > 0) {
+                        const proximos = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
+                        if (proximos[0] && proximos[0].distKm !== null && proximos[0].distKm <= 0.08) {
+                            registrarAmostraConexaoWifi(proximos[0].id, "login_presenca", true);
+                        }
+                    }
+                }
+            },
+            () => {},
+            { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
+        );
+    }
+
+    function atualizarMarcadorUsuarioNoMapa(uLat, uLng, acc = 5) {
+        if (!mapInstance) return;
+        if (userMarker) mapInstance.removeLayer(userMarker);
+        if (userAccuracyCircle) mapInstance.removeLayer(userAccuracyCircle);
+
+        const corCirculo = acc <= 5 ? "#22c55e" : "#fbbf24";
+        userAccuracyCircle = L.circle([uLat, uLng], {
+            radius: Math.max(acc, 3),
+            color: corCirculo,
+            fillColor: corCirculo,
+            fillOpacity: 0.15,
+            weight: 1.5
+        }).addTo(mapInstance);
+
+        const iconUser = L.divIcon({
+            className: 'custom-user-pin',
+            html: '<div style="background:#ffffff;width:16px;height:16px;border-radius:50%;border:4px solid #111815;box-shadow:0 0 10px rgba(255,255,255,0.95);"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+        });
+
+        userMarker = L.marker([uLat, uLng], { icon: iconUser })
+            .addTo(mapInstance)
+            .bindPopup(`<b>📍 Você está aqui</b><br><small>Raio de precisão: ±${acc.toFixed(1)}m</small>`);
+    }
+
+    // =========================================================================
+    // CÁLCULO DE DISTÂNCIA E RESOLUÇÃO DE COORDENADAS
+    // =========================================================================
+    function extrairCoordenadas(texto) {
+        if (!texto) return null;
+        const match = String(texto).match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+        if (match) {
+            return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+        }
+        return null;
+    }
+
+    function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    async function resolverCoordenadasFaltantes() {
+        for (let i = 0; i < listaWifisCache.length; i++) {
+            const w = listaWifisCache[i];
+            if (!extrairCoordenadas(w.lat_long) && (w.lat_long || w.cidade)) {
+                const query = encodeURIComponent(`${w.lat_long || ''}, ${w.cidade || ''}, Brasil`);
+                try {
+                    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`);
+                    const results = await resp.json();
+                    if (results && results.length > 0) {
+                        w.lat_long = `${results[0].lat}, ${results[0].lon}`;
+                    }
+                } catch (e) {}
+            }
+        }
+    }
+
+    function obterListaFiltradaEOrdenada(uLat = userLatAtual, uLng = userLngAtual) {
+        let lista = listaWifisCache.filter(w => {
+            const coms = obterComodidadesLocal(w);
+            if (filtrosAtivos.estacionamento && !coms.includes('estacionamento')) return false;
+            if (filtrosAtivos.mesas && !coms.includes('mesas')) return false;
+            if (filtrosAtivos.tomadas && !coms.includes('tomadas')) return false;
+            if (filtrosAtivos.sinal_rua && !coms.includes('sinal_rua')) return false;
+            return true;
+        }).map(w => {
+            const coords = obterCoordenadasCentroideWifi(w);
+            let distKm = null;
+            if (uLat !== null && uLng !== null && coords) {
+                distKm = calcularDistanciaKm(uLat, uLng, coords.lat, coords.lng);
+            }
+            const velAtiva = obterVelocidadeAtiva(w);
+            return { ...w, coords, distKm, velAtiva };
+        });
+
+        lista.sort((a, b) => {
+            if (uLat !== null && uLng !== null && a.distKm !== null && b.distKm !== null) {
+                if (Math.abs(a.distKm - b.distKm) > 0.3) return a.distKm - b.distKm;
+            }
+            return b.velAtiva - a.velAtiva;
+        });
+
+        return lista;
+    }
+
+    function preencherSelectsComLista(listaOrdenada, manterIdSelecionado = null) {
+        const selects = [document.getElementById('selectWifi'), document.getElementById('selectWifiMapa')];
+        selects.forEach(sel => {
+            if (!sel) return;
+            sel.innerHTML = "";
+            listaOrdenada.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.id;
+                let tagDist = "";
+                if (w.distKm !== null) {
+                    tagDist = w.distKm < 1
+                        ? ` [${Math.round(w.distKm * 1000)}m]`
+                        : ` [${w.distKm.toFixed(1)}km]`;
+                }
+                const tagVel = w.velAtiva > 0 ? ` (${w.velAtiva.toFixed(0)} Mbps)` : "";
+                opt.textContent = `${w.id} - ${w.local}${tagVel}${tagDist}`;
+                sel.appendChild(opt);
+            });
+            if (manterIdSelecionado && listaOrdenada.some(x => x.id === manterIdSelecionado)) {
+                sel.value = manterIdSelecionado;
+            } else if (listaOrdenada.length > 0) {
+                sel.value = listaOrdenada[0].id;
+            }
+        });
+        aoTrocarWifi();
+        const idAtual = document.getElementById('selectWifiMapa').value;
+        if (idAtual) atualizarCardQrDoMapa(idAtual);
+    }
+
+    async function selecionarWifiMaisProximo(manualClick = false) {
+        const statusEl = document.getElementById('nearGpsStatus');
+        const btnNear = document.getElementById('btnNearGps');
+
+        if (!navigator.geolocation) {
+            statusEl.textContent = "GPS indisponível neste navegador. Selecione o Wi-Fi na lista acima.";
+            return;
+        }
+
+        if (manualClick) {
+            btnNear.disabled = true;
+            btnNear.textContent = "...";
+        }
+        statusEl.textContent = "Calibrando GPS de alta precisão (meta ≤ 5m)...";
+        statusEl.style.color = "#fbbf24";
+
+        obterPosicaoAltaPrecisao(
+            (posParcial) => {
+                const acc = posParcial.coords.accuracy || 999;
+                statusEl.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m (buscando ≤ 5m)...`;
+            },
+            async (posFinal, erro) => {
+                if (!posFinal) {
+                    statusEl.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
+                    statusEl.style.color = "#fbbf24";
+                    btnNear.disabled = false;
+                    btnNear.textContent = "📍 Perto";
+                    return;
+                }
+
+                userLatAtual = posFinal.coords.latitude;
+                userLngAtual = posFinal.coords.longitude;
+                melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
+
+                await resolverCoordenadasFaltantes();
+                const listaOrdenada = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
+                preencherSelectsComLista(listaOrdenada, null);
+
+                const maisProximo = listaOrdenada[0];
+                if (maisProximo && maisProximo.distKm !== null) {
+                    const distTxt = maisProximo.distKm < 1
+                        ? `${Math.round(maisProximo.distKm * 1000)}m`
+                        : `${maisProximo.distKm.toFixed(1)} km`;
+                    statusEl.textContent = `🎯 GPS (±${melhorPrecisaoAtual.toFixed(1)}m) • Mais próximo: ${maisProximo.local} (${distTxt}).`;
+                    statusEl.style.color = "#22c55e";
+                }
+
+                btnNear.disabled = false;
+                btnNear.textContent = "📍 Perto";
+            },
+            10000,
+            5
+        );
+    }
+
+    // =========================================================================
+    // MAPA: ALFINETES COLORIDOS POR VELOCIDADE + DECLUTTERING NO ZOOM OUT
+    // =========================================================================
+    function inicializarOuAtualizarMapa() {
+        if (!mapInstance) {
+            const latInicial = userLatAtual || -26.2503;
+            const lngInicial = userLngAtual || -49.3786;
+
+            mapInstance = L.map('miniMap').setView([latInicial, lngInicial], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(mapInstance);
+
+            wifiMarkersLayer = L.layerGroup().addTo(mapInstance);
+
+            mapInstance.on('zoomend', () => {
+                renderizarAlfinetesNoMapa(true);
+            });
+        } else {
+            mapInstance.invalidateSize();
+        }
+
+        atualizarPosicaoMapa(false);
+    }
+
+    function aplicarFiltroZoomOut(pontosComCoords) {
+        if (!mapInstance) return pontosComCoords;
+        const zoom = mapInstance.getZoom();
+        const notice = document.getElementById('zoomFilterNotice');
+
+        if (zoom >= 14) {
+            notice.textContent = `Zoom detalhado (${zoom}x): exibindo todos os ${pontosComCoords.length} pontos filtrados.`;
+            return pontosComCoords;
+        }
+
+        const cellSizePx = zoom <= 8 ? 85 : (zoom <= 11 ? 65 : 50);
+        const ordenadosPorVelocidade = [...pontosComCoords].sort((a, b) => b.velAtiva - a.velAtiva);
+        const ocupados = new Set();
+        const melhores = [];
+
+        ordenadosPorVelocidade.forEach(p => {
+            const pt = mapInstance.latLngToContainerPoint([p.coords.lat, p.coords.lng]);
+            const cellKey = `${Math.floor(pt.x / cellSizePx)}_${Math.floor(pt.y / cellSizePx)}`;
+            if (!ocupados.has(cellKey)) {
+                ocupados.add(cellKey);
+                melhores.push(p);
+            }
+        });
+
+        notice.textContent = `Zoom afastado (${zoom}x): exibindo os ${melhores.length} melhores pontos de ${prioridadeVelocidade === 'upload' ? 'Upload' : 'Download'} (aproxime para ver todos).`;
+        return melhores;
+    }
+
+    function renderizarAlfinetesNoMapa(preservarPopup = false) {
+        if (!mapInstance || !wifiMarkersLayer) return;
+        let idPopupAberto = null;
+        if (preservarPopup) {
+            wifiMarkersLayer.eachLayer(layer => {
+                if (layer.isPopupOpen && layer.isPopupOpen() && layer.wifiId) {
+                    idPopupAberto = layer.wifiId;
+                }
+            });
+        }
+        wifiMarkersLayer.clearLayers();
+
+        const mapStatus = document.getElementById('mapGpsStatus');
+        const listaFiltrada = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
+        const manterId = document.getElementById('selectWifiMapa').value;
+        preencherSelectsComLista(listaFiltrada, manterId);
+
+        const pontosComCoords = listaFiltrada.filter(w => w.coords);
+        const pontosVisiveisNoZoom = aplicarFiltroZoomOut(pontosComCoords);
+
+        pontosVisiveisNoZoom.forEach(w => {
+            const vel = w.velAtiva;
+            const cor = obterCorPorVelocidade(vel);
+            const labelVel = vel > 0 ? `${Math.round(vel)}` : "?";
+
+            const iconWifi = L.divIcon({
+                className: 'custom-wifi-pin',
+                html: `<div style="background:${cor.hex};color:${cor.texto};font-weight:800;font-size:10px;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #ffffff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.6);"><span style="transform:rotate(45deg);">${labelVel}</span></div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 28]
+            });
+
+            const ssid = w.ssid || w.local;
+            const senha = w.senha || "";
+            const qrUrl = gerarUrlImagemQR(ssid, senha, 200);
+            const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${w.coords.lat},${w.coords.lng}`;
+            const down = parseFloat(w.down_mbps || w.med_down || 0);
+            const up = parseFloat(w.up_mbps || w.med_up || 0);
+            const fotos = obterFotosLocal(w);
+            const fotoHtml = fotos.length > 0 ? `<img src="${fotos[0]}" class="popup-photo-img" alt="Foto do local">` : "";
+
+            const wifiPayload = gerarPayloadWifiQR(ssid, senha);
+            const ssidSafe = String(ssid).replace(/'/g, "\\'");
+            const senhaSafe = String(senha).replace(/'/g, "\\'");
+            const popupHtml = `
+                <div>
+                    <b>${w.local}</b><br>
+                    <span style="color:#4b5563;">${w.cidade}</span><br>
+                    <span style="font-weight:700; color:#111815;">⬇️ ${down.toFixed(1)} Mbps | ⬆️ ${up.toFixed(1)} Mbps</span><br>
+                    <span>Rede: <b>${ssid}</b> | Senha: <b>${senha || '-'}</b></span><br>
+                    <span style="font-size:0.68rem; color:#2563eb;">🎯 Centro de ${w.coords.totalAmostras || 1} conexão(ões)</span>
+                    ${fotoHtml}
+                    <img src="${qrUrl}" class="popup-qr-img" alt="QR Code Wi-Fi">
+                    <a href="${navUrl}" target="_blank" class="popup-btn nav">🧭 Ir até lá</a>
+                    <a href="${wifiPayload}" onclick="event.preventDefault(); conectarPeloLinkQr('${ssidSafe}', '${senhaSafe}');" class="popup-btn">🔗 QR Code</a>
+                </div>
+            `;
+
+            const marker = L.marker([w.coords.lat, w.coords.lng], { icon: iconWifi }).bindPopup(popupHtml);
+            marker.wifiId = w.id;
+            marker.on('click', () => {
+                document.getElementById('selectWifiMapa').value = w.id;
+                document.getElementById('selectWifi').value = w.id;
+                aoTrocarWifi();
+                atualizarCardQrDoMapa(w.id);
+            });
+
+            wifiMarkersLayer.addLayer(marker);
+            if (idPopupAberto && idPopupAberto === w.id) {
+                marker.openPopup();
+            }
+        });
+
+        mapStatus.textContent = pontosFiltradosResumo(listaFiltrada.length, pontosVisiveisNoZoom.length);
+        mapStatus.style.color = "#22c55e";
+    }
+
+    function pontosFiltradosResumo(totalFiltrados, visiveisZoom) {
+        if (totalFiltrados === 0) return "Nenhum ponto corresponde aos filtros selecionados.";
+        return `Exibindo ${visiveisZoom} de ${totalFiltrados} pontos (${prioridadeVelocidade === 'upload' ? 'prioridade Upload' : 'prioridade Download'}).`;
+    }
+
+    function atualizarPosicaoMapa(forcarNovoGPS = false) {
+        const mapStatus = document.getElementById('mapGpsStatus');
+        const btnAtualizar = document.getElementById('btnAtualizarMapa');
+
+        const desenharUsuarioEAlfinetes = (uLat, uLng, acc = melhorPrecisaoAtual) => {
+            if (uLat !== null && uLng !== null) {
+                atualizarMarcadorUsuarioNoMapa(uLat, uLng, isFinite(acc) ? acc : 5);
+            }
+            renderizarAlfinetesNoMapa();
+        };
+
+        if (!forcarNovoGPS && userLatAtual !== null && userLngAtual !== null && melhorPrecisaoAtual <= 5) {
+            desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
+            return;
+        }
+
+        if (navigator.geolocation) {
+            btnAtualizar.disabled = true;
+            mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 5m)...";
+            mapStatus.style.color = "#fbbf24";
+
+            obterPosicaoAltaPrecisao(
+                (posParcial) => {
+                    const acc = posParcial.coords.accuracy || 999;
+                    userLatAtual = posParcial.coords.latitude;
+                    userLngAtual = posParcial.coords.longitude;
+                    mapInstance.setView([userLatAtual, userLngAtual], acc <= 15 ? 18 : 16);
+                    desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, acc);
+                    mapStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m (buscando ≤ 5m)...`;
+                },
+                async (posFinal) => {
+                    if (posFinal) {
+                        userLatAtual = posFinal.coords.latitude;
+                        userLngAtual = posFinal.coords.longitude;
+                        melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
+                        await resolverCoordenadasFaltantes();
+                        mapInstance.setView([userLatAtual, userLngAtual], 18);
+                        desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
+                        mapStatus.textContent = `🎯 Localização travada com raio de ±${melhorPrecisaoAtual.toFixed(1)}m.`;
+                        mapStatus.style.color = melhorPrecisaoAtual <= 5 ? "#22c55e" : "#fbbf24";
+                    } else {
+                        desenharUsuarioEAlfinetes(null, null);
+                    }
+                    btnAtualizar.disabled = false;
+                },
+                12000,
+                5
+            );
+        } else {
+            desenharUsuarioEAlfinetes(null, null);
+        }
+    }
+
+    function aoSelecionarNoMapa() {
+        const idSelecionado = document.getElementById('selectWifiMapa').value;
+        document.getElementById('selectWifi').value = idSelecionado;
+        aoTrocarWifi();
+        atualizarCardQrDoMapa(idSelecionado);
+
+        const ponto = listaWifisCache.find(w => w.id === idSelecionado);
+        const coords = ponto ? obterCoordenadasCentroideWifi(ponto) : null;
+        if (coords && mapInstance) {
+            mapInstance.setView([coords.lat, coords.lng], 16);
+            setTimeout(() => {
+                if (wifiMarkersLayer) {
+                    wifiMarkersLayer.eachLayer(layer => {
+                        if (layer.wifiId === idSelecionado) {
+                            layer.openPopup();
+                        }
+                    });
+                }
+            }, 250);
+        }
+    }
+
+    function irTestarSelecionadoDoMapa() {
+        const idSelecionado = document.getElementById('selectWifiMapa').value;
+        document.getElementById('selectWifi').value = idSelecionado;
+        aoTrocarWifi();
+        mudarAba('testar');
+    }
+
+    // =========================================================================
+    // GEOCODIFICAÇÃO REVERSA + GPS ALTA PRECISÃO (<= 5M) + PINO AJUSTÁVEL
+    // =========================================================================
+    function renderizarMinimapaCadastro(latNum, lngNum, accMetros) {
+        const wrap = document.getElementById('cadMiniMapWrap');
+        wrap.classList.remove('hidden');
+
+        if (!cadPinMap) {
+            cadPinMap = L.map('cadMiniMap').setView([latNum, lngNum], 19);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 20,
+                attribution: '© OSM'
+            }).addTo(cadPinMap);
+
+            cadPinMarker = L.marker([latNum, lngNum], { draggable: true }).addTo(cadPinMap);
+            cadPinMarker.on('dragend', () => {
+                const p = cadPinMarker.getLatLng();
+                const nLat = p.lat.toFixed(6);
+                const nLng = p.lng.toFixed(6);
+                ultimaCoordGPS = `${nLat}, ${nLng}`;
+                const inputLoc = document.getElementById('cadLocalizacao');
+                if (/\(-?\d+\.\d+\s*,\s*-?\d+\.\d+\)/.test(inputLoc.value)) {
+                    inputLoc.value = inputLoc.value.replace(/\(-?\d+\.\d+\s*,\s*-?\d+\.\d+\)/, `(${ultimaCoordGPS})`);
+                } else {
+                    inputLoc.value = `${inputLoc.value} (${ultimaCoordGPS})`.trim();
+                }
+                document.getElementById('cadPinHint').textContent = `🎯 Pino ajustado manualmente: ${ultimaCoordGPS}`;
+            });
+        } else {
+            cadPinMap.invalidateSize();
+            cadPinMap.setView([latNum, lngNum], 19);
+            cadPinMarker.setLatLng([latNum, lngNum]);
+        }
+
+        document.getElementById('cadPinHint').textContent = `🎯 Precisão GPS: ±${accMetros.toFixed(1)}m (arraste o pino se precisar de ajuste fino).`;
+    }
+
+    async function pegarEnderecoPorGPS() {
+        const gpsBtn = document.getElementById('gpsBtn');
+        const gpsStatus = document.getElementById('gpsStatus');
+        const inputLoc = document.getElementById('cadLocalizacao');
+        const inputCidade = document.getElementById('cadCidade');
+        const inputNome = document.getElementById('cadNomeLocal');
+
+        if (!navigator.geolocation) {
+            gpsStatus.textContent = "GPS não suportado neste navegador.";
+            return;
+        }
+
+        gpsBtn.disabled = true;
+        gpsBtn.textContent = "Calibrando ≤5m...";
+        gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 5m)...";
+        gpsStatus.style.color = "#fbbf24";
+
+        obterPosicaoAltaPrecisao(
+            (posParcial) => {
+                const acc = posParcial.coords.accuracy || 999;
+                gpsStatus.textContent = `📡 Refinando posição: ±${acc.toFixed(1)}m (meta ≤ 5m)...`;
+                renderizarMinimapaCadastro(posParcial.coords.latitude, posParcial.coords.longitude, acc);
+            },
+            async (posFinal, erro) => {
+                if (!posFinal) {
+                    gpsStatus.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
+                    gpsStatus.style.color = "#fbbf24";
+                    gpsBtn.disabled = false;
+                    gpsBtn.textContent = "📍 Auto-Preencher Local";
+                    return;
+                }
+
+                const lat = posFinal.coords.latitude.toFixed(6);
+                const lng = posFinal.coords.longitude.toFixed(6);
+                const acc = posFinal.coords.accuracy || 5;
+                ultimaCoordGPS = `${lat}, ${lng}`;
+                userLatAtual = posFinal.coords.latitude;
+                userLngAtual = posFinal.coords.longitude;
+                melhorPrecisaoAtual = acc;
+
+                renderizarMinimapaCadastro(posFinal.coords.latitude, posFinal.coords.longitude, acc);
+
+                try {
+                    const urlGeo = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1`;
+                    const resp = await fetch(urlGeo, { headers: { "Accept-Language": "pt-BR" } });
+                    const data = await resp.json();
+                    const addr = data.address || {};
+
+                    const nomeDetectado = data.name || addr.amenity || addr.shop || addr.building || "";
+                    if (nomeDetectado && !inputNome.value.trim()) {
+                        inputNome.value = nomeDetectado;
+                    }
+
+                    const rua = addr.road || addr.pedestrian || addr.suburb || "";
+                    const numero = addr.house_number || "S/N";
+                    const bairro = addr.suburb || addr.neighbourhood || "";
+                    const cidade = addr.city || addr.town || addr.village || addr.municipality || "";
+                    const estado = addr.state || "";
+
+                    const mapaUF = {
+                        "Acre": "AC", "Alagoas": "AL", "Amapá": "AP", "Amazonas": "AM",
+                        "Bahia": "BA", "Ceará": "CE", "Distrito Federal": "DF", "Espírito Santo": "ES",
+                        "Goiás": "GO", "Maranhão": "MA", "Mato Grosso": "MT", "Mato Grosso do Sul": "MS",
+                        "Minas Gerais": "MG", "Pará": "PA", "Paraíba": "PB", "Paraná": "PR",
+                        "Pernambuco": "PE", "Piauí": "PI", "Rio de Janeiro": "RJ", "Rio Grande do Norte": "RN",
+                        "Rio Grande do Sul": "RS", "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC",
+                        "São Paulo": "SP", "Sergipe": "SE", "Tocantins": "TO"
+                    };
+                    const uf = mapaUF[estado] || estado;
+
+                    if (rua) {
+                        inputLoc.value = bairro
+                            ? `${rua}, ${numero} - ${bairro} (${ultimaCoordGPS})`
+                            : `${rua}, ${numero} (${ultimaCoordGPS})`;
+                    } else {
+                        inputLoc.value = ultimaCoordGPS;
+                    }
+
+                    if (cidade && !inputCidade.value.trim()) {
+                        inputCidade.value = uf ? `${cidade} - ${uf}` : cidade;
+                    }
+
+                    gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Local preenchido.`;
+                    gpsStatus.style.color = acc <= 5 ? "#22c55e" : "#fbbf24";
+                } catch (err) {
+                    inputLoc.value = ultimaCoordGPS;
+                    gpsStatus.textContent = `🎯 Coordenadas captadas (±${acc.toFixed(1)}m).`;
+                    gpsStatus.style.color = "#22c55e";
+                }
+
+                gpsBtn.disabled = false;
+                gpsBtn.textContent = "📍 Auto-Preencher Local";
+            },
+            12000,
+            5
+        );
+    }
+
+    // =========================================================================
+    // ABA 4: CARREGAR DADOS DO PERFIL, SALDO E PONTOS DO USUÁRIO
+    // =========================================================================
+    async function carregarPerfilUsuario() {
+        if (!usuarioLogado) return;
+        document.getElementById('perfilNome').textContent = usuarioLogado.nome;
+        document.getElementById('perfilEmail').textContent = usuarioLogado.email;
+
+        const btn = document.getElementById('btnAtualizarPerfil');
+        btn.disabled = true;
+        btn.textContent = "Sincronizando pontos...";
+
+        try {
+            const url = `${GOOGLE_SCRIPT_URL}?acao=dados_usuario&id_usuario=${encodeURIComponent(usuarioLogado.email)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.status === "ok") {
+                document.getElementById('perfilSaldo').textContent = `${data.saldo} pts`;
+                document.getElementById('perfilPlano').textContent = data.plano || "Gratuito";
+                document.getElementById('perfilQtdCadastrados').textContent = data.qtd_cadastrados || 0;
+                document.getElementById('perfilQtdTestes').textContent = data.qtd_testes || 0;
+
+                const listaDiv = document.getElementById('meusWifisLista');
+                if (data.meus_wifis && data.meus_wifis.length > 0) {
+                    listaDiv.innerHTML = "";
+                    data.meus_wifis.forEach(w => {
+                        const qrLink = gerarUrlImagemQR(w.ssid, w.senha, 260);
+                        const item = document.createElement('div');
+                        item.className = 'my-wifi-item';
+                        item.innerHTML = `
+                            <strong>${w.id} - ${w.local}</strong> (${w.cidade})
+                            <small>Rede: ${w.ssid} | Senha: ${w.senha} • <a href="${qrLink}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">🔗 Link QR Code</a></small>
+                        `;
+                        listaDiv.appendChild(item);
+                    });
+                } else {
+                    listaDiv.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 10px;">Você ainda não cadastrou nenhum ponto de Wi-Fi.</div>`;
+                }
+            }
+        } catch (e) {
+            document.getElementById('meusWifisLista').innerHTML = `<div style="color: #fbbf24; text-align: center; padding: 10px;">Atualize o código do Apps Script para sincronizar saldo e velocidades.</div>`;
+        }
+
+        btn.disabled = false;
+        btn.textContent = "🔄 Atualizar Meus Pontos";
+    }
+
+    async function carregarListaWifis() {
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL + "?acao=listar_wifis");
+            const data = await res.json();
+            if (data.wifis && data.wifis.length > 0) {
+                listaWifisCache = data.wifis;
+                await resolverCoordenadasFaltantes();
+                const ordenada = obterListaFiltradaEOrdenada();
+                preencherSelectsComLista(ordenada);
+            }
+        } catch (e) {
+            const ordenada = obterListaFiltradaEOrdenada();
+            preencherSelectsComLista(ordenada);
+        }
+    }
+
+    async function cadastrarNovoWifi() {
+        const nomeLocal = document.getElementById('cadNomeLocal').value.trim();
+        const cidade = document.getElementById('cadCidade').value.trim();
+        const localizacao = document.getElementById('cadLocalizacao').value.trim();
+        const ssid = document.getElementById('cadSsid').value.trim();
+        const senha = document.getElementById('cadSenha').value.trim();
+        const horarioSinal = document.getElementById('cadHorarioSinal').value.trim();
+        const cadToast = document.getElementById('cadToast');
+        const cadSaveBtn = document.getElementById('cadSaveBtn');
+
+        if (!nomeLocal || !cidade || !localizacao || !ssid || !senha) {
+            cadToast.style.display = "block";
+            cadToast.className = "toast error";
+            cadToast.textContent = "Preencha todos os campos obrigatórios (*) antes de salvar.";
+            return;
+        }
+
+        const qrLinkGerado = gerarUrlImagemQR(ssid, senha, 280);
+        const listaComodidades = Object.keys(comodidadesCadastro).filter(k => comodidadesCadastro[k]);
+
+        cadSaveBtn.disabled = true;
+        cadSaveBtn.textContent = "Salvando Ponto e QR Code...";
+
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "cadastrar_wifi",
+                    id_usuario: usuarioLogado.email,
+                    nome_local: nomeLocal,
+                    cidade_uf: cidade,
+                    lat_long: localizacao,
+                    ssid_rede: ssid,
+                    senha: senha,
+                    link_qrcode: qrLinkGerado,
+                    comodidades: listaComodidades.join(","),
+                    horario_sinal: horarioSinal
+                })
+            });
+            const result = await response.json();
+            const novoId = result.id_wifi || ("WFI-" + Date.now());
+
+            if (fotoCadastroBase64) {
+                localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
+            }
+
+            cadToast.style.display = "block";
+            cadToast.className = "toast";
+            cadToast.innerHTML = `✅ Ponto ${novoId} cadastrado! +10 Créditos na carteira.<br><a href="${qrLinkGerado}" target="_blank" style="color:#3b82f6;font-weight:700;">🔗 Abrir Link do QR Code de Conexão</a>`;
+
+            document.getElementById('cadNomeLocal').value = "";
+            document.getElementById('cadLocalizacao').value = "";
+            document.getElementById('cadSsid').value = "";
+            document.getElementById('cadSenha').value = "";
+            document.getElementById('cadHorarioSinal').value = "";
+            document.getElementById('cadQrPreviewBox').classList.add('hidden');
+            document.getElementById('cadFotoPreviewContainer').classList.add('hidden');
+            fotoCadastroBase64 = "";
+
+            await carregarListaWifis();
+            selecionarWifiMaisProximo(false);
+            carregarPerfilUsuario();
+        } catch (error) {
+            cadToast.style.display = "block";
+            cadToast.className = "toast error";
+            cadToast.textContent = "Erro ao salvar o novo ponto na planilha.";
+        }
+
+        cadSaveBtn.disabled = false;
+        cadSaveBtn.textContent = "Salvar Novo Wi-Fi (+10 Créditos)";
+    }
+
+    // =========================================================================
+    // MEDIDOR MULTI-THREAD E TRAVA DE 1 ENVIO POR PONTO
+    // =========================================================================
     let downloadMbps = 0;
     let uploadMbps = 0;
 
-    async function medirDownload() {
-        const statusText = document.getElementById('statusText');
-        const progressBar = document.getElementById('progressBar');
-        statusText.textContent = "Testando velocidade de Download...";
-        progressBar.style.width = "25%";
-
-        // Utiliza arquivo público de teste via Cloudflare Speedtest (10MB)
-        const testUrl = "https://speed.cloudflare.com/__down?bytes=10000000&r=" + Math.random();
-        const startTime = performance.now();
-        
-        const response = await fetch(testUrl, { cache: "no-store" });
-        const blob = await response.blob();
-        const endTime = performance.now();
-
-        const durationSeconds = (endTime - startTime) / 1000;
-        const bitsLoaded = blob.size * 8;
-        const speedBps = bitsLoaded / durationSeconds;
-        downloadMbps = (speedBps / (1024 * 1024)).toFixed(1);
-
-        document.getElementById('downVal').textContent = downloadMbps;
-        progressBar.style.width = "55%";
+    function getStorageKey() {
+        const idWifi = document.getElementById('selectWifi').value;
+        const userEmail = usuarioLogado ? usuarioLogado.email : 'anon';
+        return `clickcontrol_tested_${userEmail}_${idWifi}`;
     }
 
-    async function medirUpload() {
+    function aoTrocarWifi() {
+        const jaTestou = localStorage.getItem(getStorageKey()) === "true";
+        const badge = document.getElementById('wifiBadge');
+        const rewardLabel = document.getElementById('rewardLabel');
+        document.getElementById('saveBtn').style.display = "none";
+        document.getElementById('toastMsg').style.display = "none";
+
+        if (jaTestou) {
+            badge.classList.add('locked');
+            rewardLabel.innerHTML = "<strong>Ponto já validado por você (0 créditos extras)</strong>";
+        } else {
+            badge.classList.remove('locked');
+            rewardLabel.innerHTML = "Recompensa: <strong>+2 Créditos</strong> (1x por ponto)";
+        }
+    }
+
+    async function medirDownloadMultiThread() {
         const statusText = document.getElementById('statusText');
         const progressBar = document.getElementById('progressBar');
-        statusText.textContent = "Testando velocidade de Upload (Crucial para fotos)...";
-        progressBar.style.width = "75%";
+        const downEl = document.getElementById('downVal');
 
-        // Gera pacote de 3MB em memória para envio real via POST
-        const payloadSize = 3 * 1024 * 1024;
-        const dummyData = new Uint8Array(payloadSize);
-        const uploadUrl = "https://speed.cloudflare.com/__up";
+        statusText.textContent = "Medindo Download (8 conexões simultâneas)...";
+        progressBar.style.width = "15%";
 
+        const baseUrls = [
+            "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/f/ff/Pizigani_1367_Chart_10MB.jpg",
+            "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
+        ];
+
+        const THREADS = 8;
+        const TEST_DURATION_MS = 5000;
+        let totalBytesDownloaded = 0;
+        let active = true;
         const startTime = performance.now();
-        await fetch(uploadUrl, {
-            method: "POST",
-            body: dummyData,
-            mode: "no-cors"
-        });
-        const endTime = performance.now();
 
-        const durationSeconds = (endTime - startTime) / 1000;
-        const bitsSent = payloadSize * 8;
-        const speedBps = bitsSent / durationSeconds;
-        uploadMbps = (speedBps / (1024 * 1024)).toFixed(1);
+        const uiInterval = setInterval(() => {
+            const elapsedSec = (performance.now() - startTime) / 1000;
+            if (elapsedSec > 0.2 && totalBytesDownloaded > 0) {
+                downEl.textContent = ((totalBytesDownloaded * 8) / elapsedSec / (1024 * 1024)).toFixed(1);
+                progressBar.style.width = Math.min(15 + (elapsedSec / 5) * 35, 50) + "%";
+            }
+        }, 200);
 
-        document.getElementById('upVal').textContent = uploadMbps;
+        setTimeout(() => { active = false; }, TEST_DURATION_MS);
+
+        const worker = async (threadId) => {
+            let i = threadId;
+            while (active) {
+                const targetUrl = baseUrls[i % baseUrls.length] + "?nocache=" + Math.random() + "_" + Date.now();
+                i++;
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), TEST_DURATION_MS);
+                    const response = await fetch(targetUrl, { cache: "no-store", signal: controller.signal });
+                    const reader = response.body.getReader();
+                    while (active) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        totalBytesDownloaded += value.byteLength;
+                    }
+                    clearTimeout(timeoutId);
+                    controller.abort();
+                } catch (e) { if (!active) break; }
+            }
+        };
+
+        await Promise.all(Array.from({ length: THREADS }, (_, idx) => worker(idx)));
+        clearInterval(uiInterval);
+
+        const finalElapsedSec = Math.max((performance.now() - startTime) / 1000, 0.1);
+        downloadMbps = ((totalBytesDownloaded * 8) / finalElapsedSec / (1024 * 1024)).toFixed(1);
+        downEl.textContent = downloadMbps;
+        progressBar.style.width = "50%";
+    }
+
+    async function medirUploadMultiThread() {
+        const statusText = document.getElementById('statusText');
+        const progressBar = document.getElementById('progressBar');
+        const upEl = document.getElementById('upVal');
+
+        statusText.textContent = "Medindo Upload (6 conexões simultâneas)...";
+
+        const THREADS = 6;
+        const TEST_DURATION_MS = 5000;
+        const CHUNK_SIZE = 2 * 1024 * 1024;
+        const dummyPayload = new Uint8Array(CHUNK_SIZE);
+
+        const uploadEndpoints = [
+            "https://httpbin.org/post",
+            "https://postman-echo.com/post",
+            "https://reqres.in/api/users"
+        ];
+
+        let totalBytesUploaded = 0;
+        let active = true;
+        const startTime = performance.now();
+
+        const uiInterval = setInterval(() => {
+            const elapsedSec = (performance.now() - startTime) / 1000;
+            if (elapsedSec > 0.2 && totalBytesUploaded > 0) {
+                upEl.textContent = ((totalBytesUploaded * 8) / elapsedSec / (1024 * 1024)).toFixed(1);
+                progressBar.style.width = Math.min(50 + (elapsedSec / 5) * 50, 100) + "%";
+            }
+        }, 200);
+
+        setTimeout(() => { active = false; }, TEST_DURATION_MS);
+
+        const worker = async (threadId) => {
+            let i = threadId;
+            while (active) {
+                const url = uploadEndpoints[i % uploadEndpoints.length] + "?r=" + Math.random();
+                i++;
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), TEST_DURATION_MS);
+                    await fetch(url, { method: "POST", mode: "no-cors", body: dummyPayload, signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (active) totalBytesUploaded += CHUNK_SIZE;
+                } catch (e) { if (!active) break; }
+            }
+        };
+
+        await Promise.all(Array.from({ length: THREADS }, (_, idx) => worker(idx)));
+        clearInterval(uiInterval);
+
+        const finalElapsedSec = Math.max((performance.now() - startTime) / 1000, 0.1);
+        uploadMbps = ((totalBytesUploaded * 8) / finalElapsedSec / (1024 * 1024)).toFixed(1);
+        upEl.textContent = uploadMbps;
         progressBar.style.width = "100%";
     }
 
@@ -268,60 +2714,75 @@
         saveBtn.style.display = "none";
         toastMsg.style.display = "none";
         progressContainer.style.display = "block";
+        document.getElementById('downVal').textContent = "0.0";
+        document.getElementById('upVal').textContent = "0.0";
 
         try {
-            await medirDownload();
-            await medirUpload();
+            await medirDownloadMultiThread();
+            await medirUploadMultiThread();
 
-            document.getElementById('statusText').textContent = "Teste concluído! Salve para validar a rede e ganhar créditos.";
             startBtn.textContent = "Refazer Teste";
             startBtn.disabled = false;
-            saveBtn.style.display = "block";
+
+            if (localStorage.getItem(getStorageKey()) === "true") {
+                document.getElementById('statusText').textContent = "Você já salvou e pontuou neste Wi-Fi.";
+                toastMsg.style.display = "block";
+                toastMsg.className = "toast warning";
+                toastMsg.textContent = "⚠️ Limite atingido: cada usuário salva e pontua apenas 1 vez por Wi-Fi.";
+            } else {
+                document.getElementById('statusText').textContent = "Teste concluído! Salve para ganhar seus créditos.";
+                saveBtn.style.display = "block";
+            }
         } catch (err) {
-            document.getElementById('statusText').textContent = "Erro de conexão durante o teste. Verifique o Wi-Fi.";
+            document.getElementById('statusText').textContent = "Falha ao medir a conexão.";
             startBtn.disabled = false;
-            console.error(err);
         }
     }
 
-    async function enviarParaPlanilha() {
+    async function enviarTesteParaPlanilha() {
         const saveBtn = document.getElementById('saveBtn');
         const toastMsg = document.getElementById('toastMsg');
-
-        if (GOOGLE_SCRIPT_URL === https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec) {
-            toastMsg.style.display = "block";
-            toastMsg.textContent = "Simulação OK! Configure a URL do Apps Script no código para gravar na planilha.";
-            saveBtn.style.display = "none";
-            return;
-        }
+        const idWifi = document.getElementById('selectWifi').value;
 
         saveBtn.disabled = true;
-        saveBtn.textContent = "Gravando no Banco de Dados...";
-
-        const payload = {
-            id_wifi: idWifi,
-            id_usuario: idUsuario,
-            download_mbps: parseFloat(downloadMbps),
-            upload_mbps: parseFloat(uploadMbps)
-        };
+        saveBtn.textContent = "Validando e Gravando...";
 
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "salvar_teste",
+                    id_wifi: idWifi,
+                    id_usuario: usuarioLogado.email,
+                    download_mbps: parseFloat(downloadMbps),
+                    upload_mbps: parseFloat(uploadMbps)
+                })
             });
 
-            saveBtn.style.display = "none";
+            const result = await response.json();
+            localStorage.setItem(getStorageKey(), "true");
+            aoTrocarWifi();
             toastMsg.style.display = "block";
-            toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos adicionados à sua carteira.";
+
+            if (result.status === "duplicate") {
+                toastMsg.className = "toast warning";
+                toastMsg.textContent = "⚠️ Você já avaliou este Wi-Fi antes. Nenhum crédito extra foi gerado.";
+            } else {
+                toastMsg.className = "toast";
+                toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
+                await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true);
+                await carregarListaWifis();
+                carregarPerfilUsuario();
+            }
         } catch (error) {
             saveBtn.disabled = false;
             saveBtn.textContent = "Tentar Salvar Novamente";
-            alert("Erro ao enviar dados para a planilha.");
+            alert("Erro ao conectar com a planilha.");
         }
     }
+
+    verificarSessao();
 </script>
 
 </body>
