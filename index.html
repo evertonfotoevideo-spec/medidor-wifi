@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v34 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v35 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -28,6 +28,10 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body {
+            touch-action: manipulation;
         }
         button, a, .tab-btn, .filter-pill, .speed-pill, .user-menu-item, span[onclick], .prio-btn, .auth-link, .btn, .btn-mini, .btn-gps, .btn-quick {
             touch-action: manipulation;
@@ -745,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v34</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v35</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -766,7 +770,7 @@
 
         <div class="form-group">
             <label for="authSenha">Sua Senha *</label>
-            <input type="password" id="authSenha" placeholder="Digite sua senha de acesso" onkeydown="if(event.key==='Enter') processarAuth(event)">
+            <input type="password" id="authSenha" placeholder="Digite sua senha de acesso" onkeydown="if(event.key==='Enter'){ event.preventDefault(); document.getElementById('authSubmitBtn').click(); }">
         </div>
 
         <button type="button" class="btn" id="authSubmitBtn" onclick="processarAuth(event)">Entrar no Aplicativo</button>
@@ -805,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v34</h1>
+                <h1 id="appTitle">CLICK CONTROL v35</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1212,6 +1216,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
+    const APP_VERSION = "v35";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1238,11 +1243,40 @@
     let autenticandoAgora = false;
 
     /* ============================================================
-       TRAVA ANTI-CLICK FANTASMA POR ELEMENTO (NÃO BLOQUEIA OUTROS BOTÕES)
+       BLINDAGEM GLOBAL ANTI-CLICK FANTASMA (TOUCH / POINTER / TRANSIÇÃO)
     ============================================================ */
     const ultimoCliquePorId = {};
-    function bloquearClickFantasma(chave = 'global', ms = 400) {
+    let escudoTransicaoAte = 0;
+    let ultimoEventoGlobalTs = 0;
+    let ultimoEventoGlobalTarget = null;
+
+    function ativarEscudoTransicao(ms = 550) {
+        escudoTransicaoAte = Date.now() + ms;
+    }
+
+    // Intercepta na fase de captura qualquer clique residual durante troca de tela,
+    // fechamento de popups/menus ou rebote duplo de toque em menos de 340ms
+    document.addEventListener('click', function(e) {
         const agora = Date.now();
+        if (agora < escudoTransicaoAte) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+        if (ultimoEventoGlobalTarget === e.target && (agora - ultimoEventoGlobalTs < 340)) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+        ultimoEventoGlobalTs = agora;
+        ultimoEventoGlobalTarget = e.target;
+    }, true);
+
+    function bloquearClickFantasma(chave = 'global', ms = 450) {
+        const agora = Date.now();
+        if (agora < escudoTransicaoAte) return true;
         if (ultimoCliquePorId[chave] && (agora - ultimoCliquePorId[chave] < ms)) {
             return true;
         }
@@ -1268,7 +1302,7 @@
             ev.preventDefault();
             ev.stopPropagation();
         }
-        if (bloquearClickFantasma('menu_user', 300)) return;
+        if (bloquearClickFantasma('menu_user', 350)) return;
         document.getElementById('userDropdownMenu').classList.toggle('hidden');
     }
 
@@ -1283,7 +1317,7 @@
     });
 
     function abrirOpcaoMenuUsuario(opcao) {
-        if (bloquearClickFantasma('opcao_menu', 300)) return;
+        if (bloquearClickFantasma('opcao_menu', 350)) return;
         fecharMenuUsuario();
         mudarAba('perfil', true);
         ['secaoDadosUsuario', 'secaoCarteiraPontos', 'secaoMeusWifis', 'adminPanelBox'].forEach(id => {
@@ -1317,7 +1351,8 @@
        FILTROS E PRIORIDADE NO MAPA
     ============================================================ */
     function alternarJanelaFiltros(forcar = null) {
-        if (bloquearClickFantasma('drawer_filtros', 300)) return;
+        if (bloquearClickFantasma('drawer_filtros', 350)) return;
+        ativarEscudoTransicao(300);
         const d = document.getElementById('janelaFiltrosMapa');
         if (forcar === true) d.classList.remove('hidden');
         else if (forcar === false) d.classList.add('hidden');
@@ -1333,7 +1368,7 @@
     }
 
     function definirPrioridade(tipo) {
-        if (bloquearClickFantasma('prio_vel', 250)) return;
+        if (bloquearClickFantasma('prio_vel', 300)) return;
         prioridadeVelocidade = tipo;
         document.getElementById('prioDownBtn').classList.toggle('active', tipo === 'download');
         document.getElementById('prioUpBtn').classList.toggle('active', tipo === 'upload');
@@ -1342,7 +1377,7 @@
     }
 
     function alternarFiltro(chave) {
-        if (bloquearClickFantasma('filtro_' + chave, 250)) return;
+        if (bloquearClickFantasma('filtro_' + chave, 300)) return;
         filtrosAtivos[chave] = !filtrosAtivos[chave];
         const mapIds = {
             'estacionamento': 'filtroEstac',
@@ -1356,7 +1391,7 @@
     }
 
     function definirFiltroVelocidade(faixa) {
-        if (bloquearClickFantasma('speed_filter', 250)) return;
+        if (bloquearClickFantasma('speed_filter', 300)) return;
         filtroVelocidadeAtivo = (filtroVelocidadeAtivo === faixa && faixa !== 'todos') ? 'todos' : faixa;
         const ids = {
             'todos': 'speedFilterAll',
@@ -1374,7 +1409,7 @@
     }
 
     function limparTodosFiltrosMapa() {
-        if (bloquearClickFantasma('limpar_filtros', 250)) return;
+        if (bloquearClickFantasma('limpar_filtros', 300)) return;
         prioridadeVelocidade = 'download';
         filtroVelocidadeAtivo = 'todos';
         Object.keys(filtrosAtivos).forEach(k => filtrosAtivos[k] = false);
@@ -1519,6 +1554,7 @@
     }
 
     function selecionarPontoDoPopup(idWifi, abaDestino) {
+        if (bloquearClickFantasma('popup_btn', 350)) return;
         const sel = document.getElementById('selectWifiMapa');
         if (sel) sel.value = idWifi;
         document.getElementById('selectWifi').value = idWifi;
@@ -1649,10 +1685,10 @@
        DADOS DA REDE & QR CODE
     ============================================================ */
     function gerarPayloadWifiQR(ssid, senha) {
-        const s = String(ssid || "").replace(/([\;,:"])/g, "\$1");
+        const s = String(ssid || "").replace(/([\\;,:"])/g, "\\$1");
         const p = String(senha || "").trim();
         if (!p || p.toLowerCase() === "aberta") return `WIFI:T:nopass;S:${s};;`;
-        return `WIFI:T:WPA;S:${s};P:${p.replace(/([\;,:"])/g, "\$1")};;`;
+        return `WIFI:T:WPA;S:${s};P:${p.replace(/([\\;,:"])/g, "\\$1")};;`;
     }
 
     function gerarUrlImagemQR(ssid, senha, tamanho = 260) {
@@ -1660,7 +1696,7 @@
     }
 
     function abrirModalQrCodeAtual() {
-        if (bloquearClickFantasma('modal_qr', 350)) return;
+        if (bloquearClickFantasma('modal_qr', 400)) return;
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
         if (!ponto) return;
@@ -1668,6 +1704,7 @@
     }
 
     function conectarPeloLinkQr(ssid, senha) {
+        ativarEscudoTransicao(400);
         const payload = gerarPayloadWifiQR(ssid, senha);
         let modal = document.getElementById('modalConexaoWifi');
         if (!modal) {
@@ -1682,9 +1719,15 @@
                 <div style="font-size:0.85rem;font-weight:700;margin-bottom:10px;">Rede: ${ssid}</div>
                 <img src="${gerarUrlImagemQR(ssid, senha, 210)}" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
                 <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;margin-bottom:8px;">⚡ Conectar Agora</a>
-                <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
+                <button type="button" onclick="fecharModalQrCode()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
             </div>
         `;
+    }
+
+    function fecharModalQrCode() {
+        ativarEscudoTransicao(450);
+        const m = document.getElementById('modalConexaoWifi');
+        if (m) m.remove();
     }
 
     function atualizarPreviewQrCadastro() {
@@ -1727,13 +1770,13 @@
     }
 
     function copiarLinkQrMapa() {
-        if (bloquearClickFantasma('copiar_qr', 300)) return;
+        if (bloquearClickFantasma('copiar_qr', 350)) return;
         if (!linkQrAtualMapa) return;
         navigator.clipboard.writeText(linkQrAtualMapa).then(() => alert("Link Wi-Fi copiado!"));
     }
 
     function irTestarSelecionadoDoMapa() {
-        if (bloquearClickFantasma('ir_testar', 300)) return;
+        if (bloquearClickFantasma('ir_testar', 350)) return;
         const idWifi = document.getElementById('selectWifiMapa').value;
         document.getElementById('selectWifi').value = idWifi;
         atualizarBannerTesteAtual(idWifi);
@@ -1741,7 +1784,7 @@
     }
 
     /* ============================================================
-       TESTE DE VELOCIDADE REAL (COM AÇÃO COMPATÍVEL COM O APPS SCRIPT)
+       TESTE DE VELOCIDADE REAL
     ============================================================ */
     function atualizarBannerTesteAtual(idWifi) {
         const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
@@ -1866,13 +1909,13 @@
        CADASTRO DE NOVO PONTO (GPS, CÂMERA/GALERIA E SALVAMENTO)
     ============================================================ */
     function marcarRedeAberta() {
-        if (bloquearClickFantasma('rede_aberta', 250)) return;
+        if (bloquearClickFantasma('rede_aberta', 300)) return;
         document.getElementById('cadSenha').value = "Aberta";
         atualizarPreviewQrCadastro();
     }
 
     function alternarComodidadeCadastro(chave) {
-        if (bloquearClickFantasma('cad_com_' + chave, 250)) return;
+        if (bloquearClickFantasma('cad_com_' + chave, 300)) return;
         comodidadesCadastro[chave] = !comodidadesCadastro[chave];
         const ids = {
             'estacionamento': 'cadPillEstac',
@@ -1905,9 +1948,8 @@
     }
 
     function abrirOpcoesLerQr() {
-        if (bloquearClickFantasma('ler_qr_btn', 350)) return;
-        if (confirm("Deseja abrir a câmera para fotografar o QR Code?
-(Clique em Cancelar para escolher uma foto da galeria)")) {
+        if (bloquearClickFantasma('ler_qr_btn', 400)) return;
+        if (confirm("Deseja abrir a câmera para fotografar o QR Code?\n(Clique em Cancelar para escolher uma foto da galeria)")) {
             document.getElementById('inputLerQrCamera').click();
         } else {
             document.getElementById('inputLerQrGaleria').click();
@@ -1952,7 +1994,7 @@
     let jaCentralizouGpsCadastro = false;
 
     function toggleAutoPreencherGps() {
-        if (bloquearClickFantasma('gps_toggle', 350)) return;
+        if (bloquearClickFantasma('gps_toggle', 400)) return;
         if (!gpsBuscaAtiva) iniciarBuscaGpsCadastro();
         else pararAutoPreencherGps();
     }
@@ -2031,7 +2073,7 @@
     }
 
     function selecionarNotaCadastro(n) {
-        if (bloquearClickFantasma('nota_cad', 200)) return;
+        if (bloquearClickFantasma('nota_cad', 250)) return;
         notaCadastro = n;
         for (let i = 1; i <= 5; i++) {
             document.getElementById('cstar' + i).style.filter = i <= n ? "none" : "grayscale(100%)";
@@ -2040,7 +2082,7 @@
     }
 
     async function cadastrarNovoWifi() {
-        if (bloquearClickFantasma('salvar_novo_wifi', 600)) return;
+        if (bloquearClickFantasma('salvar_novo_wifi', 700)) return;
         const local = document.getElementById('cadNomeLocal').value.trim();
         const localizacao = document.getElementById('cadLocalizacao').value.trim();
         const cidade = document.getElementById('cadCidade').value.trim();
@@ -2101,7 +2143,7 @@
        PAINEL ADMIN & PERFIL DO USUÁRIO
     ============================================================ */
     function alternarComodidadeAdmin(chave) {
-        if (bloquearClickFantasma('adm_com_' + chave, 250)) return;
+        if (bloquearClickFantasma('adm_com_' + chave, 300)) return;
         comodidadesAdmin[chave] = !comodidadesAdmin[chave];
         const ids = {
             'estacionamento': 'admPillEstac',
@@ -2151,7 +2193,7 @@
     }
 
     async function salvarEdicaoAdminWifi() {
-        if (bloquearClickFantasma('salvar_admin', 500)) return;
+        if (bloquearClickFantasma('salvar_admin', 600)) return;
         const idWifi = document.getElementById('adminSelectWifi').value;
         const toast = document.getElementById('adminToast');
         const btn = document.getElementById('btnSalvarAdminWifi');
@@ -2196,7 +2238,7 @@
     }
 
     async function excluirPontoAdminWifi() {
-        if (bloquearClickFantasma('excluir_admin', 500)) return;
+        if (bloquearClickFantasma('excluir_admin', 600)) return;
         const idWifi = document.getElementById('adminSelectWifi').value;
         const toast = document.getElementById('adminToast');
         if (!idWifi) return;
@@ -2255,7 +2297,7 @@
     }
 
     async function salvarDadosProprioUsuario() {
-        if (bloquearClickFantasma('salvar_perfil', 500)) return;
+        if (bloquearClickFantasma('salvar_perfil', 600)) return;
         const novoNome = document.getElementById('editUserNome').value.trim();
         const novaSenha = document.getElementById('editUserNovaSenha').value.trim();
         const toast = document.getElementById('dadosUsuarioToast');
@@ -2292,7 +2334,7 @@
        AUTENTICAÇÃO COMPATÍVEL COM O APPS SCRIPT (acao: login_usuario)
     ============================================================ */
     function alternarModoAuth(modo) {
-        if (bloquearClickFantasma('modo_auth', 250)) return;
+        if (bloquearClickFantasma('modo_auth', 300)) return;
         modoAuth = modo;
         document.getElementById('groupNome').classList.toggle('hidden', modo === 'login');
         document.getElementById('authSubmitBtn').textContent = modo === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
@@ -2301,12 +2343,12 @@
     }
 
     function alternarRecuperacaoSenha(abrir) {
-        if (bloquearClickFantasma('rec_senha', 250)) return;
+        if (bloquearClickFantasma('rec_senha', 300)) return;
         document.getElementById('boxRecuperarSenha').classList.toggle('hidden', !abrir);
     }
 
     async function solicitarCodigoRecuperacao() {
-        if (bloquearClickFantasma('sol_cod_rec', 500)) return;
+        if (bloquearClickFantasma('sol_cod_rec', 600)) return;
         const email = document.getElementById('recEmail').value.trim().toLowerCase();
         const toast = document.getElementById('loginToast');
         if (!email) return;
@@ -2326,7 +2368,7 @@
     }
 
     async function confirmarNovaSenhaRecuperacao() {
-        if (bloquearClickFantasma('conf_nova_senha', 500)) return;
+        if (bloquearClickFantasma('conf_nova_senha', 600)) return;
         const email = document.getElementById('recEmail').value.trim().toLowerCase();
         const codigo = document.getElementById('recCodigo').value.trim();
         const novaSenha = document.getElementById('recNovaSenha').value.trim();
@@ -2352,9 +2394,8 @@
             ev.preventDefault();
             ev.stopPropagation();
         }
-        // Proteção dupla contra click fantasma e duplo disparo
         if (autenticandoAgora) return;
-        if (bloquearClickFantasma('auth_submit', 800)) return;
+        if (bloquearClickFantasma('auth_submit', 850)) return;
 
         const email = document.getElementById('authEmail').value.trim().toLowerCase();
         const senha = document.getElementById('authSenha').value.trim();
@@ -2409,11 +2450,12 @@
                 autenticandoAgora = false;
                 btn.disabled = false;
                 btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
-            }, 450);
+            }, 500);
         }
     }
 
     function mostrarApp() {
+        ativarEscudoTransicao(650);
         const mapEl = document.getElementById('miniMap');
         if (mapEl) mapEl.style.pointerEvents = 'none';
 
@@ -2428,11 +2470,12 @@
 
         setTimeout(() => {
             if (mapEl) mapEl.style.pointerEvents = 'auto';
-        }, 400);
+        }, 650);
     }
 
     function sair() {
-        if (bloquearClickFantasma('sair', 300)) return;
+        if (bloquearClickFantasma('sair', 400)) return;
+        ativarEscudoTransicao(550);
         localStorage.removeItem('clickcontrol_user');
         usuarioLogado = null;
         document.getElementById('appScreen').classList.add('hidden');
@@ -2440,7 +2483,8 @@
     }
 
     function mudarAba(aba, ignorarTrava = false) {
-        if (!ignorarTrava && bloquearClickFantasma('aba_' + aba, 280)) return;
+        if (!ignorarTrava && bloquearClickFantasma('aba_' + aba, 350)) return;
+        ativarEscudoTransicao(380);
         fecharMenuUsuario();
         ['mapa', 'dadosRede', 'testar', 'cadastrar', 'perfil'].forEach(n => {
             document.getElementById('aba' + n.charAt(0).toUpperCase() + n.slice(1)).classList.toggle('hidden', n !== aba);
@@ -2470,7 +2514,7 @@
     }
 
     async function sincronizarDadosNuvemManual() {
-        if (bloquearClickFantasma('sync_nuvem', 500)) return;
+        if (bloquearClickFantasma('sync_nuvem', 600)) return;
         const btn = document.getElementById('btnSyncNuvem');
         if (btn) btn.textContent = "⏳ Atualizando...";
         await carregarListaWifis();
@@ -2478,13 +2522,13 @@
     }
 
     function baixarPacoteOfflineCidade() {
-        if (bloquearClickFantasma('offline_save', 400)) return;
+        if (bloquearClickFantasma('offline_save', 450)) return;
         localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
         alert(`✅ ${listaWifisCache.length} pontos salvos para uso offline!`);
     }
 
     function carregarPacoteOffline() {
-        if (bloquearClickFantasma('offline_load', 400)) return;
+        if (bloquearClickFantasma('offline_load', 450)) return;
         const salvo = localStorage.getItem('clickcontrol_wifis_cache');
         if (salvo) {
             listaWifisCache = JSON.parse(salvo);
@@ -2496,17 +2540,17 @@
 
     function filtrarOuCarregarCidadeOffline() {}
     function avaliarWifiComEstrelas(idWifi, nota) {
-        if (bloquearClickFantasma('avaliar_estrela', 400)) return;
+        if (bloquearClickFantasma('avaliar_estrela', 450)) return;
         alert(`⭐ Obrigado! Você avaliou este ponto com ${nota} estrelas.`);
     }
     function validarStatusAoVivo(tipo) {
-        if (bloquearClickFantasma('status_vivo', 400)) return;
+        if (bloquearClickFantasma('status_vivo', 450)) return;
         document.getElementById('mapaLiveStatus').textContent = tipo === 'conectou'
             ? "🟢 Confirmado agora por você"
             : "⚠️ Alerta de senha enviada";
     }
     function calibrarCentroPinoAgora() {
-        if (bloquearClickFantasma('calibrar_centro', 500)) return;
+        if (bloquearClickFantasma('calibrar_centro', 550)) return;
         alert("🎯 Coordenadas calibradas com a sua posição atual!");
     }
     function adicionarFotoAoLocalAtual() {}
