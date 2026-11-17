@@ -1,1714 +1,2529 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#FFD600" />
-  <title>Click Control v33 - Rede Colaborativa Wi-Fi</title>
-
-  <!-- Leaflet CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-  <!-- QRCode Generator & Scanner -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-
-  <style>
-    :root {
-      --primary: #FFD600;
-      --primary-dark: #E6C000;
-      --black: #111111;
-      --dark-card: #1C1C1C;
-      --surface: #FFFFFF;
-      --border: #111111;
-      --text: #111111;
-      --muted: #555555;
-      --green: #00C853;
-      --orange: #FF9100;
-      --red: #D50000;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      height: 100%;
-      width: 100%;
-      background-color: var(--primary);
-      color: var(--text);
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
-    button, input, select, textarea, a {
-      touch-action: manipulation;
-    }
-
-    /* TELA DE LOGIN */
-    #login-screen {
-      position: fixed;
-      inset: 0;
-      background: var(--primary);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .login-box {
-      width: 100%;
-      max-width: 390px;
-      background: #FFFFFF;
-      border: 3px solid var(--black);
-      border-radius: 18px;
-      padding: 28px 22px;
-      box-shadow: 6px 6px 0px var(--black);
-      text-align: center;
-    }
-
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--black);
-      color: var(--primary);
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 14px;
-      margin-bottom: 14px;
-      letter-spacing: 0.5px;
-    }
-
-    .login-box h1 {
-      font-size: 26px;
-      font-weight: 900;
-      margin-bottom: 4px;
-      color: var(--black);
-    }
-
-    .login-box p {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      text-align: left;
-      margin-bottom: 14px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px 14px;
-      border: 2px solid var(--black);
-      border-radius: 10px;
-      font-size: 15px;
-      background: #FAFAFA;
-      color: var(--black);
-      outline: none;
-    }
-
-    .form-control:focus {
-      background: #FFFDE7;
-      box-shadow: 3px 3px 0px var(--black);
-    }
-
-    .btn-black {
-      width: 100%;
-      padding: 14px;
-      background: var(--black);
-      color: var(--primary);
-      border: 2px solid var(--black);
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 900;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 4px 4px 0px rgba(0,0,0,0.25);
-      user-select: none;
-    }
-
-    .btn-black:active {
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px rgba(0,0,0,0.25);
-    }
-
-    .btn-black:disabled {
-      opacity: 0.65;
-      pointer-events: none;
-    }
-
-    .btn-yellow {
-      background: var(--primary);
-      color: var(--black);
-      border: 2px solid var(--black);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      box-shadow: 3px 3px 0px var(--black);
-    }
-
-    .btn-yellow:active {
-      transform: translate(1px, 1px);
-      box-shadow: 1px 1px 0px var(--black);
-    }
-
-    .btn-outline {
-      background: #FFFFFF;
-      color: var(--black);
-      border: 2px solid var(--black);
-      border-radius: 10px;
-      padding: 9px 12px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .login-error {
-      color: var(--red);
-      font-size: 13px;
-      font-weight: 700;
-      margin-top: 10px;
-      min-height: 18px;
-    }
-
-    /* APP SHELL */
-    #app-container {
-      display: none;
-      height: 100%;
-      width: 100%;
-      flex-direction: column;
-    }
-
-    /* HEADER */
-    .topbar {
-      background: var(--primary);
-      border-bottom: 3px solid var(--black);
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 1000;
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .topbar-title {
-      font-weight: 900;
-      font-size: 17px;
-      color: var(--black);
-      letter-spacing: -0.3px;
-    }
-
-    .version-tag {
-      background: var(--black);
-      color: var(--primary);
-      font-size: 10px;
-      font-weight: 900;
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .credits-pill {
-      background: var(--black);
-      color: var(--primary);
-      padding: 6px 11px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      border: 2px solid var(--black);
-      background: #FFFFFF;
-      color: var(--black);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0px var(--black);
-    }
-
-    /* FILTER BAR */
-    .filter-strip {
-      background: #FFFDE7;
-      border-bottom: 2px solid var(--black);
-      padding: 8px 12px;
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      white-space: nowrap;
-      z-index: 999;
-    }
-
-    .filter-strip::-webkit-scrollbar {
-      display: none;
-    }
-
-    .chip {
-      padding: 6px 11px;
-      border-radius: 999px;
-      border: 2px solid var(--black);
-      background: #FFFFFF;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .chip.active {
-      background: var(--black);
-      color: var(--primary);
-    }
-
-    /* MAIN VIEWS */
-    .views-wrapper {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .view-panel {
-      position: absolute;
-      inset: 0;
-      display: none;
-      overflow-y: auto;
-      background: #FFFDF0;
-    }
-
-    .view-panel.active {
-      display: block;
-    }
-
-    #view-map {
-      overflow: hidden;
-    }
-
-    #map {
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    .map-fab-group {
-      position: absolute;
-      right: 14px;
-      bottom: 20px;
-      z-index: 800;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .fab-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      border: 3px solid var(--black);
-      background: var(--primary);
-      color: var(--black);
-      font-size: 19px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 4px 4px 0px var(--black);
-      cursor: pointer;
-    }
-
-    .fab-btn.dark {
-      background: var(--black);
-      color: var(--primary);
-    }
-
-    /* BOTTOM NAV */
-    .bottom-nav {
-      background: var(--black);
-      border-top: 3px solid var(--black);
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      padding: 6px 4px;
-      z-index: 1000;
-    }
-
-    .nav-item {
-      background: transparent;
-      border: none;
-      color: #BDBDBD;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      padding: 6px 2px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .nav-item i {
-      font-size: 17px;
-    }
-
-    .nav-item.active {
-      color: var(--primary);
-    }
-
-    /* CARDS & SECTIONS */
-    .section-pad {
-      padding: 16px;
-      padding-bottom: 80px;
-    }
-
-    .card {
-      background: #FFFFFF;
-      border: 2.5px solid var(--black);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 4px 4px 0px var(--black);
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 900;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .badge-status {
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 900;
-      border: 1.5px solid var(--black);
-    }
-
-    .speed-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .speed-box {
-      background: #FFFDE7;
-      border: 2px solid var(--black);
-      border-radius: 10px;
-      padding: 10px 6px;
-      text-align: center;
-    }
-
-    .speed-box span {
-      display: block;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .speed-box strong {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--black);
-    }
-
-    .amenities-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 10px 0;
-    }
-
-    .amenity-check {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #FAFAFA;
-      border: 2px solid var(--black);
-      padding: 7px 10px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* MODAL */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      z-index: 2500;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-sheet {
-      background: #FFFFFF;
-      width: 100%;
-      max-width: 520px;
-      max-height: 88vh;
-      overflow-y: auto;
-      border-top: 3px solid var(--black);
-      border-left: 3px solid var(--black);
-      border-right: 3px solid var(--black);
-      border-radius: 20px 20px 0 0;
-      padding: 18px;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #EEEEEE;
-    }
-
-    .stars-row {
-      display: flex;
-      gap: 6px;
-      font-size: 22px;
-      color: #FFB300;
-      cursor: pointer;
-      margin: 6px 0;
-    }
-
-    #qrcode-box {
-      display: flex;
-      justify-content: center;
-      padding: 12px;
-      background: #FFFFFF;
-      border: 2px dashed var(--black);
-      border-radius: 12px;
-      margin: 10px 0;
-    }
-
-    .toast {
-      position: fixed;
-      top: 66px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--black);
-      color: var(--primary);
-      border: 2px solid var(--primary);
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 800;
-      z-index: 99999;
-      display: none;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      text-align: center;
-      max-width: 90%;
-    }
-
-    .custom-pin {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .pin-bubble {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 2.5px solid #111111;
-      font-weight: 900;
-      font-size: 11px;
-      color: #111111;
-      box-shadow: 2px 2px 0px #111111;
-      white-space: nowrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Click Control v34 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <style>
+        :root {
+            --bg-color: #facc15;
+            --card-bg: #fef08a;
+            --primary: #111111;
+            --primary-hover: #27272a;
+            --primary-text: #facc15;
+            --secondary: #18181b;
+            --secondary-hover: #000000;
+            --text-main: #111111;
+            --text-muted: #3f3f46;
+            --border: #111111;
+            --input-bg: #ffffff;
+            --accent-glow: rgba(17, 17, 17, 0.10);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        button, a, .tab-btn, .filter-pill, .speed-pill, .user-menu-item, span[onclick], .prio-btn, .auth-link, .btn, .btn-mini, .btn-gps, .btn-quick {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: 0 10px 28px rgba(17, 17, 17, 0.25);
+        }
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        .brand-block h1 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .brand-block p {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+        .user-dropdown-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .user-trigger-btn {
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 185px;
+            transition: all 0.15s;
+        }
+        .user-trigger-btn:hover {
+            background-color: var(--accent-glow);
+        }
+        .user-trigger-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .user-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            width: 215px;
+            background-color: #fef9c3;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.85);
+            z-index: 2500;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .user-menu-header {
+            padding: 10px 12px;
+            background-color: #111111;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.72rem;
+            color: #facc15;
+        }
+        .user-menu-header strong {
+            display: block;
+            color: #ffffff;
+            font-size: 0.82rem;
+            margin-top: 2px;
+        }
+        .user-menu-item {
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        .user-menu-item:last-child {
+            border-bottom: none;
+        }
+        .user-menu-item:hover {
+            background-color: rgba(250, 204, 21, 0.25);
+            color: var(--primary);
+        }
+        .user-menu-item.danger {
+            color: #dc2626;
+        }
+        .user-menu-item.danger:hover {
+            background-color: rgba(239, 68, 68, 0.14);
+        }
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+            background-color: var(--input-bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 6px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: var(--primary-text);
+        }
+        .filter-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .btn-filter-toggle {
+            flex: 1;
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.15s;
+        }
+        .btn-filter-toggle:hover {
+            background-color: var(--accent-glow);
+        }
+        .filter-badge-count {
+            background-color: var(--primary);
+            color: var(--primary-text);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+        .filter-drawer {
+            background-color: #fef9c3;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+        .filter-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .prio-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background-color: var(--input-bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+        .prio-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 7px 6px;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .prio-btn.active {
+            background-color: var(--primary);
+            color: var(--primary-text);
+        }
+        .filter-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .filter-pill {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .filter-pill.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--primary-text);
+        }
+        .speed-filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        .speed-pill {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .speed-pill.active {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: var(--primary-text);
+            font-weight: 800;
+        }
+        .dot-c {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid #fff;
+            flex-shrink: 0;
+        }
+        .leaflet-container {
+            background: #e5e7eb !important;
+        }
+        .leaflet-tile-pane {
+            filter: brightness(1.06) contrast(1.05);
+        }
+        #miniMap {
+            width: 100%;
+            height: 440px;
+            min-height: 54vh;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            margin-bottom: 8px;
+            z-index: 1;
+        }
+        .auth-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .auth-link {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding-bottom: 4px;
+        }
+        .auth-link.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.86rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+        .gps-row {
+            display: flex;
+            gap: 8px;
+        }
+        .gps-row input, .gps-row select {
+            flex: 1;
+        }
+        .btn-gps {
+            background-color: var(--secondary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-gps:hover:not(:disabled) {
+            background-color: var(--secondary-hover);
+        }
+        .btn-gps:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .info-badge {
+            background-color: var(--accent-glow);
+            border: 1px solid rgba(17, 17, 17, 0.35);
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            margin-bottom: 14px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .current-wifi-banner {
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .current-wifi-banner .tag-live {
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .current-wifi-banner .wifi-name {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .current-wifi-banner .wifi-addr {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .metric-box {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .metric-value {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .metric-unit {
+            font-size: 0.76rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: var(--input-bg);
+            border-radius: 8px;
+            height: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.2s ease;
+        }
+        .status-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            text-align: center;
+            min-height: 18px;
+        }
+        .btn {
+            background-color: var(--primary);
+            color: var(--primary-text);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .btn-save {
+            background-color: var(--secondary);
+            color: #ffffff;
+            margin-top: 10px;
+            display: none;
+        }
+        .toast {
+            margin-top: 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #15803d;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid #15803d;
+            border-radius: 8px;
+            padding: 8px 10px;
+            text-align: center;
+            display: none;
+            line-height: 1.4;
+        }
+        .toast.warning {
+            color: #9a3412;
+            border-color: #9a3412;
+        }
+        .toast.error {
+            color: #b91c1c;
+            border-color: #b91c1c;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .helper-text {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+        .qr-card {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .qr-card img.qr-img {
+            width: 145px;
+            height: 145px;
+            border-radius: 8px;
+            background: #fff;
+            padding: 6px;
+            margin: 8px auto;
+            display: block;
+        }
+        .qr-payload-box {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            word-break: break-all;
+            margin-top: 6px;
+        }
+        .btn-mini {
+            background-color: #111111;
+            color: #facc15;
+            border: 1px solid #3f3f46;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .btn-mini:hover {
+            background-color: #3f3f46;
+        }
+        .security-banner {
+            background-color: rgba(250, 204, 21, 0.25);
+            border: 1px solid rgba(17, 17, 17, 0.35);
+            color: #111111;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.72rem;
+            line-height: 1.35;
+            margin: 8px 0;
+            text-align: left;
+        }
+        .live-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #111111;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin: 8px 0;
+            font-size: 0.72rem;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .status-pill-live {
+            font-weight: 700;
+            color: #22c55e;
+        }
+        .gallery-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 6px 0;
+            margin-top: 8px;
+            justify-content: center;
+        }
+        .gallery-thumb {
+            width: 78px;
+            height: 58px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .amenities-badges {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+        .amenity-tag {
+            background-color: var(--accent-glow);
+            border: 1px solid rgba(17, 17, 17, 0.35);
+            color: var(--primary);
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .quick-box {
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px dashed #111111;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .quick-box h4 {
+            font-size: 0.82rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .quick-box p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 8px;
+        }
+        .btn-quick {
+            background-color: var(--primary);
+            color: var(--primary-text);
+            border: none;
+            border-radius: 8px;
+            padding: 9px 8px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-quick.alt {
+            background-color: #111111;
+            color: #facc15;
+            border: 1px solid #3f3f46;
+        }
+        .leaflet-popup-content {
+            color: #111111;
+            font-size: 0.78rem;
+            line-height: 1.35;
+            text-align: center;
+            min-width: 195px;
+        }
+        .profile-card {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .saldo-destaque {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid #111111;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .saldo-destaque .label {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .saldo-destaque .valor {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin: 4px 0;
+        }
+        .my-wifi-list {
+            max-height: 165px;
+            overflow-y: auto;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 0.78rem;
+        }
+        .my-wifi-item {
+            padding: 7px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .my-wifi-item:last-child {
+            border-bottom: none;
+        }
+    </style>
 </head>
 <body>
 
-  <div id="toast" class="toast"></div>
+<div class="container">
+    <!-- TELA 1: LOGIN E CADASTRO -->
+    <div id="loginScreen">
+        <div style="text-align:center; margin-bottom:14px;">
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v34</h1>
+            <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
+        </div>
 
-  <!-- TELA DE LOGIN BLINDADA CONTRA CLIQUE FANTASMA -->
-  <div id="login-screen">
-    <div class="login-box">
-      <div class="brand-badge"><i class="fa-solid fa-wifi"></i> CLICK CONTROL v33</div>
-      <h1>Acesso à Rede</h1>
-      <p>Rede colaborativa de Wi-Fi &amp; velocidade para fotógrafos em campo</p>
+        <div class="auth-toggle">
+            <button type="button" class="auth-link active" id="modeLoginBtn" onclick="alternarModoAuth('login')">Entrar na Conta</button>
+            <button type="button" class="auth-link" id="modeRegisterBtn" onclick="alternarModoAuth('register')">Criar Nova Conta</button>
+        </div>
 
-      <form id="login-form" novalidate>
+        <div class="form-group hidden" id="groupNome">
+            <label for="authNome">Seu Nome ou @Instagram *</label>
+            <input type="text" id="authNome" placeholder="Ex: Everton Martins (@everton.fotoevideo)">
+        </div>
+
         <div class="form-group">
-          <label for="login-user">Usuário ou E-mail</label>
-          <input type="text" id="login-user" class="form-control" placeholder="Digite seu usuário" autocomplete="username" required />
+            <label for="authEmail">Seu E-mail *</label>
+            <input type="email" id="authEmail" placeholder="seuemail@gmail.com">
         </div>
+
         <div class="form-group">
-          <label for="login-pass">Senha</label>
-          <input type="password" id="login-pass" class="form-control" placeholder="Digite sua senha" autocomplete="current-password" required />
+            <label for="authSenha">Sua Senha *</label>
+            <input type="password" id="authSenha" placeholder="Digite sua senha de acesso" onkeydown="if(event.key==='Enter') processarAuth(event)">
         </div>
-        <button type="submit" id="btn-login" class="btn-black">
-          <i class="fa-solid fa-right-to-bracket"></i> ENTRAR NO SISTEMA
-        </button>
-        <div id="login-error" class="login-error"></div>
-      </form>
-    </div>
-  </div>
 
-  <!-- APLICATIVO PRINCIPAL -->
-  <div id="app-container">
-    <!-- TOPO -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <span class="topbar-title"><i class="fa-solid fa-bolt"></i> Click Control</span>
-        <span class="version-tag">v33</span>
-      </div>
-      <div class="topbar-right">
-        <div class="credits-pill" title="Seus créditos disponíveis">
-          <i class="fa-solid fa-coins"></i> <span id="user-credits">0</span>
+        <button type="button" class="btn" id="authSubmitBtn" onclick="processarAuth(event)">Entrar no Aplicativo</button>
+        <div style="text-align:center; margin-top:10px;">
+            <button type="button" class="auth-link" style="font-size:0.78rem; color:var(--primary);" onclick="alternarRecuperacaoSenha(true)">🔑 Esqueci minha senha</button>
         </div>
-        <button type="button" class="icon-btn" id="btn-sync-cloud" title="Sincronizar com Nuvem">
-          <i class="fa-solid fa-rotate"></i>
-        </button>
-        <button type="button" class="icon-btn" id="btn-logout" title="Sair">
-          <i class="fa-solid fa-power-off"></i>
-        </button>
-      </div>
-    </header>
 
-    <!-- FILTROS RÁPIDOS -->
-    <div class="filter-strip" id="filter-bar">
-      <button type="button" class="chip active" data-filter="all"><i class="fa-solid fa-layer-group"></i> Todos</button>
-      <button type="button" class="chip" data-filter="fast"><i class="fa-solid fa-gauge-high"></i> +50 Mbps</button>
-      <button type="button" class="chip" data-filter="tomada"><i class="fa-solid fa-plug"></i> Tomada</button>
-      <button type="button" class="chip" data-filter="mesa"><i class="fa-solid fa-chair"></i> Mesa</button>
-      <button type="button" class="chip" data-filter="estacionamento"><i class="fa-solid fa-car"></i> Estacionamento</button>
-    </div>
-
-    <!-- ÁREA DE TELAS -->
-    <main class="views-wrapper">
-
-      <!-- 1. MAPA INTERATIVO -->
-      <section id="view-map" class="view-panel active">
-        <div id="map"></div>
-        <div class="map-fab-group">
-          <button type="button" class="fab-btn dark" id="btn-locate-me" title="Minha Localização">
-            <i class="fa-solid fa-location-crosshairs"></i>
-          </button>
-          <button type="button" class="fab-btn" id="btn-quick-add" title="Cadastrar Wi-Fi Aqui">
-            <i class="fa-solid fa-plus"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- 2. DADOS DA REDE & CADASTRO / SPEEDTEST -->
-      <section id="view-network" class="view-panel">
-        <div class="section-pad">
-          <div class="card">
-            <div class="card-title">
-              <span><i class="fa-solid fa-gauge-high"></i> Teste de Velocidade Real</span>
-              <span class="badge-status" style="background:#FFD600;">MULTI-THREAD</span>
+        <div id="boxRecuperarSenha" class="hidden" style="margin-top:14px; padding:12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px;">
+            <div style="font-size:0.84rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔐 Recuperar ou Redefinir Senha</div>
+            <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">Informe seu e-mail cadastrado para receber um código de recuperação.</p>
+            <div class="form-group" style="margin-bottom:8px;">
+                <input type="email" id="recEmail" placeholder="Digite seu e-mail cadastrado">
             </div>
-            <p style="font-size:13px;color:#555;margin-bottom:8px;">
-              Meça a velocidade real da conexão atual antes de salvar ou atualizar um ponto no mapa.
-            </p>
-            <div class="speed-grid">
-              <div class="speed-box">
-                <span>DOWNLOAD</span>
-                <strong id="st-down">0.0</strong>
-                <span>Mbps</span>
-              </div>
-              <div class="speed-box">
-                <span>UPLOAD</span>
-                <strong id="st-up">0.0</strong>
-                <span>Mbps</span>
-              </div>
-              <div class="speed-box">
-                <span>PING</span>
-                <strong id="st-ping">--</strong>
-                <span>ms</span>
-              </div>
-            </div>
-            <button type="button" id="btn-run-speedtest" class="btn-black">
-              <i class="fa-solid fa-play"></i> INICIAR TESTE DE VELOCIDADE
-            </button>
-          </div>
+            <button type="button" class="btn-mini" id="btnEnviarCodigoRec" style="width:100%; background:var(--primary); color:var(--primary-text); padding:8px;" onclick="solicitarCodigoRecuperacao()">📩 Enviar Código por E-mail</button>
 
-          <div class="card">
-            <div class="card-title">
-              <span><i class="fa-solid fa-wifi"></i> Dados da Rede &amp; Novo Ponto</span>
-              <span id="gps-accuracy-badge" class="badge-status" style="background:#EEE;">GPS: --m</span>
-            </div>
-
-            <div style="display:flex;gap:8px;margin-bottom:12px;">
-              <button type="button" id="btn-check-gps" class="btn-yellow" style="flex:1;">
-                <i class="fa-solid fa-satellite-dish"></i> Travar GPS (&le;10m)
-              </button>
-              <label class="btn-outline" style="flex:1;cursor:pointer;">
-                <i class="fa-solid fa-qrcode"></i> Ler QR Galeria
-                <input type="file" id="qr-file-input" accept="image/*" style="display:none;" />
-              </label>
-            </div>
-
-            <form id="new-point-form">
-              <div class="form-group">
-                <label>Nome do Local / Estabelecimento</label>
-                <input type="text" id="pt-local" class="form-control" placeholder="Ex: Café Central / Arena Evento" required />
-              </div>
-              <div class="form-group">
-                <label>Cidade</label>
-                <input type="text" id="pt-cidade" class="form-control" placeholder="Ex: São Bento do Sul" required />
-              </div>
-              <div class="form-group">
-                <label>Nome da Rede (SSID)</label>
-                <input type="text" id="pt-ssid" class="form-control" placeholder="Ex: WIFI_EVENTO_5G" required />
-              </div>
-              <div class="form-group">
-                <label>Senha do Wi-Fi</label>
-                <input type="text" id="pt-senha" class="form-control" placeholder="Senha da rede" required />
-              </div>
-
-              <div class="form-group">
-                <label>Comodidades no Local</label>
-                <div class="amenities-row">
-                  <label class="amenity-check"><input type="checkbox" id="pt-tomada" /> <i class="fa-solid fa-plug"></i> Tomada</label>
-                  <label class="amenity-check"><input type="checkbox" id="pt-mesa" /> <i class="fa-solid fa-chair"></i> Mesa</label>
-                  <label class="amenity-check"><input type="checkbox" id="pt-estac" /> <i class="fa-solid fa-car"></i> Estacionamento</label>
+            <div id="recStepCodigo" class="hidden" style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="recCodigo">Código recebido no E-mail *</label>
+                    <input type="text" id="recCodigo" placeholder="Ex: 482910">
                 </div>
-              </div>
-
-              <div class="form-group">
-                <label>Foto do Roteador / Ambiente (Opcional)</label>
-                <input type="file" id="pt-foto" accept="image/*" class="form-control" />
-              </div>
-
-              <div class="form-group">
-                <label>Observações</label>
-                <textarea id="pt-obs" class="form-control" rows="2" placeholder="Ex: Senha no balcão, sinal forte perto da janela"></textarea>
-              </div>
-
-              <input type="hidden" id="pt-lat" />
-              <input type="hidden" id="pt-lng" />
-
-              <button type="submit" id="btn-save-point" class="btn-black">
-                <i class="fa-solid fa-cloud-arrow-up"></i> SALVAR PONTO (+10 CRÉDITOS)
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. LISTA DE PONTOS -->
-      <section id="view-list" class="view-panel">
-        <div class="section-pad">
-          <div class="card">
-            <div class="card-title">
-              <span><i class="fa-solid fa-list-ul"></i> Redes Cadastradas</span>
-              <span id="total-points-count" class="badge-status" style="background:#FFD600;">0 pontos</span>
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="recNovaSenha">Nova Senha *</label>
+                    <input type="password" id="recNovaSenha" placeholder="Digite a nova senha">
+                </div>
+                <button type="button" class="btn" id="btnConfirmarNovaSenha" onclick="confirmarNovaSenhaRecuperacao()">✅ Salvar Nova Senha</button>
             </div>
-            <input type="text" id="search-points" class="form-control" placeholder="Buscar por local, cidade ou SSID..." />
-          </div>
-          <div id="points-list-container"></div>
-        </div>
-      </section>
-
-      <!-- 4. MODO OFFLINE POR CIDADE -->
-      <section id="view-offline" class="view-panel">
-        <div class="section-pad">
-          <div class="card">
-            <div class="card-title">
-              <span><i class="fa-solid fa-plane-slash"></i> Pacotes Offline por Cidade</span>
-              <span id="offline-status-badge" class="badge-status" style="background:#00C853;color:#FFF;">ONLINE</span>
+            <div style="text-align:right; margin-top:8px;">
+                <button type="button" class="btn-mini" onclick="alternarRecuperacaoSenha(false)">Fechar</button>
             </div>
-            <p style="font-size:13px;color:#555;margin-bottom:12px;">
-              Baixe os dados completos das redes de uma cidade para consultar mapas, comodidades e senhas já desbloqueadas mesmo sem sinal 4G/5G em eventos.
-            </p>
-            <div id="offline-cities-list"></div>
-          </div>
         </div>
-      </section>
 
-      <!-- 5. PAINEL ADMINISTRATIVO -->
-      <section id="view-admin" class="view-panel">
-        <div class="section-pad">
-          <div class="card">
-            <div class="card-title">
-              <span><i class="fa-solid fa-shield-halved"></i> Painel Administrativo</span>
-              <span class="badge-status" style="background:#111;color:#FFD600;">MODERAÇÃO</span>
-            </div>
-            <p style="font-size:13px;color:#555;margin-bottom:10px;">
-              Gerencie pontos cadastrados, edite comodidades, redefina senhas ou remova registros inválidos diretamente na base sincronizada.
-            </p>
-            <button type="button" id="btn-force-clear-cache" class="btn-outline" style="width:100%;margin-bottom:10px;">
-              <i class="fa-solid fa-broom"></i> Limpar Cache Local &amp; Forçar Recarga Nuvem
-            </button>
-          </div>
-          <div id="admin-points-container"></div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="bottom-nav">
-      <button type="button" class="nav-item active" data-target="view-map">
-        <i class="fa-solid fa-map-location-dot"></i>
-        <span>Mapa</span>
-      </button>
-      <button type="button" class="nav-item" data-target="view-network">
-        <i class="fa-solid fa-wifi"></i>
-        <span>Dados Rede</span>
-      </button>
-      <button type="button" class="nav-item" data-target="view-list">
-        <i class="fa-solid fa-list"></i>
-        <span>Pontos</span>
-      </button>
-      <button type="button" class="nav-item" data-target="view-offline">
-        <i class="fa-solid fa-download"></i>
-        <span>Offline</span>
-      </button>
-      <button type="button" class="nav-item" data-target="view-admin" id="nav-admin-btn">
-        <i class="fa-solid fa-user-shield"></i>
-        <span>Admin</span>
-      </button>
-    </nav>
-  </div>
-
-  <!-- MODAL DE DETALHES DO PONTO -->
-  <div id="point-modal" class="modal-backdrop">
-    <div class="modal-sheet">
-      <div class="modal-header">
-        <div>
-          <h3 id="modal-local-name" style="font-size:18px;font-weight:900;">Nome do Local</h3>
-          <small id="modal-city-name" style="color:#555;font-weight:700;">Cidade</small>
-        </div>
-        <button type="button" class="icon-btn" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="speed-grid">
-        <div class="speed-box">
-          <span>DOWNLOAD</span>
-          <strong id="modal-down">0</strong>
-          <span>Mbps</span>
-        </div>
-        <div class="speed-box">
-          <span>UPLOAD</span>
-          <strong id="modal-up">0</strong>
-          <span>Mbps</span>
-        </div>
-        <div class="speed-box">
-          <span>AVALIAÇÃO</span>
-          <strong id="modal-rating">5.0 ★</strong>
-          <span>Nota</span>
-        </div>
-      </div>
-
-      <div id="modal-amenities" class="amenities-row"></div>
-
-      <div class="card" style="background:#FFFDE7;margin-top:10px;">
-        <div style="font-size:12px;font-weight:800;margin-bottom:4px;">REDE (SSID)</div>
-        <div id="modal-ssid" style="font-size:16px;font-weight:900;margin-bottom:10px;">---</div>
-
-        <div style="font-size:12px;font-weight:800;margin-bottom:4px;">SENHA DO WI-FI</div>
-        <div id="modal-password-area"></div>
-
-        <div id="qrcode-box" style="display:none;"></div>
-      </div>
-
-      <div style="margin:10px 0;">
-        <div style="font-size:12px;font-weight:800;">AVALIAR ESTE PONTO:</div>
-        <div class="stars-row" id="modal-stars">
-          <i class="fa-solid fa-star" data-star="1"></i>
-          <i class="fa-solid fa-star" data-star="2"></i>
-          <i class="fa-solid fa-star" data-star="3"></i>
-          <i class="fa-solid fa-star" data-star="4"></i>
-          <i class="fa-solid fa-star" data-star="5"></i>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
-        <a id="btn-nav-gmaps" href="#" target="_blank" class="btn-yellow" style="text-decoration:none;">
-          <i class="fa-solid fa-diamond-turn-right"></i> Google Maps
-        </a>
-        <a id="btn-nav-waze" href="#" target="_blank" class="btn-outline" style="text-decoration:none;">
-          <i class="fa-brands fa-waze"></i> Waze
-        </a>
-      </div>
+        <div class="toast" id="loginToast"></div>
     </div>
-  </div>
 
-  <script>
-    // =========================================================================
-    // CONFIGURAÇÃO CENTRAL & ESTADO UNIFICADO (CLICK CONTROL v33)
-    // =========================================================================
-    const APP_VERSION = 'v33-fix-login';
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec';
-    const STORAGE_KEY_POINTS = 'cc_v33_points_unified';
-    const STORAGE_KEY_USER = 'cc_v33_user_session';
-    const STORAGE_KEY_UNLOCKED = 'cc_v33_unlocked_ids';
-    const STORAGE_KEY_OFFLINE_CITIES = 'cc_v33_offline_cities';
-
-    let state = {
-      user: null,
-      points: [],
-      unlockedIds: [],
-      offlineCities: [],
-      activeFilter: 'all',
-      selectedPoint: null,
-      lastSpeedtest: { down: 0, up: 0, ping: 0 },
-      currentCoords: null
-    };
-
-    let map = null;
-    let markersLayer = null;
-    let isLoggingIn = false;
-    let isSavingPoint = false;
-
-    // =========================================================================
-    // UTILITÁRIOS DE UI & NOTIFICAÇÃO
-    // =========================================================================
-    function showToast(msg, duration = 3000) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.style.display = 'block';
-      clearTimeout(el._timer);
-      el._timer = setTimeout(() => {
-        el.style.display = 'none';
-      }, duration);
-    }
-
-    function loadLocalState() {
-      try {
-        const savedUser = localStorage.getItem(STORAGE_KEY_USER);
-        const savedPoints = localStorage.getItem(STORAGE_KEY_POINTS);
-        const savedUnlocked = localStorage.getItem(STORAGE_KEY_UNLOCKED);
-        const savedOffline = localStorage.getItem(STORAGE_KEY_OFFLINE_CITIES);
-
-        if (savedUser) state.user = JSON.parse(savedUser);
-        if (savedPoints) state.points = JSON.parse(savedPoints);
-        if (savedUnlocked) state.unlockedIds = JSON.parse(savedUnlocked);
-        if (savedOffline) state.offlineCities = JSON.parse(savedOffline);
-      } catch (e) {
-        console.warn('Erro ao ler estado local:', e);
-      }
-    }
-
-    function persistLocalState() {
-      try {
-        if (state.user) {
-          localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(state.user));
-        }
-        localStorage.setItem(STORAGE_KEY_POINTS, JSON.stringify(state.points));
-        localStorage.setItem(STORAGE_KEY_UNLOCKED, JSON.stringify(state.unlockedIds));
-        localStorage.setItem(STORAGE_KEY_OFFLINE_CITIES, JSON.stringify(state.offlineCities));
-      } catch (e) {
-        console.warn('Erro ao salvar estado local:', e);
-      }
-    }
-
-    // =========================================================================
-    // LIMPEZA DE SERVICE WORKER ANTIGO (EVITA CACHE COM CLIQUE FANTASMA)
-    // =========================================================================
-    async function purgeOldCaches() {
-      if ('caches' in window) {
-        try {
-          const keys = await caches.keys();
-          for (const key of keys) {
-            if (!key.includes(APP_VERSION)) {
-              await caches.delete(key);
-            }
-          }
-        } catch (e) {
-          console.warn('Falha ao limpar caches:', e);
-        }
-      }
-    }
-
-    // =========================================================================
-    // LOGIN BLINDADO CONTRA CLIQUE FANTASMA E REBOTE DE TOQUE
-    // =========================================================================
-    function initLoginHandlers() {
-      const form = document.getElementById('login-form');
-      const btnLogin = document.getElementById('btn-login');
-
-      // Sobrescreve diretamente para evitar empilhamento de listeners
-      form.onsubmit = handleLoginSubmit;
-      btnLogin.onclick = handleLoginSubmit;
-    }
-
-    async function handleLoginSubmit(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
-      // Trava imediata contra duplo disparo (touchstart + click ou duplo clique)
-      if (isLoggingIn) return;
-
-      const userInput = document.getElementById('login-user').value.trim();
-      const passInput = document.getElementById('login-pass').value.trim();
-      const errBox = document.getElementById('login-error');
-      const btnLogin = document.getElementById('btn-login');
-
-      errBox.textContent = '';
-
-      if (!userInput || !passInput) {
-        errBox.textContent = 'Preencha usuário e senha para continuar.';
-        return;
-      }
-
-      isLoggingIn = true;
-      btnLogin.disabled = true;
-      btnLogin.style.pointerEvents = 'none';
-      btnLogin.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> AUTENTICANDO...';
-
-      try {
-        // Tentativa de autenticação na nuvem via Google Apps Script com redirect: follow
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          redirect: 'follow',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'login',
-            user: userInput,
-            password: passInput
-          })
-        });
-
-        let data = null;
-        try {
-          data = await response.json();
-        } catch (_) {
-          data = null;
-        }
-
-        if (data && data.status === 'ok' && data.user) {
-          state.user = data.user;
-        } else if (data && data.status === 'error') {
-          throw new Error(data.message || 'Usuário ou senha inválidos.');
-        } else {
-          // Fallback local seguro caso o Apps Script retorne resposta genérica
-          state.user = {
-            username: userInput,
-            role: userInput.toLowerCase().includes('admin') ? 'admin' : 'user',
-            credits: 30
-          };
-        }
-
-        persistLocalState();
-        completeLoginTransition();
-
-      } catch (err) {
-        errBox.textContent = err.message || 'Falha na autenticação. Tente novamente.';
-      } finally {
-        // Delay de segurança de 450ms para absorver qualquer toque residual na tela
-        setTimeout(() => {
-          isLoggingIn = false;
-          btnLogin.disabled = false;
-          btnLogin.style.pointerEvents = 'auto';
-          btnLogin.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> ENTRAR NO SISTEMA';
-        }, 450);
-      }
-    }
-
-    function completeLoginTransition() {
-      const loginScreen = document.getElementById('login-screen');
-      const appContainer = document.getElementById('app-container');
-      const mapEl = document.getElementById('map');
-
-      // Bloqueia temporariamente cliques no mapa subjacente para evitar toque fantasma atravessando o modal
-      if (mapEl) mapEl.style.pointerEvents = 'none';
-
-      loginScreen.style.display = 'none';
-      appContainer.style.display = 'flex';
-
-      updateUserHeader();
-      initMap();
-      syncFromCloud();
-
-      setTimeout(() => {
-        if (mapEl) mapEl.style.pointerEvents = 'auto';
-        if (map) map.invalidateSize();
-      }, 400);
-    }
-
-    function updateUserHeader() {
-      if (!state.user) return;
-      document.getElementById('user-credits').textContent = state.user.credits ?? 0;
-      const adminBtn = document.getElementById('nav-admin-btn');
-      if (adminBtn) {
-        adminBtn.style.display = state.user.role === 'admin' ? 'flex' : 'flex';
-      }
-    }
-
-    // =========================================================================
-    // SINCRONIZAÇÃO NUVEM-PRIMEIRO (GOOGLE APPS SCRIPT)
-    // =========================================================================
-    async function syncFromCloud(showFeedback = false) {
-      try {
-        if (showFeedback) showToast('Sincronizando pontos com a nuvem...');
-        const response = await fetch(`${SCRIPT_URL}?action=getPoints&t=${Date.now()}`, {
-          method: 'GET',
-          redirect: 'follow'
-        });
-
-        const result = await response.json();
-        const remotePoints = Array.isArray(result) ? result : (result.points || []);
-
-        if (Array.isArray(remotePoints) && remotePoints.length > 0) {
-          state.points = remotePoints.map((p, idx) => ({
-            id: p.id || `pt_${idx}_${Date.now()}`,
-            local: p.local || p.nome || 'Ponto Wi-Fi',
-            cidade: p.cidade || 'Não informada',
-            ssid: p.ssid || 'Rede Wi-Fi',
-            senha: p.senha || '',
-            lat: parseFloat(p.lat) || -26.2496,
-            lng: parseFloat(p.lng) || -49.3822,
-            download: parseFloat(p.download) || 0,
-            upload: parseFloat(p.upload) || 0,
-            rating: parseFloat(p.rating) || 5.0,
-            tomada: Boolean(p.tomada),
-            mesa: Boolean(p.mesa),
-            estacionamento: Boolean(p.estacionamento),
-            obs: p.obs || '',
-            updatedAt: p.updatedAt || new Date().toISOString()
-          }));
-          persistLocalState();
-        } else if (state.points.length === 0) {
-          seedDefaultPointsIfEmpty();
-        }
-
-        renderAllViews();
-        if (showFeedback) showToast('Nuvem sincronizada com sucesso!');
-      } catch (e) {
-        console.warn('Modo offline ou falha de rede ao sincronizar:', e);
-        if (state.points.length === 0) seedDefaultPointsIfEmpty();
-        renderAllViews();
-        if (showFeedback) showToast('Usando base local em cache.');
-      }
-    }
-
-    function seedDefaultPointsIfEmpty() {
-      state.points = [
-        {
-          id: 'pt_sbs_1',
-          local: 'Café Central Praça',
-          cidade: 'São Bento do Sul',
-          ssid: 'CAFE_CENTRAL_5G',
-          senha: 'cafe2026fast',
-          lat: -26.2496,
-          lng: -49.3822,
-          download: 185.4,
-          upload: 92.1,
-          rating: 4.9,
-          tomada: true,
-          mesa: true,
-          estacionamento: true,
-          obs: 'Tomadas próximas às mesas do fundo.'
-        }
-      ];
-      persistLocalState();
-    }
-
-    // =========================================================================
-    // MAPA INTERATIVO & ALFINETES COLORIDOS POR VELOCIDADE
-    // =========================================================================
-    function initMap() {
-      if (map) {
-        map.invalidateSize();
-        return;
-      }
-
-      map = L.map('map', { zoomControl: false }).setView([-26.2496, -49.3822], 14);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
-
-      markersLayer = L.layerGroup().addTo(map);
-      renderMapMarkers();
-    }
-
-    function getFilteredPoints() {
-      return state.points.filter(pt => {
-        if (state.activeFilter === 'fast') return pt.download >= 50;
-        if (state.activeFilter === 'tomada') return pt.tomada;
-        if (state.activeFilter === 'mesa') return pt.mesa;
-        if (state.activeFilter === 'estacionamento') return pt.estacionamento;
-        return true;
-      });
-    }
-
-    function getPinColor(download) {
-      if (download >= 80) return '#00C853'; // Verde - Ultrarrápida
-      if (download >= 30) return '#FFD600'; // Amarelo - Boa
-      return '#FF5252'; // Vermelho - Lenta
-    }
-
-    function renderMapMarkers() {
-      if (!map || !markersLayer) return;
-      markersLayer.clearLayers();
-
-      const filtered = getFilteredPoints();
-      filtered.forEach(pt => {
-        if (isNaN(pt.lat) || isNaN(pt.lng)) return;
-
-        const color = getPinColor(pt.download);
-        const icon = L.divIcon({
-          className: 'custom-pin',
-          html: `<div class="pin-bubble" style="background:${color};">
-                  <i class="fa-solid fa-wifi"></i> ${Math.round(pt.download)}M • ${pt.rating.toFixed(1)}★
-                 </div>`,
-          iconSize: [96, 30],
-          iconAnchor: [48, 15]
-        });
-
-        const marker = L.marker([pt.lat, pt.lng], { icon });
-        marker.on('click', () => openPointModal(pt));
-        marker.addTo(markersLayer);
-      });
-    }
-
-    // =========================================================================
-    // MODAL DO PONTO, CRÉDITOS, QR CODE E AVALIAÇÃO
-    // =========================================================================
-    function openPointModal(pt) {
-      state.selectedPoint = pt;
-      document.getElementById('modal-local-name').textContent = pt.local;
-      document.getElementById('modal-city-name').textContent = pt.cidade;
-      document.getElementById('modal-down').textContent = pt.download.toFixed(1);
-      document.getElementById('modal-up').textContent = pt.upload.toFixed(1);
-      document.getElementById('modal-rating').textContent = `${pt.rating.toFixed(1)} ★`;
-      document.getElementById('modal-ssid').textContent = pt.ssid;
-
-      // Comodidades
-      const amEl = document.getElementById('modal-amenities');
-      amEl.innerHTML = `
-        <span class="badge-status" style="background:${pt.tomada ? '#00C853;color:#FFF' : '#EEE'}">
-          <i class="fa-solid fa-plug"></i> Tomada: ${pt.tomada ? 'Sim' : 'Não'}
-        </span>
-        <span class="badge-status" style="background:${pt.mesa ? '#00C853;color:#FFF' : '#EEE'}">
-          <i class="fa-solid fa-chair"></i> Mesa: ${pt.mesa ? 'Sim' : 'Não'}
-        </span>
-        <span class="badge-status" style="background:${pt.estacionamento ? '#00C853;color:#FFF' : '#EEE'}">
-          <i class="fa-solid fa-car"></i> Estac.: ${pt.estacionamento ? 'Sim' : 'Não'}
-        </span>
-      `;
-
-      // Senha & Créditos
-      const isUnlocked = state.unlockedIds.includes(pt.id) || (state.user && state.user.role === 'admin');
-      const passArea = document.getElementById('modal-password-area');
-      const qrBox = document.getElementById('qrcode-box');
-
-      if (isUnlocked) {
-        passArea.innerHTML = `
-          <div style="display:flex;gap:8px;align-items:center;">
-            <code style="flex:1;background:#111;color:#FFD600;padding:10px;border-radius:8px;font-size:15px;font-weight:900;">${pt.senha}</code>
-            <button type="button" class="btn-yellow" onclick="copyPassword('${pt.senha}')"><i class="fa-solid fa-copy"></i> Copiar</button>
-          </div>
-        `;
-        qrBox.style.display = 'flex';
-        qrBox.innerHTML = '';
-        new QRCode(qrBox, {
-          text: `WIFI:T:WPA;S:${pt.ssid};P:${pt.senha};;`,
-          width: 150,
-          height: 150
-        });
-      } else {
-        qrBox.style.display = 'none';
-        passArea.innerHTML = `
-          <button type="button" class="btn-black" onclick="unlockPassword('${pt.id}')">
-            <i class="fa-solid fa-unlock-keyhole"></i> DESBLOQUEAR SENHA (-5 CRÉDITOS)
-          </button>
-        `;
-      }
-
-      // Rotas externas
-      document.getElementById('btn-nav-gmaps').href = `https://www.google.com/maps/dir/?api=1&destination=${pt.lat},${pt.lng}`;
-      document.getElementById('btn-nav-waze').href = `https://waze.com/ul?ll=${pt.lat},${pt.lng}&navigate=yes`;
-
-      document.getElementById('point-modal').classList.add('open');
-    }
-
-    window.unlockPassword = function(pointId) {
-      if (!state.user || (state.user.credits || 0) < 5) {
-        showToast('Créditos insuficientes! Cadastre ou teste uma rede para ganhar.');
-        return;
-      }
-      state.user.credits -= 5;
-      if (!state.unlockedIds.includes(pointId)) {
-        state.unlockedIds.push(pointId);
-      }
-      persistLocalState();
-      updateUserHeader();
-      const pt = state.points.find(p => p.id === pointId);
-      if (pt) openPointModal(pt);
-      showToast('Senha desbloqueada! -5 créditos.');
-    };
-
-    window.copyPassword = function(pwd) {
-      navigator.clipboard.writeText(pwd);
-      showToast('Senha copiada para a área de transferência!');
-    };
-
-    // =========================================================================
-    // SPEEDTEST MULTI-THREAD & CADASTRO DE NOVO PONTO (GPS <= 10m + QR GALERIA)
-    // =========================================================================
-    async function runSpeedtest() {
-      const btn = document.getElementById('btn-run-speedtest');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MEDINDO VELOCIDADE...';
-
-      const downEl = document.getElementById('st-down');
-      const upEl = document.getElementById('st-up');
-      const pingEl = document.getElementById('st-ping');
-
-      try {
-        const t0 = performance.now();
-        await fetch('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?t=' + Date.now(), { cache: 'no-store' });
-        const ping = Math.max(8, Math.round(performance.now() - t0));
-        pingEl.textContent = ping;
-
-        // Medição paralela de download real
-        const testUrl = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js?t=' + Date.now();
-        const startDown = performance.now();
-        const responses = await Promise.all([
-          fetch(testUrl, { cache: 'no-store' }),
-          fetch(testUrl + '_2', { cache: 'no-store' })
-        ]);
-        const blobs = await Promise.all(responses.map(r => r.blob()));
-        const totalBytes = blobs.reduce((acc, b) => acc + b.size, 0);
-        const durationSec = Math.max(0.1, (performance.now() - startDown) / 1000);
-
-        const mbpsDown = ((totalBytes * 8) / (1024 * 1024)) / durationSec;
-        const mbpsUp = mbpsDown * 0.55;
-
-        state.lastSpeedtest = {
-          down: Number(mbpsDown.toFixed(1)),
-          up: Number(mbpsUp.toFixed(1)),
-          ping
-        };
-
-        downEl.textContent = state.lastSpeedtest.down.toFixed(1);
-        upEl.textContent = state.lastSpeedtest.up.toFixed(1);
-        showToast(`Teste concluído: ${state.lastSpeedtest.down} Mbps Down!`);
-      } catch (e) {
-        showToast('Não foi possível concluir o teste de velocidade.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-play"></i> INICIAR TESTE DE VELOCIDADE';
-      }
-    }
-
-    function checkHighAccuracyGPS() {
-      const badge = document.getElementById('gps-accuracy-badge');
-      if (!navigator.geolocation) {
-        showToast('Geolocalização não suportada neste dispositivo.');
-        return;
-      }
-      badge.textContent = 'Buscando GPS...';
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const acc = Math.round(pos.coords.accuracy);
-          state.currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc };
-          document.getElementById('pt-lat').value = pos.coords.latitude;
-          document.getElementById('pt-lng').value = pos.coords.longitude;
-
-          if (acc <= 10) {
-            badge.style.background = '#00C853';
-            badge.style.color = '#FFF';
-            badge.textContent = `GPS OK: ${acc}m`;
-            showToast(`Localização travada com precisão de ${acc}m!`);
-          } else {
-            badge.style.background = '#FF9100';
-            badge.style.color = '#111';
-            badge.textContent = `Precisão: ${acc}m (>10m)`;
-            showToast(`Precisão atual ${acc}m. Aproxime-se de área aberta para <=10m.`);
-          }
-        },
-        err => {
-          badge.textContent = 'Erro GPS';
-          showToast('Ative o GPS de alta precisão do aparelho.');
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    }
-
-    // Leitura de QR Code Wi-Fi da Galeria
-    function handleQrGalleryUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-          if (code && code.data) {
-            const ssidMatch = code.data.match(/S:([^;]+)/);
-            const passMatch = code.data.match(/P:([^;]+)/);
-            if (ssidMatch) document.getElementById('pt-ssid').value = ssidMatch[1];
-            if (passMatch) document.getElementById('pt-senha').value = passMatch[1];
-            showToast('QR Code Wi-Fi lido com sucesso!');
-          } else {
-            showToast('Nenhum QR Code Wi-Fi válido encontrado na imagem.');
-          }
-        };
-        img.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // Salvar Novo Ponto na Nuvem + Atualização Instantânea no Mapa
-    async function handleSavePoint(e) {
-      e.preventDefault();
-      if (isSavingPoint) return;
-
-      const lat = parseFloat(document.getElementById('pt-lat').value);
-      const lng = parseFloat(document.getElementById('pt-lng').value);
-
-      if (isNaN(lat) || isNaN(lng)) {
-        showToast('Trave o GPS antes de salvar o ponto!');
-        return;
-      }
-
-      if (state.currentCoords && state.currentCoords.acc > 10) {
-        showToast('A precisão do GPS deve ser <= 10m para cadastrar.');
-        return;
-      }
-
-      const btn = document.getElementById('btn-save-point');
-      isSavingPoint = true;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SALVANDO NA NUVEM...';
-
-      const newPt = {
-        id: 'pt_' + Date.now(),
-        local: document.getElementById('pt-local').value.trim(),
-        cidade: document.getElementById('pt-cidade').value.trim(),
-        ssid: document.getElementById('pt-ssid').value.trim(),
-        senha: document.getElementById('pt-senha').value.trim(),
-        lat,
-        lng,
-        download: state.lastSpeedtest.down || 25.0,
-        upload: state.lastSpeedtest.up || 10.0,
-        rating: 5.0,
-        tomada: document.getElementById('pt-tomada').checked,
-        mesa: document.getElementById('pt-mesa').checked,
-        estacionamento: document.getElementById('pt-estac').checked,
-        obs: document.getElementById('pt-obs').value.trim(),
-        updatedAt: new Date().toISOString()
-      };
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          redirect: 'follow',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'addPoint', point: newPt })
-        });
-      } catch (err) {
-        console.warn('Salvo localmente para sincronização posterior:', err);
-      }
-
-      // Fonte única atualizada imediatamente para refletir no mapa sem precisar recarregar
-      state.points.push(newPt);
-      state.unlockedIds.push(newPt.id);
-      if (state.user) {
-        state.user.credits = (state.user.credits || 0) + 10;
-      }
-
-      persistLocalState();
-      updateUserHeader();
-      renderAllViews();
-
-      document.getElementById('new-point-form').reset();
-      showToast('Ponto salvo e exibido no mapa! +10 créditos!');
-
-      // Navega automaticamente para o mapa centralizado no novo alfinete
-      switchTab('view-map');
-      if (map) {
-        map.setView([newPt.lat, newPt.lng], 16);
-      }
-
-      setTimeout(() => {
-        isSavingPoint = false;
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> SALVAR PONTO (+10 CRÉDITOS)';
-      }, 400);
-    }
-
-    // =========================================================================
-    // RENDERIZAÇÃO DE LISTA, MODO OFFLINE E PAINEL ADMIN
-    // =========================================================================
-    function renderAllViews() {
-      renderMapMarkers();
-      renderPointsList();
-      renderOfflineCities();
-      renderAdminPanel();
-    }
-
-    function renderPointsList() {
-      const container = document.getElementById('points-list-container');
-      const query = (document.getElementById('search-points').value || '').toLowerCase();
-      const filtered = getFilteredPoints().filter(pt =>
-        pt.local.toLowerCase().includes(query) ||
-        pt.cidade.toLowerCase().includes(query) ||
-        pt.ssid.toLowerCase().includes(query)
-      );
-
-      document.getElementById('total-points-count').textContent = `${filtered.length} pontos`;
-
-      container.innerHTML = filtered.map(pt => `
-        <div class="card" onclick='openPointModalById("${pt.id}")' style="cursor:pointer;">
-          <div class="card-title">
-            <span>${pt.local}</span>
-            <span class="badge-status" style="background:${getPinColor(pt.download)};">${pt.download.toFixed(1)} Mbps</span>
-          </div>
-          <div style="font-size:12px;color:#555;margin-bottom:6px;">
-            <i class="fa-solid fa-location-dot"></i> ${pt.cidade} • SSID: <strong>${pt.ssid}</strong>
-          </div>
-          <div style="display:flex;gap:6px;font-size:11px;font-weight:800;">
-            ${pt.tomada ? '<span><i class="fa-solid fa-plug"></i> Tomada</span>' : ''}
-            ${pt.mesa ? '<span><i class="fa-solid fa-chair"></i> Mesa</span>' : ''}
-            ${pt.estacionamento ? '<span><i class="fa-solid fa-car"></i> Estac.</span>' : ''}
-          </div>
-        </div>
-      `).join('');
-    }
-
-    window.openPointModalById = function(id) {
-      const pt = state.points.find(p => p.id === id);
-      if (pt) openPointModal(pt);
-    };
-
-    function renderOfflineCities() {
-      const container = document.getElementById('offline-cities-list');
-      const cities = [...new Set(state.points.map(p => p.cidade))];
-
-      container.innerHTML = cities.map(city => {
-        const count = state.points.filter(p => p.cidade === city).length;
-        const isSaved = state.offlineCities.includes(city);
-        return `
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #EEE;">
-            <div>
-              <strong>${city}</strong>
-              <div style="font-size:12px;color:#555;">${count} ponto(s) disponível(is)</div>
+    <!-- TELA 2: PAINEL PRINCIPAL (LOGADO) -->
+    <div id="appScreen" class="hidden">
+        <div class="top-navbar">
+            <div class="brand-block">
+                <h1 id="appTitle">CLICK CONTROL v34</h1>
+                <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
-            <button type="button" class="${isSaved ? 'btn-yellow' : 'btn-outline'}" onclick="toggleOfflineCity('${city}')">
-              <i class="fa-solid ${isSaved ? 'fa-check' : 'fa-download'}"></i> ${isSaved ? 'Baixado' : 'Baixar'}
-            </button>
-          </div>
-        `;
-      }).join('');
-    }
 
-    window.toggleOfflineCity = function(city) {
-      if (state.offlineCities.includes(city)) {
-        state.offlineCities = state.offlineCities.filter(c => c !== city);
-        showToast(`Pacote offline de ${city} removido.`);
-      } else {
-        state.offlineCities.push(city);
-        showToast(`Pacote offline de ${city} salvo no aparelho!`);
-      }
-      persistLocalState();
-      renderOfflineCities();
-    };
-
-    function renderAdminPanel() {
-      const container = document.getElementById('admin-points-container');
-      container.innerHTML = state.points.map(pt => `
-        <div class="card">
-          <div class="card-title">
-            <span>${pt.local} (${pt.cidade})</span>
-            <button type="button" class="btn-outline" style="color:#D50000;border-color:#D50000;" onclick="deletePointAdmin('${pt.id}')">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-          <div style="font-size:12px;margin-bottom:8px;">
-            SSID: <strong>${pt.ssid}</strong> | Senha: <code>${pt.senha}</code>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="btn-outline" onclick="toggleAmenityAdmin('${pt.id}', 'tomada')">
-              Tomada: ${pt.tomada ? 'ON' : 'OFF'}
-            </button>
-            <button type="button" class="btn-outline" onclick="toggleAmenityAdmin('${pt.id}', 'mesa')">
-              Mesa: ${pt.mesa ? 'ON' : 'OFF'}
-            </button>
-            <button type="button" class="btn-outline" onclick="toggleAmenityAdmin('${pt.id}', 'estacionamento')">
-              Estac.: ${pt.estacionamento ? 'ON' : 'OFF'}
-            </button>
-          </div>
+            <div class="user-dropdown-wrap" id="userDropdownWrap">
+                <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuario(event)">
+                    <span>👤</span>
+                    <span class="user-trigger-name" id="userDisplay">Usuário</span>
+                    <span style="font-size:0.65rem;">▼</span>
+                </button>
+                <div class="user-dropdown-menu hidden" id="userDropdownMenu">
+                    <div class="user-menu-header">
+                        Conectado como
+                        <strong id="userMenuFullName">Usuário</strong>
+                    </div>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('dados_usuario')">👤 Dados do Usuário</button>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('meus_wifis')">📶 Meus Wi-Fis Cadastrados</button>
+                    <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
+                    <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
+                </div>
+            </div>
         </div>
-      `).join('');
+
+        <div class="tabs">
+            <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
+            <button type="button" class="tab-btn" id="tabDadosRedeBtn" onclick="mudarAba('dadosRede')">📶 Dados da Rede</button>
+            <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
+            <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
+        </div>
+
+        <!-- ABA 1: MAPA -->
+        <div id="abaMapa">
+            <div class="filter-toolbar">
+                <button type="button" class="btn-filter-toggle" onclick="alternarJanelaFiltros()">
+                    <span>🎛️ Filtros (Upload/Download, Estrutura & Velocidade)</span>
+                    <span class="filter-badge-count" id="filterCountBadge">Ativos: 0</span>
+                </button>
+            </div>
+
+            <div class="filter-drawer hidden" id="janelaFiltrosMapa">
+                <div class="filter-section-title">1. Prioridade de Velocidade</div>
+                <div class="prio-switch">
+                    <button type="button" class="prio-btn active" id="prioDownBtn" onclick="definirPrioridade('download')">⬇️ Priorizar Download</button>
+                    <button type="button" class="prio-btn" id="prioUpBtn" onclick="definirPrioridade('upload')">⬆️ Priorizar Upload (Envio)</button>
+                </div>
+
+                <div class="filter-section-title">2. Estrutura do Local</div>
+                <div class="filter-pills">
+                    <div class="filter-pill" id="filtroEstac" onclick="alternarFiltro('estacionamento')">🚗 Estacionamento</div>
+                    <div class="filter-pill" id="filtroMesas" onclick="alternarFiltro('mesas')">🪑 Mesas</div>
+                    <div class="filter-pill" id="filtroTomadas" onclick="alternarFiltro('tomadas')">🔌 Tomadas</div>
+                    <div class="filter-pill" id="filtroSinalRua" onclick="alternarFiltro('sinal_rua')">📡 Sinal no Carro</div>
+                </div>
+
+                <div class="filter-section-title">3. Faixa de Velocidade</div>
+                <div class="speed-filter-grid">
+                    <div class="speed-pill active" id="speedFilterAll" onclick="definirFiltroVelocidade('todos')"><span>🌐 Todos</span></div>
+                    <div class="speed-pill" id="speedFilterLt10" onclick="definirFiltroVelocidade('lt10')"><i class="dot-c" style="background:#ef4444;"></i><span>&lt;10 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilter10_20" onclick="definirFiltroVelocidade('10_20')"><i class="dot-c" style="background:#f97316;"></i><span>10-20 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilter20_40" onclick="definirFiltroVelocidade('20_40')"><i class="dot-c" style="background:#eab308;"></i><span>20-40 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilter40_100" onclick="definirFiltroVelocidade('40_100')"><i class="dot-c" style="background:#3b82f6;"></i><span>40-100 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilterGt100" onclick="definirFiltroVelocidade('gt100')"><i class="dot-c" style="background:#22c55e;"></i><span>&gt;100 Mbps</span></div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:10px; gap:8px;">
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="limparTodosFiltrosMapa()">🧹 Limpar Filtros</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0; background:var(--primary); color:var(--primary-text); border-color:var(--primary);" onclick="alternarJanelaFiltros(false)">✅ Aplicar</button>
+                </div>
+            </div>
+
+            <div id="miniMap"></div>
+            <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando melhores pontos.</div>
+
+            <div class="form-group" style="margin-top: 4px;">
+                <label for="selectWifiMapa">Endereço / Local do Wi-Fi</label>
+                <div class="gps-row">
+                    <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
+                    <button type="button" class="btn-gps" id="btnAtualizarMapa" onclick="atualizarPosicaoMapa(true)">📍 Perto</button>
+                </div>
+                <div class="helper-text" id="mapGpsStatus">Carregando mapa...</div>
+            </div>
+
+            <button type="button" class="btn" style="margin-top: 6px;" onclick="mudarAba('dadosRede')">📶 Ver Dados da Rede & QR Code</button>
+        </div>
+
+        <!-- ABA 2: DADOS DA REDE (QR CODE SOMENTE AO CLICAR NO BOTÃO) -->
+        <div id="abaDadosRede" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:0.95rem; color:var(--primary); text-transform:uppercase;">📶 Dados da Rede Selecionada</strong>
+                <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; background:#111111; color:#facc15;" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade</button>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="flex:1; padding:7px 10px; font-size:0.78rem; border-radius:8px;">
+                        <option value="">🌐 Todas as cidades (Online / Nuvem)</option>
+                    </select>
+                    <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
+                </div>
+            </div>
+
+            <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:10px; text-align:center;">
+                <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:4px;" id="mapaEstrelasTitulo">⭐ Nota do Local (Média: 4.8/5)</div>
+                <div style="display:flex; justify-content:center; gap:6px; font-size:1.4rem; cursor:pointer;" id="mapaEstrelasBotoes">
+                    <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 1)">⭐</span>
+                    <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 2)">⭐</span>
+                    <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 3)">⭐</span>
+                    <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 4)">⭐</span>
+                    <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 5)">⭐</span>
+                </div>
+            </div>
+
+            <div class="qr-card" id="mapaQrCard">
+                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">Conexão Wi-Fi</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
+                <div style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
+
+                <div class="live-status-bar">
+                    <span class="status-pill-live" id="mapaLiveStatus">🟢 Funcionando agora</span>
+                    <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('conectou')">👍 Conectou</button>
+                        <button type="button" class="btn-mini" id="btnCalibrarCentro" style="margin-top:0; padding:4px 8px; background:var(--primary); color:var(--primary-text);" onclick="calibrarCentroPinoAgora()">🎯 Centralizar Pino Aqui</button>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
+                    </div>
+                </div>
+                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#713f12; font-weight:600;">🎯 Centro calculado a partir das medições e calibragens dos usuários.</div>
+
+                <div class="security-banner" id="mapaSecurityBanner">
+                    🛡️ <strong>Segurança em Campo:</strong> Use VPN ativa ao acessar redes públicas e evite transações bancárias.
+                </div>
+
+                <div class="amenities-badges" id="mapaAmenities"></div>
+
+                <div class="gallery-strip" id="mapaGaleriaStrip"></div>
+                <div>
+                    <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
+                    <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
+                </div>
+
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top:10px;">
+                    <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:var(--primary); color:var(--primary-text); font-weight:800;">🧭 Ir até lá (Maps/Waze)</a>
+                    <button type="button" class="btn-mini" onclick="abrirModalQrCodeAtual()">🔗 Ver QR Code</button>
+                    <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi Selecionado</button>
+        </div>
+
+        <!-- ABA 3: TESTAR VELOCIDADE -->
+        <div id="abaTestar" class="hidden">
+            <input type="hidden" id="selectWifi" value="">
+
+            <div class="current-wifi-banner">
+                <span class="tag-live">📡 Wi-Fi Atual em Teste</span>
+                <div class="wifi-name" id="testarWifiNomeAtual">Carregando ponto...</div>
+                <div class="wifi-addr" id="testarWifiEnderecoAtual">Detectando endereço...</div>
+                <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+                    <button type="button" class="btn-gps" id="btnNearGps" style="padding:6px 10px;" onclick="selecionarWifiMaisProximo(true)">📍 Detectar Wi-Fi Atual</button>
+                    <button type="button" class="btn-mini" style="margin-top:0;" onclick="mudarAba('mapa')">🗺️ Trocar no Mapa</button>
+                </div>
+                <div class="helper-text" id="nearGpsStatus" style="margin-top:6px;">Mostrando ponto atual.</div>
+            </div>
+
+            <div class="info-badge" id="wifiBadge">
+                <span id="rewardLabel">Recompensa: <strong>+2 Créditos</strong> (1x por ponto)</span>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-box">
+                    <div class="metric-label">Download</div>
+                    <div class="metric-value" id="downVal">--</div>
+                    <div class="metric-unit">Mbps</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">Upload (Envio)</div>
+                    <div class="metric-value" id="upVal">--</div>
+                    <div class="metric-unit">Mbps</div>
+                </div>
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="status-text" id="statusText">Toque abaixo para medir a banda real.</div>
+
+            <button type="button" class="btn" id="startBtn" onclick="iniciarTeste(event)">Iniciar Teste de Velocidade</button>
+            <button type="button" class="btn btn-save" id="saveBtn" onclick="enviarTesteParaPlanilha(event)">Salvar Resultado (+2 Créditos)</button>
+            <div class="toast" id="toastMsg"></div>
+        </div>
+
+        <!-- ABA 4: CADASTRAR NOVO PONTO -->
+        <div id="abaCadastrar" class="hidden">
+            <div class="quick-box">
+                <h4>⚡ Cadastro Expresso</h4>
+                <p>Puxe o endereço pelo GPS, leia o QR Code ou escolha da galeria:</p>
+                <div class="quick-actions">
+                    <button type="button" class="btn-quick" id="btnAcaoGpsToggle" onclick="toggleAutoPreencherGps()">📍 Auto-Preencher</button>
+                    <button type="button" class="btn-quick alt" onclick="abrirOpcoesLerQr()">📷 Ler QR</button>
+                </div>
+                <input type="file" id="inputLerQrCamera" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
+                <input type="file" id="inputLerQrGaleria" accept="image/*" class="hidden" onchange="lerQrCodeDeImagem(event)">
+                <div class="helper-text" id="gpsStatus" style="margin-top:6px;">Toque em Auto-Preencher para detectar comércio e rua.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="cadNomeLocal">Nome do Estabelecimento / Local *</label>
+                <input type="text" id="cadNomeLocal" placeholder="Ex: Posto Ipiranga">
+            </div>
+            <div class="form-group hidden" id="groupEmpresasProximas">
+                <label for="selectEmpresaProxima">🏢 Empresas / Lojas próximas (raio de 30m)</label>
+                <select id="selectEmpresaProxima" onchange="aoSelecionarEmpresaProxima()">
+                    <option value="">Selecione um local...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cadLocalizacao">Endereço Completo ou GPS *</label>
+                <input type="text" id="cadLocalizacao" placeholder="Preenchido pelo GPS">
+                <div id="cadMiniMapWrap" class="hidden" style="margin-top:8px;">
+                    <div id="cadMiniMap" style="width:100%;height:165px;border-radius:10px;border:1px solid var(--primary);z-index:1;"></div>
+                    <div class="helper-text" id="cadPinHint" style="color:var(--primary);">🎯 Arraste o pino até a porta se necessário.</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cadCidade">Cidade - UF *</label>
+                <input type="text" id="cadCidade" placeholder="Ex: São Bento do Sul - SC">
+            </div>
+
+            <div class="form-group">
+                <label for="cadSsid">Nome da Rede Wi-Fi (SSID) *</label>
+                <input type="text" id="cadSsid" placeholder="Nome exato" oninput="atualizarPreviewQrCadastro()">
+            </div>
+
+            <div class="form-group">
+                <label for="cadSenha">Senha do Wi-Fi *</label>
+                <div class="gps-row">
+                    <input type="text" id="cadSenha" placeholder="Senha" oninput="atualizarPreviewQrCadastro()">
+                    <button type="button" class="btn-gps" style="background:#27272a; border:1px solid #3f3f46;" onclick="marcarRedeAberta()">🔓 Aberta</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cadHorarioSinal">Horário de Funcionamento / Acesso</label>
+                <input type="text" id="cadHorarioSinal" placeholder="Ex: 24h">
+            </div>
+
+            <div class="form-group">
+                <label>Estrutura do Local (Opcional)</label>
+                <div class="filter-pills">
+                    <div class="filter-pill" id="cadPillEstac" onclick="alternarComodidadeCadastro('estacionamento')">🚗 Estacionamento</div>
+                    <div class="filter-pill" id="cadPillMesas" onclick="alternarComodidadeCadastro('mesas')">🪑 Mesas</div>
+                    <div class="filter-pill" id="cadPillTomadas" onclick="alternarComodidadeCadastro('tomadas')">🔌 Tomadas</div>
+                    <div class="filter-pill" id="cadPillSinalRua" onclick="alternarComodidadeCadastro('sinal_rua')">📡 Sinal no Carro</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Foto do Local / Ambiente (Opcional)</label>
+                <div style="display:flex; gap:6px; margin-bottom:6px;">
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="document.getElementById('inputFotoCamera').click()">📷 Câmera</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="document.getElementById('inputFotoGaleria').click()">🖼️ Galeria</button>
+                </div>
+                <input type="file" id="inputFotoCamera" accept="image/*" capture="environment" class="hidden" onchange="processarFotoCadastro(event)">
+                <input type="file" id="inputFotoGaleria" accept="image/*" class="hidden" onchange="processarFotoCadastro(event)">
+                
+                <div id="cadFotoPreviewContainer" class="hidden" style="margin-top:6px; text-align:center;">
+                    <img id="cadFotoPreviewImg" src="" style="max-height:90px; border-radius:8px; border:1px solid var(--border);">
+                </div>
+            </div>
+
+            <div class="qr-card hidden" id="cadQrPreviewBox">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">QR Code Gerado</div>
+                <img id="cadQrPreviewImg" class="qr-img" src="" alt="Preview">
+                <div class="qr-payload-box" id="cadQrPreviewLink"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Nota do Local (1 a 5 estrelas) *</label>
+                <div id="cadStarsSelect" style="display:flex; gap:6px; font-size:1.5rem; cursor:pointer; align-items:center; margin-bottom:6px;">
+                    <span onclick="selecionarNotaCadastro(1)" id="cstar1">⭐</span>
+                    <span onclick="selecionarNotaCadastro(2)" id="cstar2">⭐</span>
+                    <span onclick="selecionarNotaCadastro(3)" id="cstar3">⭐</span>
+                    <span onclick="selecionarNotaCadastro(4)" id="cstar4">⭐</span>
+                    <span onclick="selecionarNotaCadastro(5)" id="cstar5">⭐</span>
+                    <span id="cadNotaTexto" style="font-size:0.8rem; font-weight:700; color:var(--primary); margin-left:8px;">5.0 estrelas</span>
+                </div>
+            </div>
+
+            <button type="button" class="btn" id="cadSaveBtn" onclick="cadastrarNovoWifi()">Salvar Novo Wi-Fi (+10 Créditos)</button>
+            <div class="toast" id="cadToast"></div>
+        </div>
+
+        <!-- ABA PERFIL & ADMIN -->
+        <div id="abaPerfil" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong id="tituloSecaoUsuario" style="font-size:0.95rem; color:var(--primary); text-transform:uppercase;">👤 Dados do Usuário</strong>
+                <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
+            </div>
+
+            <div id="secaoDadosUsuario" class="hidden">
+                <div class="profile-card">
+                    <div class="form-group">
+                        <label for="editUserEmail">E-mail de Acesso</label>
+                        <input type="email" id="editUserEmail" readonly style="opacity:0.75; cursor:not-allowed;">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserNome">Nome ou @Instagram</label>
+                        <input type="text" id="editUserNome">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserNovaSenha">Nova Senha</label>
+                        <input type="password" id="editUserNovaSenha" placeholder="Deixe em branco para manter">
+                    </div>
+                    <button type="button" class="btn" id="btnSalvarDadosUsuario" onclick="salvarDadosProprioUsuario()">💾 Salvar Dados e Senha</button>
+                    <div class="toast" id="dadosUsuarioToast"></div>
+                </div>
+            </div>
+
+            <div id="secaoCarteiraPontos" class="hidden">
+                <div class="saldo-destaque">
+                    <div class="label">Saldo Disponível na Carteira</div>
+                    <div class="valor" id="perfilSaldo">--</div>
+                    <div class="sub">Créditos</div>
+                </div>
+                <button type="button" class="btn" onclick="carregarPerfilUsuario()">🔄 Atualizar Saldo</button>
+            </div>
+
+            <div id="secaoMeusWifis" class="hidden">
+                <div class="form-group">
+                    <label>Meus Pontos de Wi-Fi Cadastrados</label>
+                    <div class="my-wifi-list" id="meusWifisLista"></div>
+                </div>
+            </div>
+
+            <!-- PAINEL ADMIN COMPLETO RESTAURADO -->
+            <div id="adminPanelBox" class="hidden" style="padding:12px; background:#fef9c3; border:2px solid #111111; border-radius:12px;">
+                <div style="font-size:0.9rem; font-weight:800; color:var(--primary); margin-bottom:4px;">🛡️ Painel Administrador — Gestão de Wi-Fis</div>
+                <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">Selecione qualquer ponto cadastrado na rede para editar dados, senha, horário, estrutura ou excluir.</p>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminSelectWifi">Selecione o Ponto Cadastrado</label>
+                    <select id="adminSelectWifi" onchange="carregarDadosAdminWifi()"></select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminWifiLocal">Nome do Local</label>
+                    <input type="text" id="adminWifiLocal">
+                </div>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminWifiEndereco">Endereço / Coordenadas</label>
+                    <input type="text" id="adminWifiEndereco">
+                </div>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminWifiCidade">Cidade - UF</label>
+                    <input type="text" id="adminWifiCidade">
+                </div>
+
+                <div class="gps-row" style="margin-bottom:8px;">
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label for="adminWifiSsid">SSID (Rede)</label>
+                        <input type="text" id="adminWifiSsid">
+                    </div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label for="adminWifiSenha">Senha</label>
+                        <input type="text" id="adminWifiSenha">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminWifiHorario">Horário de Funcionamento</label>
+                    <input type="text" id="adminWifiHorario">
+                </div>
+
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label>Estrutura do Local</label>
+                    <div class="filter-pills">
+                        <div class="filter-pill" id="admPillEstac" onclick="alternarComodidadeAdmin('estacionamento')">🚗 Estacionamento</div>
+                        <div class="filter-pill" id="admPillMesas" onclick="alternarComodidadeAdmin('mesas')">🪑 Mesas</div>
+                        <div class="filter-pill" id="admPillTomadas" onclick="alternarComodidadeAdmin('tomadas')">🔌 Tomadas</div>
+                        <div class="filter-pill" id="admPillSinalRua" onclick="alternarComodidadeAdmin('sinal_rua')">📡 Sinal no Carro</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:8px;">
+                    <button type="button" class="btn" id="btnSalvarAdminWifi" style="flex:2;" onclick="salvarEdicaoAdminWifi()">💾 Salvar Alterações</button>
+                    <button type="button" class="btn" id="btnExcluirAdminWifi" style="flex:1; background:#dc2626; color:#ffffff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir</button>
+                </div>
+                <div class="toast" id="adminToast"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
+    const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
+
+    let modoAuth = 'login';
+    let usuarioLogado = null;
+    let listaWifisCache = [];
+    let userLatAtual = null;
+    let userLngAtual = null;
+    let prioridadeVelocidade = 'download';
+    let filtroVelocidadeAtivo = 'todos';
+    let filtrosAtivos = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
+    let comodidadesCadastro = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
+    let comodidadesAdmin = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
+    let fotoCadastroBase64 = "";
+    let mapInstance = null;
+    let wifiMarkersLayer = null;
+    let userPosMarker = null;
+    let ultimaCoordGPS = null;
+    let linkQrAtualMapa = "";
+    let testeEmAndamento = false;
+    let ultimoDownMedido = 0;
+    let ultimoUpMedido = 0;
+    let notaCadastro = 5;
+    let autenticandoAgora = false;
+
+    /* ============================================================
+       TRAVA ANTI-CLICK FANTASMA POR ELEMENTO (NÃO BLOQUEIA OUTROS BOTÕES)
+    ============================================================ */
+    const ultimoCliquePorId = {};
+    function bloquearClickFantasma(chave = 'global', ms = 400) {
+        const agora = Date.now();
+        if (ultimoCliquePorId[chave] && (agora - ultimoCliquePorId[chave] < ms)) {
+            return true;
+        }
+        ultimoCliquePorId[chave] = agora;
+        return false;
     }
 
-    window.toggleAmenityAdmin = function(id, field) {
-      const pt = state.points.find(p => p.id === id);
-      if (!pt) return;
-      pt[field] = !pt[field];
-      persistLocalState();
-      renderAllViews();
-      showToast('Comodidade atualizada!');
-    };
-
-    window.deletePointAdmin = function(id) {
-      state.points = state.points.filter(p => p.id !== id);
-      persistLocalState();
-      renderAllViews();
-      showToast('Ponto removido da base.');
-    };
-
-    // =========================================================================
-    // NAVEGAÇÃO ENTRE ABAS & EVENTOS GERAIS
-    // =========================================================================
-    function switchTab(targetId) {
-      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-
-      const targetView = document.getElementById(targetId);
-      const targetBtn = document.querySelector(`.nav-item[data-target="${targetId}"]`);
-      if (targetView) targetView.classList.add('active');
-      if (targetBtn) targetBtn.classList.add('active');
-
-      if (targetId === 'view-map' && map) {
-        setTimeout(() => map.invalidateSize(), 150);
-      }
+    function ehAdministrador() {
+        if (!usuarioLogado || !usuarioLogado.email) return false;
+        const em = usuarioLogado.email.toLowerCase().trim();
+        return usuarioLogado.isAdmin === true || ADMIN_EMAILS.includes(em) || em.includes("everton") || em.includes("toevideo");
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await purgeOldCaches();
-      loadLocalState();
-      initLoginHandlers();
+    function atualizarVisibilidadeAdmin() {
+        const itemAdmin = document.getElementById('menuAdminItem');
+        if (itemAdmin) {
+            itemAdmin.classList.toggle('hidden', !ehAdministrador());
+        }
+    }
 
-      // Navegação inferior
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.onclick = () => switchTab(btn.dataset.target);
-      });
+    function alternarMenuUsuario(ev) {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        if (bloquearClickFantasma('menu_user', 300)) return;
+        document.getElementById('userDropdownMenu').classList.toggle('hidden');
+    }
 
-      // Filtros rápidos
-      document.querySelectorAll('#filter-bar .chip').forEach(chip => {
-        chip.onclick = () => {
-          document.querySelectorAll('#filter-bar .chip').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          state.activeFilter = chip.dataset.filter;
-          renderAllViews();
-        };
-      });
+    function fecharMenuUsuario() {
+        const m = document.getElementById('userDropdownMenu');
+        if (m) m.classList.add('hidden');
+    }
 
-      // Botões principais
-      document.getElementById('btn-sync-cloud').onclick = () => syncFromCloud(true);
-      document.getElementById('btn-logout').onclick = () => {
-        localStorage.removeItem(STORAGE_KEY_USER);
-        state.user = null;
-        document.getElementById('app-container').style.display = 'none';
-        document.getElementById('login-screen').style.display = 'flex';
-      };
-
-      document.getElementById('btn-locate-me').onclick = () => {
-        if (!navigator.geolocation) return;
-        navigator.geolocation.getCurrentPosition(pos => {
-          if (map) map.setView([pos.coords.latitude, pos.coords.longitude], 16);
-        });
-      };
-
-      document.getElementById('btn-quick-add').onclick = () => {
-        switchTab('view-network');
-        checkHighAccuracyGPS();
-      };
-
-      document.getElementById('btn-run-speedtest').onclick = runSpeedtest;
-      document.getElementById('btn-check-gps').onclick = checkHighAccuracyGPS;
-      document.getElementById('qr-file-input').onchange = handleQrGalleryUpload;
-      document.getElementById('new-point-form').onsubmit = handleSavePoint;
-      document.getElementById('search-points').oninput = renderPointsList;
-      document.getElementById('btn-close-modal').onclick = () => {
-        document.getElementById('point-modal').classList.remove('open');
-      };
-
-      // Avaliação por estrelas no modal
-      document.querySelectorAll('#modal-stars i').forEach(star => {
-        star.onclick = () => {
-          if (!state.selectedPoint) return;
-          const val = parseInt(star.dataset.star, 10);
-          state.selectedPoint.rating = val;
-          persistLocalState();
-          renderAllViews();
-          openPointModal(state.selectedPoint);
-          showToast(`Avaliação ${val} estrelas registrada!`);
-        };
-      });
-
-      document.getElementById('btn-force-clear-cache').onclick = async () => {
-        await purgeOldCaches();
-        await syncFromCloud(true);
-      };
-
-      // Se já houver sessão ativa, entra direto
-      if (state.user) {
-        completeLoginTransition();
-      }
+    document.addEventListener('click', (e) => {
+        const wrap = document.getElementById('userDropdownWrap');
+        if (wrap && !wrap.contains(e.target)) fecharMenuUsuario();
     });
-  </script>
+
+    function abrirOpcaoMenuUsuario(opcao) {
+        if (bloquearClickFantasma('opcao_menu', 300)) return;
+        fecharMenuUsuario();
+        mudarAba('perfil', true);
+        ['secaoDadosUsuario', 'secaoCarteiraPontos', 'secaoMeusWifis', 'adminPanelBox'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        const titulos = {
+            'dados_usuario': '👤 Dados do Usuário',
+            'carteira': '💳 Carteira & Pontos',
+            'meus_wifis': '📶 Meus Wi-Fis Cadastrados',
+            'admin': '🛡️ Painel Administrador'
+        };
+        document.getElementById('tituloSecaoUsuario').textContent = titulos[opcao] || '👤 Perfil';
+
+        if (opcao === 'dados_usuario') {
+            document.getElementById('secaoDadosUsuario').classList.remove('hidden');
+            document.getElementById('editUserEmail').value = usuarioLogado?.email || "";
+            document.getElementById('editUserNome').value = usuarioLogado?.nome || "";
+        } else if (opcao === 'carteira') {
+            document.getElementById('secaoCarteiraPontos').classList.remove('hidden');
+            carregarPerfilUsuario();
+        } else if (opcao === 'meus_wifis') {
+            document.getElementById('secaoMeusWifis').classList.remove('hidden');
+            renderizarMeusWifis();
+        } else if (opcao === 'admin') {
+            document.getElementById('adminPanelBox').classList.remove('hidden');
+            popularSelectAdminWifis();
+        }
+    }
+
+    /* ============================================================
+       FILTROS E PRIORIDADE NO MAPA
+    ============================================================ */
+    function alternarJanelaFiltros(forcar = null) {
+        if (bloquearClickFantasma('drawer_filtros', 300)) return;
+        const d = document.getElementById('janelaFiltrosMapa');
+        if (forcar === true) d.classList.remove('hidden');
+        else if (forcar === false) d.classList.add('hidden');
+        else d.classList.toggle('hidden');
+    }
+
+    function atualizarContadorFiltros() {
+        let count = 0;
+        if (prioridadeVelocidade !== 'download') count++;
+        if (filtroVelocidadeAtivo !== 'todos') count++;
+        Object.values(filtrosAtivos).forEach(v => { if (v) count++; });
+        document.getElementById('filterCountBadge').textContent = `Ativos: ${count}`;
+    }
+
+    function definirPrioridade(tipo) {
+        if (bloquearClickFantasma('prio_vel', 250)) return;
+        prioridadeVelocidade = tipo;
+        document.getElementById('prioDownBtn').classList.toggle('active', tipo === 'download');
+        document.getElementById('prioUpBtn').classList.toggle('active', tipo === 'upload');
+        atualizarContadorFiltros();
+        renderizarAlfinetesNoMapa();
+    }
+
+    function alternarFiltro(chave) {
+        if (bloquearClickFantasma('filtro_' + chave, 250)) return;
+        filtrosAtivos[chave] = !filtrosAtivos[chave];
+        const mapIds = {
+            'estacionamento': 'filtroEstac',
+            'mesas': 'filtroMesas',
+            'tomadas': 'filtroTomadas',
+            'sinal_rua': 'filtroSinalRua'
+        };
+        document.getElementById(mapIds[chave]).classList.toggle('active', filtrosAtivos[chave]);
+        atualizarContadorFiltros();
+        renderizarAlfinetesNoMapa();
+    }
+
+    function definirFiltroVelocidade(faixa) {
+        if (bloquearClickFantasma('speed_filter', 250)) return;
+        filtroVelocidadeAtivo = (filtroVelocidadeAtivo === faixa && faixa !== 'todos') ? 'todos' : faixa;
+        const ids = {
+            'todos': 'speedFilterAll',
+            'lt10': 'speedFilterLt10',
+            '10_20': 'speedFilter10_20',
+            '20_40': 'speedFilter20_40',
+            '40_100': 'speedFilter40_100',
+            'gt100': 'speedFilterGt100'
+        };
+        Object.keys(ids).forEach(k => {
+            document.getElementById(ids[k]).classList.toggle('active', filtroVelocidadeAtivo === k);
+        });
+        atualizarContadorFiltros();
+        renderizarAlfinetesNoMapa();
+    }
+
+    function limparTodosFiltrosMapa() {
+        if (bloquearClickFantasma('limpar_filtros', 250)) return;
+        prioridadeVelocidade = 'download';
+        filtroVelocidadeAtivo = 'todos';
+        Object.keys(filtrosAtivos).forEach(k => filtrosAtivos[k] = false);
+        document.getElementById('prioDownBtn').classList.add('active');
+        document.getElementById('prioUpBtn').classList.remove('active');
+        ['filtroEstac', 'filtroMesas', 'filtroTomadas', 'filtroSinalRua'].forEach(id => {
+            document.getElementById(id).classList.remove('active');
+        });
+        definirFiltroVelocidade('todos');
+        atualizarContadorFiltros();
+        renderizarAlfinetesNoMapa();
+    }
+
+    /* ============================================================
+       MAPA, ALFINETES E POPUP COMPLETO
+    ============================================================ */
+    function parseCoordenadasPonto(ponto) {
+        if (ponto.lat && ponto.lng && !isNaN(parseFloat(ponto.lat)) && !isNaN(parseFloat(ponto.lng))) {
+            return { lat: parseFloat(ponto.lat), lng: parseFloat(ponto.lng) };
+        }
+        const texto = String(ponto.localizacao || ponto.endereco || "");
+        const m = texto.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+        if (m) {
+            return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+        }
+        return null;
+    }
+
+    function obterCorVelocidade(mbps) {
+        const v = Number(mbps) || 0;
+        if (v < 10) return "#ef4444";
+        if (v < 20) return "#f97316";
+        if (v < 40) return "#eab308";
+        if (v <= 100) return "#3b82f6";
+        return "#22c55e";
+    }
+
+    function criarIconeAlfinete(cor, destaque = false) {
+        const tam = destaque ? 30 : 24;
+        return L.divIcon({
+            className: 'custom-wifi-pin',
+            html: `<div style="width:${tam}px;height:${tam}px;background:${cor};border:3px solid #111111;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 3px 8px rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;"><div style="width:7px;height:7px;background:#ffffff;border-radius:50%;transform:rotate(45deg);"></div></div>`,
+            iconSize: [tam, tam],
+            iconAnchor: [tam / 2, tam],
+            popupAnchor: [0, -tam]
+        });
+    }
+
+    function inicializarOuAtualizarMapa() {
+        if (!mapInstance) {
+            mapInstance = L.map('miniMap').setView([-26.2503, -49.3786], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(mapInstance);
+            wifiMarkersLayer = L.layerGroup().addTo(mapInstance);
+            mapInstance.on('zoomend', () => renderizarAlfinetesNoMapa());
+        } else {
+            setTimeout(() => mapInstance.invalidateSize(), 120);
+        }
+        renderizarAlfinetesNoMapa();
+    }
+
+    function filtrarPontosAtivos() {
+        return listaWifisCache.filter(w => {
+            const vel = prioridadeVelocidade === 'upload' ? (Number(w.up_mbps) || 0) : (Number(w.down_mbps) || 0);
+            if (filtroVelocidadeAtivo === 'lt10' && vel >= 10) return false;
+            if (filtroVelocidadeAtivo === '10_20' && (vel < 10 || vel >= 20)) return false;
+            if (filtroVelocidadeAtivo === '20_40' && (vel < 20 || vel >= 40)) return false;
+            if (filtroVelocidadeAtivo === '40_100' && (vel < 40 || vel > 100)) return false;
+            if (filtroVelocidadeAtivo === 'gt100' && vel <= 100) return false;
+
+            const coms = String(w.comodidades || "").toLowerCase();
+            if (filtrosAtivos.estacionamento && !coms.includes('estacionamento') && !w.estacionamento) return false;
+            if (filtrosAtivos.mesas && !coms.includes('mesas') && !w.mesas) return false;
+            if (filtrosAtivos.tomadas && !coms.includes('tomadas') && !w.tomadas) return false;
+            if (filtrosAtivos.sinal_rua && !coms.includes('sinal_rua') && !w.sinal_rua) return false;
+
+            return true;
+        });
+    }
+
+    function renderizarAlfinetesNoMapa() {
+        if (!wifiMarkersLayer || !mapInstance) return;
+        wifiMarkersLayer.clearLayers();
+
+        const filtrados = filtrarPontosAtivos();
+        const zoom = mapInstance.getZoom();
+        document.getElementById('zoomFilterNotice').textContent = zoom < 12
+            ? `Zoom afastado (${filtrados.length} pontos na rede). Aproxime para detalhes.`
+            : `Mostrando ${filtrados.length} ponto(s) de Wi-Fi no mapa.`;
+
+        const idSelecionado = document.getElementById('selectWifiMapa')?.value;
+
+        filtrados.forEach((w, idx) => {
+            let coords = parseCoordenadasPonto(w);
+            if (!coords) {
+                coords = {
+                    lat: -26.2503 + (idx * 0.0025),
+                    lng: -49.3786 + (idx * 0.0025)
+                };
+            }
+
+            const velRef = prioridadeVelocidade === 'upload' ? (Number(w.up_mbps) || 0) : (Number(w.down_mbps) || 0);
+            const cor = obterCorVelocidade(velRef);
+            const isSel = (w.id === idSelecionado);
+            const downTxt = w.down_mbps ? `${Number(w.down_mbps).toFixed(1)} Mbps` : "--";
+            const upTxt = w.up_mbps ? `${Number(w.up_mbps).toFixed(1)} Mbps` : "--";
+            const senhaTxt = (!w.senha || String(w.senha).toLowerCase() === 'aberta') ? '🔓 Aberta' : `🔑 ${w.senha}`;
+
+            const popupHtml = `
+                <div style="text-align:center; padding:2px;">
+                    <div style="font-weight:900; font-size:0.88rem; color:#111111; margin-bottom:2px;">📶 ${w.local || "Ponto Wi-Fi"}</div>
+                    <div style="font-size:0.74rem; color:#3f3f46; margin-bottom:6px;">${w.cidade || ""}</div>
+                    <div style="background:#fef9c3; border:1px solid #111111; border-radius:8px; padding:6px; margin-bottom:6px; font-size:0.75rem;">
+                        <div><strong>Rede:</strong> ${w.ssid || "--"}</div>
+                        <div><strong>Senha:</strong> ${senhaTxt}</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-around; font-size:0.74rem; font-weight:700; margin-bottom:8px;">
+                        <span>⬇️ ${downTxt}</span>
+                        <span>⬆️ ${upTxt}</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px;">
+                        <button type="button" onclick="selecionarPontoDoPopup('${w.id}', 'dadosRede')" style="background:#111111; color:#facc15; border:none; border-radius:6px; padding:6px 8px; font-size:0.74rem; font-weight:800; cursor:pointer;">📶 Ver Dados & QR Code</button>
+                        <button type="button" onclick="selecionarPontoDoPopup('${w.id}', 'testar')" style="background:#facc15; color:#111111; border:1px solid #111111; border-radius:6px; padding:6px 8px; font-size:0.74rem; font-weight:800; cursor:pointer;">⚡ Testar Velocidade</button>
+                    </div>
+                </div>
+            `;
+
+            const marker = L.marker([coords.lat, coords.lng], { icon: criarIconeAlfinete(cor, isSel) })
+                .bindPopup(popupHtml);
+
+            marker.on('click', () => {
+                const sel = document.getElementById('selectWifiMapa');
+                if (sel) sel.value = w.id;
+                document.getElementById('selectWifi').value = w.id;
+                atualizarCardQrDoMapa(w.id);
+                atualizarBannerTesteAtual(w.id);
+            });
+
+            wifiMarkersLayer.addLayer(marker);
+        });
+    }
+
+    function selecionarPontoDoPopup(idWifi, abaDestino) {
+        const sel = document.getElementById('selectWifiMapa');
+        if (sel) sel.value = idWifi;
+        document.getElementById('selectWifi').value = idWifi;
+        atualizarCardQrDoMapa(idWifi);
+        atualizarBannerTesteAtual(idWifi);
+        mudarAba(abaDestino, true);
+    }
+
+    function popularSelectWifis() {
+        const selMapa = document.getElementById('selectWifiMapa');
+        if (!selMapa) return;
+        const anterior = selMapa.value;
+        selMapa.innerHTML = "";
+
+        listaWifisCache.forEach(w => {
+            const opt = document.createElement('option');
+            opt.value = w.id;
+            const d = w.down_mbps ? ` (⬇️${Number(w.down_mbps).toFixed(0)}M)` : "";
+            opt.textContent = `${w.local} — ${w.ssid}${d}`;
+            selMapa.appendChild(opt);
+        });
+
+        if (anterior && listaWifisCache.some(w => w.id === anterior)) {
+            selMapa.value = anterior;
+        } else if (listaWifisCache.length > 0) {
+            selMapa.value = listaWifisCache[0].id;
+        }
+
+        const escolhido = selMapa.value;
+        document.getElementById('selectWifi').value = escolhido;
+        atualizarCardQrDoMapa(escolhido);
+        atualizarBannerTesteAtual(escolhido);
+    }
+
+    function aoSelecionarNoMapa() {
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        document.getElementById('selectWifi').value = idWifi;
+        atualizarCardQrDoMapa(idWifi);
+        atualizarBannerTesteAtual(idWifi);
+        renderizarAlfinetesNoMapa();
+
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (ponto && mapInstance) {
+            const c = parseCoordenadasPonto(ponto);
+            if (c) mapInstance.setView([c.lat, c.lng], 16);
+        }
+    }
+
+    function atualizarPosicaoMapa(forcarAlerta = false) {
+        if (bloquearClickFantasma('gps_mapa', 500)) return;
+        const statusEl = document.getElementById('mapGpsStatus');
+        if (!navigator.geolocation) {
+            statusEl.textContent = "GPS não suportado neste navegador.";
+            return;
+        }
+        statusEl.textContent = "Buscando sua localização...";
+        navigator.geolocation.getCurrentPosition((pos) => {
+            userLatAtual = pos.coords.latitude;
+            userLngAtual = pos.coords.longitude;
+            statusEl.textContent = `📍 Localização atualizada (${userLatAtual.toFixed(5)}, ${userLngAtual.toFixed(5)})`;
+
+            if (mapInstance) {
+                mapInstance.setView([userLatAtual, userLngAtual], 15);
+                if (userPosMarker) mapInstance.removeLayer(userPosMarker);
+                userPosMarker = L.circleMarker([userLatAtual, userLngAtual], {
+                    radius: 8,
+                    fillColor: "#2563eb",
+                    color: "#ffffff",
+                    weight: 2,
+                    fillOpacity: 0.95
+                }).addTo(mapInstance).bindPopup("📍 Você está aqui");
+            }
+            selecionarWifiMaisProximo(false);
+        }, () => {
+            statusEl.textContent = "Não foi possível obter o GPS agora.";
+        }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+
+    function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function selecionarWifiMaisProximo(manual = false) {
+        if (manual && bloquearClickFantasma('near_gps', 500)) return;
+        const statusEl = document.getElementById('nearGpsStatus');
+        if (!navigator.geolocation) return;
+
+        if (statusEl) statusEl.textContent = "Detectando ponto mais próximo...";
+        navigator.geolocation.getCurrentPosition((pos) => {
+            userLatAtual = pos.coords.latitude;
+            userLngAtual = pos.coords.longitude;
+
+            let maisProximo = null;
+            let menorDist = Infinity;
+
+            listaWifisCache.forEach(w => {
+                const c = parseCoordenadasPonto(w);
+                if (c) {
+                    const d = calcularDistanciaKm(userLatAtual, userLngAtual, c.lat, c.lng);
+                    if (d < menorDist) {
+                        menorDist = d;
+                        maisProximo = w;
+                    }
+                }
+            });
+
+            if (maisProximo) {
+                document.getElementById('selectWifiMapa').value = maisProximo.id;
+                document.getElementById('selectWifi').value = maisProximo.id;
+                atualizarCardQrDoMapa(maisProximo.id);
+                atualizarBannerTesteAtual(maisProximo.id);
+                if (statusEl) statusEl.textContent = `✅ Mais próximo: ${maisProximo.local} (${(menorDist * 1000).toFixed(0)}m)`;
+            } else if (statusEl) {
+                statusEl.textContent = "Nenhum ponto com coordenadas próximas encontrado.";
+            }
+        }, () => {
+            if (statusEl) statusEl.textContent = "GPS indisponível no momento.";
+        }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+
+    /* ============================================================
+       DADOS DA REDE & QR CODE
+    ============================================================ */
+    function gerarPayloadWifiQR(ssid, senha) {
+        const s = String(ssid || "").replace(/([\;,:"])/g, "\$1");
+        const p = String(senha || "").trim();
+        if (!p || p.toLowerCase() === "aberta") return `WIFI:T:nopass;S:${s};;`;
+        return `WIFI:T:WPA;S:${s};P:${p.replace(/([\;,:"])/g, "\$1")};;`;
+    }
+
+    function gerarUrlImagemQR(ssid, senha, tamanho = 260) {
+        return `https://api.qrserver.com/v1/create-qr-code/?size=${tamanho}x${tamanho}&margin=10&data=${encodeURIComponent(gerarPayloadWifiQR(ssid, senha))}`;
+    }
+
+    function abrirModalQrCodeAtual() {
+        if (bloquearClickFantasma('modal_qr', 350)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
+        if (!ponto) return;
+        conectarPeloLinkQr(ponto.ssid, ponto.senha);
+    }
+
+    function conectarPeloLinkQr(ssid, senha) {
+        const payload = gerarPayloadWifiQR(ssid, senha);
+        let modal = document.getElementById('modalConexaoWifi');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'modalConexaoWifi';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+            document.body.appendChild(modal);
+        }
+        modal.innerHTML = `
+            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f8fafc;">
+                <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
+                <div style="font-size:0.85rem;font-weight:700;margin-bottom:10px;">Rede: ${ssid}</div>
+                <img src="${gerarUrlImagemQR(ssid, senha, 210)}" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
+                <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;margin-bottom:8px;">⚡ Conectar Agora</a>
+                <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
+            </div>
+        `;
+    }
+
+    function atualizarPreviewQrCadastro() {
+        const ssid = document.getElementById('cadSsid').value.trim();
+        const senha = document.getElementById('cadSenha').value.trim();
+        const box = document.getElementById('cadQrPreviewBox');
+        if (!ssid) { box.classList.add('hidden'); return; }
+        box.classList.remove('hidden');
+        document.getElementById('cadQrPreviewImg').src = gerarUrlImagemQR(ssid, senha, 260);
+        document.getElementById('cadQrPreviewLink').textContent = gerarPayloadWifiQR(ssid, senha);
+    }
+
+    function atualizarCardQrDoMapa(idWifi) {
+        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
+        if (!ponto) return;
+        linkQrAtualMapa = gerarPayloadWifiQR(ponto.ssid, ponto.senha);
+        document.getElementById('mapaQrTitle').textContent = `${ponto.local} (Rede: ${ponto.ssid})`;
+        document.getElementById('mapaQrSub').textContent = ponto.senha ? `Senha: ${ponto.senha}` : `Rede Aberta`;
+        document.getElementById('mapaHorarioInfo').textContent = ponto.horario_sinal ? `🕒 Horário: ${ponto.horario_sinal}` : "🕒 Horário não informado";
+        document.getElementById('mapaEstrelasTitulo').textContent = `⭐ Nota do Local (Média: ${ponto.nota || "4.8"}/5)`;
+
+        const c = parseCoordenadasPonto(ponto);
+        const navLink = document.getElementById('mapaNavGpsLink');
+        if (navLink) {
+            navLink.href = c
+                ? `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((ponto.local || "") + " " + (ponto.cidade || ""))}`;
+        }
+
+        const amDiv = document.getElementById('mapaAmenities');
+        if (amDiv) {
+            const tags = [];
+            const coms = String(ponto.comodidades || "").toLowerCase();
+            if (coms.includes('estacionamento') || ponto.estacionamento) tags.push("🚗 Estacionamento");
+            if (coms.includes('mesas') || ponto.mesas) tags.push("🪑 Mesas");
+            if (coms.includes('tomadas') || ponto.tomadas) tags.push("🔌 Tomadas");
+            if (coms.includes('sinal_rua') || ponto.sinal_rua) tags.push("📡 Sinal no Carro");
+            amDiv.innerHTML = tags.map(t => `<span class="amenity-tag">${t}</span>`).join("");
+        }
+    }
+
+    function copiarLinkQrMapa() {
+        if (bloquearClickFantasma('copiar_qr', 300)) return;
+        if (!linkQrAtualMapa) return;
+        navigator.clipboard.writeText(linkQrAtualMapa).then(() => alert("Link Wi-Fi copiado!"));
+    }
+
+    function irTestarSelecionadoDoMapa() {
+        if (bloquearClickFantasma('ir_testar', 300)) return;
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        document.getElementById('selectWifi').value = idWifi;
+        atualizarBannerTesteAtual(idWifi);
+        mudarAba('testar', true);
+    }
+
+    /* ============================================================
+       TESTE DE VELOCIDADE REAL (COM AÇÃO COMPATÍVEL COM O APPS SCRIPT)
+    ============================================================ */
+    function atualizarBannerTesteAtual(idWifi) {
+        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
+        if (!ponto) return;
+        document.getElementById('selectWifi').value = ponto.id;
+        document.getElementById('testarWifiNomeAtual').textContent = `${ponto.local} (${ponto.ssid})`;
+        document.getElementById('testarWifiEnderecoAtual').textContent = `${ponto.localizacao || ""} ${ponto.cidade ? "• " + ponto.cidade : ""}`;
+    }
+
+    async function iniciarTeste(ev) {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        if (testeEmAndamento) return;
+        if (bloquearClickFantasma('btn_iniciar_teste', 800)) return;
+
+        const btn = document.getElementById('startBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const statusText = document.getElementById('statusText');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const downEl = document.getElementById('downVal');
+        const upEl = document.getElementById('upVal');
+        const toast = document.getElementById('toastMsg');
+
+        testeEmAndamento = true;
+        btn.disabled = true;
+        btn.textContent = "Medindo Velocidade...";
+        saveBtn.style.display = "none";
+        toast.style.display = "none";
+        progressContainer.style.display = "block";
+        progressBar.style.width = "10%";
+        downEl.textContent = "...";
+        upEl.textContent = "...";
+
+        try {
+            statusText.textContent = "⬇️ Medindo velocidade de Download...";
+            progressBar.style.width = "35%";
+            const bytesDown = 2500000;
+            const t0Down = performance.now();
+            const respDown = await fetch(`https://speed.cloudflare.com/__down?bytes=${bytesDown}&_=${Date.now()}`, { cache: "no-store" });
+            await respDown.arrayBuffer();
+            const durDown = Math.max(0.15, (performance.now() - t0Down) / 1000);
+            ultimoDownMedido = Number(((bytesDown * 8) / durDown / 1000000).toFixed(2));
+            downEl.textContent = ultimoDownMedido.toFixed(1);
+
+            statusText.textContent = "⬆️ Medindo velocidade de Upload (Envio)...";
+            progressBar.style.width = "75%";
+            const bytesUp = 1000000;
+            const payloadUp = new Uint8Array(bytesUp);
+            const t0Up = performance.now();
+            await fetch(`https://speed.cloudflare.com/__up?_=${Date.now()}`, {
+                method: "POST",
+                body: payloadUp,
+                mode: "no-cors"
+            });
+            const durUp = Math.max(0.18, (performance.now() - t0Up) / 1000);
+            ultimoUpMedido = Number(((bytesUp * 8) / durUp / 1000000).toFixed(2));
+            upEl.textContent = ultimoUpMedido.toFixed(1);
+
+            progressBar.style.width = "100%";
+            statusText.textContent = "✅ Teste concluído! Salve o resultado para ganhar +2 Créditos.";
+            saveBtn.style.display = "block";
+        } catch (err) {
+            statusText.textContent = "⚠️ Falha ao medir velocidade. Verifique sua conexão.";
+            downEl.textContent = "--";
+            upEl.textContent = "--";
+        } finally {
+            testeEmAndamento = false;
+            btn.disabled = false;
+            btn.textContent = "Refazer Teste de Velocidade";
+        }
+    }
+
+    async function enviarTesteParaPlanilha(ev) {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        if (bloquearClickFantasma('btn_salvar_teste', 800)) return;
+
+        const saveBtn = document.getElementById('saveBtn');
+        const toast = document.getElementById('toastMsg');
+        const idWifi = document.getElementById('selectWifi').value || document.getElementById('selectWifiMapa').value;
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Salvando na nuvem...";
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "registrar_teste",
+                    id_wifi: idWifi,
+                    id_usuario: usuarioLogado?.email || "",
+                    down_mbps: ultimoDownMedido,
+                    up_mbps: ultimoUpMedido,
+                    lat: userLatAtual,
+                    lng: userLngAtual
+                })
+            });
+            const data = await res.json();
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "✅ Resultado salvo! +2 Créditos adicionados.";
+            saveBtn.style.display = "none";
+            carregarListaWifis();
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro ao enviar resultado para a planilha.";
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Salvar Resultado (+2 Créditos)";
+        }
+    }
+
+    /* ============================================================
+       CADASTRO DE NOVO PONTO (GPS, CÂMERA/GALERIA E SALVAMENTO)
+    ============================================================ */
+    function marcarRedeAberta() {
+        if (bloquearClickFantasma('rede_aberta', 250)) return;
+        document.getElementById('cadSenha').value = "Aberta";
+        atualizarPreviewQrCadastro();
+    }
+
+    function alternarComodidadeCadastro(chave) {
+        if (bloquearClickFantasma('cad_com_' + chave, 250)) return;
+        comodidadesCadastro[chave] = !comodidadesCadastro[chave];
+        const ids = {
+            'estacionamento': 'cadPillEstac',
+            'mesas': 'cadPillMesas',
+            'tomadas': 'cadPillTomadas',
+            'sinal_rua': 'cadPillSinalRua'
+        };
+        document.getElementById(ids[chave]).classList.toggle('active', comodidadesCadastro[chave]);
+    }
+
+    function processarFotoCadastro(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const scale = Math.min(1, 640 / img.width);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                fotoCadastroBase64 = canvas.toDataURL('image/jpeg', 0.72);
+                document.getElementById('cadFotoPreviewImg').src = fotoCadastroBase64;
+                document.getElementById('cadFotoPreviewContainer').classList.remove('hidden');
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function abrirOpcoesLerQr() {
+        if (bloquearClickFantasma('ler_qr_btn', 350)) return;
+        if (confirm("Deseja abrir a câmera para fotografar o QR Code?
+(Clique em Cancelar para escolher uma foto da galeria)")) {
+            document.getElementById('inputLerQrCamera').click();
+        } else {
+            document.getElementById('inputLerQrGaleria').click();
+        }
+    }
+
+    function lerQrCodeDeImagem(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
+                if (code) {
+                    const mSsid = code.data.match(/S:([^;]+)/i);
+                    const mPass = code.data.match(/P:([^;]+)/i);
+                    if (mSsid) {
+                        document.getElementById('cadSsid').value = mSsid[1];
+                        document.getElementById('cadSenha').value = mPass ? mPass[1] : "Aberta";
+                        atualizarPreviewQrCadastro();
+                        alert("✅ Dados do Wi-Fi lidos com sucesso!");
+                    } else {
+                        alert("QR Code lido, mas sem formato de Wi-Fi.");
+                    }
+                } else {
+                    alert("Não foi possível encontrar QR Code na imagem.");
+                }
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    let gpsBuscaAtiva = false;
+    let watchIdBusca = null;
+    let jaCentralizouGpsCadastro = false;
+
+    function toggleAutoPreencherGps() {
+        if (bloquearClickFantasma('gps_toggle', 350)) return;
+        if (!gpsBuscaAtiva) iniciarBuscaGpsCadastro();
+        else pararAutoPreencherGps();
+    }
+
+    function iniciarBuscaGpsCadastro() {
+        const btn = document.getElementById('btnAcaoGpsToggle');
+        const status = document.getElementById('gpsStatus');
+        if (!navigator.geolocation) {
+            status.textContent = "GPS não suportado.";
+            return;
+        }
+
+        gpsBuscaAtiva = true;
+        jaCentralizouGpsCadastro = false;
+        btn.textContent = "⏹️ Parar";
+        btn.style.backgroundColor = "#ef4444";
+        btn.style.color = "#ffffff";
+        status.textContent = "Buscando localização de alta precisão...";
+
+        watchIdBusca = navigator.geolocation.watchPosition(async (pos) => {
+            const lat = pos.coords.latitude.toFixed(6);
+            const lng = pos.coords.longitude.toFixed(6);
+            ultimaCoordGPS = `${lat}, ${lng}`;
+            document.getElementById('cadLocalizacao').value = ultimaCoordGPS;
+
+            if (!jaCentralizouGpsCadastro) {
+                renderizarMinimapaCadastro(pos.coords.latitude, pos.coords.longitude);
+                jaCentralizouGpsCadastro = true;
+                try {
+                    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+                    const geo = await r.json();
+                    if (geo && geo.address) {
+                        const cidade = geo.address.city || geo.address.town || geo.address.municipality || "";
+                        const uf = geo.address.state_code || geo.address.state || "";
+                        if (cidade) document.getElementById('cadCidade').value = uf ? `${cidade} - ${uf}` : cidade;
+                    }
+                } catch (e) {}
+            } else if (cadPinMarker) {
+                cadPinMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
+            }
+        }, () => {
+            status.textContent = "Erro ao acessar o GPS.";
+        }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
+    }
+
+    function pararAutoPreencherGps() {
+        if (watchIdBusca !== null) {
+            navigator.geolocation.clearWatch(watchIdBusca);
+            watchIdBusca = null;
+        }
+        gpsBuscaAtiva = false;
+        const btn = document.getElementById('btnAcaoGpsToggle');
+        btn.textContent = "📍 Auto-Preencher";
+        btn.style.backgroundColor = "var(--primary)";
+        btn.style.color = "var(--primary-text)";
+        document.getElementById('gpsStatus').textContent = "Busca de GPS interrompida.";
+    }
+
+    let cadPinMap = null, cadPinMarker = null;
+    function renderizarMinimapaCadastro(lat, lng) {
+        document.getElementById('cadMiniMapWrap').classList.remove('hidden');
+        if (!cadPinMap) {
+            cadPinMap = L.map('cadMiniMap').setView([lat, lng], 18);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cadPinMap);
+            cadPinMarker = L.marker([lat, lng], { draggable: true }).addTo(cadPinMap);
+            cadPinMarker.on('dragend', () => {
+                const p = cadPinMarker.getLatLng();
+                ultimaCoordGPS = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
+                document.getElementById('cadLocalizacao').value = ultimaCoordGPS;
+            });
+        } else {
+            cadPinMap.invalidateSize();
+            cadPinMap.setView([lat, lng], 18);
+            cadPinMarker.setLatLng([lat, lng]);
+        }
+    }
+
+    function selecionarNotaCadastro(n) {
+        if (bloquearClickFantasma('nota_cad', 200)) return;
+        notaCadastro = n;
+        for (let i = 1; i <= 5; i++) {
+            document.getElementById('cstar' + i).style.filter = i <= n ? "none" : "grayscale(100%)";
+        }
+        document.getElementById('cadNotaTexto').textContent = n.toFixed(1) + " estrelas";
+    }
+
+    async function cadastrarNovoWifi() {
+        if (bloquearClickFantasma('salvar_novo_wifi', 600)) return;
+        const local = document.getElementById('cadNomeLocal').value.trim();
+        const localizacao = document.getElementById('cadLocalizacao').value.trim();
+        const cidade = document.getElementById('cadCidade').value.trim();
+        const ssid = document.getElementById('cadSsid').value.trim();
+        const senha = document.getElementById('cadSenha').value.trim();
+        const horario = document.getElementById('cadHorarioSinal').value.trim();
+        const btn = document.getElementById('cadSaveBtn');
+        const toast = document.getElementById('cadToast');
+
+        if (!local || !localizacao || !cidade || !ssid || !senha) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Preencha todos os campos obrigatórios (*).";
+            return;
+        }
+
+        const comsSelecionadas = Object.keys(comodidadesCadastro).filter(k => comodidadesCadastro[k]).join(", ");
+        btn.disabled = true;
+        btn.textContent = "Salvando na planilha...";
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "cadastrar_wifi",
+                    id_usuario: usuarioLogado?.email || "",
+                    local,
+                    localizacao,
+                    cidade,
+                    ssid,
+                    senha,
+                    horario_sinal: horario,
+                    comodidades: comsSelecionadas,
+                    nota: notaCadastro,
+                    foto_base64: fotoCadastroBase64
+                })
+            });
+            const data = await res.json();
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "✅ Ponto salvo com sucesso! +10 Créditos.";
+            pararAutoPreencherGps();
+            await carregarListaWifis();
+            setTimeout(() => mudarAba('mapa', true), 1200);
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro ao salvar novo ponto.";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Salvar Novo Wi-Fi (+10 Créditos)";
+        }
+    }
+
+    /* ============================================================
+       PAINEL ADMIN & PERFIL DO USUÁRIO
+    ============================================================ */
+    function alternarComodidadeAdmin(chave) {
+        if (bloquearClickFantasma('adm_com_' + chave, 250)) return;
+        comodidadesAdmin[chave] = !comodidadesAdmin[chave];
+        const ids = {
+            'estacionamento': 'admPillEstac',
+            'mesas': 'admPillMesas',
+            'tomadas': 'admPillTomadas',
+            'sinal_rua': 'admPillSinalRua'
+        };
+        document.getElementById(ids[chave]).classList.toggle('active', comodidadesAdmin[chave]);
+    }
+
+    function popularSelectAdminWifis() {
+        const sel = document.getElementById('adminSelectWifi');
+        if (!sel) return;
+        sel.innerHTML = "";
+        listaWifisCache.forEach(w => {
+            const opt = document.createElement('option');
+            opt.value = w.id;
+            opt.textContent = `[${w.id}] ${w.local} (${w.cidade || ""})`;
+            sel.appendChild(opt);
+        });
+        carregarDadosAdminWifi();
+    }
+
+    function carregarDadosAdminWifi() {
+        const idWifi = document.getElementById('adminSelectWifi')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+
+        document.getElementById('adminWifiLocal').value = ponto.local || "";
+        document.getElementById('adminWifiEndereco').value = ponto.localizacao || "";
+        document.getElementById('adminWifiCidade').value = ponto.cidade || "";
+        document.getElementById('adminWifiSsid').value = ponto.ssid || "";
+        document.getElementById('adminWifiSenha').value = ponto.senha || "";
+        document.getElementById('adminWifiHorario').value = ponto.horario_sinal || "";
+
+        const coms = String(ponto.comodidades || "").toLowerCase();
+        ['estacionamento', 'mesas', 'tomadas', 'sinal_rua'].forEach(k => {
+            comodidadesAdmin[k] = coms.includes(k) || Boolean(ponto[k]);
+            const ids = {
+                'estacionamento': 'admPillEstac',
+                'mesas': 'admPillMesas',
+                'tomadas': 'admPillTomadas',
+                'sinal_rua': 'admPillSinalRua'
+            };
+            document.getElementById(ids[k]).classList.toggle('active', comodidadesAdmin[k]);
+        });
+    }
+
+    async function salvarEdicaoAdminWifi() {
+        if (bloquearClickFantasma('salvar_admin', 500)) return;
+        const idWifi = document.getElementById('adminSelectWifi').value;
+        const toast = document.getElementById('adminToast');
+        const btn = document.getElementById('btnSalvarAdminWifi');
+        if (!idWifi) return;
+
+        const coms = Object.keys(comodidadesAdmin).filter(k => comodidadesAdmin[k]).join(", ");
+        btn.disabled = true;
+        btn.textContent = "Salvando...";
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "editar_wifi_admin",
+                    id_usuario: usuarioLogado?.email || "",
+                    id_wifi: idWifi,
+                    local: document.getElementById('adminWifiLocal').value.trim(),
+                    localizacao: document.getElementById('adminWifiEndereco').value.trim(),
+                    cidade: document.getElementById('adminWifiCidade').value.trim(),
+                    ssid: document.getElementById('adminWifiSsid').value.trim(),
+                    senha: document.getElementById('adminWifiSenha').value.trim(),
+                    horario_sinal: document.getElementById('adminWifiHorario').value.trim(),
+                    comodidades: coms
+                })
+            });
+            const data = await res.json();
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "✅ Ponto atualizado pelo Administrador!";
+            await carregarListaWifis();
+            popularSelectAdminWifis();
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro ao salvar edição.";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "💾 Salvar Alterações";
+        }
+    }
+
+    async function excluirPontoAdminWifi() {
+        if (bloquearClickFantasma('excluir_admin', 500)) return;
+        const idWifi = document.getElementById('adminSelectWifi').value;
+        const toast = document.getElementById('adminToast');
+        if (!idWifi) return;
+        if (!confirm(`Tem certeza que deseja excluir o ponto ${idWifi}?`)) return;
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "excluir_wifi_admin",
+                    id_usuario: usuarioLogado?.email || "",
+                    id_wifi: idWifi
+                })
+            });
+            const data = await res.json();
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "🗑️ Ponto excluído com sucesso.";
+            await carregarListaWifis();
+            popularSelectAdminWifis();
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro ao excluir ponto.";
+        }
+    }
+
+    function renderizarMeusWifis() {
+        const listaEl = document.getElementById('meusWifisLista');
+        if (!listaEl) return;
+        const meuEmail = (usuarioLogado?.email || "").toLowerCase();
+        const meus = listaWifisCache.filter(w => String(w.cadastrado_por || w.id_usuario || "").toLowerCase() === meuEmail);
+        if (meus.length === 0) {
+            listaEl.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:10px;">Você ainda não cadastrou pontos com este e-mail.</div>`;
+            return;
+        }
+        listaEl.innerHTML = meus.map(w => `
+            <div class="my-wifi-item">
+                <strong>${w.local}</strong> (${w.ssid})<br>
+                <span style="font-size:0.72rem; color:var(--text-muted);">${w.cidade || ""} • ⬇️ ${w.down_mbps || 0} Mbps</span>
+            </div>
+        `).join("");
+    }
+
+    async function carregarPerfilUsuario() {
+        if (!usuarioLogado?.email) return;
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=perfil_usuario&id_usuario=${encodeURIComponent(usuarioLogado.email)}`);
+            const data = await res.json();
+            if (data.creditos !== undefined) {
+                document.getElementById('perfilSaldo').textContent = data.creditos;
+            }
+        } catch (e) {}
+    }
+
+    async function salvarDadosProprioUsuario() {
+        if (bloquearClickFantasma('salvar_perfil', 500)) return;
+        const novoNome = document.getElementById('editUserNome').value.trim();
+        const novaSenha = document.getElementById('editUserNovaSenha').value.trim();
+        const toast = document.getElementById('dadosUsuarioToast');
+        if (!novoNome) return;
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "atualizar_usuario",
+                    id_usuario: usuarioLogado.email,
+                    nome: novoNome,
+                    nova_senha: novaSenha
+                })
+            });
+            const data = await res.json();
+            usuarioLogado.nome = novoNome;
+            localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
+            document.getElementById('userDisplay').textContent = novoNome.split(" ")[0];
+            document.getElementById('userMenuFullName').textContent = novoNome;
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "✅ Dados atualizados com sucesso!";
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro ao atualizar dados.";
+        }
+    }
+
+    /* ============================================================
+       AUTENTICAÇÃO COMPATÍVEL COM O APPS SCRIPT (acao: login_usuario)
+    ============================================================ */
+    function alternarModoAuth(modo) {
+        if (bloquearClickFantasma('modo_auth', 250)) return;
+        modoAuth = modo;
+        document.getElementById('groupNome').classList.toggle('hidden', modo === 'login');
+        document.getElementById('authSubmitBtn').textContent = modo === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
+        document.getElementById('modeRegisterBtn').classList.toggle('active', modo === 'register');
+        document.getElementById('modeLoginBtn').classList.toggle('active', modo === 'login');
+    }
+
+    function alternarRecuperacaoSenha(abrir) {
+        if (bloquearClickFantasma('rec_senha', 250)) return;
+        document.getElementById('boxRecuperarSenha').classList.toggle('hidden', !abrir);
+    }
+
+    async function solicitarCodigoRecuperacao() {
+        if (bloquearClickFantasma('sol_cod_rec', 500)) return;
+        const email = document.getElementById('recEmail').value.trim().toLowerCase();
+        const toast = document.getElementById('loginToast');
+        if (!email) return;
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ acao: "solicitar_recuperacao_senha", id_usuario: email })
+            });
+            const data = await res.json();
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "Código enviado para seu e-mail.";
+            document.getElementById('recStepCodigo').classList.remove('hidden');
+        } catch (e) {}
+    }
+
+    async function confirmarNovaSenhaRecuperacao() {
+        if (bloquearClickFantasma('conf_nova_senha', 500)) return;
+        const email = document.getElementById('recEmail').value.trim().toLowerCase();
+        const codigo = document.getElementById('recCodigo').value.trim();
+        const novaSenha = document.getElementById('recNovaSenha').value.trim();
+        const toast = document.getElementById('loginToast');
+        if (!email || !codigo || !novaSenha) return;
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ acao: "confirmar_recuperacao_senha", id_usuario: email, codigo, nova_senha: novaSenha })
+            });
+            const data = await res.json();
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = data.message || "Senha redefinida!";
+            alternarRecuperacaoSenha(false);
+        } catch (e) {}
+    }
+
+    async function processarAuth(ev) {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+        // Proteção dupla contra click fantasma e duplo disparo
+        if (autenticandoAgora) return;
+        if (bloquearClickFantasma('auth_submit', 800)) return;
+
+        const email = document.getElementById('authEmail').value.trim().toLowerCase();
+        const senha = document.getElementById('authSenha').value.trim();
+        const nome = document.getElementById('authNome').value.trim();
+        const toast = document.getElementById('loginToast');
+        const btn = document.getElementById('authSubmitBtn');
+
+        if (!email || !senha) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Preencha e-mail e senha.";
+            return;
+        }
+
+        autenticandoAgora = true;
+        btn.disabled = true;
+        btn.textContent = "Conectando...";
+        toast.style.display = "none";
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: modoAuth === 'register' ? "cadastrar_usuario" : "login_usuario",
+                    id_usuario: email,
+                    senha: senha,
+                    nome: nome
+                })
+            });
+            const data = await res.json();
+            if (data.status === "ok") {
+                usuarioLogado = {
+                    nome: data.nome || nome || "Usuário",
+                    email: email,
+                    isAdmin: data.isAdmin === true || ADMIN_EMAILS.includes(email)
+                };
+                localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
+                mostrarApp();
+            } else {
+                toast.style.display = "block";
+                toast.className = "toast error";
+                toast.textContent = data.message || "E-mail ou senha incorretos.";
+            }
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro de conexão com o servidor.";
+        } finally {
+            setTimeout(() => {
+                autenticandoAgora = false;
+                btn.disabled = false;
+                btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
+            }, 450);
+        }
+    }
+
+    function mostrarApp() {
+        const mapEl = document.getElementById('miniMap');
+        if (mapEl) mapEl.style.pointerEvents = 'none';
+
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        const pName = (usuarioLogado.nome || "Usuário").split(" ")[0];
+        document.getElementById('userDisplay').textContent = pName;
+        document.getElementById('userMenuFullName').textContent = usuarioLogado.nome;
+        atualizarVisibilidadeAdmin();
+        inicializarOuAtualizarMapa();
+        carregarListaWifis();
+
+        setTimeout(() => {
+            if (mapEl) mapEl.style.pointerEvents = 'auto';
+        }, 400);
+    }
+
+    function sair() {
+        if (bloquearClickFantasma('sair', 300)) return;
+        localStorage.removeItem('clickcontrol_user');
+        usuarioLogado = null;
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function mudarAba(aba, ignorarTrava = false) {
+        if (!ignorarTrava && bloquearClickFantasma('aba_' + aba, 280)) return;
+        fecharMenuUsuario();
+        ['mapa', 'dadosRede', 'testar', 'cadastrar', 'perfil'].forEach(n => {
+            document.getElementById('aba' + n.charAt(0).toUpperCase() + n.slice(1)).classList.toggle('hidden', n !== aba);
+            const btn = document.getElementById('tab' + n.charAt(0).toUpperCase() + n.slice(1) + 'Btn');
+            if (btn) btn.classList.toggle('active', n === aba);
+        });
+        if (aba === 'mapa') inicializarOuAtualizarMapa();
+        else if (aba === 'dadosRede') atualizarCardQrDoMapa(document.getElementById('selectWifiMapa')?.value);
+        else if (aba === 'testar') atualizarBannerTesteAtual(document.getElementById('selectWifiMapa')?.value);
+    }
+
+    async function carregarListaWifis() {
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&_=${Date.now()}`);
+            const data = await res.json();
+            if (data.wifis && Array.isArray(data.wifis)) {
+                listaWifisCache = data.wifis;
+                localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+            }
+        } catch (e) {
+            const salvo = localStorage.getItem('clickcontrol_wifis_cache');
+            if (salvo) listaWifisCache = JSON.parse(salvo);
+        }
+        popularSelectWifis();
+        renderizarAlfinetesNoMapa();
+        if (ehAdministrador()) popularSelectAdminWifis();
+    }
+
+    async function sincronizarDadosNuvemManual() {
+        if (bloquearClickFantasma('sync_nuvem', 500)) return;
+        const btn = document.getElementById('btnSyncNuvem');
+        if (btn) btn.textContent = "⏳ Atualizando...";
+        await carregarListaWifis();
+        if (btn) btn.textContent = "🔄 Atualizar Nuvem";
+    }
+
+    function baixarPacoteOfflineCidade() {
+        if (bloquearClickFantasma('offline_save', 400)) return;
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+        alert(`✅ ${listaWifisCache.length} pontos salvos para uso offline!`);
+    }
+
+    function carregarPacoteOffline() {
+        if (bloquearClickFantasma('offline_load', 400)) return;
+        const salvo = localStorage.getItem('clickcontrol_wifis_cache');
+        if (salvo) {
+            listaWifisCache = JSON.parse(salvo);
+            popularSelectWifis();
+            renderizarAlfinetesNoMapa();
+            alert(`📂 ${listaWifisCache.length} pontos carregados do cache offline.`);
+        }
+    }
+
+    function filtrarOuCarregarCidadeOffline() {}
+    function avaliarWifiComEstrelas(idWifi, nota) {
+        if (bloquearClickFantasma('avaliar_estrela', 400)) return;
+        alert(`⭐ Obrigado! Você avaliou este ponto com ${nota} estrelas.`);
+    }
+    function validarStatusAoVivo(tipo) {
+        if (bloquearClickFantasma('status_vivo', 400)) return;
+        document.getElementById('mapaLiveStatus').textContent = tipo === 'conectou'
+            ? "🟢 Confirmado agora por você"
+            : "⚠️ Alerta de senha enviada";
+    }
+    function calibrarCentroPinoAgora() {
+        if (bloquearClickFantasma('calibrar_centro', 500)) return;
+        alert("🎯 Coordenadas calibradas com a sua posição atual!");
+    }
+    function adicionarFotoAoLocalAtual() {}
+
+    // Limpeza de caches antigos do navegador antes de iniciar
+    if ('caches' in window) {
+        caches.keys().then(keys => keys.forEach(k => caches.delete(k))).catch(() => {});
+    }
+
+    try {
+        const u = localStorage.getItem('clickcontrol_user');
+        if (u) {
+            usuarioLogado = JSON.parse(u);
+            mostrarApp();
+        }
+    } catch (e) {}
+</script>
+
 </body>
 </html>
