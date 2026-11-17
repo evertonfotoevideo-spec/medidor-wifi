@@ -1014,10 +1014,11 @@
                 <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
             </div>
 
-            <!-- Pacote Offline da Cidade -->
+            <!-- Sincronização em Tempo Real + Pacote Offline -->
             <div style="display:flex; gap:6px; margin-bottom:10px;">
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade Offline</button>
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Cache Offline</button>
+                <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; border-color:var(--primary); color:var(--primary);" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
+                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade</button>
+                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
             </div>
 
             <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
@@ -2167,12 +2168,35 @@
         if (adminBox) adminBox.classList.toggle('hidden', !isAdm);
         if (menuAdminItem) menuAdminItem.classList.toggle('hidden', !isAdm);
 
-        setTimeout(() => {
-            inicializarOuAtualizarMapa();
-        }, 80);
+        inicializarOuAtualizarMapa();
         await carregarListaWifis();
+        renderizarAlfinetesNoMapa(false);
         iniciarRastreamentoGpsAltaPrecisao(false);
         carregarPerfilUsuario();
+
+        if (!window._clickControlSyncTimer) {
+            window._clickControlSyncTimer = setInterval(() => {
+                if (usuarioLogado && !document.hidden) {
+                    carregarListaWifis();
+                }
+            }, 25000);
+        }
+    }
+
+    async function sincronizarDadosNuvemManual() {
+        const btn = document.getElementById('btnSyncNuvem');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "⏳ Atualizando...";
+        }
+        await carregarListaWifis();
+        renderizarAlfinetesNoMapa(true);
+        const idAtual = document.getElementById('selectWifiMapa')?.value;
+        if (idAtual) atualizarCardQrDoMapa(idAtual);
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "🔄 Atualizar Nuvem";
+        }
     }
 
     function sair() {
@@ -2947,18 +2971,20 @@
 
     async function carregarListaWifis() {
         try {
-            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`);
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`, { cache: "no-store" });
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
                 // Filtra WFI-001 caso venha da planilha
                 listaWifisCache = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
                 await resolverCoordenadasFaltantes();
                 const ordenada = obterListaFiltradaEOrdenada();
-                preencherSelectsComLista(ordenada);
+                preencherSelectsComLista(ordenada, document.getElementById('selectWifiMapa')?.value || null);
+                renderizarAlfinetesNoMapa(true);
             }
         } catch (e) {
             const ordenada = obterListaFiltradaEOrdenada();
             preencherSelectsComLista(ordenada);
+            renderizarAlfinetesNoMapa(true);
         }
     }
 
@@ -3271,12 +3297,12 @@
             startBtn.disabled = false;
 
             if (localStorage.getItem(getStorageKey()) === "true") {
-                document.getElementById('statusText').textContent = "Você já salvou e pontuou neste Wi-Fi.";
-                toastMsg.style.display = "block";
-                toastMsg.className = "toast warning";
-                toastMsg.textContent = "⚠️ Limite atingido: cada usuário salva e pontua apenas 1 vez por Wi-Fi.";
+                document.getElementById('statusText').textContent = "Teste concluído! Atualize a velocidade do ponto na nuvem.";
+                saveBtn.textContent = "Atualizar Velocidade no Mapa (0 pts extras)";
+                saveBtn.style.display = "block";
             } else {
                 document.getElementById('statusText').textContent = "Teste concluído! Salve para ganhar seus créditos.";
+                saveBtn.textContent = "Salvar Resultado (+2 Créditos)";
                 saveBtn.style.display = "block";
             }
         } catch (err) {
@@ -3312,8 +3338,15 @@
             toastMsg.style.display = "block";
 
             if (result.status === "duplicate") {
-                toastMsg.className = "toast warning";
-                toastMsg.textContent = "⚠️ Você já avaliou este Wi-Fi antes. Nenhum crédito extra foi gerado.";
+                toastMsg.className = "toast";
+                toastMsg.textContent = "✅ Velocidade atualizada no mapa (crédito de 1ª avaliação já resgatado).";
+                const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
+                if (pontoLocal) {
+                    pontoLocal.down_mbps = Number(parseFloat(downloadMbps).toFixed(1));
+                    pontoLocal.up_mbps = Number(parseFloat(uploadMbps).toFixed(1));
+                }
+                renderizarAlfinetesNoMapa(true);
+                atualizarCardQrDoMapa(idWifi);
             } else {
                 toastMsg.className = "toast";
                 toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
