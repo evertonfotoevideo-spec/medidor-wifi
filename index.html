@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
-            --bg-color: #111815;
-            --card-bg: #1c2621;
-            --primary: #22c55e;
-            --primary-hover: #16a34a;
-            --secondary: #3b82f6;
-            --secondary-hover: #2563eb;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border: #2e3b34;
-            --input-bg: #141c18;
+            /* Tema Inspirado na Foco Radical (Preto Profundo + Amarelo/Âmbar Vibrante + Grafite) */
+            --bg-color: #0b0b0c;
+            --card-bg: #141416;
+            --primary: #facc15;
+            --primary-hover: #eab308;
+            --primary-text: #111111;
+            --secondary: #f97316;
+            --secondary-hover: #ea580c;
+            --text-main: #f8fafc;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+            --input-bg: #1c1c1f;
+            --accent-glow: rgba(250, 204, 21, 0.16);
         }
         * {
             box-sizing: border-box;
@@ -30,72 +33,132 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            padding: 14px;
+            padding: 10px;
         }
         .container {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 18px;
+            padding: 14px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            max-width: 560px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
         }
-        .header {
-            text-align: center;
-            margin-bottom: 14px;
-        }
-        .header h1 {
-            color: var(--primary);
-            font-size: 1.45rem;
-            letter-spacing: 0.5px;
-        }
-        .header p {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-top: 3px;
-        }
-        .user-bar {
+        /* Cabeçalho Compacto + Menu Vertical Suspenso do Usuário */
+        .top-navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 10px;
+            gap: 10px;
             margin-bottom: 12px;
-            font-size: 0.78rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
         }
-        .user-bar span {
+        .brand-block h1 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .brand-block p {
             color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+        .user-dropdown-wrap {
+            position: relative;
+            display: inline-block;
+        }
+        .user-trigger-btn {
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 185px;
+            transition: all 0.15s;
+        }
+        .user-trigger-btn:hover {
+            background-color: var(--accent-glow);
+        }
+        .user-trigger-name {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            max-width: 260px;
         }
-        .user-bar strong {
+        .user-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            width: 215px;
+            background-color: #18181b;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.85);
+            z-index: 2500;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .user-menu-header {
+            padding: 10px 12px;
+            background-color: #111113;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .user-menu-header strong {
+            display: block;
+            color: var(--primary);
+            font-size: 0.82rem;
+            margin-top: 2px;
+        }
+        .user-menu-item {
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s;
+        }
+        .user-menu-item:last-child {
+            border-bottom: none;
+        }
+        .user-menu-item:hover {
+            background-color: rgba(250, 204, 21, 0.12);
             color: var(--primary);
         }
-        .btn-logout {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.72rem;
-            cursor: pointer;
-        }
-        .btn-logout:hover {
+        .user-menu-item.danger {
             color: #f87171;
-            border-color: #f87171;
         }
+        .user-menu-item.danger:hover {
+            background-color: rgba(239, 68, 68, 0.14);
+        }
+
+        /* Navegação Principal (3 Abas principais + Perfil no menu suspenso) */
         .tabs {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            margin-bottom: 14px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 12px;
             background-color: var(--input-bg);
             padding: 4px;
             border-radius: 10px;
@@ -105,10 +168,10 @@
             background: none;
             border: none;
             color: var(--text-muted);
-            padding: 8px 4px;
+            padding: 8px 6px;
             border-radius: 8px;
-            font-size: 0.74rem;
-            font-weight: 600;
+            font-size: 0.78rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
@@ -116,8 +179,153 @@
         }
         .tab-btn.active {
             background-color: var(--primary);
-            color: #052e16;
+            color: var(--primary-text);
         }
+
+        /* Barra e Janela Colapsável de Filtros do Mapa */
+        .filter-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .btn-filter-toggle {
+            flex: 1;
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.15s;
+        }
+        .btn-filter-toggle:hover {
+            background-color: var(--accent-glow);
+        }
+        .filter-badge-count {
+            background-color: var(--primary);
+            color: var(--primary-text);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+        .filter-drawer {
+            background-color: #18181b;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+        }
+        .filter-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .prio-switch {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background-color: var(--bg-color);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+        }
+        .prio-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 7px 6px;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .prio-btn.active {
+            background-color: var(--primary);
+            color: var(--primary-text);
+        }
+        .filter-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .filter-pill {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s;
+        }
+        .filter-pill.active {
+            background-color: var(--accent-glow);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        /* Legenda de Velocidade Interativa (Filtro por Faixa de Velocidade) */
+        .speed-filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        .speed-pill {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .speed-pill.active {
+            border-color: var(--primary);
+            background-color: var(--accent-glow);
+            color: var(--primary);
+            font-weight: 800;
+        }
+        .dot-c {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid #fff;
+            flex-shrink: 0;
+        }
+
+        /* Área do Mapa Ampliada */
+        #miniMap {
+            width: 100%;
+            height: 440px;
+            min-height: 54vh;
+            border-radius: 12px;
+            border: 1px solid var(--primary);
+            margin-bottom: 8px;
+            z-index: 1;
+        }
+
         .auth-toggle {
             display: flex;
             justify-content: center;
@@ -157,7 +365,7 @@
             color: var(--text-main);
             padding: 10px 12px;
             border-radius: 8px;
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             outline: none;
         }
         .form-group input:focus, .form-group select:focus {
@@ -177,7 +385,7 @@
             border-radius: 8px;
             padding: 0 12px;
             font-size: 0.78rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -189,8 +397,8 @@
             cursor: not-allowed;
         }
         .info-badge {
-            background-color: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
+            background-color: var(--accent-glow);
+            border: 1px solid rgba(250, 204, 21, 0.35);
             color: var(--primary);
             padding: 8px 12px;
             border-radius: 8px;
@@ -200,9 +408,36 @@
             line-height: 1.4;
         }
         .info-badge.locked {
-            background-color: rgba(245, 158, 11, 0.1);
-            border-color: rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
+            background-color: rgba(249, 115, 22, 0.14);
+            border-color: rgba(249, 115, 22, 0.4);
+            color: #fdba74;
+        }
+        .current-wifi-banner {
+            background-color: var(--input-bg);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .current-wifi-banner .tag-live {
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .current-wifi-banner .wifi-name {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .current-wifi-banner .wifi-addr {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            margin-top: 3px;
         }
         .metrics {
             display: grid;
@@ -226,12 +461,13 @@
         }
         .metric-value {
             font-size: 1.65rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-main);
         }
         .metric-unit {
             font-size: 0.76rem;
             color: var(--primary);
+            font-weight: 700;
         }
         .progress-container {
             width: 100%;
@@ -257,12 +493,12 @@
         }
         .btn {
             background-color: var(--primary);
-            color: #052e16;
+            color: var(--primary-text);
             border: none;
             border-radius: 10px;
             padding: 12px 16px;
             font-size: 0.92rem;
-            font-weight: 700;
+            font-weight: 800;
             width: 100%;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
@@ -292,7 +528,7 @@
             line-height: 1.4;
         }
         .toast.warning {
-            color: #fbbf24;
+            color: #fdba74;
         }
         .toast.error {
             color: #f87171;
@@ -306,94 +542,9 @@
             margin-top: 4px;
             line-height: 1.35;
         }
-        /* Controles de Prioridade Download / Upload e Filtros */
-        .prio-switch {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            background-color: var(--input-bg);
-            padding: 4px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            margin-bottom: 8px;
-        }
-        .prio-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 7px 6px;
-            border-radius: 7px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .prio-btn.active {
-            background-color: var(--secondary);
-            color: #fff;
-        }
-        .filter-pills {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .filter-pill {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 0.74rem;
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.15s;
-        }
-        .filter-pill.active {
-            background-color: rgba(34, 197, 94, 0.2);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        /* Legenda de Cores de Velocidade */
-        .speed-legend {
-            display: flex;
-            justify-content: space-between;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 6px 8px;
-            font-size: 0.68rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-        .speed-legend span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .dot-c {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            display: inline-block;
-            border: 1px solid #fff;
-        }
-        /* Estilo do Mapa Miniatura */
-        #miniMap {
-            width: 100%;
-            height: 260px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            margin-bottom: 8px;
-            z-index: 1;
-        }
-        /* Caixa de QR Code / Conexão Rápida e Galeria do Local */
         .qr-card {
             background-color: var(--input-bg);
-            border: 1px solid rgba(34, 197, 94, 0.45);
+            border: 1px solid rgba(250, 204, 21, 0.35);
             border-radius: 12px;
             padding: 12px;
             margin-top: 10px;
@@ -410,20 +561,20 @@
             display: block;
         }
         .qr-payload-box {
-            background: #0d1310;
+            background: #0d0d0f;
             border: 1px solid var(--border);
             border-radius: 6px;
             padding: 6px 8px;
             font-family: monospace;
             font-size: 0.7rem;
-            color: #9ca3af;
+            color: var(--text-muted);
             word-break: break-all;
             margin-top: 6px;
         }
         .btn-mini {
-            background-color: #2e3b34;
+            background-color: #27272a;
             color: var(--text-main);
-            border: 1px solid #3f5248;
+            border: 1px solid #3f3f46;
             border-radius: 6px;
             padding: 6px 10px;
             font-size: 0.74rem;
@@ -432,13 +583,12 @@
             margin-top: 6px;
         }
         .btn-mini:hover {
-            background-color: #3a4b42;
+            background-color: #3f3f46;
         }
-        /* Banner de Segurança de Rede */
         .security-banner {
-            background-color: rgba(245, 158, 11, 0.12);
-            border: 1px solid rgba(245, 158, 11, 0.4);
-            color: #fcd34d;
+            background-color: rgba(250, 204, 21, 0.1);
+            border: 1px solid rgba(250, 204, 21, 0.35);
+            color: #fde047;
             border-radius: 8px;
             padding: 8px 10px;
             font-size: 0.72rem;
@@ -451,12 +601,11 @@
             border-color: rgba(239, 68, 68, 0.45);
             color: #fca5a5;
         }
-        /* Status Ao Vivo */
         .live-status-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #101714;
+            background-color: #111113;
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 6px 10px;
@@ -467,12 +616,11 @@
         }
         .status-pill-live {
             font-weight: 700;
-            color: var(--primary);
+            color: #22c55e;
         }
         .status-pill-live.warn {
             color: #f87171;
         }
-        /* Galeria de Fotos do Local */
         .gallery-strip {
             display: flex;
             gap: 8px;
@@ -501,18 +649,17 @@
             margin: 6px 0;
         }
         .amenity-tag {
-            background-color: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.35);
-            color: #93c5fd;
+            background-color: var(--accent-glow);
+            border: 1px solid rgba(250, 204, 21, 0.35);
+            color: var(--primary);
             font-size: 0.7rem;
             padding: 3px 8px;
             border-radius: 12px;
             font-weight: 600;
         }
-        /* Cadastro Ultra-Rápido (1 Clique / Foto QR) */
         .quick-box {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(34, 197, 94, 0.12));
-            border: 1px dashed rgba(59, 130, 246, 0.5);
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(249, 115, 22, 0.12));
+            border: 1px dashed rgba(250, 204, 21, 0.5);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 14px;
@@ -520,7 +667,7 @@
         }
         .quick-box h4 {
             font-size: 0.82rem;
-            color: #93c5fd;
+            color: var(--primary);
             margin-bottom: 4px;
         }
         .quick-box p {
@@ -534,22 +681,22 @@
             gap: 8px;
         }
         .btn-quick {
-            background-color: var(--secondary);
-            color: #fff;
+            background-color: var(--primary);
+            color: var(--primary-text);
             border: none;
             border-radius: 8px;
             padding: 9px 8px;
             font-size: 0.76rem;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
         }
         .btn-quick.alt {
-            background-color: #2e3b34;
-            border: 1px solid #3f5248;
+            background-color: #27272a;
+            color: var(--text-main);
+            border: 1px solid #3f3f46;
         }
-        /* Popup customizado do Leaflet */
         .leaflet-popup-content {
-            color: #111815;
+            color: #111111;
             font-size: 0.78rem;
             line-height: 1.35;
             text-align: center;
@@ -560,7 +707,7 @@
             height: 110px;
             margin: 5px auto;
             display: block;
-            border: 1px solid #d1d5db;
+            border: 1px solid #d4d4d8;
             border-radius: 6px;
             padding: 3px;
             background: #fff;
@@ -571,14 +718,14 @@
             object-fit: cover;
             border-radius: 6px;
             margin-top: 5px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #d4d4d8;
         }
         .popup-btn {
             display: inline-block;
-            background-color: #16a34a;
-            color: #fff !important;
+            background-color: #facc15;
+            color: #111111 !important;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.7rem;
             padding: 5px 9px;
             border-radius: 6px;
@@ -587,9 +734,9 @@
             cursor: pointer;
         }
         .popup-btn.nav {
-            background-color: #2563eb;
+            background-color: #18181b;
+            color: #facc15 !important;
         }
-        /* Cartão de Perfil e Saldo */
         .profile-card {
             background-color: var(--input-bg);
             border: 1px solid var(--border);
@@ -614,8 +761,8 @@
             color: var(--text-main);
         }
         .saldo-destaque {
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.12));
-            border: 1px solid rgba(34, 197, 94, 0.4);
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.18), rgba(249, 115, 22, 0.14));
+            border: 1px solid rgba(250, 204, 21, 0.45);
             border-radius: 12px;
             padding: 14px;
             text-align: center;
@@ -629,7 +776,7 @@
         }
         .saldo-destaque .valor {
             font-size: 2rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--primary);
             margin: 4px 0;
         }
@@ -652,7 +799,7 @@
         }
         .mini-stat-box .num {
             font-size: 1.25rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-main);
         }
         .mini-stat-box .txt {
@@ -689,15 +836,15 @@
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1 id="appTitle">CLICK CONTROL</h1>
-        <p>Gestão & Rede Colaborativa de Wi-Fi</p>
-    </div>
-
     <!-- ===================================================================== -->
     <!-- TELA 1: LOGIN E CADASTRO COM SENHA                                    -->
     <!-- ===================================================================== -->
     <div id="loginScreen">
+        <div style="text-align:center; margin-bottom:14px;">
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL</h1>
+            <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
+        </div>
+
         <div class="auth-toggle">
             <button type="button" class="auth-link active" id="modeLoginBtn" onclick="alternarModoAuth('login')">Entrar na Conta</button>
             <button type="button" class="auth-link" id="modeRegisterBtn" onclick="alternarModoAuth('register')">Criar Nova Conta</button>
@@ -720,7 +867,7 @@
 
         <button type="button" class="btn" id="authSubmitBtn" onclick="processarAuth()">Entrar no Aplicativo</button>
         <div style="text-align:center; margin-top:10px;">
-            <button type="button" class="auth-link" style="font-size:0.78rem; color:#93c5fd;" onclick="alternarRecuperacaoSenha(true)">🔑 Esqueci minha senha</button>
+            <button type="button" class="auth-link" style="font-size:0.78rem; color:var(--primary);" onclick="alternarRecuperacaoSenha(true)">🔑 Esqueci minha senha</button>
         </div>
 
         <!-- Painel de Recuperação de Senha -->
@@ -730,7 +877,7 @@
             <div class="form-group" style="margin-bottom:8px;">
                 <input type="email" id="recEmail" placeholder="Digite seu e-mail cadastrado">
             </div>
-            <button type="button" class="btn-mini" id="btnEnviarCodigoRec" style="width:100%; background:var(--secondary); color:#fff; padding:8px;" onclick="solicitarCodigoRecuperacao()">📩 Enviar Código por E-mail</button>
+            <button type="button" class="btn-mini" id="btnEnviarCodigoRec" style="width:100%; background:var(--primary); color:var(--primary-text); padding:8px;" onclick="solicitarCodigoRecuperacao()">📩 Enviar Código por E-mail</button>
 
             <div id="recStepCodigo" class="hidden" style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">
                 <div class="form-group" style="margin-bottom:8px;">
@@ -744,7 +891,7 @@
                 <button type="button" class="btn" id="btnConfirmarNovaSenha" onclick="confirmarNovaSenhaRecuperacao()">✅ Salvar Nova Senha</button>
             </div>
             <div style="text-align:right; margin-top:8px;">
-                <button type="button" class="btn-logout" onclick="alternarRecuperacaoSenha(false)">Fechar</button>
+                <button type="button" class="btn-mini" onclick="alternarRecuperacaoSenha(false)">Fechar</button>
             </div>
         </div>
 
@@ -755,31 +902,173 @@
     <!-- TELA 2: PAINEL PRINCIPAL (LOGADO)                                     -->
     <!-- ===================================================================== -->
     <div id="appScreen" class="hidden">
-        <div class="user-bar">
-            <span>Fotógrafo: <strong id="userDisplay">Usuario</strong></span>
-            <button type="button" class="btn-logout" onclick="sair()">Sair</button>
+        <!-- Cabeçalho com Menu Vertical Suspenso do Usuário -->
+        <div class="top-navbar">
+            <div class="brand-block">
+                <h1 id="appTitle">CLICK CONTROL</h1>
+                <p>Rede Wi-Fi de Campo • Foco Radical</p>
+            </div>
+
+            <div class="user-dropdown-wrap" id="userDropdownWrap">
+                <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuario(event)">
+                    <span>👤</span>
+                    <span class="user-trigger-name" id="userDisplay">Usuário</span>
+                    <span style="font-size:0.65rem;">▼</span>
+                </button>
+                <div class="user-dropdown-menu hidden" id="userDropdownMenu">
+                    <div class="user-menu-header">
+                        Conectado como
+                        <strong id="userMenuFullName">Usuário</strong>
+                    </div>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('perfil')">💳 Carteira & Pontos</button>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('meus_wifis')">📶 Meus Wi-Fis Cadastrados</button>
+                    <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
+                    <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
+                </div>
+            </div>
         </div>
 
         <div class="tabs">
             <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
             <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
             <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
-            <button type="button" class="tab-btn" id="tabPerfilBtn" onclick="mudarAba('perfil')">👤 Perfil</button>
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 1: TESTAR VELOCIDADE DO WI-FI                                 -->
+        <!-- ABA 1: MAPA AMPLIADO + JANELA DE FILTROS + ENDEREÇO               -->
+        <!-- ================================================================= -->
+        <div id="abaMapa">
+            <!-- Barra de Abertura da Janela de Filtros -->
+            <div class="filter-toolbar">
+                <button type="button" class="btn-filter-toggle" onclick="alternarJanelaFiltros()">
+                    <span>🎛️ Filtros (Upload/Download, Estrutura & Velocidade)</span>
+                    <span class="filter-badge-count" id="filterCountBadge">Ativos: 0</span>
+                </button>
+            </div>
+
+            <!-- Janela de Filtros Agrupada -->
+            <div class="filter-drawer hidden" id="janelaFiltrosMapa">
+                <div class="filter-section-title">1. Prioridade de Velocidade</div>
+                <div class="prio-switch">
+                    <button type="button" class="prio-btn active" id="prioDownBtn" onclick="definirPrioridade('download')">⬇️ Priorizar Download</button>
+                    <button type="button" class="prio-btn" id="prioUpBtn" onclick="definirPrioridade('upload')">⬆️ Priorizar Upload (Envio)</button>
+                </div>
+
+                <div class="filter-section-title">2. Estrutura do Local</div>
+                <div class="filter-pills">
+                    <div class="filter-pill" id="filtroEstac" onclick="alternarFiltro('estacionamento')">🚗 Estacionamento</div>
+                    <div class="filter-pill" id="filtroMesas" onclick="alternarFiltro('mesas')">🪑 Mesas</div>
+                    <div class="filter-pill" id="filtroTomadas" onclick="alternarFiltro('tomadas')">🔌 Tomadas</div>
+                    <div class="filter-pill" id="filtroSinalRua" onclick="alternarFiltro('sinal_rua')">📡 Sinal no Carro</div>
+                </div>
+
+                <div class="filter-section-title">3. Faixa de Velocidade (Toque para filtrar)</div>
+                <div class="speed-filter-grid">
+                    <div class="speed-pill active" id="speedFilterAll" onclick="definirFiltroVelocidade('todos')">
+                        <span>🌐 Todos</span>
+                    </div>
+                    <div class="speed-pill" id="speedFilterLt10" onclick="definirFiltroVelocidade('lt10')">
+                        <i class="dot-c" style="background:#ef4444;"></i><span>&lt;10 Mbps</span>
+                    </div>
+                    <div class="speed-pill" id="speedFilter10_20" onclick="definirFiltroVelocidade('10_20')">
+                        <i class="dot-c" style="background:#f97316;"></i><span>10-20 Mbps</span>
+                    </div>
+                    <div class="speed-pill" id="speedFilter20_40" onclick="definirFiltroVelocidade('20_40')">
+                        <i class="dot-c" style="background:#eab308;"></i><span>20-40 Mbps</span>
+                    </div>
+                    <div class="speed-pill" id="speedFilter40_100" onclick="definirFiltroVelocidade('40_100')">
+                        <i class="dot-c" style="background:#3b82f6;"></i><span>40-100 Mbps</span>
+                    </div>
+                    <div class="speed-pill" id="speedFilterGt100" onclick="definirFiltroVelocidade('gt100')">
+                        <i class="dot-c" style="background:#22c55e;"></i><span>&gt;100 Mbps</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:10px; gap:8px;">
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="limparTodosFiltrosMapa()">🧹 Limpar Filtros</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0; background:var(--primary); color:var(--primary-text); border-color:var(--primary);" onclick="alternarJanelaFiltros(false)">✅ Aplicar</button>
+                </div>
+            </div>
+
+            <!-- Mapa Ampliado -->
+            <div id="miniMap"></div>
+            <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando apenas os melhores pontos da região.</div>
+
+            <!-- Seletor mostrando SOMENTE o Endereço / Local (sem código WFI-001) -->
+            <div class="form-group" style="margin-top: 4px;">
+                <label for="selectWifiMapa">Endereço / Local do Wi-Fi</label>
+                <div class="gps-row">
+                    <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
+                    <button type="button" class="btn-gps" id="btnAtualizarMapa" onclick="atualizarPosicaoMapa(true)">📍 Perto</button>
+                </div>
+                <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
+            </div>
+
+            <!-- Pacote Offline da Cidade -->
+            <div style="display:flex; gap:6px; margin-bottom:10px;">
+                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade Offline</button>
+                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Cache Offline</button>
+            </div>
+
+            <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
+            <div class="qr-card" id="mapaQrCard">
+                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
+                <div style="font-size: 0.72rem; color: #fde047; margin-top: 3px;" id="mapaHorarioInfo"></div>
+
+                <!-- Status ao Vivo & Centroide Colaborativo -->
+                <div class="live-status-bar">
+                    <span class="status-pill-live" id="mapaLiveStatus">🟢 Funcionando agora</span>
+                    <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('conectou')">👍 Conectou</button>
+                        <button type="button" class="btn-mini" id="btnCalibrarCentro" style="margin-top:0; padding:4px 8px; background:var(--primary); color:var(--primary-text);" onclick="calibrarCentroPinoAgora()">🎯 Centralizar Pino Aqui</button>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
+                    </div>
+                </div>
+                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#fde047;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
+
+                <!-- Banner de Segurança da Rede -->
+                <div class="security-banner" id="mapaSecurityBanner">
+                    🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa para subir fotos no Foco Radical com proteção.
+                </div>
+
+                <!-- Tags de Comodidades do Ponto -->
+                <div class="amenities-badges" id="mapaAmenities"></div>
+
+                <!-- Galeria de Fotos do Local + Botão para Adicionar Foto -->
+                <div class="gallery-strip" id="mapaGaleriaStrip"></div>
+                <div>
+                    <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
+                    <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
+                </div>
+
+                <img id="mapaQrImg" class="qr-img" src="" alt="QR Code Wi-Fi">
+                <div class="qr-payload-box" id="mapaQrLinkText">WIFI:T:WPA;S:...;P:...;;</div>
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                    <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:var(--primary); color:var(--primary-text); font-weight:800;">🧭 Ir até lá (Maps/Waze)</a>
+                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Abrir QR Code</a>
+                    <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi Selecionado</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 2: TESTAR VELOCIDADE (MOSTRA SOMENTE O WI-FI ATUAL)           -->
         <!-- ================================================================= -->
         <div id="abaTestar" class="hidden">
-            <div class="form-group">
-                <label for="selectWifi">Ponto de Wi-Fi Selecionado</label>
-                <div class="gps-row">
-                    <select id="selectWifi" onchange="aoTrocarWifi()">
-                        <option value="WFI-001">WFI-001 - Café da Praça (Florianópolis)</option>
-                    </select>
-                    <button type="button" class="btn-gps" id="btnNearGps" onclick="selecionarWifiMaisProximo(true)" title="Detectar ponto mais próximo">📍 Perto</button>
+            <input type="hidden" id="selectWifi" value="">
+
+            <div class="current-wifi-banner">
+                <span class="tag-live">📡 Wi-Fi Atual em Teste</span>
+                <div class="wifi-name" id="testarWifiNomeAtual">Carregando ponto atual...</div>
+                <div class="wifi-addr" id="testarWifiEnderecoAtual">Detectando endereço e rede...</div>
+                <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+                    <button type="button" class="btn-gps" id="btnNearGps" style="padding:6px 10px;" onclick="selecionarWifiMaisProximo(true)">📍 Detectar Wi-Fi Atual</button>
+                    <button type="button" class="btn-mini" style="margin-top:0;" onclick="mudarAba('mapa')">🗺️ Trocar no Mapa</button>
                 </div>
-                <div class="helper-text" id="nearGpsStatus">Use a aba "🗺️ Mapa" para ver os alfinetes coloridos por velocidade, filtros e QR Code.</div>
+                <div class="helper-text" id="nearGpsStatus" style="margin-top:6px;">Mostrando apenas o ponto de Wi-Fi em que você está conectado/selecionado agora.</div>
             </div>
 
             <div class="info-badge" id="wifiBadge">
@@ -803,7 +1092,7 @@
                 <div class="progress-bar" id="progressBar"></div>
             </div>
 
-            <div class="status-text" id="statusText">Toque abaixo para medir a banda real da rede.</div>
+            <div class="status-text" id="statusText">Toque abaixo para medir a banda real da rede atual.</div>
 
             <button type="button" class="btn" id="startBtn" onclick="iniciarTeste()">Iniciar Teste de Velocidade</button>
             <button type="button" class="btn btn-save" id="saveBtn" onclick="enviarTesteParaPlanilha()">Salvar Resultado (+2 Créditos)</button>
@@ -811,99 +1100,9 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 2: MAPA DE PROXIMIDADE, CORES POR VELOCIDADE E FILTROS        -->
-        <!-- ================================================================= -->
-        <div id="abaMapa">
-            <!-- Botão para Priorizar Velocidade de Download ou Upload -->
-            <div class="prio-switch">
-                <button type="button" class="prio-btn active" id="prioDownBtn" onclick="definirPrioridade('download')">⬇️ Priorizar Download</button>
-                <button type="button" class="prio-btn" id="prioUpBtn" onclick="definirPrioridade('upload')">⬆️ Priorizar Upload (Envio)</button>
-            </div>
-
-            <!-- Filtros de Comodidades do Local -->
-            <div class="filter-pills">
-                <div class="filter-pill" id="filtroEstac" onclick="alternarFiltro('estacionamento')">🚗 Estacionamento</div>
-                <div class="filter-pill" id="filtroMesas" onclick="alternarFiltro('mesas')">🪑 Mesas</div>
-                <div class="filter-pill" id="filtroTomadas" onclick="alternarFiltro('tomadas')">🔌 Tomadas</div>
-                <div class="filter-pill" id="filtroSinalRua" onclick="alternarFiltro('sinal_rua')">📡 Sinal no Carro</div>
-            </div>
-
-            <!-- Legenda das 5 cores de velocidade -->
-            <div class="speed-legend">
-                <span><i class="dot-c" style="background:#ef4444;"></i> &lt;10</span>
-                <span><i class="dot-c" style="background:#f97316;"></i> 10-20</span>
-                <span><i class="dot-c" style="background:#eab308;"></i> 20-40</span>
-                <span><i class="dot-c" style="background:#3b82f6;"></i> 40-100</span>
-                <span><i class="dot-c" style="background:#22c55e;"></i> &gt;100 Mbps</span>
-            </div>
-
-            <div id="miniMap"></div>
-            <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando apenas os melhores pontos da região.</div>
-
-            <div class="form-group" style="margin-top: 4px;">
-                <label for="selectWifiMapa">Ponto de Wi-Fi (Ordenado por Proximidade & Prioridade)</label>
-                <div class="gps-row">
-                    <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
-                    <button type="button" class="btn-gps" id="btnAtualizarMapa" onclick="atualizarPosicaoMapa(true)">📍 Perto</button>
-                </div>
-                <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
-            </div>
-
-            <!-- Pacote Offline da Cidade -->
-            <div style="display:flex; gap:6px; margin-bottom:10px;">
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade Offline</button>
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Cache Offline</button>
-            </div>
-
-            <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
-            <div class="qr-card" id="mapaQrCard">
-                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
-                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
-                <div style="font-size: 0.72rem; color: #93c5fd; margin-top: 3px;" id="mapaHorarioInfo"></div>
-
-                <!-- Status ao Vivo & Centroide Colaborativo -->
-                <div class="live-status-bar">
-                    <span class="status-pill-live" id="mapaLiveStatus">🟢 Funcionando agora</span>
-                    <div style="display:flex; gap:5px; flex-wrap:wrap;">
-                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('conectou')">👍 Conectou</button>
-                        <button type="button" class="btn-mini" id="btnCalibrarCentro" style="margin-top:0; padding:4px 8px; background:#1d4ed8; color:#fff;" onclick="calibrarCentroPinoAgora()">🎯 Centralizar Pino Aqui</button>
-                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
-                    </div>
-                </div>
-                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#93c5fd;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
-
-                <!-- Banner de Segurança da Rede -->
-                <div class="security-banner" id="mapaSecurityBanner">
-                    🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa para subir fotos no Foco Radical com proteção.
-                </div>
-
-                <!-- Tags de Comodidades do Ponto -->
-                <div class="amenities-badges" id="mapaAmenities"></div>
-
-                <!-- Galeria de Fotos do Local + Botão para Adicionar Foto -->
-                <div class="gallery-strip" id="mapaGaleriaStrip"></div>
-                <div>
-                    <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
-                    <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
-                </div>
-
-                <img id="mapaQrImg" class="qr-img" src="" alt="QR Code Wi-Fi">
-                <div class="qr-payload-box" id="mapaQrLinkText">WIFI:T:WPA;S:...;P:...;;</div>
-                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
-                    <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:#2563eb; color:#fff;">🧭 Ir até lá (Maps/Waze)</a>
-                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Abrir QR Code</a>
-                    <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
-                </div>
-            </div>
-
-            <button type="button" class="btn" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi Selecionado</button>
-        </div>
-
-        <!-- ================================================================= -->
         <!-- ABA 3: CADASTRAR NOVO PONTO DE WI-FI (MODO EXPRESSO SEM PREGUIÇA)  -->
         <!-- ================================================================= -->
         <div id="abaCadastrar" class="hidden">
-            <!-- Atalhos de Preenchimento em 1 Toque -->
             <div class="quick-box">
                 <h4>⚡ Cadastro Expresso (Zero Digitação)</h4>
                 <p>Puxe o endereço + nome do lugar pelo GPS ou leia a foto do QR Code da parede:</p>
@@ -925,7 +1124,7 @@
                 <input type="text" id="cadLocalizacao" placeholder="Preenchido pelo botão GPS acima">
                 <div id="cadMiniMapWrap" class="hidden" style="margin-top:8px;">
                     <div id="cadMiniMap" style="width:100%;height:165px;border-radius:10px;border:1px solid var(--primary);z-index:1;"></div>
-                    <div class="helper-text" id="cadPinHint" style="color:#22c55e;">🎯 Arraste o pino exato até a porta do estabelecimento se necessário.</div>
+                    <div class="helper-text" id="cadPinHint" style="color:var(--primary);">🎯 Arraste o pino exato até a porta do estabelecimento se necessário.</div>
                 </div>
             </div>
 
@@ -943,7 +1142,7 @@
                 <label for="cadSenha">Senha do Wi-Fi (ou deixe "Aberta") *</label>
                 <div class="gps-row">
                     <input type="text" id="cadSenha" placeholder="Ex: cafe2026" oninput="atualizarPreviewQrCadastro()">
-                    <button type="button" class="btn-gps" style="background:#2e3b34;" onclick="marcarRedeAberta()">🔓 Aberta</button>
+                    <button type="button" class="btn-gps" style="background:#27272a; border:1px solid #3f3f46;" onclick="marcarRedeAberta()">🔓 Aberta</button>
                 </div>
             </div>
 
@@ -952,7 +1151,6 @@
                 <input type="text" id="cadHorarioSinal" placeholder="Ex: 24h no estacionamento | 06h às 22h (exige consumo)">
             </div>
 
-            <!-- Comodidades do Local (Toque Único) -->
             <div class="form-group">
                 <label>Estrutura do Local para Trabalhar / Editar (Opcional)</label>
                 <div class="filter-pills">
@@ -963,7 +1161,6 @@
                 </div>
             </div>
 
-            <!-- Foto do Lugar (Opcional) -->
             <div class="form-group">
                 <label>Foto do Local / Ambiente (Opcional)</label>
                 <input type="file" id="cadFotoLugar" accept="image/*" onchange="processarFotoCadastro(event)">
@@ -972,7 +1169,6 @@
                 </div>
             </div>
 
-            <!-- Pré-visualização ao vivo do QR Code gerado -->
             <div class="qr-card hidden" id="cadQrPreviewBox">
                 <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">QR Code Automático Gerado</div>
                 <img id="cadQrPreviewImg" class="qr-img" src="" alt="Preview QR Code">
@@ -985,7 +1181,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 4: MEUS DADOS E MEUS PONTOS (CARTEIRA)                        -->
+        <!-- ABA 4: MEUS DADOS E MEUS PONTOS (ACESSADA PELO MENU DO USUÁRIO)   -->
         <!-- ================================================================= -->
         <div id="abaPerfil" class="hidden">
             <div class="saldo-destaque">
@@ -1029,11 +1225,11 @@
 
             <button type="button" class="btn" style="margin-top: 10px;" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meus Pontos</button>
 
-            <!-- PAINEL ADMINISTRADOR (MODERAR PONTOS, CORRIGIR PINOS E GERENCIAR SENHAS) -->
-            <div id="adminPanelBox" style="margin-top:16px; padding:12px; background:#141c18; border:1px solid #3b82f6; border-radius:12px;">
+            <!-- PAINEL ADMINISTRADOR -->
+            <div id="adminPanelBox" style="margin-top:16px; padding:12px; background:#111113; border:1px solid var(--primary); border-radius:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <strong style="color:#93c5fd; font-size:0.86rem;">🛡️ Administração de Pontos & Usuários</strong>
-                    <span id="adminBadgeStatus" style="font-size:0.7rem; background:rgba(59,130,246,0.2); color:#93c5fd; padding:2px 8px; border-radius:10px;">Modo Admin</span>
+                    <strong style="color:var(--primary); font-size:0.86rem;">🛡️ Administração de Pontos & Usuários</strong>
+                    <span id="adminBadgeStatus" style="font-size:0.7rem; background:var(--accent-glow); color:var(--primary); padding:2px 8px; border-radius:10px;">Modo Admin</span>
                 </div>
                 <p style="font-size:0.73rem; color:var(--text-muted); margin-bottom:10px;">Corrija coordenadas, altere senhas desatualizadas, remova pontos duplicados ou redefina a senha de um usuário.</p>
 
@@ -1071,14 +1267,13 @@
                     <button type="button" class="btn" style="padding:9px; font-size:0.8rem; background:#ef4444; color:#fff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir Ponto</button>
                 </div>
 
-                <!-- Redefinição rápida de senha de usuário pelo Admin -->
                 <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:6px;">
-                    <div style="font-size:0.78rem; font-weight:700; color:#fbbf24; margin-bottom:6px;">🔑 Redefinir Senha de Usuário (Suporte)</div>
+                    <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔑 Redefinir Senha de Usuário (Suporte)</div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
                         <input type="email" id="adminResetUserEmail" placeholder="E-mail do usuário" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
                         <input type="text" id="adminResetUserPass" placeholder="Nova senha provisória" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
                     </div>
-                    <button type="button" class="btn-mini" style="width:100%; background:#2563eb; color:#fff; padding:7px;" onclick="adminRedefinirSenhaUsuario()">🔄 Aplicar Nova Senha ao Usuário</button>
+                    <button type="button" class="btn-mini" style="width:100%; background:var(--secondary); color:#fff; padding:7px;" onclick="adminRedefinirSenhaUsuario()">🔄 Aplicar Nova Senha ao Usuário</button>
                 </div>
 
                 <div class="toast" id="adminToast"></div>
@@ -1087,7 +1282,6 @@
     </div>
 </div>
 
-<!-- Leaflet JS & jsQR (para leitura instantânea de QR Code da parede) -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
@@ -1097,19 +1291,10 @@
     let modoAuth = 'login';
     let usuarioLogado = null;
 
-    // Cache inicial com velocidades, comodidades, horários e fotos
+    // Cache inicial (WFI-001 removido conforme solicitado)
     let listaWifisCache = [
         {
-            id: "WFI-001", local: "Café da Praça", cidade: "Florianópolis - SC",
-            ssid: "CafeDaPraca_WiFi", senha: "cafe2026", lat_long: "-27.5969, -48.5495",
-            down_mbps: 125.4, up_mbps: 68.2,
-            comodidades: ["mesas", "tomadas"],
-            horario_sinal: "07h às 20h • Exige consumo no local",
-            status: "Funcionando", ultima_validacao: "Hoje 08:30",
-            fotos: ["https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=75"]
-        },
-        {
-            id: "WFI-002", local: "Posto Shell BR-101", cidade: "Itajaí - SC",
+            id: "WFI-002", local: "Posto Shell BR-101", endereco: "Rodovia BR-101, Km 118", cidade: "Itajaí - SC",
             ssid: "Shell_Clientes", senha: "Aberta", lat_long: "-26.9078, -48.6619",
             down_mbps: 18.5, up_mbps: 8.4,
             comodidades: ["estacionamento", "mesas", "sinal_rua"],
@@ -1118,7 +1303,7 @@
             fotos: ["https://images.unsplash.com/photo-1527018601619-a508a2be00cd?w=400&q=75"]
         },
         {
-            id: "WFI-003", local: "Padaria Central", cidade: "São Bento do Sul - SC",
+            id: "WFI-003", local: "Padaria Central", endereco: "Rua Barão do Rio Branco, 240 - Centro", cidade: "São Bento do Sul - SC",
             ssid: "PadariaCentral_5G", senha: "paoquente", lat_long: "-26.2503, -49.3786",
             down_mbps: 54.0, up_mbps: 32.5,
             comodidades: ["estacionamento", "mesas", "tomadas", "sinal_rua"],
@@ -1133,8 +1318,9 @@
     let userLngAtual = null;
     let linkQrAtualMapa = "";
 
-    // Estado de Prioridade (download vs upload) e Filtros do Mapa
+    // Estado de Prioridade, Comodidades e Faixa de Velocidade
     let prioridadeVelocidade = 'download';
+    let filtroVelocidadeAtivo = 'todos'; // 'todos', 'lt10', '10_20', '20_40', '40_100', 'gt100'
     let filtrosAtivos = {
         estacionamento: false,
         mesas: false,
@@ -1156,6 +1342,108 @@
     let userMarker = null;
     let wifiMarkersLayer = null;
 
+    // =========================================================================
+    // MENU VERTICAL SUSPENSO DO USUÁRIO E JANELA DE FILTROS
+    // =========================================================================
+    function alternarMenuUsuario(ev) {
+        if (ev) ev.stopPropagation();
+        const menu = document.getElementById('userDropdownMenu');
+        menu.classList.toggle('hidden');
+    }
+
+    function fecharMenuUsuario() {
+        const menu = document.getElementById('userDropdownMenu');
+        if (menu) menu.classList.add('hidden');
+    }
+
+    document.addEventListener('click', (e) => {
+        const wrap = document.getElementById('userDropdownWrap');
+        if (wrap && !wrap.contains(e.target)) {
+            fecharMenuUsuario();
+        }
+    });
+
+    function abrirOpcaoMenuUsuario(opcao) {
+        fecharMenuUsuario();
+        mudarAba('perfil');
+        if (opcao === 'meus_wifis') {
+            setTimeout(() => {
+                const el = document.getElementById('meusWifisLista');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 150);
+        } else if (opcao === 'admin') {
+            setTimeout(() => {
+                const el = document.getElementById('adminPanelBox');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 150);
+        }
+    }
+
+    function alternarJanelaFiltros(forcarEstado = null) {
+        const drawer = document.getElementById('janelaFiltrosMapa');
+        if (forcarEstado === true) drawer.classList.remove('hidden');
+        else if (forcarEstado === false) drawer.classList.add('hidden');
+        else drawer.classList.toggle('hidden');
+    }
+
+    function atualizarContadorFiltros() {
+        let count = 0;
+        if (prioridadeVelocidade === 'upload') count++;
+        if (filtroVelocidadeAtivo !== 'todos') count++;
+        Object.values(filtrosAtivos).forEach(v => { if (v) count++; });
+        const badge = document.getElementById('filterCountBadge');
+        if (badge) badge.textContent = `Ativos: ${count}`;
+    }
+
+    function limparTodosFiltrosMapa() {
+        prioridadeVelocidade = 'download';
+        filtroVelocidadeAtivo = 'todos';
+        filtrosAtivos = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
+
+        document.getElementById('prioDownBtn').classList.add('active');
+        document.getElementById('prioUpBtn').classList.remove('active');
+        ['filtroEstac', 'filtroMesas', 'filtroTomadas', 'filtroSinalRua'].forEach(id => {
+            document.getElementById(id).classList.remove('active');
+        });
+        ['speedFilterAll', 'speedFilterLt10', 'speedFilter10_20', 'speedFilter20_40', 'speedFilter40_100', 'speedFilterGt100'].forEach(id => {
+            document.getElementById(id).classList.toggle('active', id === 'speedFilterAll');
+        });
+        atualizarContadorFiltros();
+        renderizarAlfinetesNoMapa();
+    }
+
+    // =========================================================================
+    // FORMATAÇÃO DE ENDEREÇO LIMPO (SEM CÓDIGO WFI-XXX)
+    // =========================================================================
+    function formatarEnderecoLimpo(w) {
+        if (w.endereco && String(w.endereco).trim()) {
+            return w.cidade ? `${w.endereco} • ${w.cidade}` : w.endereco;
+        }
+        const rawLoc = String(w.lat_long || "").trim();
+        // Remove coordenadas entre parênteses ou puras para exibir o endereço textual limpo
+        const semCoords = rawLoc.replace(/\(?-?\d{1,2}\.\d+\s*,\s*-?\d{1,3}\.\d+\)?/g, "").trim();
+        if (semCoords) {
+            return w.cidade ? `${semCoords} • ${w.cidade}` : semCoords;
+        }
+        return w.cidade ? `${w.local} • ${w.cidade}` : w.local;
+    }
+
+    function atualizarBannerWifiAtualTestar() {
+        const idAtual = document.getElementById('selectWifi').value;
+        const ponto = listaWifisCache.find(w => w.id === idAtual) || listaWifisCache[0];
+        const nomeEl = document.getElementById('testarWifiNomeAtual');
+        const endEl = document.getElementById('testarWifiEnderecoAtual');
+        if (!nomeEl || !endEl) return;
+
+        if (!ponto) {
+            nomeEl.textContent = "Nenhum Wi-Fi detectado";
+            endEl.textContent = "Toque em Detectar Wi-Fi Atual ou escolha no Mapa.";
+            return;
+        }
+        const ssidTxt = ponto.ssid ? ` (Rede: ${ponto.ssid})` : "";
+        nomeEl.textContent = `${ponto.local}${ssidTxt}`;
+        endEl.textContent = `📍 ${formatarEnderecoLimpo(ponto)}`;
+    }
 
     // =========================================================================
     // CENTROIDE DINÂMICO DE CONEXÃO (MÉDIA PONDERADA POR PRECISÃO GPS)
@@ -1175,7 +1463,6 @@
         const todas = [];
 
         if (coordBase) {
-            // Amostra original do cadastro (peso base com accuracy = 25m se não houver precisão salva)
             const accBase = parseFloat(ponto.precisao_cadastro || 25);
             todas.push({ lat: coordBase.lat, lng: coordBase.lng, acc: accBase });
         }
@@ -1191,7 +1478,6 @@
             return { lat: todas[0].lat, lng: todas[0].lng, totalAmostras: 1, raioMedio: todas[0].acc };
         }
 
-        // Média ponderada pelo inverso da variância (1 / acc^2): amostras de <= 5m têm peso muito maior
         let somaPeso = 0;
         let somaLat = 0;
         let somaLng = 0;
@@ -1220,15 +1506,12 @@
     async function registrarAmostraConexaoWifi(idWifi, origem = "conexao", silencioso = true) {
         if (!idWifi || userLatAtual === null || userLngAtual === null) return;
         const acc = isFinite(melhorPrecisaoAtual) ? melhorPrecisaoAtual : 10;
-
-        // Só aceita amostras com precisão <= 35m para não contaminar o centroide
         if (acc > 35) return;
 
         const ponto = listaWifisCache.find(w => w.id === idWifi);
         if (!ponto) return;
 
         const coordAtual = obterCoordenadasCentroideWifi(ponto);
-        // Trava de segurança: só agrega se o usuário estiver dentro de 180m do ponto (evita deslocar pino se alguém clicar de longe em casa)
         if (coordAtual) {
             const distKm = calcularDistanciaKm(userLatAtual, userLngAtual, coordAtual.lat, coordAtual.lng);
             if (distKm > 0.18) {
@@ -1243,7 +1526,6 @@
         const amostras = obterAmostrasPosicaoWifi(idWifi);
         const userEmail = usuarioLogado ? usuarioLogado.email : "anon";
 
-        // Atualiza a amostra mais recente deste usuário ou adiciona nova
         const idxExistente = amostras.findIndex(a => a.usuario === userEmail && a.origem === origem);
         const novaAmostra = {
             lat: Number(userLatAtual.toFixed(6)),
@@ -1262,7 +1544,6 @@
 
         localStorage.setItem(key, JSON.stringify(amostras));
 
-        // Recalcula o novo centroide e atualiza no cache local + planilha
         const novoCentro = calcularCentroidePonderado(ponto);
         if (novoCentro) {
             ponto.lat_long = `${novoCentro.lat.toFixed(6)}, ${novoCentro.lng.toFixed(6)}`;
@@ -1314,7 +1595,7 @@
     }
 
     // =========================================================================
-    // REGRAS DE CORES POR VELOCIDADE (VERMELHO, LARANJA, AMARELO, AZUL, VERDE)
+    // REGRAS DE CORES E FILTRO POR VELOCIDADE
     // =========================================================================
     function obterVelocidadeAtiva(w) {
         const down = parseFloat(w.down_mbps || w.med_down || w.ult_down || 0);
@@ -1326,15 +1607,27 @@
         const v = parseFloat(mbps) || 0;
         if (v < 10) return { hex: "#ef4444", nome: "Vermelho (<10 Mbps)", texto: "#ffffff" };
         if (v < 20) return { hex: "#f97316", nome: "Laranja (10-20 Mbps)", texto: "#ffffff" };
-        if (v < 40) return { hex: "#eab308", nome: "Amarelo (20-40 Mbps)", texto: "#111815" };
+        if (v < 40) return { hex: "#eab308", nome: "Amarelo (20-40 Mbps)", texto: "#111111" };
         if (v <= 100) return { hex: "#3b82f6", nome: "Azul (40-100 Mbps)", texto: "#ffffff" };
         return { hex: "#22c55e", nome: "Verde (>100 Mbps)", texto: "#052e16" };
+    }
+
+    function correspondeFaixaVelocidade(mbps) {
+        const v = parseFloat(mbps) || 0;
+        if (filtroVelocidadeAtivo === 'todos') return true;
+        if (filtroVelocidadeAtivo === 'lt10') return v < 10;
+        if (filtroVelocidadeAtivo === '10_20') return v >= 10 && v < 20;
+        if (filtroVelocidadeAtivo === '20_40') return v >= 20 && v < 40;
+        if (filtroVelocidadeAtivo === '40_100') return v >= 40 && v <= 100;
+        if (filtroVelocidadeAtivo === 'gt100') return v > 100;
+        return true;
     }
 
     function definirPrioridade(tipo) {
         prioridadeVelocidade = tipo;
         document.getElementById('prioDownBtn').classList.toggle('active', tipo === 'download');
         document.getElementById('prioUpBtn').classList.toggle('active', tipo === 'upload');
+        atualizarContadorFiltros();
         renderizarAlfinetesNoMapa();
     }
 
@@ -1347,11 +1640,29 @@
             sinal_rua: 'filtroSinalRua'
         };
         document.getElementById(mapBtnId[chave]).classList.toggle('active', filtrosAtivos[chave]);
+        atualizarContadorFiltros();
+        renderizarAlfinetesNoMapa();
+    }
+
+    function definirFiltroVelocidade(faixa) {
+        filtroVelocidadeAtivo = (filtroVelocidadeAtivo === faixa && faixa !== 'todos') ? 'todos' : faixa;
+        const mapSpeedId = {
+            todos: 'speedFilterAll',
+            lt10: 'speedFilterLt10',
+            '10_20': 'speedFilter10_20',
+            '20_40': 'speedFilter20_40',
+            '40_100': 'speedFilter40_100',
+            gt100: 'speedFilterGt100'
+        };
+        Object.keys(mapSpeedId).forEach(k => {
+            document.getElementById(mapSpeedId[k]).classList.toggle('active', filtroVelocidadeAtivo === k);
+        });
+        atualizarContadorFiltros();
         renderizarAlfinetesNoMapa();
     }
 
     // =========================================================================
-    // GERADOR PADRÃO DE QR CODE WI-FI (CONEXÃO AUTOMÁTICA) - SINTAXE CORRIGIDA
+    // GERADOR PADRÃO DE QR CODE WI-FI (CONEXÃO AUTOMÁTICA)
     // =========================================================================
     function escaparCampoWifi(str) {
         return String(str || "").replace(/([\\;,:"])/g, "\\$1");
@@ -1367,7 +1678,6 @@
         const p = escaparCampoWifi(pRaw);
         return `WIFI:T:WPA;S:${s};P:${p};;`;
     }
-
 
     function conectarPeloLinkQr(ssid, senha) {
         const pontoMatch = listaWifisCache.find(w => (w.ssid || w.local) === ssid);
@@ -1386,20 +1696,20 @@
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'modalConexaoWifi';
-            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
             document.body.appendChild(modal);
         }
 
         modal.innerHTML = `
-            <div style="background:#1c2621;border:2px solid #22c55e;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f3f4f6;box-shadow:0 15px 35px rgba(0,0,0,0.7);">
-                <div style="font-size:1rem;font-weight:800;color:#22c55e;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
+            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f8fafc;box-shadow:0 15px 35px rgba(0,0,0,0.8);">
+                <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
                 <div style="font-size:0.85rem;font-weight:700;margin-bottom:2px;">Rede: ${ssid}</div>
-                <div style="font-size:0.8rem;color:#9ca3af;margin-bottom:10px;">Senha: <strong style="color:#fff;">${isAberta ? 'Rede Aberta' : senha}</strong> ${!isAberta ? '(copiada!)' : ''}</div>
+                <div style="font-size:0.8rem;color:#a1a1aa;margin-bottom:10px;">Senha: <strong style="color:#fff;">${isAberta ? 'Rede Aberta' : senha}</strong> ${!isAberta ? '(copiada!)' : ''}</div>
                 <img src="${qrUrl}" alt="QR Code Wi-Fi" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
-                <div style="font-size:0.72rem;color:#9ca3af;margin-bottom:10px;word-break:break-all;background:#111815;padding:6px;border-radius:6px;border:1px solid #2e3b34;">${payload}</div>
+                <div style="font-size:0.72rem;color:#a1a1aa;margin-bottom:10px;word-break:break-all;background:#0b0b0c;padding:6px;border-radius:6px;border:1px solid #27272a;">${payload}</div>
                 <div style="display:flex;flex-direction:column;gap:8px;">
-                    <a href="${payload}" style="background:#22c55e;color:#052e16;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;">⚡ Conectar Agora (Link Wi-Fi)</a>
-                    <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#2e3b34;color:#f3f4f6;border:1px solid #3f5248;font-weight:600;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;">Fechar</button>
+                    <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;">⚡ Conectar Agora (Link Wi-Fi)</a>
+                    <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-weight:600;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;">Fechar</button>
                 </div>
             </div>
         `;
@@ -1458,7 +1768,6 @@
         const ssid = ponto.ssid || ponto.local;
         const senha = ponto.senha || "";
         const qrUrl = gerarUrlImagemQR(ssid, senha, 280);
-        linkQrAtualMapa = qrUrl;
 
         const down = parseFloat(ponto.down_mbps || ponto.med_down || 0);
         const up = parseFloat(ponto.up_mbps || ponto.med_up || 0);
@@ -1475,7 +1784,6 @@
         btnQrCard.href = wifiPayloadCard;
         btnQrCard.onclick = (e) => { e.preventDefault(); conectarPeloLinkQr(ssid, senha); };
 
-        // Link de Rota Direta (Google Maps / Waze)
         const coords = obterCoordenadasCentroideWifi(ponto);
         const navBtn = document.getElementById('mapaNavGpsLink');
         if (coords) {
@@ -1485,7 +1793,6 @@
             navBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ponto.local + " " + ponto.cidade)}`;
         }
 
-        // Status ao Vivo
         const liveEl = document.getElementById('mapaLiveStatus');
         const st = String(ponto.status || "Funcionando");
         const valData = ponto.ultima_validacao ? ` (${ponto.ultima_validacao})` : "";
@@ -1504,7 +1811,6 @@
                 : `📍 Posição inicial (1 amostra). Conecte-se ou toque em "Centralizar Pino Aqui" para refinar.`;
         }
 
-        // Banner de Segurança Dinâmico (Rede Aberta vs Rede com Senha)
         const secBanner = document.getElementById('mapaSecurityBanner');
         const isAberta = !senha || senha.toLowerCase() === "aberta" || senha.toLowerCase() === "sem senha";
         if (isAberta) {
@@ -1515,7 +1821,6 @@
             secBanner.innerHTML = `🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa e mantenha o compartilhamento de arquivos do notebook desativado.`;
         }
 
-        // Comodidades
         const amenitiesDiv = document.getElementById('mapaAmenities');
         amenitiesDiv.innerHTML = "";
         const coms = obterComodidadesLocal(ponto);
@@ -1534,7 +1839,6 @@
             }
         });
 
-        // Galeria de Fotos
         const galeriaDiv = document.getElementById('mapaGaleriaStrip');
         galeriaDiv.innerHTML = "";
         const fotos = obterFotosLocal(ponto);
@@ -1652,7 +1956,7 @@
     }
 
     // =========================================================================
-    // CADASTRO ULTRA-RÁPIDO (AUTO-PREENCHER COMÉRCIO/GPS + LER QR CODE DA PAREDE)
+    // CADASTRO ULTRA-RÁPIDO
     // =========================================================================
     function marcarRedeAberta() {
         document.getElementById('cadSenha').value = "Aberta";
@@ -1718,11 +2022,11 @@
                         gpsStatus.style.color = "#22c55e";
                     } else {
                         gpsStatus.textContent = "⚠️ QR Code lido (" + txt.slice(0, 30) + "), mas não contém dados de Wi-Fi.";
-                        gpsStatus.style.color = "#fbbf24";
+                        gpsStatus.style.color = "#facc15";
                     }
                 } else {
                     gpsStatus.textContent = "⚠️ Não foi possível identificar um QR Code nítido na foto.";
-                    gpsStatus.style.color = "#fbbf24";
+                    gpsStatus.style.color = "#facc15";
                 }
             };
             img.src = e.target.result;
@@ -1815,7 +2119,7 @@
         } catch (e) {
             loginToast.style.display = "block";
             loginToast.className = "toast error";
-            loginToast.textContent = "Erro de conexão com o Google Apps Script. Verifique se implantou como 'Qualquer pessoa'.";
+            loginToast.textContent = "Erro de conexão com o Google Apps Script.";
         }
 
         submitBtn.disabled = false;
@@ -1831,11 +2135,19 @@
     async function mostrarApp() {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
-        document.getElementById('userDisplay').textContent = usuarioLogado.nome;
+
+        // Exibe somente o primeiro nome ou nome curto no botão do menu suspenso
+        const nomeCompleto = usuarioLogado.nome || "Usuário";
+        const primeiroNome = nomeCompleto.split("(")[0].trim().split(" ")[0];
+        document.getElementById('userDisplay').textContent = primeiroNome;
+        document.getElementById('userMenuFullName').textContent = nomeCompleto;
+
+        const isAdm = ehUsuarioAdmin();
         const adminBox = document.getElementById('adminPanelBox');
-        if (adminBox) {
-            adminBox.classList.toggle('hidden', !ehUsuarioAdmin());
-        }
+        const menuAdminItem = document.getElementById('menuAdminItem');
+        if (adminBox) adminBox.classList.toggle('hidden', !isAdm);
+        if (menuAdminItem) menuAdminItem.classList.toggle('hidden', !isAdm);
+
         setTimeout(() => {
             inicializarOuAtualizarMapa();
         }, 80);
@@ -1845,6 +2157,7 @@
     }
 
     function sair() {
+        fecharMenuUsuario();
         localStorage.removeItem('clickcontrol_user');
         usuarioLogado = null;
         document.getElementById('authSenha').value = "";
@@ -1853,16 +2166,17 @@
     }
 
     function mudarAba(aba) {
-        const abas = ['testar', 'mapa', 'cadastrar', 'perfil'];
+        const abas = ['mapa', 'testar', 'cadastrar', 'perfil'];
         abas.forEach(nome => {
             const div = document.getElementById('aba' + nome.charAt(0).toUpperCase() + nome.slice(1));
             const btn = document.getElementById('tab' + nome.charAt(0).toUpperCase() + nome.slice(1) + 'Btn');
-            if (nome === aba) {
-                div.classList.remove('hidden');
-                btn.classList.add('active');
-            } else {
-                div.classList.add('hidden');
-                btn.classList.remove('active');
+            if (div) {
+                if (nome === aba) div.classList.remove('hidden');
+                else div.classList.add('hidden');
+            }
+            if (btn) {
+                if (nome === aba) btn.classList.add('active');
+                else btn.classList.remove('active');
             }
         });
 
@@ -1870,12 +2184,16 @@
             setTimeout(() => {
                 inicializarOuAtualizarMapa();
             }, 100);
+        } else if (aba === 'testar') {
+            atualizarBannerWifiAtualTestar();
         } else if (aba === 'perfil') {
             carregarPerfilUsuario();
         }
     }
 
-
+    // =========================================================================
+    // GPS DE ALTA PRECISÃO
+    // =========================================================================
     let gpsWatchId = null;
     let melhorPrecisaoAtual = Infinity;
     let userAccuracyCircle = null;
@@ -1902,11 +2220,8 @@
         };
 
         const timer = setTimeout(() => {
-            if (melhorPos) {
-                concluir(melhorPos, null);
-            } else {
-                concluir(null, "Tempo esgotado ao aguardar sinal fino de GPS.");
-            }
+            if (melhorPos) concluir(melhorPos, null);
+            else concluir(null, "Tempo esgotado ao aguardar sinal fino de GPS.");
         }, timeoutMs);
 
         watchId = navigator.geolocation.watchPosition(
@@ -1922,17 +2237,13 @@
                     concluir(melhorPos, null);
                 }
             },
-            (err) => {
+            () => {
                 if (!melhorPos) {
                     clearTimeout(timer);
                     concluir(null, "Permissão de GPS negada ou sinal indisponível.");
                 }
             },
-            {
-                enableHighAccuracy: true,
-                maximumAge: 0,
-                timeout: timeoutMs
-            }
+            { enableHighAccuracy: true, maximumAge: 0, timeout: timeoutMs }
         );
     }
 
@@ -1948,7 +2259,6 @@
         gpsWatchId = navigator.geolocation.watchPosition(
             async (pos) => {
                 const acc = pos.coords.accuracy || 999;
-                // Aceita imediatamente se for a primeira leitura ou se melhorar/mantiver precisão <= 15m
                 if (userLatAtual === null || acc <= melhorPrecisaoAtual || acc <= 10) {
                     if (acc < melhorPrecisaoAtual) melhorPrecisaoAtual = acc;
                     userLatAtual = pos.coords.latitude;
@@ -1962,17 +2272,16 @@
 
                     if (mapStatus) {
                         mapStatus.textContent = badgeAcc;
-                        mapStatus.style.color = acc <= 5 ? "#22c55e" : "#fbbf24";
+                        mapStatus.style.color = acc <= 5 ? "#22c55e" : "#facc15";
                     }
                     if (nearStatus) {
                         nearStatus.textContent = badgeAcc;
-                        nearStatus.style.color = acc <= 5 ? "#22c55e" : "#fbbf24";
+                        nearStatus.style.color = acc <= 5 ? "#22c55e" : "#facc15";
                     }
 
                     if (mapInstance) {
                         atualizarMarcadorUsuarioNoMapa(userLatAtual, userLngAtual, acc);
                     }
-                    // Se o usuário acabou de logar/abrir e está a <= 80m de uma rede conhecida, registra sua posição no centroide dela
                     if (acc <= 15 && listaWifisCache.length > 0) {
                         const proximos = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
                         if (proximos[0] && proximos[0].distKm !== null && proximos[0].distKm <= 0.08) {
@@ -1991,18 +2300,18 @@
         if (userMarker) mapInstance.removeLayer(userMarker);
         if (userAccuracyCircle) mapInstance.removeLayer(userAccuracyCircle);
 
-        const corCirculo = acc <= 5 ? "#22c55e" : "#fbbf24";
+        const corCirculo = acc <= 5 ? "#facc15" : "#f97316";
         userAccuracyCircle = L.circle([uLat, uLng], {
             radius: Math.max(acc, 3),
             color: corCirculo,
             fillColor: corCirculo,
-            fillOpacity: 0.15,
+            fillOpacity: 0.16,
             weight: 1.5
         }).addTo(mapInstance);
 
         const iconUser = L.divIcon({
             className: 'custom-user-pin',
-            html: '<div style="background:#ffffff;width:16px;height:16px;border-radius:50%;border:4px solid #111815;box-shadow:0 0 10px rgba(255,255,255,0.95);"></div>',
+            html: '<div style="background:#facc15;width:16px;height:16px;border-radius:50%;border:4px solid #111111;box-shadow:0 0 12px rgba(250,204,21,0.95);"></div>',
             iconSize: [16, 16],
             iconAnchor: [8, 8]
         });
@@ -2053,11 +2362,18 @@
 
     function obterListaFiltradaEOrdenada(uLat = userLatAtual, uLng = userLngAtual) {
         let lista = listaWifisCache.filter(w => {
+            // Garante remoção de WFI-001 caso ainda exista na planilha
+            if (String(w.id || "").trim().toUpperCase() === "WFI-001") return false;
+
             const coms = obterComodidadesLocal(w);
             if (filtrosAtivos.estacionamento && !coms.includes('estacionamento')) return false;
             if (filtrosAtivos.mesas && !coms.includes('mesas')) return false;
             if (filtrosAtivos.tomadas && !coms.includes('tomadas')) return false;
             if (filtrosAtivos.sinal_rua && !coms.includes('sinal_rua')) return false;
+
+            const velAtiva = obterVelocidadeAtiva(w);
+            if (!correspondeFaixaVelocidade(velAtiva)) return false;
+
             return true;
         }).map(w => {
             const coords = obterCoordenadasCentroideWifi(w);
@@ -2080,10 +2396,11 @@
     }
 
     function preencherSelectsComLista(listaOrdenada, manterIdSelecionado = null) {
-        const selects = [document.getElementById('selectWifi'), document.getElementById('selectWifiMapa')];
-        selects.forEach(sel => {
-            if (!sel) return;
-            sel.innerHTML = "";
+        const selMapa = document.getElementById('selectWifiMapa');
+        const hiddenTestar = document.getElementById('selectWifi');
+
+        if (selMapa) {
+            selMapa.innerHTML = "";
             listaOrdenada.forEach(w => {
                 const opt = document.createElement('option');
                 opt.value = w.id;
@@ -2093,19 +2410,26 @@
                         ? ` [${Math.round(w.distKm * 1000)}m]`
                         : ` [${w.distKm.toFixed(1)}km]`;
                 }
-                const tagVel = w.velAtiva > 0 ? ` (${w.velAtiva.toFixed(0)} Mbps)` : "";
-                opt.textContent = `${w.id} - ${w.local}${tagVel}${tagDist}`;
-                sel.appendChild(opt);
+                // Mostra SOMENTE o endereço (sem WFI-xxx e sem nome técnico)
+                opt.textContent = `${formatarEnderecoLimpo(w)}${tagDist}`;
+                selMapa.appendChild(opt);
             });
+
             if (manterIdSelecionado && listaOrdenada.some(x => x.id === manterIdSelecionado)) {
-                sel.value = manterIdSelecionado;
+                selMapa.value = manterIdSelecionado;
             } else if (listaOrdenada.length > 0) {
-                sel.value = listaOrdenada[0].id;
+                selMapa.value = listaOrdenada[0].id;
             }
-        });
+        }
+
+        const idEscolhido = (selMapa && selMapa.value) ? selMapa.value : (listaOrdenada[0] ? listaOrdenada[0].id : "");
+        if (hiddenTestar) {
+            hiddenTestar.value = idEscolhido;
+        }
+
         aoTrocarWifi();
-        const idAtual = document.getElementById('selectWifiMapa').value;
-        if (idAtual) atualizarCardQrDoMapa(idAtual);
+        atualizarBannerWifiAtualTestar();
+        if (idEscolhido) atualizarCardQrDoMapa(idEscolhido);
     }
 
     async function selecionarWifiMaisProximo(manualClick = false) {
@@ -2113,7 +2437,7 @@
         const btnNear = document.getElementById('btnNearGps');
 
         if (!navigator.geolocation) {
-            statusEl.textContent = "GPS indisponível neste navegador. Selecione o Wi-Fi na lista acima.";
+            statusEl.textContent = "GPS indisponível neste navegador.";
             return;
         }
 
@@ -2121,20 +2445,20 @@
             btnNear.disabled = true;
             btnNear.textContent = "...";
         }
-        statusEl.textContent = "Calibrando GPS de alta precisão (meta ≤ 5m)...";
-        statusEl.style.color = "#fbbf24";
+        statusEl.textContent = "Detectando o Wi-Fi mais próximo de você agora...";
+        statusEl.style.color = "#facc15";
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
                 const acc = posParcial.coords.accuracy || 999;
-                statusEl.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m (buscando ≤ 5m)...`;
+                statusEl.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
             },
             async (posFinal, erro) => {
                 if (!posFinal) {
                     statusEl.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    statusEl.style.color = "#fbbf24";
+                    statusEl.style.color = "#fdba74";
                     btnNear.disabled = false;
-                    btnNear.textContent = "📍 Perto";
+                    btnNear.textContent = "📍 Detectar Wi-Fi Atual";
                     return;
                 }
 
@@ -2151,12 +2475,12 @@
                     const distTxt = maisProximo.distKm < 1
                         ? `${Math.round(maisProximo.distKm * 1000)}m`
                         : `${maisProximo.distKm.toFixed(1)} km`;
-                    statusEl.textContent = `🎯 GPS (±${melhorPrecisaoAtual.toFixed(1)}m) • Mais próximo: ${maisProximo.local} (${distTxt}).`;
+                    statusEl.textContent = `🎯 Wi-Fi atual detectado a ${distTxt} (±${melhorPrecisaoAtual.toFixed(1)}m).`;
                     statusEl.style.color = "#22c55e";
                 }
 
                 btnNear.disabled = false;
-                btnNear.textContent = "📍 Perto";
+                btnNear.textContent = "📍 Detectar Wi-Fi Atual";
             },
             10000,
             5
@@ -2213,7 +2537,7 @@
             }
         });
 
-        notice.textContent = `Zoom afastado (${zoom}x): exibindo os ${melhores.length} melhores pontos de ${prioridadeVelocidade === 'upload' ? 'Upload' : 'Download'} (aproxime para ver todos).`;
+        notice.textContent = `Zoom afastado (${zoom}x): exibindo os ${melhores.length} melhores pontos de ${prioridadeVelocidade === 'upload' ? 'Upload' : 'Download'}.`;
         return melhores;
     }
 
@@ -2244,7 +2568,7 @@
 
             const iconWifi = L.divIcon({
                 className: 'custom-wifi-pin',
-                html: `<div style="background:${cor.hex};color:${cor.texto};font-weight:800;font-size:10px;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #ffffff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.6);"><span style="transform:rotate(45deg);">${labelVel}</span></div>`,
+                html: `<div style="background:${cor.hex};color:${cor.texto};font-weight:800;font-size:10px;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #ffffff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.75);"><span style="transform:rotate(45deg);">${labelVel}</span></div>`,
                 iconSize: [28, 28],
                 iconAnchor: [14, 28]
             });
@@ -2264,10 +2588,10 @@
             const popupHtml = `
                 <div>
                     <b>${w.local}</b><br>
-                    <span style="color:#4b5563;">${w.cidade}</span><br>
-                    <span style="font-weight:700; color:#111815;">⬇️ ${down.toFixed(1)} Mbps | ⬆️ ${up.toFixed(1)} Mbps</span><br>
+                    <span style="color:#4b5563;">${formatarEnderecoLimpo(w)}</span><br>
+                    <span style="font-weight:700; color:#111111;">⬇️ ${down.toFixed(1)} Mbps | ⬆️ ${up.toFixed(1)} Mbps</span><br>
                     <span>Rede: <b>${ssid}</b> | Senha: <b>${senha || '-'}</b></span><br>
-                    <span style="font-size:0.68rem; color:#2563eb;">🎯 Centro de ${w.coords.totalAmostras || 1} conexão(ões)</span>
+                    <span style="font-size:0.68rem; color:#b45309;">🎯 Centro de ${w.coords.totalAmostras || 1} conexão(ões)</span>
                     ${fotoHtml}
                     <img src="${qrUrl}" class="popup-qr-img" alt="QR Code Wi-Fi">
                     <a href="${navUrl}" target="_blank" class="popup-btn nav">🧭 Ir até lá</a>
@@ -2281,6 +2605,7 @@
                 document.getElementById('selectWifiMapa').value = w.id;
                 document.getElementById('selectWifi').value = w.id;
                 aoTrocarWifi();
+                atualizarBannerWifiAtualTestar();
                 atualizarCardQrDoMapa(w.id);
             });
 
@@ -2291,7 +2616,7 @@
         });
 
         mapStatus.textContent = pontosFiltradosResumo(listaFiltrada.length, pontosVisiveisNoZoom.length);
-        mapStatus.style.color = "#22c55e";
+        mapStatus.style.color = "#facc15";
     }
 
     function pontosFiltradosResumo(totalFiltrados, visiveisZoom) {
@@ -2318,7 +2643,7 @@
         if (navigator.geolocation) {
             btnAtualizar.disabled = true;
             mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 5m)...";
-            mapStatus.style.color = "#fbbf24";
+            mapStatus.style.color = "#facc15";
 
             obterPosicaoAltaPrecisao(
                 (posParcial) => {
@@ -2327,7 +2652,7 @@
                     userLngAtual = posParcial.coords.longitude;
                     mapInstance.setView([userLatAtual, userLngAtual], acc <= 15 ? 18 : 16);
                     desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, acc);
-                    mapStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m (buscando ≤ 5m)...`;
+                    mapStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
                 },
                 async (posFinal) => {
                     if (posFinal) {
@@ -2338,7 +2663,7 @@
                         mapInstance.setView([userLatAtual, userLngAtual], 18);
                         desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
                         mapStatus.textContent = `🎯 Localização travada com raio de ±${melhorPrecisaoAtual.toFixed(1)}m.`;
-                        mapStatus.style.color = melhorPrecisaoAtual <= 5 ? "#22c55e" : "#fbbf24";
+                        mapStatus.style.color = "#22c55e";
                     } else {
                         desenharUsuarioEAlfinetes(null, null);
                     }
@@ -2356,6 +2681,7 @@
         const idSelecionado = document.getElementById('selectWifiMapa').value;
         document.getElementById('selectWifi').value = idSelecionado;
         aoTrocarWifi();
+        atualizarBannerWifiAtualTestar();
         atualizarCardQrDoMapa(idSelecionado);
 
         const ponto = listaWifisCache.find(w => w.id === idSelecionado);
@@ -2378,11 +2704,12 @@
         const idSelecionado = document.getElementById('selectWifiMapa').value;
         document.getElementById('selectWifi').value = idSelecionado;
         aoTrocarWifi();
+        atualizarBannerWifiAtualTestar();
         mudarAba('testar');
     }
 
     // =========================================================================
-    // GEOCODIFICAÇÃO REVERSA + GPS ALTA PRECISÃO (<= 5M) + PINO AJUSTÁVEL
+    // GEOCODIFICAÇÃO REVERSA + GPS ALTA PRECISÃO + PINO AJUSTÁVEL
     // =========================================================================
     function renderizarMinimapaCadastro(latNum, lngNum, accMetros) {
         const wrap = document.getElementById('cadMiniMapWrap');
@@ -2433,18 +2760,18 @@
         gpsBtn.disabled = true;
         gpsBtn.textContent = "Calibrando ≤5m...";
         gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 5m)...";
-        gpsStatus.style.color = "#fbbf24";
+        gpsStatus.style.color = "#facc15";
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
                 const acc = posParcial.coords.accuracy || 999;
-                gpsStatus.textContent = `📡 Refinando posição: ±${acc.toFixed(1)}m (meta ≤ 5m)...`;
+                gpsStatus.textContent = `📡 Refinando posição: ±${acc.toFixed(1)}m...`;
                 renderizarMinimapaCadastro(posParcial.coords.latitude, posParcial.coords.longitude, acc);
             },
             async (posFinal, erro) => {
                 if (!posFinal) {
                     gpsStatus.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    gpsStatus.style.color = "#fbbf24";
+                    gpsStatus.style.color = "#fdba74";
                     gpsBtn.disabled = false;
                     gpsBtn.textContent = "📍 Auto-Preencher Local";
                     return;
@@ -2501,7 +2828,7 @@
                     }
 
                     gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Local preenchido.`;
-                    gpsStatus.style.color = acc <= 5 ? "#22c55e" : "#fbbf24";
+                    gpsStatus.style.color = "#22c55e";
                 } catch (err) {
                     inputLoc.value = ultimaCoordGPS;
                     gpsStatus.textContent = `🎯 Coordenadas captadas (±${acc.toFixed(1)}m).`;
@@ -2547,8 +2874,8 @@
                         const item = document.createElement('div');
                         item.className = 'my-wifi-item';
                         item.innerHTML = `
-                            <strong>${w.id} - ${w.local}</strong> (${w.cidade})
-                            <small>Rede: ${w.ssid} | Senha: ${w.senha} • <a href="${qrLink}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 600;">🔗 Link QR Code</a></small>
+                            <strong>${w.local}</strong> (${w.cidade})
+                            <small>Rede: ${w.ssid} | Senha: ${w.senha} • <a href="${qrLink}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">🔗 Link QR Code</a></small>
                         `;
                         listaDiv.appendChild(item);
                     });
@@ -2557,7 +2884,7 @@
                 }
             }
         } catch (e) {
-            document.getElementById('meusWifisLista').innerHTML = `<div style="color: #fbbf24; text-align: center; padding: 10px;">Atualize o código do Apps Script para sincronizar saldo e velocidades.</div>`;
+            document.getElementById('meusWifisLista').innerHTML = `<div style="color: #facc15; text-align: center; padding: 10px;">Atualize o código do Apps Script para sincronizar saldo e velocidades.</div>`;
         }
 
         atualizarListaAdminWifis();
@@ -2570,7 +2897,8 @@
             const res = await fetch(GOOGLE_SCRIPT_URL + "?acao=listar_wifis");
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
-                listaWifisCache = data.wifis;
+                // Filtra WFI-001 caso venha da planilha
+                listaWifisCache = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
                 await resolverCoordenadasFaltantes();
                 const ordenada = obterListaFiltradaEOrdenada();
                 preencherSelectsComLista(ordenada);
@@ -2630,7 +2958,7 @@
 
             cadToast.style.display = "block";
             cadToast.className = "toast";
-            cadToast.innerHTML = `✅ Ponto ${novoId} cadastrado! +10 Créditos na carteira.<br><a href="${qrLinkGerado}" target="_blank" style="color:#3b82f6;font-weight:700;">🔗 Abrir Link do QR Code de Conexão</a>`;
+            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos na carteira.<br><a href="${qrLinkGerado}" target="_blank" style="color:var(--primary);font-weight:700;">🔗 Abrir Link do QR Code de Conexão</a>`;
 
             document.getElementById('cadNomeLocal').value = "";
             document.getElementById('cadLocalizacao').value = "";
@@ -2680,6 +3008,7 @@
             badge.classList.remove('locked');
             rewardLabel.innerHTML = "Recompensa: <strong>+2 Créditos</strong> (1x por ponto)";
         }
+        atualizarBannerWifiAtualTestar();
     }
 
     async function medirDownloadMultiThread() {
@@ -2867,7 +3196,6 @@
                 toastMsg.className = "toast";
                 toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
 
-                // Atualiza imediatamente a velocidade no cache local (caso a planilha demore ou não tenha recalculado ainda)
                 const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
                 if (pontoLocal) {
                     const dNovo = parseFloat(downloadMbps) || 0;
@@ -2883,7 +3211,6 @@
                 await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true);
                 await carregarListaWifis();
 
-                // Garante que se a planilha retornou 0/vazio para o ponto recém-testado, o valor medido prevaleça na tela
                 const pontoPosSync = listaWifisCache.find(w => w.id === idWifi);
                 if (pontoPosSync && (!parseFloat(pontoPosSync.down_mbps) && !parseFloat(pontoPosSync.med_down))) {
                     pontoPosSync.down_mbps = parseFloat(downloadMbps) || 0;
@@ -2901,9 +3228,8 @@
         }
     }
 
-
     // =========================================================================
-    // RECUPERAÇÃO DE SENHA (E-MAIL + CÓDIGO)
+    // RECUPERAÇÃO DE SENHA
     // =========================================================================
     function alternarRecuperacaoSenha(mostrar) {
         const box = document.getElementById('boxRecuperarSenha');
@@ -2955,7 +3281,7 @@
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast error";
-            toast.textContent = "Erro ao enviar código. Atualize o Google Apps Script com suporte a recuperação de senha.";
+            toast.textContent = "Erro ao enviar código.";
         }
 
         btn.disabled = false;
@@ -3013,7 +3339,7 @@
     }
 
     // =========================================================================
-    // ADMINISTRAÇÃO DE PONTOS E USUÁRIOS (MODERADOR / ADMIN)
+    // ADMINISTRAÇÃO DE PONTOS E USUÁRIOS
     // =========================================================================
     function atualizarListaAdminWifis() {
         const sel = document.getElementById('adminSelectWifi');
@@ -3023,7 +3349,7 @@
         listaWifisCache.forEach(w => {
             const opt = document.createElement('option');
             opt.value = w.id;
-            opt.textContent = `${w.id} - ${w.local} (${w.cidade || ''})`;
+            opt.textContent = `${w.local} (${w.cidade || ''})`;
             sel.appendChild(opt);
         });
         if (atual && listaWifisCache.some(x => x.id === atual)) {
@@ -3065,7 +3391,6 @@
             w.ssid = ssid;
             w.senha = senha;
             w.lat_long = coords;
-            // Limpa amostras locais antigas para assumir a coordenada oficial definida pelo admin
             localStorage.removeItem(`clickcontrol_samples_${id}`);
         }
 
@@ -3088,11 +3413,11 @@
             });
             toast.style.display = "block";
             toast.className = "toast";
-            toast.textContent = `✅ Ponto ${id} atualizado com sucesso!`;
+            toast.textContent = `✅ Ponto atualizado com sucesso!`;
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast warning";
-            toast.textContent = `⚠️ Atualizado localmente. Sincronize o Apps Script para gravar na planilha.`;
+            toast.textContent = `⚠️ Atualizado localmente.`;
         }
     }
 
@@ -3100,7 +3425,7 @@
         const id = document.getElementById('adminSelectWifi').value;
         const w = listaWifisCache.find(x => x.id === id);
         if (!w) return;
-        if (!confirm(`Tem certeza que deseja excluir o ponto "${w.local}" (${id})?`)) return;
+        if (!confirm(`Tem certeza que deseja excluir o ponto "${w.local}"?`)) return;
 
         listaWifisCache = listaWifisCache.filter(x => x.id !== id);
         localStorage.removeItem(`clickcontrol_samples_${id}`);
@@ -3120,7 +3445,7 @@
             });
             toast.style.display = "block";
             toast.className = "toast";
-            toast.textContent = `🗑️ Ponto ${id} removido com sucesso.`;
+            toast.textContent = `🗑️ Ponto removido com sucesso.`;
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast warning";
