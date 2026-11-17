@@ -7,19 +7,20 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
-            /* Tema Inspirado na Foco Radical (Preto Profundo + Amarelo/Âmbar Vibrante + Grafite) */
-            --bg-color: #0b0b0c;
-            --card-bg: #141416;
-            --primary: #facc15;
-            --primary-hover: #eab308;
-            --primary-text: #111111;
-            --secondary: #f97316;
-            --secondary-hover: #ea580c;
-            --text-main: #f8fafc;
-            --text-muted: #a1a1aa;
-            --border: #27272a;
-            --input-bg: #1c1c1f;
-            --accent-glow: rgba(250, 204, 21, 0.16);
+            /* Novo Tema: Fundo Amarelo Vibrante com Detalhes Pretos */
+            --bg-color: #FFD000;
+            --card-bg: #FFE047;
+            --surface-alt: #FFF5B8;
+            --primary: #111111;
+            --primary-hover: #27272a;
+            --primary-text: #FFD000;
+            --secondary: #18181b;
+            --secondary-hover: #000000;
+            --text-main: #111111;
+            --text-muted: #3f3f46;
+            --border: #111111;
+            --input-bg: #FFFDF0;
+            --accent-glow: rgba(17, 17, 17, 0.12);
         }
         * {
             box-sizing: border-box;
@@ -39,12 +40,12 @@
         }
         .container {
             background-color: var(--card-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 16px;
             padding: 14px;
             width: 100%;
             max-width: 560px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+            box-shadow: 4px 4px 0px #111111;
         }
         /* Cabeçalho Compacto + Menu Vertical Suspenso do Usuário */
         .top-navbar {
@@ -54,7 +55,7 @@
             gap: 10px;
             margin-bottom: 12px;
             padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 2px solid var(--border);
             position: relative;
         }
         .brand-block h1 {
@@ -67,7 +68,8 @@
         }
         .brand-block p {
             color: var(--text-muted);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 600;
             margin-top: 2px;
         }
         .user-dropdown-wrap {
@@ -75,13 +77,13 @@
             display: inline-block;
         }
         .user-trigger-btn {
-            background-color: var(--input-bg);
-            border: 1px solid var(--primary);
-            color: var(--primary);
+            background-color: var(--primary);
+            border: 2px solid var(--border);
+            color: var(--primary-text);
             padding: 7px 12px;
             border-radius: 999px;
             font-size: 0.78rem;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -90,7 +92,7 @@
             transition: all 0.15s;
         }
         .user-trigger-btn:hover {
-            background-color: var(--accent-glow);
+            background-color: var(--primary-hover);
         }
         .user-trigger-name {
             overflow: hidden;
@@ -101,11 +103,11 @@
             position: absolute;
             right: 0;
             top: calc(100% + 6px);
-            width: 215px;
-            background-color: #18181b;
-            border: 1px solid var(--primary);
+            width: 220px;
+            background-color: var(--input-bg);
+            border: 2px solid var(--border);
             border-radius: 12px;
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.85);
+            box-shadow: 4px 4px 0px #111111;
             z-index: 2500;
             overflow: hidden;
             display: flex;
@@ -113,26 +115,26 @@
         }
         .user-menu-header {
             padding: 10px 12px;
-            background-color: #111113;
-            border-bottom: 1px solid var(--border);
+            background-color: var(--primary);
+            border-bottom: 2px solid var(--border);
             font-size: 0.72rem;
-            color: var(--text-muted);
+            color: #d4d4d8;
         }
         .user-menu-header strong {
             display: block;
-            color: var(--primary);
-            font-size: 0.82rem;
+            color: var(--primary-text);
+            font-size: 0.84rem;
             margin-top: 2px;
         }
         .user-menu-item {
             background: none;
             border: none;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(17, 17, 17, 0.2);
             color: var(--text-main);
             padding: 10px 12px;
             text-align: left;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -143,35 +145,35 @@
             border-bottom: none;
         }
         .user-menu-item:hover {
-            background-color: rgba(250, 204, 21, 0.12);
+            background-color: var(--bg-color);
             color: var(--primary);
         }
         .user-menu-item.danger {
-            color: #f87171;
+            color: #b91c1c;
         }
         .user-menu-item.danger:hover {
-            background-color: rgba(239, 68, 68, 0.14);
+            background-color: #fee2e2;
         }
 
-        /* Navegação Principal (3 Abas principais + Perfil no menu suspenso) */
+        /* Navegação Principal (Agora 4 Abas: Mapa, Pontos, Testar, Novo) */
         .tabs {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
             margin-bottom: 12px;
-            background-color: var(--input-bg);
+            background-color: var(--surface-alt);
             padding: 4px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
         }
         .tab-btn {
             background: none;
             border: none;
-            color: var(--text-muted);
-            padding: 8px 6px;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 700;
+            color: var(--text-main);
+            padding: 8px 4px;
+            border-radius: 7px;
+            font-size: 0.75rem;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
@@ -193,12 +195,12 @@
         .btn-filter-toggle {
             flex: 1;
             background-color: var(--input-bg);
-            border: 1px solid var(--primary);
+            border: 2px solid var(--border);
             color: var(--primary);
             padding: 9px 12px;
             border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 0.78rem;
+            font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -206,7 +208,7 @@
             transition: all 0.15s;
         }
         .btn-filter-toggle:hover {
-            background-color: var(--accent-glow);
+            background-color: var(--surface-alt);
         }
         .filter-badge-count {
             background-color: var(--primary);
@@ -217,16 +219,16 @@
             font-weight: 800;
         }
         .filter-drawer {
-            background-color: #18181b;
-            border: 1px solid var(--primary);
+            background-color: var(--input-bg);
+            border: 2px solid var(--border);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 10px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+            box-shadow: 3px 3px 0px #111111;
         }
         .filter-section-title {
             font-size: 0.72rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -236,19 +238,19 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 6px;
-            background-color: var(--bg-color);
+            background-color: var(--surface-alt);
             padding: 4px;
             border-radius: 10px;
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             margin-bottom: 10px;
         }
         .prio-btn {
             background: none;
             border: none;
-            color: var(--text-muted);
+            color: var(--text-main);
             padding: 7px 6px;
             border-radius: 7px;
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -264,36 +266,36 @@
             margin-bottom: 10px;
         }
         .filter-pill {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
+            background-color: var(--surface-alt);
+            border: 1.5px solid var(--border);
+            color: var(--text-main);
             padding: 6px 10px;
             border-radius: 20px;
             font-size: 0.74rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             user-select: none;
             transition: all 0.15s;
         }
         .filter-pill.active {
-            background-color: var(--accent-glow);
+            background-color: var(--primary);
             border-color: var(--primary);
-            color: var(--primary);
+            color: var(--primary-text);
         }
-        /* Legenda de Velocidade Interativa (Filtro por Faixa de Velocidade) */
+        /* Legenda de Velocidade Interativa */
         .speed-filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 6px;
         }
         .speed-pill {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border);
+            background-color: var(--surface-alt);
+            border: 1.5px solid var(--border);
             color: var(--text-main);
             border-radius: 8px;
             padding: 6px 8px;
             font-size: 0.72rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -302,8 +304,8 @@
         }
         .speed-pill.active {
             border-color: var(--primary);
-            background-color: var(--accent-glow);
-            color: var(--primary);
+            background-color: var(--primary);
+            color: var(--primary-text);
             font-weight: 800;
         }
         .dot-c {
@@ -311,19 +313,20 @@
             height: 10px;
             border-radius: 50%;
             display: inline-block;
-            border: 1px solid #fff;
+            border: 1.5px solid #111111;
             flex-shrink: 0;
         }
 
-        /* Área do Mapa Ampliada */
+        /* Área do Mapa Enxuta */
         #miniMap {
             width: 100%;
-            height: 440px;
-            min-height: 54vh;
+            height: 360px;
+            min-height: 44vh;
             border-radius: 12px;
-            border: 1px solid var(--primary);
+            border: 2px solid var(--border);
             margin-bottom: 8px;
             z-index: 1;
+            background-color: #e5e7eb;
         }
 
         .auth-toggle {
@@ -331,7 +334,7 @@
             justify-content: center;
             gap: 16px;
             margin-bottom: 16px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 2px solid var(--border);
             padding-bottom: 10px;
         }
         .auth-link {
@@ -339,13 +342,13 @@
             border: none;
             color: var(--text-muted);
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             padding-bottom: 4px;
         }
         .auth-link.active {
             color: var(--primary);
-            border-bottom: 2px solid var(--primary);
+            border-bottom: 3px solid var(--primary);
         }
         .form-group {
             margin-bottom: 12px;
@@ -354,22 +357,23 @@
         .form-group label {
             display: block;
             font-size: 0.78rem;
-            color: var(--text-muted);
+            color: var(--text-main);
             margin-bottom: 5px;
-            font-weight: 600;
+            font-weight: 800;
         }
         .form-group input, .form-group select {
             width: 100%;
             background-color: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             color: var(--text-main);
             padding: 10px 12px;
             border-radius: 8px;
             font-size: 0.86rem;
+            font-weight: 600;
             outline: none;
         }
         .form-group input:focus, .form-group select:focus {
-            border-color: var(--primary);
+            box-shadow: 2px 2px 0px #111111;
         }
         .gps-row {
             display: flex;
@@ -379,64 +383,70 @@
             flex: 1;
         }
         .btn-gps {
-            background-color: var(--secondary);
-            color: #fff;
-            border: none;
+            background-color: var(--primary);
+            color: var(--primary-text);
+            border: 2px solid var(--border);
             border-radius: 8px;
             padding: 0 12px;
             font-size: 0.78rem;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             white-space: nowrap;
         }
         .btn-gps:hover:not(:disabled) {
-            background-color: var(--secondary-hover);
+            background-color: var(--primary-hover);
         }
         .btn-gps:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
         .info-badge {
-            background-color: var(--accent-glow);
-            border: 1px solid rgba(250, 204, 21, 0.35);
+            background-color: var(--surface-alt);
+            border: 2px solid var(--border);
             color: var(--primary);
             padding: 8px 12px;
             border-radius: 8px;
             font-size: 0.78rem;
+            font-weight: 700;
             margin-bottom: 14px;
             text-align: center;
             line-height: 1.4;
         }
         .info-badge.locked {
-            background-color: rgba(249, 115, 22, 0.14);
-            border-color: rgba(249, 115, 22, 0.4);
-            color: #fdba74;
+            background-color: #fed7aa;
+            border-color: #111111;
+            color: #7c2d12;
         }
         .current-wifi-banner {
             background-color: var(--input-bg);
-            border: 1px solid var(--primary);
+            border: 2px solid var(--border);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 12px;
             text-align: left;
+            box-shadow: 2px 2px 0px #111111;
         }
         .current-wifi-banner .tag-live {
             font-size: 0.68rem;
-            font-weight: 800;
+            font-weight: 900;
             text-transform: uppercase;
-            color: var(--primary);
+            background: var(--primary);
+            color: var(--primary-text);
+            padding: 2px 8px;
+            border-radius: 6px;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
-            display: block;
+            margin-bottom: 6px;
+            display: inline-block;
         }
         .current-wifi-banner .wifi-name {
             font-size: 1rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--text-main);
         }
         .current-wifi-banner .wifi-addr {
             font-size: 0.76rem;
             color: var(--text-muted);
+            font-weight: 600;
             margin-top: 3px;
         }
         .metrics {
@@ -447,7 +457,7 @@
         }
         .metric-box {
             background-color: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 12px;
             padding: 12px 10px;
             text-align: center;
@@ -455,25 +465,27 @@
         .metric-label {
             font-size: 0.7rem;
             color: var(--text-muted);
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
         }
         .metric-value {
             font-size: 1.65rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--text-main);
         }
         .metric-unit {
             font-size: 0.76rem;
             color: var(--primary);
-            font-weight: 700;
+            font-weight: 800;
         }
         .progress-container {
             width: 100%;
             background-color: var(--input-bg);
+            border: 1.5px solid var(--border);
             border-radius: 8px;
-            height: 8px;
+            height: 10px;
             margin-bottom: 10px;
             overflow: hidden;
             display: none;
@@ -486,7 +498,8 @@
         }
         .status-text {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: var(--text-main);
+            font-weight: 700;
             margin-bottom: 14px;
             text-align: center;
             min-height: 18px;
@@ -494,11 +507,11 @@
         .btn {
             background-color: var(--primary);
             color: var(--primary-text);
-            border: none;
+            border: 2px solid var(--border);
             border-radius: 10px;
             padding: 12px 16px;
             font-size: 0.92rem;
-            font-weight: 800;
+            font-weight: 900;
             width: 100%;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
@@ -511,27 +524,34 @@
             cursor: not-allowed;
         }
         .btn-save {
-            background-color: var(--secondary);
+            background-color: #15803d;
             color: #ffffff;
             margin-top: 10px;
             display: none;
         }
         .btn-save:hover:not(:disabled) {
-            background-color: var(--secondary-hover);
+            background-color: #166534;
         }
         .toast {
             margin-top: 12px;
             font-size: 0.8rem;
-            color: var(--primary);
+            font-weight: 800;
+            color: #14532d;
+            background: #dcfce7;
+            border: 1.5px solid #111111;
+            padding: 8px;
+            border-radius: 8px;
             text-align: center;
             display: none;
             line-height: 1.4;
         }
         .toast.warning {
-            color: #fdba74;
+            color: #7c2d12;
+            background: #ffedd5;
         }
         .toast.error {
-            color: #f87171;
+            color: #7f1d1d;
+            background: #fee2e2;
         }
         .hidden {
             display: none !important;
@@ -539,74 +559,79 @@
         .helper-text {
             font-size: 0.72rem;
             color: var(--text-muted);
+            font-weight: 700;
             margin-top: 4px;
             line-height: 1.35;
         }
         .qr-card {
             background-color: var(--input-bg);
-            border: 1px solid rgba(250, 204, 21, 0.35);
+            border: 2px solid var(--border);
             border-radius: 12px;
             padding: 12px;
-            margin-top: 10px;
+            margin-top: 6px;
             margin-bottom: 12px;
             text-align: center;
+            box-shadow: 3px 3px 0px #111111;
         }
         .qr-card img.qr-img {
             width: 145px;
             height: 145px;
             border-radius: 8px;
+            border: 2px solid var(--border);
             background: #fff;
             padding: 6px;
             margin: 8px auto;
             display: block;
         }
         .qr-payload-box {
-            background: #0d0d0f;
-            border: 1px solid var(--border);
+            background: var(--surface-alt);
+            border: 1.5px solid var(--border);
             border-radius: 6px;
             padding: 6px 8px;
             font-family: monospace;
             font-size: 0.7rem;
-            color: var(--text-muted);
+            font-weight: 700;
+            color: var(--text-main);
             word-break: break-all;
             margin-top: 6px;
         }
         .btn-mini {
-            background-color: #27272a;
+            background-color: var(--surface-alt);
             color: var(--text-main);
-            border: 1px solid #3f3f46;
-            border-radius: 6px;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
             padding: 6px 10px;
             font-size: 0.74rem;
-            font-weight: 600;
+            font-weight: 800;
             cursor: pointer;
             margin-top: 6px;
         }
         .btn-mini:hover {
-            background-color: #3f3f46;
+            background-color: var(--bg-color);
         }
         .security-banner {
-            background-color: rgba(250, 204, 21, 0.1);
-            border: 1px solid rgba(250, 204, 21, 0.35);
-            color: #fde047;
+            background-color: #fef9c3;
+            border: 1.5px solid var(--border);
+            color: #111111;
             border-radius: 8px;
             padding: 8px 10px;
             font-size: 0.72rem;
+            font-weight: 600;
             line-height: 1.35;
             margin: 8px 0;
             text-align: left;
         }
         .security-banner.open-net {
-            background-color: rgba(239, 68, 68, 0.14);
-            border-color: rgba(239, 68, 68, 0.45);
-            color: #fca5a5;
+            background-color: #fee2e2;
+            border-color: #111111;
+            color: #7f1d1d;
         }
         .live-status-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #111113;
-            border: 1px solid var(--border);
+            background-color: var(--surface-alt);
+            border: 1.5px solid var(--border);
             border-radius: 8px;
             padding: 6px 10px;
             margin: 8px 0;
@@ -615,11 +640,11 @@
             gap: 6px;
         }
         .status-pill-live {
-            font-weight: 700;
-            color: #22c55e;
+            font-weight: 800;
+            color: #15803d;
         }
         .status-pill-live.warn {
-            color: #f87171;
+            color: #b91c1c;
         }
         .gallery-strip {
             display: flex;
@@ -634,12 +659,9 @@
             height: 58px;
             object-fit: cover;
             border-radius: 8px;
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             cursor: pointer;
             flex-shrink: 0;
-        }
-        .gallery-thumb:hover {
-            border-color: var(--primary);
         }
         .amenities-badges {
             display: flex;
@@ -649,30 +671,32 @@
             margin: 6px 0;
         }
         .amenity-tag {
-            background-color: var(--accent-glow);
-            border: 1px solid rgba(250, 204, 21, 0.35);
-            color: var(--primary);
+            background-color: var(--primary);
+            border: 1px solid var(--border);
+            color: var(--primary-text);
             font-size: 0.7rem;
             padding: 3px 8px;
             border-radius: 12px;
-            font-weight: 600;
+            font-weight: 700;
         }
         .quick-box {
-            background: linear-gradient(135deg, rgba(250, 204, 21, 0.12), rgba(249, 115, 22, 0.12));
-            border: 1px dashed rgba(250, 204, 21, 0.5);
+            background-color: var(--input-bg);
+            border: 2px dashed var(--border);
             border-radius: 12px;
             padding: 12px;
             margin-bottom: 14px;
             text-align: center;
         }
         .quick-box h4 {
-            font-size: 0.82rem;
+            font-size: 0.84rem;
+            font-weight: 900;
             color: var(--primary);
             margin-bottom: 4px;
         }
         .quick-box p {
             font-size: 0.72rem;
             color: var(--text-muted);
+            font-weight: 600;
             margin-bottom: 8px;
         }
         .quick-actions {
@@ -683,7 +707,7 @@
         .btn-quick {
             background-color: var(--primary);
             color: var(--primary-text);
-            border: none;
+            border: 2px solid var(--border);
             border-radius: 8px;
             padding: 9px 8px;
             font-size: 0.76rem;
@@ -691,9 +715,9 @@
             cursor: pointer;
         }
         .btn-quick.alt {
-            background-color: #27272a;
+            background-color: var(--surface-alt);
             color: var(--text-main);
-            border: 1px solid #3f3f46;
+            border: 2px solid var(--border);
         }
         .leaflet-popup-content {
             color: #111111;
@@ -707,7 +731,7 @@
             height: 110px;
             margin: 5px auto;
             display: block;
-            border: 1px solid #d4d4d8;
+            border: 1.5px solid #111111;
             border-radius: 6px;
             padding: 3px;
             background: #fff;
@@ -718,11 +742,11 @@
             object-fit: cover;
             border-radius: 6px;
             margin-top: 5px;
-            border: 1px solid #d4d4d8;
+            border: 1.5px solid #111111;
         }
         .popup-btn {
             display: inline-block;
-            background-color: #facc15;
+            background-color: #FFD000;
             color: #111111 !important;
             text-decoration: none;
             font-weight: 800;
@@ -730,16 +754,16 @@
             padding: 5px 9px;
             border-radius: 6px;
             margin-top: 4px;
-            border: none;
+            border: 1.5px solid #111111;
             cursor: pointer;
         }
         .popup-btn.nav {
-            background-color: #18181b;
-            color: #facc15 !important;
+            background-color: #111111;
+            color: #FFD000 !important;
         }
         .profile-card {
             background-color: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 12px;
             padding: 14px;
             margin-bottom: 14px;
@@ -748,7 +772,7 @@
             display: flex;
             justify-content: space-between;
             padding: 6px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(17, 17, 17, 0.2);
             font-size: 0.82rem;
         }
         .profile-row:last-child {
@@ -756,33 +780,36 @@
         }
         .profile-row span {
             color: var(--text-muted);
+            font-weight: 600;
         }
         .profile-row strong {
             color: var(--text-main);
+            font-weight: 800;
         }
         .saldo-destaque {
-            background: linear-gradient(135deg, rgba(250, 204, 21, 0.18), rgba(249, 115, 22, 0.14));
-            border: 1px solid rgba(250, 204, 21, 0.45);
+            background-color: var(--primary);
+            border: 2px solid var(--border);
             border-radius: 12px;
             padding: 14px;
             text-align: center;
             margin-bottom: 14px;
+            color: var(--primary-text);
         }
         .saldo-destaque .label {
             font-size: 0.74rem;
-            color: var(--text-muted);
+            color: #e4e4e7;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .saldo-destaque .valor {
             font-size: 2rem;
             font-weight: 900;
-            color: var(--primary);
+            color: var(--primary-text);
             margin: 4px 0;
         }
         .saldo-destaque .sub {
             font-size: 0.74rem;
-            color: var(--text-muted);
+            color: #e4e4e7;
         }
         .mini-stats {
             display: grid;
@@ -792,33 +819,34 @@
         }
         .mini-stat-box {
             background-color: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 10px;
             padding: 10px;
             text-align: center;
         }
         .mini-stat-box .num {
             font-size: 1.25rem;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--text-main);
         }
         .mini-stat-box .txt {
             font-size: 0.72rem;
             color: var(--text-muted);
+            font-weight: 700;
             margin-top: 2px;
         }
         .my-wifi-list {
-            max-height: 165px;
+            max-height: 185px;
             overflow-y: auto;
             background-color: var(--input-bg);
-            border: 1px solid var(--border);
+            border: 2px solid var(--border);
             border-radius: 10px;
             padding: 8px 10px;
             font-size: 0.78rem;
         }
         .my-wifi-item {
             padding: 7px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(17, 17, 17, 0.2);
         }
         .my-wifi-item:last-child {
             border-bottom: none;
@@ -829,7 +857,51 @@
         .my-wifi-item small {
             display: block;
             color: var(--text-muted);
+            font-weight: 600;
             margin-top: 2px;
+        }
+
+        /* Modal de Confirmação Offline */
+        .modal-overlay-offline {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-box-offline {
+            background: #FFD000;
+            color: #111111;
+            border: 3px solid #111111;
+            border-radius: 16px;
+            padding: 18px;
+            max-width: 390px;
+            width: 100%;
+            box-shadow: 5px 5px 0px #111111;
+            text-align: left;
+        }
+        .modal-box-offline h3 {
+            font-size: 1rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .modal-box-offline p {
+            font-size: 0.82rem;
+            line-height: 1.45;
+            font-weight: 600;
+            margin-bottom: 12px;
+            background: #FFFDF0;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1.5px solid #111111;
+        }
+        .modal-offline-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
     </style>
 </head>
@@ -842,7 +914,7 @@
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
             <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL</h1>
-            <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
+            <p style="color:var(--text-muted); font-size:0.78rem; font-weight:700; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
         <div class="auth-toggle">
@@ -871,15 +943,15 @@
         </div>
 
         <!-- Painel de Recuperação de Senha -->
-        <div id="boxRecuperarSenha" class="hidden" style="margin-top:14px; padding:12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px;">
-            <div style="font-size:0.84rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔐 Recuperar ou Redefinir Senha</div>
-            <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">Informe seu e-mail cadastrado para receber um código de recuperação no seu e-mail.</p>
+        <div id="boxRecuperarSenha" class="hidden" style="margin-top:14px; padding:12px; background:var(--input-bg); border:2px solid var(--border); border-radius:10px;">
+            <div style="font-size:0.84rem; font-weight:800; color:var(--primary); margin-bottom:6px;">🔐 Recuperar ou Redefinir Senha</div>
+            <p style="font-size:0.74rem; color:var(--text-muted); font-weight:600; margin-bottom:8px;">Informe seu e-mail cadastrado para receber um código de recuperação no seu e-mail.</p>
             <div class="form-group" style="margin-bottom:8px;">
                 <input type="email" id="recEmail" placeholder="Digite seu e-mail cadastrado">
             </div>
             <button type="button" class="btn-mini" id="btnEnviarCodigoRec" style="width:100%; background:var(--primary); color:var(--primary-text); padding:8px;" onclick="solicitarCodigoRecuperacao()">📩 Enviar Código por E-mail</button>
 
-            <div id="recStepCodigo" class="hidden" style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">
+            <div id="recStepCodigo" class="hidden" style="margin-top:10px; border-top:1.5px solid var(--border); padding-top:10px;">
                 <div class="form-group" style="margin-bottom:8px;">
                     <label for="recCodigo">Código recebido no E-mail *</label>
                     <input type="text" id="recCodigo" placeholder="Ex: 482910">
@@ -928,20 +1000,22 @@
             </div>
         </div>
 
+        <!-- 4 ABAS PRINCIPAIS (Aba Mapa dividida em "Mapa" + "Pontos & Offline") -->
         <div class="tabs">
             <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
+            <button type="button" class="tab-btn" id="tabPontosBtn" onclick="mudarAba('pontos')">📋 Pontos</button>
             <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
             <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 1: MAPA AMPLIADO + JANELA DE FILTROS + ENDEREÇO               -->
+        <!-- ABA 1: MAPA ENXUTO (FILTROS + MAPA + SELETOR RÁPIDO DE ENDEREÇO)   -->
         <!-- ================================================================= -->
         <div id="abaMapa">
             <!-- Barra de Abertura da Janela de Filtros -->
             <div class="filter-toolbar">
                 <button type="button" class="btn-filter-toggle" onclick="alternarJanelaFiltros()">
-                    <span>🎛️ Filtros (Upload/Download, Estrutura & Velocidade)</span>
+                    <span>🎛️ Filtros (Upload/Download & Estrutura)</span>
                     <span class="filter-badge-count" id="filterCountBadge">Ativos: 0</span>
                 </button>
             </div>
@@ -990,12 +1064,12 @@
                 </div>
             </div>
 
-            <!-- Mapa Ampliado -->
+            <!-- Mapa -->
             <div id="miniMap"></div>
             <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando apenas os melhores pontos da região.</div>
 
-            <!-- Seletor mostrando SOMENTE o Endereço / Local (sem código WFI-001) -->
-            <div class="form-group" style="margin-top: 4px;">
+            <!-- Seletor rápido de Endereço / Local -->
+            <div class="form-group" style="margin-top: 4px; margin-bottom: 8px;">
                 <label for="selectWifiMapa">Endereço / Local do Wi-Fi</label>
                 <div class="gps-row">
                     <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
@@ -1004,17 +1078,27 @@
                 <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
             </div>
 
-            <!-- Pacote Offline da Cidade -->
-            <div style="display:flex; gap:6px; margin-bottom:10px;">
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade Offline</button>
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Cache Offline</button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <button type="button" class="btn" style="padding:10px; font-size:0.82rem; background:var(--surface-alt); color:var(--text-main);" onclick="mudarAba('pontos')">🔑 Ver Senha, QR & Offline</button>
+                <button type="button" class="btn" style="padding:10px; font-size:0.82rem;" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi</button>
+            </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 2: PONTOS, QR CODE, GALERIA & MODO OFFLINE (DIVIDIDA DO MAPA) -->
+        <!-- ================================================================= -->
+        <div id="abaPontos" class="hidden">
+            <!-- Pacote Offline da Cidade com Janelas de Confirmação -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                <button type="button" class="btn-gps" style="padding:10px 8px;" onclick="abrirModalConfirmacaoOffline('salvar')">📥 Salvar Cidade Offline</button>
+                <button type="button" class="btn-mini" style="margin-top:0; padding:10px 8px; background:var(--input-bg);" onclick="abrirModalConfirmacaoOffline('carregar')">📂 Abrir Cache Offline</button>
             </div>
 
             <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
             <div class="qr-card" id="mapaQrCard">
-                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
-                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
-                <div style="font-size: 0.72rem; color: #fde047; margin-top: 3px;" id="mapaHorarioInfo"></div>
+                <div style="font-size: 0.9rem; font-weight: 900; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
+                <div style="font-size: 0.76rem; color: var(--text-main); font-weight: 700; margin-top: 2px;" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
+                <div style="font-size: 0.72rem; color: #7c2d12; font-weight: 700; margin-top: 3px;" id="mapaHorarioInfo"></div>
 
                 <!-- Status ao Vivo & Centroide Colaborativo -->
                 <div class="live-status-bar">
@@ -1025,7 +1109,7 @@
                         <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
                     </div>
                 </div>
-                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#fde047;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
+                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#111111;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
 
                 <!-- Banner de Segurança da Rede -->
                 <div class="security-banner" id="mapaSecurityBanner">
@@ -1035,18 +1119,20 @@
                 <!-- Tags de Comodidades do Ponto -->
                 <div class="amenities-badges" id="mapaAmenities"></div>
 
-                <!-- Galeria de Fotos do Local + Botão para Adicionar Foto -->
+                <!-- Galeria de Fotos do Local + Botão Tirar/Adicionar Foto -->
                 <div class="gallery-strip" id="mapaGaleriaStrip"></div>
-                <div>
+                <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                    <input type="file" id="inputTirarFotoLocal" accept="image/*" capture="environment" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
                     <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
-                    <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
+                    <button type="button" class="btn-mini" style="background:var(--primary); color:var(--primary-text);" onclick="document.getElementById('inputTirarFotoLocal').click()">📸 Tirar Foto</button>
+                    <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">🖼️ Carregar Foto</button>
                 </div>
 
                 <img id="mapaQrImg" class="qr-img" src="" alt="QR Code Wi-Fi">
                 <div class="qr-payload-box" id="mapaQrLinkText">WIFI:T:WPA;S:...;P:...;;</div>
-                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 4px;">
                     <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:var(--primary); color:var(--primary-text); font-weight:800;">🧭 Ir até lá (Maps/Waze)</a>
-                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Abrir QR Code</a>
+                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Conectar Wi-Fi</a>
                     <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
                 </div>
             </div>
@@ -1055,7 +1141,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 2: TESTAR VELOCIDADE (MOSTRA SOMENTE O WI-FI ATUAL)           -->
+        <!-- ABA 3: TESTAR VELOCIDADE (MOSTRA SOMENTE O WI-FI ATUAL)           -->
         <!-- ================================================================= -->
         <div id="abaTestar" class="hidden">
             <input type="hidden" id="selectWifi" value="">
@@ -1100,7 +1186,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 3: CADASTRAR NOVO PONTO DE WI-FI (MODO EXPRESSO SEM PREGUIÇA)  -->
+        <!-- ABA 4: CADASTRAR NOVO PONTO DE WI-FI (CÂMERA + GALERIA)           -->
         <!-- ================================================================= -->
         <div id="abaCadastrar" class="hidden">
             <div class="quick-box">
@@ -1123,7 +1209,7 @@
                 <label for="cadLocalizacao">Endereço Completo (Rua, Número) ou GPS *</label>
                 <input type="text" id="cadLocalizacao" placeholder="Preenchido pelo botão GPS acima">
                 <div id="cadMiniMapWrap" class="hidden" style="margin-top:8px;">
-                    <div id="cadMiniMap" style="width:100%;height:165px;border-radius:10px;border:1px solid var(--primary);z-index:1;"></div>
+                    <div id="cadMiniMap" style="width:100%;height:165px;border-radius:10px;border:2px solid var(--border);z-index:1;"></div>
                     <div class="helper-text" id="cadPinHint" style="color:var(--primary);">🎯 Arraste o pino exato até a porta do estabelecimento se necessário.</div>
                 </div>
             </div>
@@ -1142,7 +1228,7 @@
                 <label for="cadSenha">Senha do Wi-Fi (ou deixe "Aberta") *</label>
                 <div class="gps-row">
                     <input type="text" id="cadSenha" placeholder="Ex: cafe2026" oninput="atualizarPreviewQrCadastro()">
-                    <button type="button" class="btn-gps" style="background:#27272a; border:1px solid #3f3f46;" onclick="marcarRedeAberta()">🔓 Aberta</button>
+                    <button type="button" class="btn-gps" onclick="marcarRedeAberta()">🔓 Aberta</button>
                 </div>
             </div>
 
@@ -1161,16 +1247,20 @@
                 </div>
             </div>
 
+            <!-- OPÇÃO DUPLA: TIRAR FOTO DO LOCAL + CARREGAR FOTOS DA GALERIA -->
             <div class="form-group">
-                <label>Foto do Local / Ambiente (Opcional)</label>
-                <input type="file" id="cadFotoLugar" accept="image/*" onchange="processarFotoCadastro(event)">
-                <div id="cadFotoPreviewContainer" class="hidden" style="margin-top:6px; text-align:center;">
-                    <img id="cadFotoPreviewImg" src="" style="max-height:90px; border-radius:8px; border:1px solid var(--border);">
+                <label>Fotos do Local / Roteador (Opcional)</label>
+                <input type="file" id="cadCameraLugar" accept="image/*" capture="environment" class="hidden" onchange="processarFotoCadastro(event)">
+                <input type="file" id="cadFotoLugar" accept="image/*" multiple class="hidden" onchange="processarFotoCadastro(event)">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button type="button" class="btn-quick" onclick="document.getElementById('cadCameraLugar').click()">📸 Tirar Foto Agora</button>
+                    <button type="button" class="btn-quick alt" onclick="document.getElementById('cadFotoLugar').click()">🖼️ Carregar Fotos</button>
                 </div>
+                <div id="cadFotoPreviewContainer" class="hidden" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;"></div>
             </div>
 
             <div class="qr-card hidden" id="cadQrPreviewBox">
-                <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">QR Code Automático Gerado</div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: var(--primary);">QR Code Automático Gerado</div>
                 <img id="cadQrPreviewImg" class="qr-img" src="" alt="Preview QR Code">
                 <div class="qr-payload-box" id="cadQrPreviewLink"></div>
                 <a id="cadQrOpenUrl" href="#" target="_blank" class="btn-mini" style="display:inline-block; text-decoration:none;">🔗 Abrir Link do QR Code</a>
@@ -1181,7 +1271,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 4: MEUS DADOS E MEUS PONTOS (ACESSADA PELO MENU DO USUÁRIO)   -->
+        <!-- ABA 5: MEUS DADOS E MEUS PONTOS (ACESSADA PELO MENU DO USUÁRIO)   -->
         <!-- ================================================================= -->
         <div id="abaPerfil" class="hidden">
             <div class="saldo-destaque">
@@ -1212,7 +1302,7 @@
                 </div>
                 <div class="profile-row">
                     <span>Plano Atual:</span>
-                    <strong id="perfilPlano" style="color: var(--primary);">Gratuito</strong>
+                    <strong id="perfilPlano">Gratuito</strong>
                 </div>
             </div>
 
@@ -1226,12 +1316,12 @@
             <button type="button" class="btn" style="margin-top: 10px;" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meus Pontos</button>
 
             <!-- PAINEL ADMINISTRADOR -->
-            <div id="adminPanelBox" style="margin-top:16px; padding:12px; background:#111113; border:1px solid var(--primary); border-radius:12px;">
+            <div id="adminPanelBox" style="margin-top:16px; padding:12px; background:var(--input-bg); border:2px solid var(--border); border-radius:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <strong style="color:var(--primary); font-size:0.86rem;">🛡️ Administração de Pontos & Usuários</strong>
-                    <span id="adminBadgeStatus" style="font-size:0.7rem; background:var(--accent-glow); color:var(--primary); padding:2px 8px; border-radius:10px;">Modo Admin</span>
+                    <span id="adminBadgeStatus" style="font-size:0.7rem; background:var(--primary); color:var(--primary-text); padding:2px 8px; border-radius:10px; font-weight:800;">Modo Admin</span>
                 </div>
-                <p style="font-size:0.73rem; color:var(--text-muted); margin-bottom:10px;">Corrija coordenadas, altere senhas desatualizadas, remova pontos duplicados ou redefina a senha de um usuário.</p>
+                <p style="font-size:0.73rem; color:var(--text-muted); font-weight:600; margin-bottom:10px;">Corrija coordenadas, altere senhas desatualizadas, remova pontos duplicados ou redefina a senha de um usuário.</p>
 
                 <div class="form-group" style="margin-bottom:8px;">
                     <label for="adminSelectWifi">Selecionar Ponto para Editar / Excluir</label>
@@ -1264,16 +1354,16 @@
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
                     <button type="button" class="btn" style="padding:9px; font-size:0.8rem;" onclick="salvarEdicaoAdminWifi()">💾 Salvar Alterações</button>
-                    <button type="button" class="btn" style="padding:9px; font-size:0.8rem; background:#ef4444; color:#fff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir Ponto</button>
+                    <button type="button" class="btn" style="padding:9px; font-size:0.8rem; background:#dc2626; color:#fff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir Ponto</button>
                 </div>
 
-                <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:6px;">
-                    <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔑 Redefinir Senha de Usuário (Suporte)</div>
+                <div style="border-top:1.5px solid var(--border); padding-top:10px; margin-top:6px;">
+                    <div style="font-size:0.78rem; font-weight:800; color:var(--primary); margin-bottom:6px;">🔑 Redefinir Senha de Usuário (Suporte)</div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
-                        <input type="email" id="adminResetUserEmail" placeholder="E-mail do usuário" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
-                        <input type="text" id="adminResetUserPass" placeholder="Nova senha provisória" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
+                        <input type="email" id="adminResetUserEmail" placeholder="E-mail do usuário" style="background:var(--surface-alt); border:1.5px solid var(--border); color:#111; padding:7px 9px; border-radius:7px; font-size:0.78rem; font-weight:600;">
+                        <input type="text" id="adminResetUserPass" placeholder="Nova senha provisória" style="background:var(--surface-alt); border:1.5px solid var(--border); color:#111; padding:7px 9px; border-radius:7px; font-size:0.78rem; font-weight:600;">
                     </div>
-                    <button type="button" class="btn-mini" style="width:100%; background:var(--secondary); color:#fff; padding:7px;" onclick="adminRedefinirSenhaUsuario()">🔄 Aplicar Nova Senha ao Usuário</button>
+                    <button type="button" class="btn-mini" style="width:100%; background:var(--primary); color:var(--primary-text); padding:8px;" onclick="adminRedefinirSenhaUsuario()">🔄 Aplicar Nova Senha ao Usuário</button>
                 </div>
 
                 <div class="toast" id="adminToast"></div>
@@ -1282,16 +1372,38 @@
     </div>
 </div>
 
+<!-- MODAL DE CONFIRMAÇÃO PARA SALVAR CIDADE OFFLINE / ABRIR CACHE OFFLINE -->
+<div id="modalOfflineConfirm" class="modal-overlay-offline hidden">
+    <div class="modal-box-offline">
+        <h3 id="modalOfflineTitulo">Título</h3>
+        <p id="modalOfflineTexto">Explicação...</p>
+        <div style="font-weight:900; font-size:0.86rem; margin-bottom:10px; text-align:center;">Gostaria de continuar?</div>
+        <div class="modal-offline-actions">
+            <button type="button" class="btn" id="btnModalOfflineSim" style="padding:10px;">✅ Sim</button>
+            <button type="button" class="btn" style="padding:10px; background:#FFFDF0; color:#111111;" onclick="fecharModalConfirmacaoOffline()">❌ Não</button>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
+    // Correção definitiva dos ícones padrão do Leaflet no GitHub Pages
+    if (typeof L !== "undefined" && L.Icon && L.Icon.Default) {
+        delete L.Icon.Default.prototype._getIconUrl;
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+        });
+    }
+
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
 
     let modoAuth = 'login';
     let usuarioLogado = null;
 
-    // Cache inicial (WFI-001 removido conforme solicitado)
     let listaWifisCache = [
         {
             id: "WFI-002", local: "Posto Shell BR-101", endereco: "Rodovia BR-101, Km 118", cidade: "Itajaí - SC",
@@ -1318,9 +1430,8 @@
     let userLngAtual = null;
     let linkQrAtualMapa = "";
 
-    // Estado de Prioridade, Comodidades e Faixa de Velocidade
     let prioridadeVelocidade = 'download';
-    let filtroVelocidadeAtivo = 'todos'; // 'todos', 'lt10', '10_20', '20_40', '40_100', 'gt100'
+    let filtroVelocidadeAtivo = 'todos';
     let filtrosAtivos = {
         estacionamento: false,
         mesas: false,
@@ -1328,19 +1439,53 @@
         sinal_rua: false
     };
 
-    // Estado do Cadastro Rápido
     let comodidadesCadastro = {
         estacionamento: false,
         mesas: false,
         tomadas: false,
         sinal_rua: false
     };
-    let fotoCadastroBase64 = "";
+    let fotosCadastroLista = [];
 
-    // Variáveis do Mapa Leaflet
     let mapInstance = null;
     let userMarker = null;
     let wifiMarkersLayer = null;
+
+    // =========================================================================
+    // MODAIS DE CONFIRMAÇÃO OFFLINE (SALVAR E ABRIR CACHE)
+    // =========================================================================
+    function abrirModalConfirmacaoOffline(tipo) {
+        const modal = document.getElementById('modalOfflineConfirm');
+        const titulo = document.getElementById('modalOfflineTitulo');
+        const texto = document.getElementById('modalOfflineTexto');
+        const btnSim = document.getElementById('btnModalOfflineSim');
+
+        const idWifi = document.getElementById('selectWifiMapa').value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
+        const cidadeAtual = ponto ? (ponto.cidade || "região atual") : "região atual";
+
+        if (tipo === 'salvar') {
+            titulo.textContent = "📥 Salvar Cidade Offline";
+            texto.innerHTML = `Esta função baixa e salva na memória interna do seu celular todos os pontos de Wi-Fi, endereços, senhas e dados de <strong>${cidadeAtual}</strong>.<br><br>Assim, você poderá consultar os pontos e conectar mesmo quando estiver em locais de prova sem sinal de internet ou 4G.`;
+            btnSim.onclick = () => {
+                fecharModalConfirmacaoOffline();
+                baixarPacoteOfflineCidade();
+            };
+        } else {
+            titulo.textContent = "📂 Abrir Cache Offline";
+            texto.innerHTML = `<strong>Como funciona o carregamento:</strong><br>O sistema lê o pacote de redes Wi-Fi que você salvou anteriormente no armazenamento local do navegador (sem gastar internet móvel) e carrega os pontos offline na lista e no mapa.<br><br><em>Dica:</em> Para os quadrantes do mapa aparecerem sem internet, navegue pela região antes de ficar offline.`;
+            btnSim.onclick = () => {
+                fecharModalConfirmacaoOffline();
+                carregarPacoteOffline();
+            };
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    function fecharModalConfirmacaoOffline() {
+        document.getElementById('modalOfflineConfirm').classList.add('hidden');
+    }
 
     // =========================================================================
     // MENU VERTICAL SUSPENSO DO USUÁRIO E JANELA DE FILTROS
@@ -1413,14 +1558,13 @@
     }
 
     // =========================================================================
-    // FORMATAÇÃO DE ENDEREÇO LIMPO (SEM CÓDIGO WFI-XXX)
+    // FORMATAÇÃO DE ENDEREÇO LIMPO
     // =========================================================================
     function formatarEnderecoLimpo(w) {
         if (w.endereco && String(w.endereco).trim()) {
             return w.cidade ? `${w.endereco} • ${w.cidade}` : w.endereco;
         }
         const rawLoc = String(w.lat_long || "").trim();
-        // Remove coordenadas entre parênteses ou puras para exibir o endereço textual limpo
         const semCoords = rawLoc.replace(/\(?-?\d{1,2}\.\d+\s*,\s*-?\d{1,3}\.\d+\)?/g, "").trim();
         if (semCoords) {
             return w.cidade ? `${semCoords} • ${w.cidade}` : semCoords;
@@ -1662,10 +1806,10 @@
     }
 
     // =========================================================================
-    // GERADOR PADRÃO DE QR CODE WI-FI (CONEXÃO AUTOMÁTICA)
+    // GERADOR PADRÃO DE QR CODE WI-FI
     // =========================================================================
     function escaparCampoWifi(str) {
-        return String(str || "").replace(/([\\;,:"])/g, "\\$1");
+        return String(str || "").replace(/([\;,:"])/g, "\$1");
     }
 
     function gerarPayloadWifiQR(ssid, senha) {
@@ -1696,20 +1840,20 @@
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'modalConexaoWifi';
-            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
             document.body.appendChild(modal);
         }
 
         modal.innerHTML = `
-            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f8fafc;box-shadow:0 15px 35px rgba(0,0,0,0.8);">
-                <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
-                <div style="font-size:0.85rem;font-weight:700;margin-bottom:2px;">Rede: ${ssid}</div>
-                <div style="font-size:0.8rem;color:#a1a1aa;margin-bottom:10px;">Senha: <strong style="color:#fff;">${isAberta ? 'Rede Aberta' : senha}</strong> ${!isAberta ? '(copiada!)' : ''}</div>
-                <img src="${qrUrl}" alt="QR Code Wi-Fi" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
-                <div style="font-size:0.72rem;color:#a1a1aa;margin-bottom:10px;word-break:break-all;background:#0b0b0c;padding:6px;border-radius:6px;border:1px solid #27272a;">${payload}</div>
+            <div style="background:#FFD000;border:3px solid #111111;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#111111;box-shadow:5px 5px 0px #111111;">
+                <div style="font-size:1rem;font-weight:900;color:#111111;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
+                <div style="font-size:0.85rem;font-weight:800;margin-bottom:2px;">Rede: ${ssid}</div>
+                <div style="font-size:0.8rem;color:#3f3f46;font-weight:700;margin-bottom:10px;">Senha: <strong style="color:#111;">${isAberta ? 'Rede Aberta' : senha}</strong> ${!isAberta ? '(copiada!)' : ''}</div>
+                <img src="${qrUrl}" alt="QR Code Wi-Fi" style="width:210px;height:210px;background:#fff;padding:8px;border:2px solid #111111;border-radius:10px;margin:0 auto 10px;display:block;">
+                <div style="font-size:0.72rem;color:#111111;margin-bottom:10px;word-break:break-all;background:#FFFDF0;padding:6px;border-radius:6px;border:1.5px solid #111111;">${payload}</div>
                 <div style="display:flex;flex-direction:column;gap:8px;">
-                    <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;">⚡ Conectar Agora (Link Wi-Fi)</a>
-                    <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-weight:600;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;">Fechar</button>
+                    <a href="${payload}" style="background:#111111;color:#FFD000;font-weight:900;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;">⚡ Conectar Agora (Link Wi-Fi)</a>
+                    <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#FFFDF0;color:#111111;border:2px solid #111111;font-weight:800;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;">Fechar</button>
                 </div>
             </div>
         `;
@@ -1741,7 +1885,7 @@
     }
 
     // =========================================================================
-    // GALERIA DE FOTOS, STATUS AO VIVO, SEGURANÇA E DETALHES DO PONTO NO MAPA
+    // GALERIA DE FOTOS, STATUS AO VIVO, SEGURANÇA E DETALHES DO PONTO
     // =========================================================================
     function obterFotosLocal(ponto) {
         const keyLocal = `clickcontrol_fotos_${ponto.id}`;
@@ -1852,7 +1996,7 @@
                 galeriaDiv.appendChild(img);
             });
         } else {
-            galeriaDiv.innerHTML = `<span style="font-size:0.7rem; color:var(--text-muted);">Sem fotos ainda. Adicione uma foto do ambiente abaixo!</span>`;
+            galeriaDiv.innerHTML = `<span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">Sem fotos ainda. Tire ou carregue uma foto do ambiente abaixo!</span>`;
         }
     }
 
@@ -1903,14 +2047,15 @@
     function carregarPacoteOffline() {
         const raw = localStorage.getItem('clickcontrol_offline_pack');
         if (!raw) {
-            alert("Nenhum pacote offline salvo ainda. Selecione uma cidade e toque em 'Salvar Cidade Offline'.");
+            alert("Nenhum pacote offline salvo ainda. Toque em 'Salvar Cidade Offline' primeiro enquanto estiver conectado.");
             return;
         }
         const pack = JSON.parse(raw);
         listaWifisCache = pack.wifis;
         const ordenada = obterListaFiltradaEOrdenada();
         preencherSelectsComLista(ordenada);
-        alert(`📂 Cache Offline carregado: ${pack.cidade} (Salvo em ${pack.data}).`);
+        renderizarAlfinetesNoMapa();
+        alert(`📂 Cache Offline carregado: ${pack.cidade} (${pack.wifis.length} pontos salvos em ${pack.data}).`);
     }
 
     function adicionarFotoAoLocalAtual(event) {
@@ -1956,7 +2101,7 @@
     }
 
     // =========================================================================
-    // CADASTRO ULTRA-RÁPIDO
+    // CADASTRO ULTRA-RÁPIDO (COM TIRAR FOTO + CARREGAR FOTOS)
     // =========================================================================
     function marcarRedeAberta() {
         document.getElementById('cadSenha').value = "Aberta";
@@ -1975,12 +2120,19 @@
     }
 
     function processarFotoCadastro(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        comprimirImagemParaBase64(file, 640, 0.72, (b64) => {
-            fotoCadastroBase64 = b64;
-            document.getElementById('cadFotoPreviewImg').src = b64;
-            document.getElementById('cadFotoPreviewContainer').classList.remove('hidden');
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+        const container = document.getElementById('cadFotoPreviewContainer');
+        container.classList.remove('hidden');
+
+        Array.from(files).forEach(file => {
+            comprimirImagemParaBase64(file, 640, 0.72, (b64) => {
+                fotosCadastroLista.push(b64);
+                const img = document.createElement('img');
+                img.src = b64;
+                img.style.cssText = 'width:76px;height:76px;object-fit:cover;border-radius:8px;border:2px solid #111111;';
+                container.appendChild(img);
+            });
         });
     }
 
@@ -2015,18 +2167,16 @@
                     const matchSsid = txt.match(/S:([^;]+)/i);
                     const matchPass = txt.match(/P:([^;]+)/i);
                     if (matchSsid) {
-                        document.getElementById('cadSsid').value = matchSsid[1].replace(/\\([\\;,:"])/g, "$1");
-                        document.getElementById('cadSenha').value = matchPass ? matchPass[1].replace(/\\([\\;,:"])/g, "$1") : "Aberta";
+                        document.getElementById('cadSsid').value = matchSsid[1].replace(/\([\;,:"])/g, "$1");
+                        document.getElementById('cadSenha').value = matchPass ? matchPass[1].replace(/\([\;,:"])/g, "$1") : "Aberta";
                         atualizarPreviewQrCadastro();
                         gpsStatus.textContent = "✅ Rede e senha extraídas automaticamente do QR Code!";
-                        gpsStatus.style.color = "#22c55e";
+                        gpsStatus.style.color = "#15803d";
                     } else {
                         gpsStatus.textContent = "⚠️ QR Code lido (" + txt.slice(0, 30) + "), mas não contém dados de Wi-Fi.";
-                        gpsStatus.style.color = "#facc15";
                     }
                 } else {
                     gpsStatus.textContent = "⚠️ Não foi possível identificar um QR Code nítido na foto.";
-                    gpsStatus.style.color = "#facc15";
                 }
             };
             img.src = e.target.result;
@@ -2136,7 +2286,6 @@
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
 
-        // Exibe somente o primeiro nome ou nome curto no botão do menu suspenso
         const nomeCompleto = usuarioLogado.nome || "Usuário";
         const primeiroNome = nomeCompleto.split("(")[0].trim().split(" ")[0];
         document.getElementById('userDisplay').textContent = primeiroNome;
@@ -2150,7 +2299,7 @@
 
         setTimeout(() => {
             inicializarOuAtualizarMapa();
-        }, 80);
+        }, 120);
         await carregarListaWifis();
         iniciarRastreamentoGpsAltaPrecisao(false);
         carregarPerfilUsuario();
@@ -2166,7 +2315,7 @@
     }
 
     function mudarAba(aba) {
-        const abas = ['mapa', 'testar', 'cadastrar', 'perfil'];
+        const abas = ['mapa', 'pontos', 'testar', 'cadastrar', 'perfil'];
         abas.forEach(nome => {
             const div = document.getElementById('aba' + nome.charAt(0).toUpperCase() + nome.slice(1));
             const btn = document.getElementById('tab' + nome.charAt(0).toUpperCase() + nome.slice(1) + 'Btn');
@@ -2183,7 +2332,11 @@
         if (aba === 'mapa') {
             setTimeout(() => {
                 inicializarOuAtualizarMapa();
-            }, 100);
+                renderizarAlfinetesNoMapa(true);
+            }, 120);
+        } else if (aba === 'pontos') {
+            const idSel = document.getElementById('selectWifiMapa').value;
+            if (idSel) atualizarCardQrDoMapa(idSel);
         } else if (aba === 'testar') {
             atualizarBannerWifiAtualTestar();
         } else if (aba === 'perfil') {
@@ -2272,11 +2425,11 @@
 
                     if (mapStatus) {
                         mapStatus.textContent = badgeAcc;
-                        mapStatus.style.color = acc <= 5 ? "#22c55e" : "#facc15";
+                        mapStatus.style.color = acc <= 5 ? "#15803d" : "#111111";
                     }
                     if (nearStatus) {
                         nearStatus.textContent = badgeAcc;
-                        nearStatus.style.color = acc <= 5 ? "#22c55e" : "#facc15";
+                        nearStatus.style.color = acc <= 5 ? "#15803d" : "#111111";
                     }
 
                     if (mapInstance) {
@@ -2300,35 +2453,41 @@
         if (userMarker) mapInstance.removeLayer(userMarker);
         if (userAccuracyCircle) mapInstance.removeLayer(userAccuracyCircle);
 
-        const corCirculo = acc <= 5 ? "#facc15" : "#f97316";
+        const corCirculo = acc <= 5 ? "#111111" : "#ea580c";
         userAccuracyCircle = L.circle([uLat, uLng], {
             radius: Math.max(acc, 3),
             color: corCirculo,
-            fillColor: corCirculo,
-            fillOpacity: 0.16,
-            weight: 1.5
+            fillColor: "#FFD000",
+            fillOpacity: 0.25,
+            weight: 2
         }).addTo(mapInstance);
 
         const iconUser = L.divIcon({
             className: 'custom-user-pin',
-            html: '<div style="background:#facc15;width:16px;height:16px;border-radius:50%;border:4px solid #111111;box-shadow:0 0 12px rgba(250,204,21,0.95);"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+            html: '<div style="background:#FFD000;width:18px;height:18px;border-radius:50%;border:4px solid #111111;box-shadow:0 0 10px rgba(0,0,0,0.6);"></div>',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
         });
 
-        userMarker = L.marker([uLat, uLng], { icon: iconUser })
+        userMarker = L.marker([uLat, uLng], { icon: iconUser, zIndexOffset: 1000 })
             .addTo(mapInstance)
             .bindPopup(`<b>📍 Você está aqui</b><br><small>Raio de precisão: ±${acc.toFixed(1)}m</small>`);
     }
 
     // =========================================================================
-    // CÁLCULO DE DISTÂNCIA E RESOLUÇÃO DE COORDENADAS
+    // CÁLCULO DE DISTÂNCIA E RESOLUÇÃO DE COORDENADAS (CORRIGIDO VÍRGULA/PONTO)
     // =========================================================================
     function extrairCoordenadas(texto) {
         if (!texto) return null;
-        const match = String(texto).match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+        // Aceita formatos "-26.2503, -49.3786", "-26,2503; -49,3786" ou similar
+        const str = String(texto).trim();
+        const match = str.match(/(-?\d{1,2}[.,]\d+)\s*[,;\s]\s*(-?\d{1,3}[.,]\d+)/);
         if (match) {
-            return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+            const lat = parseFloat(match[1].replace(',', '.'));
+            const lng = parseFloat(match[2].replace(',', '.'));
+            if (!isNaN(lat) && !isNaN(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+                return { lat, lng };
+            }
         }
         return null;
     }
@@ -2347,8 +2506,9 @@
     async function resolverCoordenadasFaltantes() {
         for (let i = 0; i < listaWifisCache.length; i++) {
             const w = listaWifisCache[i];
-            if (!extrairCoordenadas(w.lat_long) && (w.lat_long || w.cidade)) {
-                const query = encodeURIComponent(`${w.lat_long || ''}, ${w.cidade || ''}, Brasil`);
+            if (!extrairCoordenadas(w.lat_long) && (w.lat_long || w.local || w.cidade)) {
+                const baseBusca = w.lat_long || w.endereco || w.local || '';
+                const query = encodeURIComponent(`${baseBusca}, ${w.cidade || ''}, Brasil`);
                 try {
                     const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${query}`);
                     const results = await resp.json();
@@ -2362,7 +2522,6 @@
 
     function obterListaFiltradaEOrdenada(uLat = userLatAtual, uLng = userLngAtual) {
         let lista = listaWifisCache.filter(w => {
-            // Garante remoção de WFI-001 caso ainda exista na planilha
             if (String(w.id || "").trim().toUpperCase() === "WFI-001") return false;
 
             const coms = obterComodidadesLocal(w);
@@ -2410,7 +2569,6 @@
                         ? ` [${Math.round(w.distKm * 1000)}m]`
                         : ` [${w.distKm.toFixed(1)}km]`;
                 }
-                // Mostra SOMENTE o endereço (sem WFI-xxx e sem nome técnico)
                 opt.textContent = `${formatarEnderecoLimpo(w)}${tagDist}`;
                 selMapa.appendChild(opt);
             });
@@ -2446,7 +2604,6 @@
             btnNear.textContent = "...";
         }
         statusEl.textContent = "Detectando o Wi-Fi mais próximo de você agora...";
-        statusEl.style.color = "#facc15";
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
@@ -2456,7 +2613,6 @@
             async (posFinal, erro) => {
                 if (!posFinal) {
                     statusEl.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    statusEl.style.color = "#fdba74";
                     btnNear.disabled = false;
                     btnNear.textContent = "📍 Detectar Wi-Fi Atual";
                     return;
@@ -2476,7 +2632,6 @@
                         ? `${Math.round(maisProximo.distKm * 1000)}m`
                         : `${maisProximo.distKm.toFixed(1)} km`;
                     statusEl.textContent = `🎯 Wi-Fi atual detectado a ${distTxt} (±${melhorPrecisaoAtual.toFixed(1)}m).`;
-                    statusEl.style.color = "#22c55e";
                 }
 
                 btnNear.disabled = false;
@@ -2488,14 +2643,14 @@
     }
 
     // =========================================================================
-    // MAPA: ALFINETES COLORIDOS POR VELOCIDADE + DECLUTTERING NO ZOOM OUT
+    // MAPA: ALFINETES VISÍVEIS CORRIGIDOS (CSS DIVICON + SVG PIN + Z-INDEX)
     // =========================================================================
     function inicializarOuAtualizarMapa() {
         if (!mapInstance) {
             const latInicial = userLatAtual || -26.2503;
             const lngInicial = userLngAtual || -49.3786;
 
-            mapInstance = L.map('miniMap').setView([latInicial, lngInicial], 13);
+            mapInstance = L.map('miniMap').setView([latInicial, lngInicial], 14);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap'
@@ -2510,6 +2665,7 @@
             mapInstance.invalidateSize();
         }
 
+        renderizarAlfinetesNoMapa(true);
         atualizarPosicaoMapa(false);
     }
 
@@ -2518,12 +2674,12 @@
         const zoom = mapInstance.getZoom();
         const notice = document.getElementById('zoomFilterNotice');
 
-        if (zoom >= 14) {
+        if (zoom >= 13) {
             notice.textContent = `Zoom detalhado (${zoom}x): exibindo todos os ${pontosComCoords.length} pontos filtrados.`;
             return pontosComCoords;
         }
 
-        const cellSizePx = zoom <= 8 ? 85 : (zoom <= 11 ? 65 : 50);
+        const cellSizePx = zoom <= 8 ? 75 : (zoom <= 10 ? 55 : 40);
         const ordenadosPorVelocidade = [...pontosComCoords].sort((a, b) => b.velAtiva - a.velAtiva);
         const ocupados = new Set();
         const melhores = [];
@@ -2542,7 +2698,11 @@
     }
 
     function renderizarAlfinetesNoMapa(preservarPopup = false) {
-        if (!mapInstance || !wifiMarkersLayer) return;
+        if (!mapInstance) return;
+        if (!wifiMarkersLayer) {
+            wifiMarkersLayer = L.layerGroup().addTo(mapInstance);
+        }
+
         let idPopupAberto = null;
         if (preservarPopup) {
             wifiMarkersLayer.eachLayer(layer => {
@@ -2558,19 +2718,26 @@
         const manterId = document.getElementById('selectWifiMapa').value;
         preencherSelectsComLista(listaFiltrada, manterId);
 
-        const pontosComCoords = listaFiltrada.filter(w => w.coords);
+        const pontosComCoords = listaFiltrada.filter(w => w.coords && !isNaN(w.coords.lat) && !isNaN(w.coords.lng));
         const pontosVisiveisNoZoom = aplicarFiltroZoomOut(pontosComCoords);
 
         pontosVisiveisNoZoom.forEach(w => {
             const vel = w.velAtiva;
             const cor = obterCorPorVelocidade(vel);
-            const labelVel = vel > 0 ? `${Math.round(vel)}` : "?";
+            const labelVel = vel > 0 ? `${Math.round(vel)}` : "📶";
 
+            // Alfinete SVG + HTML com contorno preto de alto contraste (impossível de sumir)
             const iconWifi = L.divIcon({
-                className: 'custom-wifi-pin',
-                html: `<div style="background:${cor.hex};color:${cor.texto};font-weight:800;font-size:10px;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #ffffff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.75);"><span style="transform:rotate(45deg);">${labelVel}</span></div>`,
-                iconSize: [28, 28],
-                iconAnchor: [14, 28]
+                className: '',
+                html: `<div style="position:relative;width:34px;height:42px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 4px rgba(0,0,0,0.65));">
+                    <svg width="34" height="42" viewBox="0 0 34 42" style="position:absolute;top:0;left:0;">
+                        <path d="M17 1C8.7 1 2 7.7 2 16c0 11.2 15 24.5 15 24.5S32 27.2 32 16C32 7.7 25.3 1 17 1z" fill="${cor.hex}" stroke="#111111" stroke-width="2.5"/>
+                    </svg>
+                    <span style="position:relative;z-index:2;margin-top:-8px;color:${cor.texto};font-weight:900;font-size:10px;font-family:sans-serif;">${labelVel}</span>
+                </div>`,
+                iconSize: [34, 42],
+                iconAnchor: [17, 42],
+                popupAnchor: [0, -38]
             });
 
             const ssid = w.ssid || w.local;
@@ -2583,15 +2750,15 @@
             const fotoHtml = fotos.length > 0 ? `<img src="${fotos[0]}" class="popup-photo-img" alt="Foto do local">` : "";
 
             const wifiPayload = gerarPayloadWifiQR(ssid, senha);
-            const ssidSafe = String(ssid).replace(/'/g, "\\'");
-            const senhaSafe = String(senha).replace(/'/g, "\\'");
+            const ssidSafe = String(ssid).replace(/'/g, "\'");
+            const senhaSafe = String(senha).replace(/'/g, "\'");
             const popupHtml = `
                 <div>
                     <b>${w.local}</b><br>
-                    <span style="color:#4b5563;">${formatarEnderecoLimpo(w)}</span><br>
-                    <span style="font-weight:700; color:#111111;">⬇️ ${down.toFixed(1)} Mbps | ⬆️ ${up.toFixed(1)} Mbps</span><br>
+                    <span style="color:#3f3f46;">${formatarEnderecoLimpo(w)}</span><br>
+                    <span style="font-weight:800; color:#111111;">⬇️ ${down.toFixed(1)} Mbps | ⬆️ ${up.toFixed(1)} Mbps</span><br>
                     <span>Rede: <b>${ssid}</b> | Senha: <b>${senha || '-'}</b></span><br>
-                    <span style="font-size:0.68rem; color:#b45309;">🎯 Centro de ${w.coords.totalAmostras || 1} conexão(ões)</span>
+                    <span style="font-size:0.68rem; color:#92400e; font-weight:700;">🎯 Centro de ${w.coords.totalAmostras || 1} conexão(ões)</span>
                     ${fotoHtml}
                     <img src="${qrUrl}" class="popup-qr-img" alt="QR Code Wi-Fi">
                     <a href="${navUrl}" target="_blank" class="popup-btn nav">🧭 Ir até lá</a>
@@ -2599,7 +2766,7 @@
                 </div>
             `;
 
-            const marker = L.marker([w.coords.lat, w.coords.lng], { icon: iconWifi }).bindPopup(popupHtml);
+            const marker = L.marker([w.coords.lat, w.coords.lng], { icon: iconWifi, zIndexOffset: 500 }).bindPopup(popupHtml);
             marker.wifiId = w.id;
             marker.on('click', () => {
                 document.getElementById('selectWifiMapa').value = w.id;
@@ -2615,8 +2782,16 @@
             }
         });
 
+        // Se ainda não há GPS do usuário e há pontos cadastrados, centraliza no ponto selecionado para garantir que os alfinetes fiquem visíveis
+        if (userLatAtual === null && pontosVisiveisNoZoom.length > 0 && !preservarPopup) {
+            const idSel = document.getElementById('selectWifiMapa').value;
+            const alvo = pontosVisiveisNoZoom.find(p => p.id === idSel) || pontosVisiveisNoZoom[0];
+            if (alvo && alvo.coords) {
+                mapInstance.setView([alvo.coords.lat, alvo.coords.lng], 15);
+            }
+        }
+
         mapStatus.textContent = pontosFiltradosResumo(listaFiltrada.length, pontosVisiveisNoZoom.length);
-        mapStatus.style.color = "#facc15";
     }
 
     function pontosFiltradosResumo(totalFiltrados, visiveisZoom) {
@@ -2632,7 +2807,7 @@
             if (uLat !== null && uLng !== null) {
                 atualizarMarcadorUsuarioNoMapa(uLat, uLng, isFinite(acc) ? acc : 5);
             }
-            renderizarAlfinetesNoMapa();
+            renderizarAlfinetesNoMapa(true);
         };
 
         if (!forcarNovoGPS && userLatAtual !== null && userLngAtual !== null && melhorPrecisaoAtual <= 5) {
@@ -2643,14 +2818,13 @@
         if (navigator.geolocation) {
             btnAtualizar.disabled = true;
             mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 5m)...";
-            mapStatus.style.color = "#facc15";
 
             obterPosicaoAltaPrecisao(
                 (posParcial) => {
                     const acc = posParcial.coords.accuracy || 999;
                     userLatAtual = posParcial.coords.latitude;
                     userLngAtual = posParcial.coords.longitude;
-                    mapInstance.setView([userLatAtual, userLngAtual], acc <= 15 ? 18 : 16);
+                    mapInstance.setView([userLatAtual, userLngAtual], acc <= 15 ? 17 : 15);
                     desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, acc);
                     mapStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
                 },
@@ -2660,10 +2834,9 @@
                         userLngAtual = posFinal.coords.longitude;
                         melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
                         await resolverCoordenadasFaltantes();
-                        mapInstance.setView([userLatAtual, userLngAtual], 18);
+                        mapInstance.setView([userLatAtual, userLngAtual], 17);
                         desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
                         mapStatus.textContent = `🎯 Localização travada com raio de ±${melhorPrecisaoAtual.toFixed(1)}m.`;
-                        mapStatus.style.color = "#22c55e";
                     } else {
                         desenharUsuarioEAlfinetes(null, null);
                     }
@@ -2760,7 +2933,6 @@
         gpsBtn.disabled = true;
         gpsBtn.textContent = "Calibrando ≤5m...";
         gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 5m)...";
-        gpsStatus.style.color = "#facc15";
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
@@ -2771,7 +2943,6 @@
             async (posFinal, erro) => {
                 if (!posFinal) {
                     gpsStatus.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    gpsStatus.style.color = "#fdba74";
                     gpsBtn.disabled = false;
                     gpsBtn.textContent = "📍 Auto-Preencher Local";
                     return;
@@ -2828,11 +2999,9 @@
                     }
 
                     gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Local preenchido.`;
-                    gpsStatus.style.color = "#22c55e";
                 } catch (err) {
                     inputLoc.value = ultimaCoordGPS;
                     gpsStatus.textContent = `🎯 Coordenadas captadas (±${acc.toFixed(1)}m).`;
-                    gpsStatus.style.color = "#22c55e";
                 }
 
                 gpsBtn.disabled = false;
@@ -2844,7 +3013,7 @@
     }
 
     // =========================================================================
-    // ABA 4: CARREGAR DADOS DO PERFIL, SALDO E PONTOS DO USUÁRIO
+    // PERFIL DO USUÁRIO
     // =========================================================================
     async function carregarPerfilUsuario() {
         if (!usuarioLogado) return;
@@ -2875,7 +3044,7 @@
                         item.className = 'my-wifi-item';
                         item.innerHTML = `
                             <strong>${w.local}</strong> (${w.cidade})
-                            <small>Rede: ${w.ssid} | Senha: ${w.senha} • <a href="${qrLink}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">🔗 Link QR Code</a></small>
+                            <small>Rede: ${w.ssid} | Senha: ${w.senha} • <a href="${qrLink}" target="_blank" style="color: var(--primary); text-decoration: underline; font-weight: 700;">🔗 Link QR Code</a></small>
                         `;
                         listaDiv.appendChild(item);
                     });
@@ -2884,7 +3053,7 @@
                 }
             }
         } catch (e) {
-            document.getElementById('meusWifisLista').innerHTML = `<div style="color: #facc15; text-align: center; padding: 10px;">Atualize o código do Apps Script para sincronizar saldo e velocidades.</div>`;
+            document.getElementById('meusWifisLista').innerHTML = `<div style="color: #7c2d12; text-align: center; padding: 10px;">Sincronizando com a planilha...</div>`;
         }
 
         atualizarListaAdminWifis();
@@ -2897,15 +3066,16 @@
             const res = await fetch(GOOGLE_SCRIPT_URL + "?acao=listar_wifis");
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
-                // Filtra WFI-001 caso venha da planilha
                 listaWifisCache = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
                 await resolverCoordenadasFaltantes();
                 const ordenada = obterListaFiltradaEOrdenada();
                 preencherSelectsComLista(ordenada);
+                renderizarAlfinetesNoMapa(true);
             }
         } catch (e) {
             const ordenada = obterListaFiltradaEOrdenada();
             preencherSelectsComLista(ordenada);
+            renderizarAlfinetesNoMapa(true);
         }
     }
 
@@ -2952,13 +3122,13 @@
             const result = await response.json();
             const novoId = result.id_wifi || ("WFI-" + Date.now());
 
-            if (fotoCadastroBase64) {
-                localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
+            if (fotosCadastroLista.length > 0) {
+                localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify(fotosCadastroLista));
             }
 
             cadToast.style.display = "block";
             cadToast.className = "toast";
-            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos na carteira.<br><a href="${qrLinkGerado}" target="_blank" style="color:var(--primary);font-weight:700;">🔗 Abrir Link do QR Code de Conexão</a>`;
+            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos na carteira.<br><a href="${qrLinkGerado}" target="_blank" style="color:var(--primary);font-weight:800;">🔗 Abrir Link do QR Code de Conexão</a>`;
 
             document.getElementById('cadNomeLocal').value = "";
             document.getElementById('cadLocalizacao').value = "";
@@ -2966,8 +3136,10 @@
             document.getElementById('cadSenha').value = "";
             document.getElementById('cadHorarioSinal').value = "";
             document.getElementById('cadQrPreviewBox').classList.add('hidden');
-            document.getElementById('cadFotoPreviewContainer').classList.add('hidden');
-            fotoCadastroBase64 = "";
+            const prevContainer = document.getElementById('cadFotoPreviewContainer');
+            prevContainer.innerHTML = "";
+            prevContainer.classList.add('hidden');
+            fotosCadastroLista = [];
 
             await carregarListaWifis();
             selecionarWifiMaisProximo(false);
