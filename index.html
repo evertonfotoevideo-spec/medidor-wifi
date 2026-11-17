@@ -156,11 +156,11 @@
             background-color: rgba(239, 68, 68, 0.14);
         }
 
-        /* Navegação Principal (3 Abas principais + Perfil no menu suspenso) */
+        /* Navegação Principal (4 Abas principais + Perfil no menu suspenso) */
         .tabs {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
             margin-bottom: 12px;
             background-color: var(--input-bg);
             padding: 4px;
@@ -940,6 +940,7 @@
 
         <div class="tabs">
             <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
+            <button type="button" class="tab-btn" id="tabDadosRedeBtn" onclick="mudarAba('dadosRede')">📶 Dados da Rede</button>
             <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
             <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
         </div>
@@ -1014,11 +1015,30 @@
                 <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
             </div>
 
-            <!-- Sincronização em Tempo Real + Pacote Offline -->
-            <div style="display:flex; gap:6px; margin-bottom:10px;">
-                <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; background:#111111; color:#facc15;" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade</button>
-                <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
+            <button type="button" class="btn" style="margin-top: 6px;" onclick="mudarAba('dadosRede')">📶 Ver Dados da Rede & QR Code</button>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- ABA 2: DADOS DA REDE (QR CODE, STATUS, FOTOS, OFFLINE E NUVEM)    -->
+        <!-- ================================================================= -->
+        <div id="abaDadosRede" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <strong style="font-size:0.95rem; color:var(--primary); text-transform:uppercase;">📶 Dados da Rede Selecionada</strong>
+                <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
+            </div>
+
+            <!-- Sincronização em Tempo Real + Filtro de Cidades Offline -->
+            <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; background:#111111; color:#facc15;" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade</button>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="flex:1; padding:7px 10px; font-size:0.78rem; border-radius:8px;">
+                        <option value="">🌐 Todas as cidades (Online / Nuvem)</option>
+                    </select>
+                    <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
+                </div>
             </div>
 
             <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
@@ -1036,7 +1056,7 @@
                         <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
                     </div>
                 </div>
-                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#fde047;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
+                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#713f12; font-weight:600;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
 
                 <!-- Banner de Segurança da Rede -->
                 <div class="security-banner" id="mapaSecurityBanner">
@@ -1066,7 +1086,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- ABA 2: TESTAR VELOCIDADE (MOSTRA SOMENTE O WI-FI ATUAL)           -->
+        <!-- ABA 3: TESTAR VELOCIDADE (MOSTRA SOMENTE O WI-FI ATUAL)           -->
         <!-- ================================================================= -->
         <div id="abaTestar" class="hidden">
             <input type="hidden" id="selectWifi" value="">
@@ -1997,31 +2017,129 @@
         } catch (e) {}
     }
 
+    let cidadeOfflineFiltroAtivo = "";
+
+    function normalizarNomeCidade(cidadeStr) {
+        return String(cidadeStr || "").trim();
+    }
+
+    function obterMapaPacotesOffline() {
+        try {
+            return JSON.parse(localStorage.getItem('clickcontrol_offline_cities_map') || "{}");
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function atualizarSeletorCidadesOffline() {
+        const sel = document.getElementById('selectCidadeOffline');
+        if (!sel) return;
+        const valorAtual = sel.value || cidadeOfflineFiltroAtivo;
+        const pacotesSalvos = obterMapaPacotesOffline();
+
+        const contagemCidades = {};
+        listaWifisCache.forEach(w => {
+            const cid = normalizarNomeCidade(w.cidade);
+            if (cid) contagemCidades[cid] = (contagemCidades[cid] || 0) + 1;
+        });
+        Object.keys(pacotesSalvos).forEach(cid => {
+            if (!contagemCidades[cid] && pacotesSalvos[cid]?.wifis) {
+                contagemCidades[cid] = pacotesSalvos[cid].wifis.length;
+            }
+        });
+
+        const cidadesOrdenadas = Object.keys(contagemCidades).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        sel.innerHTML = `<option value="">🌐 Todas as cidades (${listaWifisCache.length} redes)</option>`;
+
+        cidadesOrdenadas.forEach(cid => {
+            const opt = document.createElement('option');
+            opt.value = cid;
+            const badgeOffline = pacotesSalvos[cid] ? " • 📴 Offline OK" : "";
+            opt.textContent = `🏙️ ${cid} (${contagemCidades[cid]} redes${badgeOffline})`;
+            sel.appendChild(opt);
+        });
+
+        if (valorAtual && cidadesOrdenadas.includes(valorAtual)) {
+            sel.value = valorAtual;
+        }
+    }
+
     function baixarPacoteOfflineCidade() {
+        const selCidade = document.getElementById('selectCidadeOffline');
         const idWifi = document.getElementById('selectWifiMapa').value;
         const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
-        const cidadeAlvo = ponto ? ponto.cidade : "Todas";
-        const pacote = listaWifisCache.filter(w => !cidadeAlvo || w.cidade === cidadeAlvo);
+        const cidadeAlvo = normalizarNomeCidade(selCidade?.value) || normalizarNomeCidade(ponto?.cidade);
 
-        localStorage.setItem('clickcontrol_offline_pack', JSON.stringify({
+        if (!cidadeAlvo) {
+            alert("Selecione um ponto ou uma cidade primeiro para salvar offline.");
+            return;
+        }
+
+        const pacote = listaWifisCache.filter(w => normalizarNomeCidade(w.cidade).toLowerCase() === cidadeAlvo.toLowerCase());
+        const pacotes = obterMapaPacotesOffline();
+        pacotes[cidadeAlvo] = {
             cidade: cidadeAlvo,
             data: new Date().toLocaleString('pt-BR'),
             wifis: pacote
-        }));
-        alert(`✅ Pacote Offline salvo! ${pacote.length} ponto(s) de "${cidadeAlvo}" disponíveis mesmo sem internet.`);
+        };
+        localStorage.setItem('clickcontrol_offline_cities_map', JSON.stringify(pacotes));
+        atualizarSeletorCidadesOffline();
+        if (selCidade) selCidade.value = cidadeAlvo;
+
+        alert(`✅ Pacote Offline salvo para "${cidadeAlvo}" (${pacote.length} ponto(s)).`);
+    }
+
+    function filtrarOuCarregarCidadeOffline() {
+        const selCidade = document.getElementById('selectCidadeOffline');
+        cidadeOfflineFiltroAtivo = selCidade ? selCidade.value : "";
+
+        const pacotes = obterMapaPacotesOffline();
+        if (cidadeOfflineFiltroAtivo && pacotes[cidadeOfflineFiltroAtivo]?.wifis) {
+            const idsAtuais = new Set(listaWifisCache.map(w => w.id));
+            const faltantes = pacotes[cidadeOfflineFiltroAtivo].wifis.filter(w => !idsAtuais.has(w.id));
+            if (faltantes.length > 0) {
+                listaWifisCache = [...listaWifisCache, ...faltantes];
+            }
+        }
+
+        const ordenada = obterListaFiltradaEOrdenada();
+        preencherSelectsComLista(ordenada);
+        renderizarAlfinetesNoMapa(false);
+
+        const primeiroComCoord = ordenada.find(w => w.coords);
+        if (primeiroComCoord && mapInstance) {
+            mapInstance.setView([primeiroComCoord.coords.lat, primeiroComCoord.coords.lng], 13);
+        }
     }
 
     function carregarPacoteOffline() {
-        const raw = localStorage.getItem('clickcontrol_offline_pack');
-        if (!raw) {
-            alert("Nenhum pacote offline salvo ainda. Selecione uma cidade e toque em 'Salvar Cidade Offline'.");
+        const pacotes = obterMapaPacotesOffline();
+        const cidadesOffline = Object.keys(pacotes);
+        if (cidadesOffline.length === 0) {
+            alert("Nenhuma cidade salva offline ainda. Escolha uma cidade e toque em '📥 Salvar Cidade'.");
             return;
         }
-        const pack = JSON.parse(raw);
+
+        const selCidade = document.getElementById('selectCidadeOffline');
+        const alvo = (selCidade && selCidade.value && pacotes[selCidade.value])
+            ? selCidade.value
+            : cidadesOffline[cidadesOffline.length - 1];
+
+        const pack = pacotes[alvo];
         listaWifisCache = pack.wifis;
+        cidadeOfflineFiltroAtivo = alvo;
+        atualizarSeletorCidadesOffline();
+        if (selCidade) selCidade.value = alvo;
+
         const ordenada = obterListaFiltradaEOrdenada();
         preencherSelectsComLista(ordenada);
-        alert(`📂 Cache Offline carregado: ${pack.cidade} (Salvo em ${pack.data}).`);
+        renderizarAlfinetesNoMapa(false);
+
+        const primeiroComCoord = ordenada.find(w => w.coords);
+        if (primeiroComCoord && mapInstance) {
+            mapInstance.setView([primeiroComCoord.coords.lat, primeiroComCoord.coords.lng], 13);
+        }
+        alert(`📂 Modo Offline carregado: ${pack.cidade} (${pack.wifis.length} redes • salvo em ${pack.data}).`);
     }
 
     function adicionarFotoAoLocalAtual(event) {
@@ -2267,6 +2385,7 @@
         if (menuAdminItem) menuAdminItem.classList.toggle('hidden', !isAdm);
 
         inicializarOuAtualizarMapa();
+        atualizarSeletorCidadesOffline();
         await carregarListaWifis();
         renderizarAlfinetesNoMapa(false);
 
@@ -2317,7 +2436,7 @@
     }
 
     function mudarAba(aba) {
-        const abas = ['mapa', 'testar', 'cadastrar', 'perfil'];
+        const abas = ['mapa', 'dadosRede', 'testar', 'cadastrar', 'perfil'];
         abas.forEach(nome => {
             const div = document.getElementById('aba' + nome.charAt(0).toUpperCase() + nome.slice(1));
             const btn = document.getElementById('tab' + nome.charAt(0).toUpperCase() + nome.slice(1) + 'Btn');
@@ -2335,6 +2454,9 @@
             setTimeout(() => {
                 inicializarOuAtualizarMapa();
             }, 100);
+        } else if (aba === 'dadosRede') {
+            const idAtual = document.getElementById('selectWifiMapa')?.value;
+            if (idAtual) atualizarCardQrDoMapa(idAtual);
         } else if (aba === 'testar') {
             atualizarBannerWifiAtualTestar();
         } else if (aba === 'perfil') {
@@ -2549,6 +2671,7 @@
         let lista = listaWifisCache.filter(w => {
             // Garante remoção de WFI-001 caso ainda exista na planilha
             if (String(w.id || "").trim().toUpperCase() === "WFI-001") return false;
+            if (cidadeOfflineFiltroAtivo && normalizarNomeCidade(w.cidade).toLowerCase() !== cidadeOfflineFiltroAtivo.toLowerCase()) return false;
 
             const coms = obterComodidadesLocal(w);
             if (filtrosAtivos.estacionamento && !coms.includes('estacionamento')) return false;
@@ -2781,6 +2904,7 @@
                     <img src="${qrUrl}" class="popup-qr-img" alt="QR Code Wi-Fi">
                     <a href="${navUrl}" target="_blank" class="popup-btn nav">🧭 Ir até lá</a>
                     <a href="${wifiPayload}" onclick="event.preventDefault(); conectarPeloLinkQr('${ssidSafe}', '${senhaSafe}');" class="popup-btn">🔗 QR Code</a>
+                    <button type="button" onclick="mudarAba('dadosRede')" class="popup-btn">📶 Dados</button>
                 </div>
             `;
 
@@ -3096,23 +3220,146 @@
         });
     }
 
+    function salvarPontosLocaisPersistentes() {
+        try {
+            localStorage.setItem('clickcontrol_custom_wifis', JSON.stringify(listaWifisCache));
+        } catch (e) {}
+    }
+
     async function carregarListaWifis() {
+        let locaisSalvos = [];
+        try { locaisSalvos = JSON.parse(localStorage.getItem('clickcontrol_custom_wifis') || "[]"); } catch (e) {}
+
         try {
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`, { cache: "no-store" });
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
                 const filtrados = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
-                listaWifisCache = mesclarVelocidadesLocais(filtrados);
+                const idsNuvem = new Set(filtrados.map(w => w.id));
+                const pendentesLocais = locaisSalvos.filter(w => w.id && !idsNuvem.has(w.id));
+                listaWifisCache = mesclarVelocidadesLocais([...pendentesLocais, ...filtrados]);
+                salvarPontosLocaisPersistentes();
                 await resolverCoordenadasFaltantes();
-                const ordenada = obterListaFiltradaEOrdenada();
-                preencherSelectsComLista(ordenada, document.getElementById('selectWifiMapa')?.value || null);
-                renderizarAlfinetesNoMapa(true);
             }
         } catch (e) {
-            listaWifisCache = mesclarVelocidadesLocais(listaWifisCache);
-            const ordenada = obterListaFiltradaEOrdenada();
-            preencherSelectsComLista(ordenada);
+            if (locaisSalvos.length > 0) {
+                listaWifisCache = mesclarVelocidadesLocais(locaisSalvos);
+            } else {
+                listaWifisCache = mesclarVelocidadesLocais(listaWifisCache);
+            }
+        }
+
+        atualizarSeletorCidadesOffline();
+        const ordenada = obterListaFiltradaEOrdenada();
+        preencherSelectsComLista(ordenada, document.getElementById('selectWifiMapa')?.value || null);
+        renderizarAlfinetesNoMapa(true);
+    }
+
+    async function executarTesteVelocidadeBackground(idWifi) {
+        try {
+            const downUrls = [
+                "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
+            ];
+            const upUrls = [
+                "https://httpbin.org/post",
+                "https://postman-echo.com/post"
+            ];
+
+            // 1. Download em background (4 segundos, 4 threads)
+            let bytesDown = 0;
+            let ativoDown = true;
+            const t0Down = performance.now();
+            setTimeout(() => { ativoDown = false; }, 4000);
+
+            await Promise.all(Array.from({ length: 4 }, async (_, idx) => {
+                let i = idx;
+                while (ativoDown) {
+                    const url = `${downUrls[i % downUrls.length]}?bg=${Math.random()}_${Date.now()}`;
+                    i++;
+                    try {
+                        const ctrl = new AbortController();
+                        const tid = setTimeout(() => ctrl.abort(), 4000);
+                        const resp = await fetch(url, { cache: "no-store", signal: ctrl.signal });
+                        const reader = resp.body.getReader();
+                        while (ativoDown) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
+                            bytesDown += value.byteLength;
+                        }
+                        clearTimeout(tid);
+                        ctrl.abort();
+                    } catch (e) { if (!ativoDown) break; }
+                }
+            }));
+
+            const secDown = Math.max((performance.now() - t0Down) / 1000, 0.2);
+            const downBg = Number(((bytesDown * 8) / secDown / (1024 * 1024)).toFixed(1));
+
+            // 2. Upload em background (4 segundos, 3 threads)
+            const chunk = new Uint8Array(1024 * 1024);
+            let bytesUp = 0;
+            let ativoUp = true;
+            const t0Up = performance.now();
+            setTimeout(() => { ativoUp = false; }, 4000);
+
+            await Promise.all(Array.from({ length: 3 }, async (_, idx) => {
+                let i = idx;
+                while (ativoUp) {
+                    const url = `${upUrls[i % upUrls.length]}?bg=${Math.random()}`;
+                    i++;
+                    try {
+                        const ctrl = new AbortController();
+                        const tid = setTimeout(() => ctrl.abort(), 4000);
+                        await fetch(url, { method: "POST", mode: "no-cors", body: chunk, signal: ctrl.signal });
+                        clearTimeout(tid);
+                        if (ativoUp) bytesUp += chunk.byteLength;
+                    } catch (e) { if (!ativoUp) break; }
+                }
+            }));
+
+            const secUp = Math.max((performance.now() - t0Up) / 1000, 0.2);
+            const upBg = Number(((bytesUp * 8) / secUp / (1024 * 1024)).toFixed(1));
+
+            if (downBg <= 0 && upBg <= 0) return;
+
+            let velMap = {};
+            try { velMap = JSON.parse(localStorage.getItem('clickcontrol_vel_overrides') || "{}"); } catch (e) {}
+            velMap[idWifi] = { down: downBg, up: upBg };
+            localStorage.setItem('clickcontrol_vel_overrides', JSON.stringify(velMap));
+
+            const ponto = listaWifisCache.find(w => w.id === idWifi);
+            if (ponto) {
+                ponto.down_mbps = downBg;
+                ponto.up_mbps = upBg;
+                ponto.med_down = downBg;
+                ponto.med_up = upBg;
+            }
+            salvarPontosLocaisPersistentes();
             renderizarAlfinetesNoMapa(true);
+            if (document.getElementById('selectWifiMapa')?.value === idWifi) {
+                atualizarCardQrDoMapa(idWifi);
+            }
+
+            const mapStatus = document.getElementById('mapGpsStatus');
+            if (mapStatus) {
+                mapStatus.textContent = `⚡ Velocidade inicial medida: ⬇️ ${downBg} Mbps | ⬆️ ${upBg} Mbps`;
+            }
+
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "salvar_teste",
+                    id_wifi: idWifi,
+                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
+                    download_mbps: downBg,
+                    upload_mbps: upBg
+                })
+            });
+        } catch (e) {
+            console.warn("Teste em background ignorado:", e);
         }
     }
 
@@ -3144,17 +3391,18 @@
         if (!coordExistente) {
             if (ultimaCoordGPS) {
                 localizacao = `${localizacao} (${ultimaCoordGPS})`;
-                coordExistente = extrairCoordenadas(localizacao);
             } else {
                 const geoResolvido = await geocodificarEnderecoEmEtapas(localizacao, cidade);
                 if (geoResolvido) {
                     localizacao = `${localizacao} (${geoResolvido})`;
-                    coordExistente = extrairCoordenadas(localizacao);
                 } else if (userLatAtual !== null && userLngAtual !== null) {
                     localizacao = `${localizacao} (${userLatAtual.toFixed(6)}, ${userLngAtual.toFixed(6)})`;
-                    coordExistente = extrairCoordenadas(localizacao);
+                } else if (mapInstance) {
+                    const c = mapInstance.getCenter();
+                    localizacao = `${localizacao} (${c.lat.toFixed(6)}, ${c.lng.toFixed(6)})`;
                 }
             }
+            coordExistente = extrairCoordenadas(localizacao);
         }
 
         const qrLinkGerado = gerarUrlImagemQR(ssid, senha, 280);
@@ -3185,7 +3433,7 @@
                 localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
             }
 
-            // Insere imediatamente no cache local para garantir exibição instantânea no mapa
+            // Insere imediatamente no cache local persistente para garantir exibição instantânea no mapa
             const novoPontoObj = {
                 id: novoId,
                 local: nomeLocal,
@@ -3205,10 +3453,12 @@
 
             listaWifisCache = listaWifisCache.filter(w => w.id !== novoId);
             listaWifisCache.unshift(novoPontoObj);
+            salvarPontosLocaisPersistentes();
+            atualizarSeletorCidadesOffline();
 
             cadToast.style.display = "block";
             cadToast.className = "toast";
-            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos na carteira. Abrindo pino no mapa...`;
+            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos. Medindo velocidade inicial em segundo plano...`;
 
             document.getElementById('cadNomeLocal').value = "";
             document.getElementById('cadLocalizacao').value = "";
@@ -3221,16 +3471,18 @@
             fotoCadastroBase64 = "";
             ultimaCoordGPS = null;
 
-            // Sincroniza em segundo plano e atualiza o mapa imediatamente
-            await carregarListaWifis();
-            if (!listaWifisCache.some(w => w.id === novoId)) {
-                listaWifisCache.unshift(novoPontoObj);
-            }
+            // Dispara o teste de velocidade automático em background sem travar a interface
+            executarTesteVelocidadeBackground(novoId);
 
             limparTodosFiltrosMapa();
+            cidadeOfflineFiltroAtivo = "";
+            const selCidade = document.getElementById('selectCidadeOffline');
+            if (selCidade) selCidade.value = "";
+
             mudarAba('mapa');
 
             setTimeout(() => {
+                if (mapInstance) mapInstance.invalidateSize();
                 const ordenada = obterListaFiltradaEOrdenada();
                 preencherSelectsComLista(ordenada, novoId);
                 document.getElementById('selectWifiMapa').value = novoId;
@@ -3238,14 +3490,14 @@
                 renderizarAlfinetesNoMapa(false);
                 atualizarCardQrDoMapa(novoId);
                 if (coordExistente && mapInstance) {
-                    mapInstance.setView([coordExistente.lat, coordExistente.lng], 18);
+                    mapInstance.setView([coordExistente.lat, coordExistente.lng], 17);
                     if (wifiMarkersLayer) {
                         wifiMarkersLayer.eachLayer(layer => {
                             if (layer.wifiId === novoId) layer.openPopup();
                         });
                     }
                 }
-            }, 250);
+            }, 300);
 
             carregarPerfilUsuario();
         } catch (error) {
