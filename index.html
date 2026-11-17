@@ -6,11 +6,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v31 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
-            /* Tema Fundo Amarelo Vibrante com Detalhes Pretos */
             --bg-color: #facc15;
             --card-bg: #fef08a;
             --primary: #111111;
@@ -49,7 +48,6 @@
             max-width: 560px;
             box-shadow: 0 10px 28px rgba(17, 17, 17, 0.25);
         }
-        /* Cabeçalho Compacto + Menu Vertical Suspenso do Usuário */
         .top-navbar {
             display: flex;
             justify-content: space-between;
@@ -62,7 +60,7 @@
         }
         .brand-block h1 {
             color: var(--primary);
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 900;
             letter-spacing: 0.6px;
             text-transform: uppercase;
@@ -155,8 +153,6 @@
         .user-menu-item.danger:hover {
             background-color: rgba(239, 68, 68, 0.14);
         }
-
-        /* Navegação Principal (4 Abas principais + Perfil no menu suspenso) */
         .tabs {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -184,8 +180,6 @@
             background-color: var(--primary);
             color: var(--primary-text);
         }
-
-        /* Barra e Janela Colapsável de Filtros do Mapa */
         .filter-toolbar {
             display: flex;
             justify-content: space-between;
@@ -283,7 +277,6 @@
             border-color: var(--primary);
             color: var(--primary);
         }
-        /* Legenda de Velocidade Interativa (Filtro por Faixa de Velocidade) */
         .speed-filter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -317,8 +310,6 @@
             border: 1px solid #fff;
             flex-shrink: 0;
         }
-
-        /* Área do Mapa Ampliada */
         .leaflet-container {
             background: #e5e7eb !important;
         }
@@ -334,7 +325,6 @@
             margin-bottom: 8px;
             z-index: 1;
         }
-
         .auth-toggle {
             display: flex;
             justify-content: center;
@@ -415,11 +405,6 @@
             margin-bottom: 14px;
             text-align: center;
             line-height: 1.4;
-        }
-        .info-badge.locked {
-            background-color: rgba(249, 115, 22, 0.14);
-            border-color: rgba(249, 115, 22, 0.4);
-            color: #fdba74;
         }
         .current-wifi-banner {
             background-color: var(--input-bg);
@@ -524,9 +509,6 @@
             color: #ffffff;
             margin-top: 10px;
             display: none;
-        }
-        .btn-save:hover:not(:disabled) {
-            background-color: var(--secondary-hover);
         }
         .toast {
             margin-top: 12px;
@@ -852,12 +834,10 @@
 <body>
 
 <div class="container">
-    <!-- ===================================================================== -->
-    <!-- TELA 1: LOGIN E CADASTRO COM SENHA                                    -->
-    <!-- ===================================================================== -->
+    <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v31</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -886,10 +866,9 @@
             <button type="button" class="auth-link" style="font-size:0.78rem; color:var(--primary);" onclick="alternarRecuperacaoSenha(true)">🔑 Esqueci minha senha</button>
         </div>
 
-        <!-- Painel de Recuperação de Senha -->
         <div id="boxRecuperarSenha" class="hidden" style="margin-top:14px; padding:12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px;">
             <div style="font-size:0.84rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔐 Recuperar ou Redefinir Senha</div>
-            <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">Informe seu e-mail cadastrado para receber um código de recuperação no seu e-mail.</p>
+            <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">Informe seu e-mail cadastrado para receber um código de recuperação.</p>
             <div class="form-group" style="margin-bottom:8px;">
                 <input type="email" id="recEmail" placeholder="Digite seu e-mail cadastrado">
             </div>
@@ -914,14 +893,11 @@
         <div class="toast" id="loginToast"></div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- TELA 2: PAINEL PRINCIPAL (LOGADO)                                     -->
-    <!-- ===================================================================== -->
+    <!-- TELA 2: PAINEL PRINCIPAL (LOGADO) -->
     <div id="appScreen" class="hidden">
-        <!-- Cabeçalho com Menu Vertical Suspenso do Usuário -->
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL</h1>
+                <h1 id="appTitle">CLICK CONTROL v31</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -952,11 +928,8 @@
             <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- ABA 1: MAPA AMPLIADO + JANELA DE FILTROS + ENDEREÇO               -->
-        <!-- ================================================================= -->
+        <!-- ABA 1: MAPA -->
         <div id="abaMapa">
-            <!-- Barra de Abertura da Janela de Filtros -->
             <div class="filter-toolbar">
                 <button type="button" class="btn-filter-toggle" onclick="alternarJanelaFiltros()">
                     <span>🎛️ Filtros (Upload/Download, Estrutura & Velocidade)</span>
@@ -964,7 +937,6 @@
                 </button>
             </div>
 
-            <!-- Janela de Filtros Agrupada -->
             <div class="filter-drawer hidden" id="janelaFiltrosMapa">
                 <div class="filter-section-title">1. Prioridade de Velocidade</div>
                 <div class="prio-switch">
@@ -980,26 +952,14 @@
                     <div class="filter-pill" id="filtroSinalRua" onclick="alternarFiltro('sinal_rua')">📡 Sinal no Carro</div>
                 </div>
 
-                <div class="filter-section-title">3. Faixa de Velocidade (Toque para filtrar)</div>
+                <div class="filter-section-title">3. Faixa de Velocidade</div>
                 <div class="speed-filter-grid">
-                    <div class="speed-pill active" id="speedFilterAll" onclick="definirFiltroVelocidade('todos')">
-                        <span>🌐 Todos</span>
-                    </div>
-                    <div class="speed-pill" id="speedFilterLt10" onclick="definirFiltroVelocidade('lt10')">
-                        <i class="dot-c" style="background:#ef4444;"></i><span>&lt;10 Mbps</span>
-                    </div>
-                    <div class="speed-pill" id="speedFilter10_20" onclick="definirFiltroVelocidade('10_20')">
-                        <i class="dot-c" style="background:#f97316;"></i><span>10-20 Mbps</span>
-                    </div>
-                    <div class="speed-pill" id="speedFilter20_40" onclick="definirFiltroVelocidade('20_40')">
-                        <i class="dot-c" style="background:#eab308;"></i><span>20-40 Mbps</span>
-                    </div>
-                    <div class="speed-pill" id="speedFilter40_100" onclick="definirFiltroVelocidade('40_100')">
-                        <i class="dot-c" style="background:#3b82f6;"></i><span>40-100 Mbps</span>
-                    </div>
-                    <div class="speed-pill" id="speedFilterGt100" onclick="definirFiltroVelocidade('gt100')">
-                        <i class="dot-c" style="background:#22c55e;"></i><span>&gt;100 Mbps</span>
-                    </div>
+                    <div class="speed-pill active" id="speedFilterAll" onclick="definirFiltroVelocidade('todos')"><span>🌐 Todos</span></div>
+                    <div class="speed-pill" id="speedFilterLt10" onclick="definirFiltroVelocidade('lt10')"><i class="dot-c" style="background:#ef4444;"></i><span>&lt;10 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilter10_20" onclick="definirFiltroVelocidade('10_20')"><i class="dot-c" style="background:#f97316;"></i><span>10-20 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilter20_40" onclick="definirFiltroVelocidade('20_40')"><i class="dot-c" style="background:#eab308;"></i><span>20-40 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilter40_100" onclick="definirFiltroVelocidade('40_100')"><i class="dot-c" style="background:#3b82f6;"></i><span>40-100 Mbps</span></div>
+                    <div class="speed-pill" id="speedFilterGt100" onclick="definirFiltroVelocidade('gt100')"><i class="dot-c" style="background:#22c55e;"></i><span>&gt;100 Mbps</span></div>
                 </div>
 
                 <div style="display:flex; justify-content:space-between; margin-top:10px; gap:8px;">
@@ -1008,33 +968,28 @@
                 </div>
             </div>
 
-            <!-- Mapa Ampliado -->
             <div id="miniMap"></div>
-            <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando apenas os melhores pontos da região.</div>
+            <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando melhores pontos.</div>
 
-            <!-- Seletor mostrando SOMENTE o Endereço / Local (sem código WFI-001) -->
             <div class="form-group" style="margin-top: 4px;">
                 <label for="selectWifiMapa">Endereço / Local do Wi-Fi</label>
                 <div class="gps-row">
                     <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
                     <button type="button" class="btn-gps" id="btnAtualizarMapa" onclick="atualizarPosicaoMapa(true)">📍 Perto</button>
                 </div>
-                <div class="helper-text" id="mapGpsStatus">Carregando mapa e pontos de acesso...</div>
+                <div class="helper-text" id="mapGpsStatus">Carregando mapa...</div>
             </div>
 
             <button type="button" class="btn" style="margin-top: 6px;" onclick="mudarAba('dadosRede')">📶 Ver Dados da Rede & QR Code</button>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- ABA 2: DADOS DA REDE (QR CODE, STATUS, FOTOS, OFFLINE E NUVEM)    -->
-        <!-- ================================================================= -->
+        <!-- ABA 2: DADOS DA REDE (SEM O QR CODE FIXO) -->
         <div id="abaDadosRede" class="hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <strong style="font-size:0.95rem; color:var(--primary); text-transform:uppercase;">📶 Dados da Rede Selecionada</strong>
                 <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
             </div>
 
-            <!-- Sincronização em Tempo Real + Filtro de Cidades Offline -->
             <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
                 <div style="display:flex; gap:6px;">
                     <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; background:#111111; color:#facc15;" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
@@ -1048,10 +1003,8 @@
                 </div>
             </div>
 
-            <!-- Cartão de Detalhes, Segurança, Status ao Vivo, Galeria e QR Code -->
-            
             <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:10px; text-align:center;">
-                <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:4px;" id="mapaEstrelasTitulo">⭐ Avalie este Wi-Fi (Média: 4.8/5)</div>
+                <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:4px;" id="mapaEstrelasTitulo">⭐ Nota do Local (Média: 4.8/5)</div>
                 <div style="display:flex; justify-content:center; gap:6px; font-size:1.4rem; cursor:pointer;" id="mapaEstrelasBotoes">
                     <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 1)">⭐</span>
                     <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 2)">⭐</span>
@@ -1062,11 +1015,10 @@
             </div>
 
             <div class="qr-card" id="mapaQrCard">
-                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">QR Code de Conexão Automática</div>
-                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Aponte a câmera do celular ou compartilhe o link</div>
+                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">Conexão Wi-Fi</div>
+                <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
                 <div style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
 
-                <!-- Status ao Vivo & Centroide Colaborativo -->
                 <div class="live-status-bar">
                     <span class="status-pill-live" id="mapaLiveStatus">🟢 Funcionando agora</span>
                     <div style="display:flex; gap:5px; flex-wrap:wrap;">
@@ -1075,28 +1027,24 @@
                         <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
                     </div>
                 </div>
-                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#713f12; font-weight:600;">🎯 Centro calculado com base nas conexões reais dos usuários.</div>
+                <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#713f12; font-weight:600;">🎯 Centro calculado.</div>
 
-                <!-- Banner de Segurança da Rede -->
                 <div class="security-banner" id="mapaSecurityBanner">
-                    🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa para subir fotos no Foco Radical com proteção.
+                    🛡️ <strong>Segurança:</strong> Use VPN ativa ao acessar redes públicas.
                 </div>
 
-                <!-- Tags de Comodidades do Ponto -->
                 <div class="amenities-badges" id="mapaAmenities"></div>
 
-                <!-- Galeria de Fotos do Local + Botão para Adicionar Foto -->
                 <div class="gallery-strip" id="mapaGaleriaStrip"></div>
                 <div>
                     <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
                     <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
                 </div>
 
-                <img id="mapaQrImg" class="qr-img" src="" alt="QR Code Wi-Fi">
-                <div class="qr-payload-box" id="mapaQrLinkText">WIFI:T:WPA;S:...;P:...;;</div>
-                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;">
+                <!-- O QR Code visual foi removido desta aba conforme solicitado, mantendo os links de ação abaixo -->
+                <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top:10px;">
                     <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:var(--primary); color:var(--primary-text); font-weight:800;">🧭 Ir até lá (Maps/Waze)</a>
-                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Abrir QR Code</a>
+                    <a id="mapaQrDownloadLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none;">🔗 Ver QR Code</a>
                     <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
                 </div>
             </div>
@@ -1104,21 +1052,19 @@
             <button type="button" class="btn" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi Selecionado</button>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- ABA 3: TESTAR VELOCIDADE (MOSTRA SOMENTE O WI-FI ATUAL)           -->
-        <!-- ================================================================= -->
+        <!-- ABA 3: TESTAR VELOCIDADE -->
         <div id="abaTestar" class="hidden">
             <input type="hidden" id="selectWifi" value="">
 
             <div class="current-wifi-banner">
                 <span class="tag-live">📡 Wi-Fi Atual em Teste</span>
-                <div class="wifi-name" id="testarWifiNomeAtual">Carregando ponto atual...</div>
-                <div class="wifi-addr" id="testarWifiEnderecoAtual">Detectando endereço e rede...</div>
+                <div class="wifi-name" id="testarWifiNomeAtual">Carregando ponto...</div>
+                <div class="wifi-addr" id="testarWifiEnderecoAtual">Detectando endereço...</div>
                 <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
                     <button type="button" class="btn-gps" id="btnNearGps" style="padding:6px 10px;" onclick="selecionarWifiMaisProximo(true)">📍 Detectar Wi-Fi Atual</button>
                     <button type="button" class="btn-mini" style="margin-top:0;" onclick="mudarAba('mapa')">🗺️ Trocar no Mapa</button>
                 </div>
-                <div class="helper-text" id="nearGpsStatus" style="margin-top:6px;">Mostrando apenas o ponto de Wi-Fi em que você está conectado/selecionado agora.</div>
+                <div class="helper-text" id="nearGpsStatus" style="margin-top:6px;">Mostrando ponto atual.</div>
             </div>
 
             <div class="info-badge" id="wifiBadge">
@@ -1142,46 +1088,47 @@
                 <div class="progress-bar" id="progressBar"></div>
             </div>
 
-            <div class="status-text" id="statusText">Toque abaixo para medir a banda real da rede atual.</div>
+            <div class="status-text" id="statusText">Toque abaixo para medir a banda real.</div>
 
             <button type="button" class="btn" id="startBtn" onclick="iniciarTeste()">Iniciar Teste de Velocidade</button>
             <button type="button" class="btn btn-save" id="saveBtn" onclick="enviarTesteParaPlanilha()">Salvar Resultado (+2 Créditos)</button>
             <div class="toast" id="toastMsg"></div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- ABA 3: CADASTRAR NOVO PONTO DE WI-FI (MODO EXPRESSO SEM PREGUIÇA)  -->
-        <!-- ================================================================= -->
+        <!-- ABA 4: CADASTRAR NOVO PONTO -->
         <div id="abaCadastrar" class="hidden">
             <div class="quick-box">
-                <h4>⚡ Cadastro Expresso (Zero Digitação)</h4>
-                <p>Puxe o endereço + nome do lugar pelo GPS ou leia a foto do QR Code da parede:</p>
-                <div class="quick-actions" style="grid-template-columns: 2fr 1.2fr 1fr; gap:6px;">
-                    <button type="button" class="btn-quick" id="gpsBtn" onclick="pegarEnderecoPorGPS()">📍 Auto-Preencher</button>
-                    <button type="button" class="btn-quick" id="pararGpsBtn" style="background:#ef4444; color:#fff;" onclick="pararAutoPreencherGps()">⏹️ Parar</button>
-                    <button type="button" class="btn-quick alt" onclick="document.getElementById('inputLerQrFoto').click()">📷 Ler QR</button>
+                <h4>⚡ Cadastro Expresso</h4>
+                <p>Puxe o endereço pelo GPS, leia o QR Code ou escolha da galeria:</p>
+                <div class="quick-actions" style="grid-template-columns: 2fr 1fr; gap:6px;">
+                    <!-- Botão dinâmico: se GPS rodando, mostra Parar; senão, Auto-Preencher -->
+                    <button type="button" class="btn-quick" id="btnAcaoGpsToggle" onclick="toggleAutoPreencherGps()">📍 Auto-Preencher</button>
+                    
+                    <!-- Ler QR com opções de Câmera ou Galeria -->
+                    <button type="button" class="btn-quick alt" onclick="abrirOpcoesLerQr()">📷 Ler QR</button>
                 </div>
-                <input type="file" id="inputLerQrFoto" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
-                <div class="helper-text" id="gpsStatus" style="margin-top:6px;">Toque em "Auto-Preencher Local" para detectar comércio, rua e cidade.</div>
+                <input type="file" id="inputLerQrCamera" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
+                <input type="file" id="inputLerQrGaleria" accept="image/*" class="hidden" onchange="lerQrCodeDeImagem(event)">
+                <div class="helper-text" id="gpsStatus" style="margin-top:6px;">Toque em Auto-Preencher para detectar comércio e rua.</div>
             </div>
 
             <div class="form-group">
                 <label for="cadNomeLocal">Nome do Estabelecimento / Local *</label>
-                <input type="text" id="cadNomeLocal" placeholder="Ex: Posto Ipiranga Beira-Rio">
+                <input type="text" id="cadNomeLocal" placeholder="Ex: Posto Ipiranga">
             </div>
             <div class="form-group hidden" id="groupEmpresasProximas">
                 <label for="selectEmpresaProxima">🏢 Empresas / Lojas próximas (raio de 30m)</label>
                 <select id="selectEmpresaProxima" onchange="aoSelecionarEmpresaProxima()">
-                    <option value="">Selecione um local encontrado...</option>
+                    <option value="">Selecione um local...</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="cadLocalizacao">Endereço Completo (Rua, Número) ou GPS *</label>
-                <input type="text" id="cadLocalizacao" placeholder="Preenchido pelo botão GPS acima">
+                <label for="cadLocalizacao">Endereço Completo ou GPS *</label>
+                <input type="text" id="cadLocalizacao" placeholder="Preenchido pelo GPS">
                 <div id="cadMiniMapWrap" class="hidden" style="margin-top:8px;">
                     <div id="cadMiniMap" style="width:100%;height:165px;border-radius:10px;border:1px solid var(--primary);z-index:1;"></div>
-                    <div class="helper-text" id="cadPinHint" style="color:var(--primary);">🎯 Arraste o pino exato até a porta do estabelecimento se necessário.</div>
+                    <div class="helper-text" id="cadPinHint" style="color:var(--primary);">🎯 Arraste o pino até a porta se necessário.</div>
                 </div>
             </div>
 
@@ -1192,24 +1139,24 @@
 
             <div class="form-group">
                 <label for="cadSsid">Nome da Rede Wi-Fi (SSID) *</label>
-                <input type="text" id="cadSsid" placeholder="Nome exato da rede Wi-Fi" oninput="atualizarPreviewQrCadastro()">
+                <input type="text" id="cadSsid" placeholder="Nome exato" oninput="atualizarPreviewQrCadastro()">
             </div>
 
             <div class="form-group">
-                <label for="cadSenha">Senha do Wi-Fi (ou deixe "Aberta") *</label>
+                <label for="cadSenha">Senha do Wi-Fi *</label>
                 <div class="gps-row">
-                    <input type="text" id="cadSenha" placeholder="Ex: cafe2026" oninput="atualizarPreviewQrCadastro()">
+                    <input type="text" id="cadSenha" placeholder="Senha" oninput="atualizarPreviewQrCadastro()">
                     <button type="button" class="btn-gps" style="background:#27272a; border:1px solid #3f3f46;" onclick="marcarRedeAberta()">🔓 Aberta</button>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="cadHorarioSinal">Horário de Funcionamento / Acesso</label>
-                <input type="text" id="cadHorarioSinal" placeholder="Ex: 24h no estacionamento | 06h às 22h (exige consumo)">
+                <input type="text" id="cadHorarioSinal" placeholder="Ex: 24h">
             </div>
 
             <div class="form-group">
-                <label>Estrutura do Local para Trabalhar / Editar (Opcional)</label>
+                <label>Estrutura do Local (Opcional)</label>
                 <div class="filter-pills">
                     <div class="filter-pill" id="cadPillEstac" onclick="alternarComodidadeCadastro('estacionamento')">🚗 Estacionamento</div>
                     <div class="filter-pill" id="cadPillMesas" onclick="alternarComodidadeCadastro('mesas')">🪑 Mesas</div>
@@ -1218,47 +1165,52 @@
                 </div>
             </div>
 
+            <!-- FOTO DO LOCAL COM OPÇÃO DE CÂMERA OU GALERIA -->
             <div class="form-group">
                 <label>Foto do Local / Ambiente (Opcional)</label>
-                <input type="file" id="cadFotoLugar" accept="image/*" onchange="processarFotoCadastro(event)">
+                <div style="display:flex; gap:6px; margin-bottom:6px;">
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="document.getElementById('inputFotoCamera').click()">📷 Câmera</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="document.getElementById('inputFotoGaleria').click()">🖼️ Galeria</button>
+                </div>
+                <input type="file" id="inputFotoCamera" accept="image/*" capture="environment" class="hidden" onchange="processarFotoCadastro(event)">
+                <input type="file" id="inputFotoGaleria" accept="image/*" class="hidden" onchange="processarFotoCadastro(event)">
+                
                 <div id="cadFotoPreviewContainer" class="hidden" style="margin-top:6px; text-align:center;">
                     <img id="cadFotoPreviewImg" src="" style="max-height:90px; border-radius:8px; border:1px solid var(--border);">
                 </div>
             </div>
 
             <div class="qr-card hidden" id="cadQrPreviewBox">
-                <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">QR Code Automático Gerado</div>
-                <img id="cadQrPreviewImg" class="qr-img" src="" alt="Preview QR Code">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">QR Code Gerado</div>
+                <img id="cadQrPreviewImg" class="qr-img" src="" alt="Preview">
                 <div class="qr-payload-box" id="cadQrPreviewLink"></div>
-                <a id="cadQrOpenUrl" href="#" target="_blank" class="btn-mini" style="display:inline-block; text-decoration:none;">🔗 Abrir Link do QR Code</a>
+                <a id="cadQrOpenUrl" href="#" target="_blank" class="btn-mini" style="display:inline-block; text-decoration:none;">🔗 Abrir Link</a>
             </div>
 
-            <button type="button" class="btn" 
             <div class="form-group">
-                <label>Sua Nota Inicial para o Wi-Fi (1 a 5 estrelas) *</label>
+                <label>Nota do Local (1 a 5 estrelas) *</label>
                 <div id="cadStarsSelect" style="display:flex; gap:6px; font-size:1.5rem; cursor:pointer; align-items:center; margin-bottom:6px;">
-                    <span onclick="selecionarNotaCadastro(1)" id="cstar1" style="filter:none;">⭐</span>
-                    <span onclick="selecionarNotaCadastro(2)" id="cstar2" style="filter:none;">⭐</span>
-                    <span onclick="selecionarNotaCadastro(3)" id="cstar3" style="filter:none;">⭐</span>
-                    <span onclick="selecionarNotaCadastro(4)" id="cstar4" style="filter:none;">⭐</span>
-                    <span onclick="selecionarNotaCadastro(5)" id="cstar5" style="filter:none;">⭐</span>
+                    <span onclick="selecionarNotaCadastro(1)" id="cstar1">⭐</span>
+                    <span onclick="selecionarNotaCadastro(2)" id="cstar2">⭐</span>
+                    <span onclick="selecionarNotaCadastro(3)" id="cstar3">⭐</span>
+                    <span onclick="selecionarNotaCadastro(4)" id="cstar4">⭐</span>
+                    <span onclick="selecionarNotaCadastro(5)" id="cstar5">⭐</span>
                     <span id="cadNotaTexto" style="font-size:0.8rem; font-weight:700; color:var(--primary); margin-left:8px;">5.0 estrelas</span>
                 </div>
             </div>
-            id="cadSaveBtn" onclick="cadastrarNovoWifi()">Salvar Novo Wi-Fi (+10 Créditos)</button>
+
+            <!-- Botão de salvamento corrigido (tag HTML fechada e clicável) -->
+            <button type="button" class="btn" id="cadSaveBtn" onclick="cadastrarNovoWifi()">Salvar Novo Wi-Fi (+10 Créditos)</button>
             <div class="toast" id="cadToast"></div>
         </div>
 
-        <!-- ================================================================= -->
-        <!-- TELA DO MENU DO USUÁRIO (SEÇÕES SEPARADAS POR CLIQUE)             -->
-        <!-- ================================================================= -->
+        <!-- ABA PERFIL -->
         <div id="abaPerfil" class="hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <strong id="tituloSecaoUsuario" style="font-size:0.95rem; color:var(--primary); text-transform:uppercase;">👤 Dados do Usuário</strong>
                 <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
             </div>
 
-            <!-- SEÇÃO A: DADOS DO USUÁRIO + ATUALIZAR SENHA -->
             <div id="secaoDadosUsuario" class="hidden">
                 <div class="profile-card">
                     <div class="form-group">
@@ -1267,105 +1219,37 @@
                     </div>
                     <div class="form-group">
                         <label for="editUserNome">Nome ou @Instagram</label>
-                        <input type="text" id="editUserNome" placeholder="Seu nome de exibição">
+                        <input type="text" id="editUserNome">
                     </div>
                     <div class="form-group">
-                        <label for="editUserNovaSenha">Nova Senha (deixe em branco para manter a atual)</label>
-                        <input type="password" id="editUserNovaSenha" placeholder="Digite uma nova senha (mín. 4 dígitos)">
-                    </div>
-                    <div class="profile-row" style="margin-bottom:10px;">
-                        <span>Plano Atual:</span>
-                        <strong id="perfilPlano" style="color: var(--primary);">Gratuito</strong>
+                        <label for="editUserNovaSenha">Nova Senha</label>
+                        <input type="password" id="editUserNovaSenha" placeholder="Deixe em branco para manter">
                     </div>
                     <button type="button" class="btn" id="btnSalvarDadosUsuario" onclick="salvarDadosProprioUsuario()">💾 Salvar Dados e Senha</button>
                     <div class="toast" id="dadosUsuarioToast"></div>
                 </div>
             </div>
 
-            <!-- SEÇÃO B: CARTEIRA & PONTOS -->
             <div id="secaoCarteiraPontos" class="hidden">
                 <div class="saldo-destaque">
                     <div class="label">Saldo Disponível na Carteira</div>
                     <div class="valor" id="perfilSaldo">--</div>
-                    <div class="sub">Créditos para desbloquear senhas de Wi-Fi</div>
+                    <div class="sub">Créditos</div>
                 </div>
-
-                <div class="mini-stats">
-                    <div class="mini-stat-box">
-                        <div class="num" id="perfilQtdCadastrados">0</div>
-                        <div class="txt">Wi-Fis Cadastrados (+10)</div>
-                    </div>
-                    <div class="mini-stat-box">
-                        <div class="num" id="perfilQtdTestes">0</div>
-                        <div class="txt">Testes Realizados (+2)</div>
-                    </div>
-                </div>
-
-                <button type="button" class="btn" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meu Saldo</button>
+                <button type="button" class="btn" onclick="carregarPerfilUsuario()">🔄 Atualizar</button>
             </div>
 
-            <!-- SEÇÃO C: MEUS WI-FIS CADASTRADOS -->
             <div id="secaoMeusWifis" class="hidden">
-                <div class="form-group" style="margin-bottom: 6px;">
-                    <label>Meus Pontos de Wi-Fi Cadastrados</label>
-                    <div class="my-wifi-list" id="meusWifisLista" style="max-height:320px;">
-                        <div style="color: var(--text-muted); text-align: center; padding: 10px;">Carregando seus pontos...</div>
-                    </div>
+                <div class="form-group">
+                    <label>Meus Pontos de Wi-Fi</label>
+                    <div class="my-wifi-list" id="meusWifisLista"></div>
                 </div>
-                <button type="button" class="btn" style="margin-top: 10px;" onclick="carregarPerfilUsuario()">🔄 Sincronizar Meus Pontos</button>
             </div>
 
-            <!-- SEÇÃO D: PAINEL ADMINISTRADOR -->
             <div id="adminPanelBox" class="hidden" style="padding:12px; background:#fef9c3; border:2px solid #111111; border-radius:12px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <strong style="color:var(--primary); font-size:0.86rem;">🛡️ Administração de Pontos & Usuários</strong>
-                    <span id="adminBadgeStatus" style="font-size:0.7rem; background:var(--accent-glow); color:var(--primary); padding:2px 8px; border-radius:10px;">Modo Admin</span>
-                </div>
-                <p style="font-size:0.73rem; color:var(--text-muted); margin-bottom:10px;">Corrija coordenadas, altere senhas desatualizadas, remova pontos duplicados ou redefina a senha de um usuário.</p>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminSelectWifi">Selecionar Ponto para Editar / Excluir</label>
-                    <select id="adminSelectWifi" onchange="carregarDadosAdminWifi()"></select>
-                </div>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminEditLocal">Nome do Local</label>
-                    <input type="text" id="adminEditLocal">
-                </div>
-
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="adminEditSsid">Rede (SSID)</label>
-                        <input type="text" id="adminEditSsid">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="adminEditSenha">Senha Wi-Fi</label>
-                        <input type="text" id="adminEditSenha">
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminEditCoords">Coordenadas (Lat, Long)</label>
-                    <div class="gps-row">
-                        <input type="text" id="adminEditCoords" placeholder="-26.250300, -49.378600">
-                        <button type="button" class="btn-gps" onclick="adminUsarMeuGpsAtual()">📍 Meu GPS</button>
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-                    <button type="button" class="btn" style="padding:9px; font-size:0.8rem;" onclick="salvarEdicaoAdminWifi()">💾 Salvar Alterações</button>
-                    <button type="button" class="btn" style="padding:9px; font-size:0.8rem; background:#ef4444; color:#fff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir Ponto</button>
-                </div>
-
-                <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:6px;">
-                    <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔑 Redefinir Senha de Usuário (Suporte)</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
-                        <input type="email" id="adminResetUserEmail" placeholder="E-mail do usuário" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
-                        <input type="text" id="adminResetUserPass" placeholder="Nova senha provisória" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
-                    </div>
-                    <button type="button" class="btn-mini" style="width:100%; background:var(--secondary); color:#fff; padding:7px;" onclick="adminRedefinirSenhaUsuario()">🔄 Aplicar Nova Senha ao Usuário</button>
-                </div>
-
+                <strong style="color:var(--primary);">🛡️ Painel Admin</strong>
+                <div class="form-group"><select id="adminSelectWifi" onchange="carregarDadosAdminWifi()"></select></div>
+                <button class="btn" onclick="excluirPontoAdminWifi()">Excluir Ponto</button>
                 <div class="toast" id="adminToast"></div>
             </div>
         </div>
@@ -1373,412 +1257,77 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
 
     let modoAuth = 'login';
     let usuarioLogado = null;
-
-    // Cache inicial (WFI-001 removido conforme solicitado)
-    let listaWifisCache = [
-        {
-            id: "WFI-002", local: "Posto Shell BR-101", endereco: "Rodovia BR-101, Km 118", cidade: "Itajaí - SC",
-            ssid: "Shell_Clientes", senha: "Aberta", lat_long: "-26.9078, -48.6619",
-            down_mbps: 18.5, up_mbps: 8.4,
-            comodidades: ["estacionamento", "mesas", "sinal_rua"],
-            horario_sinal: "24h • Sinal chega forte no estacionamento",
-            status: "Funcionando", ultima_validacao: "Ontem 19:15",
-            fotos: ["https://images.unsplash.com/photo-1527018601619-a508a2be00cd?w=400&q=75"]
-        },
-        {
-            id: "WFI-003", local: "Padaria Central", endereco: "Rua Barão do Rio Branco, 240 - Centro", cidade: "São Bento do Sul - SC",
-            ssid: "PadariaCentral_5G", senha: "paoquente", lat_long: "-26.2503, -49.3786",
-            down_mbps: 54.0, up_mbps: 32.5,
-            comodidades: ["estacionamento", "mesas", "tomadas", "sinal_rua"],
-            horario_sinal: "06h às 21h • Pega no estacionamento em frente",
-            status: "Funcionando", ultima_validacao: "Hoje 06:45",
-            fotos: ["https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=75"]
-        }
-    ];
-
-    let ultimaCoordGPS = null;
+    let listaWifisCache = [];
     let userLatAtual = null;
     let userLngAtual = null;
-    let linkQrAtualMapa = "";
-
-    // Estado de Prioridade, Comodidades e Faixa de Velocidade
+    let melhorPrecisaoAtual = Infinity;
     let prioridadeVelocidade = 'download';
-    let filtroVelocidadeAtivo = 'todos'; // 'todos', 'lt10', '10_20', '20_40', '40_100', 'gt100'
-    let filtrosAtivos = {
-        estacionamento: false,
-        mesas: false,
-        tomadas: false,
-        sinal_rua: false
-    };
-
-    // Estado do Cadastro Rápido
-    let comodidadesCadastro = {
-        estacionamento: false,
-        mesas: false,
-        tomadas: false,
-        sinal_rua: false
-    };
+    let filtroVelocidadeAtivo = 'todos';
+    let filtrosAtivos = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
+    let comodidadesCadastro = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
     let fotoCadastroBase64 = "";
-
-    // Variáveis do Mapa Leaflet
     let mapInstance = null;
     let userMarker = null;
     let wifiMarkersLayer = null;
+    let ultimaCoordGPS = null;
+    let linkQrAtualMapa = "";
 
-    // =========================================================================
-    // MENU VERTICAL SUSPENSO DO USUÁRIO E JANELA DE FILTROS
-    // =========================================================================
     function alternarMenuUsuario(ev) {
         if (ev) ev.stopPropagation();
-        const menu = document.getElementById('userDropdownMenu');
-        menu.classList.toggle('hidden');
+        document.getElementById('userDropdownMenu').classList.toggle('hidden');
     }
 
     function fecharMenuUsuario() {
-        const menu = document.getElementById('userDropdownMenu');
-        if (menu) menu.classList.add('hidden');
+        const m = document.getElementById('userDropdownMenu');
+        if (m) m.classList.add('hidden');
     }
 
     document.addEventListener('click', (e) => {
-        const wrap = document.getElementById('userDropdownWrap');
-        if (wrap && !wrap.contains(e.target)) {
-            fecharMenuUsuario();
-        }
+        if (!document.getElementById('userDropdownWrap').contains(e.target)) fecharMenuUsuario();
     });
 
     function abrirOpcaoMenuUsuario(opcao) {
         fecharMenuUsuario();
         mudarAba('perfil');
-
-        const secDados = document.getElementById('secaoDadosUsuario');
-        const secCarteira = document.getElementById('secaoCarteiraPontos');
-        const secWifis = document.getElementById('secaoMeusWifis');
-        const secAdmin = document.getElementById('adminPanelBox');
-        const titulo = document.getElementById('tituloSecaoUsuario');
-
-        [secDados, secCarteira, secWifis, secAdmin].forEach(el => {
-            if (el) el.classList.add('hidden');
-        });
-
-        if (opcao === 'dados_usuario') {
-            if (titulo) titulo.textContent = "👤 Dados do Usuário";
-            if (secDados) secDados.classList.remove('hidden');
-            if (usuarioLogado) {
-                document.getElementById('editUserEmail').value = usuarioLogado.email || "";
-                document.getElementById('editUserNome').value = usuarioLogado.nome || "";
-                document.getElementById('editUserNovaSenha').value = "";
-            }
-        } else if (opcao === 'carteira') {
-            if (titulo) titulo.textContent = "💳 Carteira & Pontos";
-            if (secCarteira) secCarteira.classList.remove('hidden');
-        } else if (opcao === 'meus_wifis') {
-            if (titulo) titulo.textContent = "📶 Meus Wi-Fis Cadastrados";
-            if (secWifis) secWifis.classList.remove('hidden');
-        } else if (opcao === 'admin') {
-            if (titulo) titulo.textContent = "🛡️ Painel Admin";
-            if (secAdmin && ehUsuarioAdmin()) secAdmin.classList.remove('hidden');
-        }
+        ['secaoDadosUsuario', 'secaoCarteiraPontos', 'secaoMeusWifis', 'adminPanelBox'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        if (opcao === 'dados_usuario') document.getElementById('secaoDadosUsuario').classList.remove('hidden');
+        else if (opcao === 'carteira') document.getElementById('secaoCarteiraPontos').classList.remove('hidden');
+        else if (opcao === 'meus_wifis') document.getElementById('secaoMeusWifis').classList.remove('hidden');
+        else if (opcao === 'admin') document.getElementById('adminPanelBox').classList.remove('hidden');
     }
 
-    async function salvarDadosProprioUsuario() {
-        if (!usuarioLogado) return;
-        const novoNome = document.getElementById('editUserNome').value.trim();
-        const novaSenha = document.getElementById('editUserNovaSenha').value.trim();
-        const toast = document.getElementById('dadosUsuarioToast');
-        const btn = document.getElementById('btnSalvarDadosUsuario');
-
-        if (!novoNome) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Informe seu nome de exibição.";
-            return;
-        }
-        if (novaSenha && novaSenha.length < 4) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "A nova senha deve ter pelo menos 4 caracteres.";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Salvando...";
-
-        try {
-            const resp = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "atualizar_dados_usuario",
-                    id_usuario: usuarioLogado.email,
-                    nome: novoNome,
-                    nova_senha: novaSenha
-                })
-            });
-            const data = await resp.json();
-            toast.style.display = "block";
-            if (data.status === "ok") {
-                usuarioLogado.nome = novoNome;
-                localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
-                const primeiroNome = novoNome.split("(")[0].trim().split(" ")[0];
-                document.getElementById('userDisplay').textContent = primeiroNome;
-                document.getElementById('userMenuFullName').textContent = novoNome;
-                document.getElementById('editUserNovaSenha').value = "";
-                toast.className = "toast";
-                toast.textContent = novaSenha
-                    ? "✅ Nome e senha atualizados com sucesso!"
-                    : "✅ Nome atualizado com sucesso!";
-            } else {
-                toast.className = "toast error";
-                toast.textContent = data.message || "Não foi possível atualizar os dados.";
-            }
-        } catch (e) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Erro de conexão ao salvar dados.";
-        }
-
-        btn.disabled = false;
-        btn.textContent = "💾 Salvar Dados e Senha";
+    function alternarJanelaFiltros(forcar = null) {
+        const d = document.getElementById('janelaFiltrosMapa');
+        if (forcar === true) d.classList.remove('hidden');
+        else if (forcar === false) d.classList.add('hidden');
+        else d.classList.toggle('hidden');
     }
 
-    function alternarJanelaFiltros(forcarEstado = null) {
-        const drawer = document.getElementById('janelaFiltrosMapa');
-        if (forcarEstado === true) drawer.classList.remove('hidden');
-        else if (forcarEstado === false) drawer.classList.add('hidden');
-        else drawer.classList.toggle('hidden');
-    }
-
-    function atualizarContadorFiltros() {
-        let count = 0;
-        if (prioridadeVelocidade === 'upload') count++;
-        if (filtroVelocidadeAtivo !== 'todos') count++;
-        Object.values(filtrosAtivos).forEach(v => { if (v) count++; });
-        const badge = document.getElementById('filterCountBadge');
-        if (badge) badge.textContent = `Ativos: ${count}`;
-    }
-
-    function limparTodosFiltrosMapa() {
-        prioridadeVelocidade = 'download';
-        filtroVelocidadeAtivo = 'todos';
-        filtrosAtivos = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
-
-        document.getElementById('prioDownBtn').classList.add('active');
-        document.getElementById('prioUpBtn').classList.remove('active');
-        ['filtroEstac', 'filtroMesas', 'filtroTomadas', 'filtroSinalRua'].forEach(id => {
-            document.getElementById(id).classList.remove('active');
-        });
-        ['speedFilterAll', 'speedFilterLt10', 'speedFilter10_20', 'speedFilter20_40', 'speedFilter40_100', 'speedFilterGt100'].forEach(id => {
-            document.getElementById(id).classList.toggle('active', id === 'speedFilterAll');
-        });
-        atualizarContadorFiltros();
-        renderizarAlfinetesNoMapa();
-    }
-
-    // =========================================================================
-    // FORMATAÇÃO DE ENDEREÇO LIMPO (SEM CÓDIGO WFI-XXX)
-    // =========================================================================
     function formatarEnderecoLimpo(w) {
-        if (w.endereco && String(w.endereco).trim()) {
-            return w.cidade ? `${w.endereco} • ${w.cidade}` : w.endereco;
-        }
-        const rawLoc = String(w.lat_long || "").trim();
-        // Remove coordenadas entre parênteses ou puras para exibir o endereço textual limpo
-        const semCoords = rawLoc.replace(/\(?-?\d{1,2}\.\d+\s*,\s*-?\d{1,3}\.\d+\)?/g, "").trim();
-        if (semCoords) {
-            return w.cidade ? `${semCoords} • ${w.cidade}` : semCoords;
-        }
+        if (w.endereco && String(w.endereco).trim()) return w.cidade ? `${w.endereco} • ${w.cidade}` : w.endereco;
         return w.cidade ? `${w.local} • ${w.cidade}` : w.local;
     }
 
-    function atualizarBannerWifiAtualTestar() {
-        const idAtual = document.getElementById('selectWifi').value;
-        const ponto = listaWifisCache.find(w => w.id === idAtual) || listaWifisCache[0];
-        const nomeEl = document.getElementById('testarWifiNomeAtual');
-        const endEl = document.getElementById('testarWifiEnderecoAtual');
-        if (!nomeEl || !endEl) return;
-
-        if (!ponto) {
-            nomeEl.textContent = "Nenhum Wi-Fi detectado";
-            endEl.textContent = "Toque em Detectar Wi-Fi Atual ou escolha no Mapa.";
-            return;
-        }
-        const ssidTxt = ponto.ssid ? ` (Rede: ${ponto.ssid})` : "";
-        nomeEl.textContent = `${ponto.local}${ssidTxt}`;
-        endEl.textContent = `📍 ${formatarEnderecoLimpo(ponto)}`;
-    }
-
-    // =========================================================================
-    // CENTROIDE DINÂMICO DE CONEXÃO (MÉDIA PONDERADA POR PRECISÃO GPS)
-    // =========================================================================
-    function obterAmostrasPosicaoWifi(idWifi) {
-        const key = `clickcontrol_samples_${idWifi}`;
-        try {
-            return JSON.parse(localStorage.getItem(key) || "[]");
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function calcularCentroidePonderado(ponto) {
-        const amostras = obterAmostrasPosicaoWifi(ponto.id);
-        const coordBase = extrairCoordenadas(ponto.lat_long);
-        const todas = [];
-
-        if (coordBase) {
-            const accBase = parseFloat(ponto.precisao_cadastro || 25);
-            todas.push({ lat: coordBase.lat, lng: coordBase.lng, acc: accBase });
-        }
-
-        amostras.forEach(a => {
-            if (a && typeof a.lat === "number" && typeof a.lng === "number") {
-                todas.push({ lat: a.lat, lng: a.lng, acc: Math.max(parseFloat(a.acc) || 10, 2) });
-            }
-        });
-
-        if (todas.length === 0) return null;
-        if (todas.length === 1) {
-            return { lat: todas[0].lat, lng: todas[0].lng, totalAmostras: 1, raioMedio: todas[0].acc };
-        }
-
-        let somaPeso = 0;
-        let somaLat = 0;
-        let somaLng = 0;
-
-        todas.forEach(item => {
-            const peso = 1 / Math.pow(Math.max(item.acc, 2), 2);
-            somaPeso += peso;
-            somaLat += item.lat * peso;
-            somaLng += item.lng * peso;
-        });
-
-        return {
-            lat: somaLat / somaPeso,
-            lng: somaLng / somaPeso,
-            totalAmostras: todas.length,
-            raioMedio: Math.min(...todas.map(t => t.acc))
-        };
-    }
-
-    function obterCoordenadasCentroideWifi(ponto) {
-        const c = calcularCentroidePonderado(ponto);
-        if (!c) return null;
-        return { lat: c.lat, lng: c.lng, totalAmostras: c.totalAmostras, raioMedio: c.raioMedio };
-    }
-
-    async function registrarAmostraConexaoWifi(idWifi, origem = "conexao", silencioso = true) {
-        if (!idWifi || userLatAtual === null || userLngAtual === null) return;
-        const acc = isFinite(melhorPrecisaoAtual) ? melhorPrecisaoAtual : 10;
-        if (acc > 35) return;
-
-        const ponto = listaWifisCache.find(w => w.id === idWifi);
-        if (!ponto) return;
-
-        const coordAtual = obterCoordenadasCentroideWifi(ponto);
-        if (coordAtual) {
-            const distKm = calcularDistanciaKm(userLatAtual, userLngAtual, coordAtual.lat, coordAtual.lng);
-            if (distKm > 0.18) {
-                if (!silencioso) {
-                    alert(`Você está a ${Math.round(distKm * 1000)}m deste ponto. Aproxime-se da rede para calibrar o centro do pino.`);
-                }
-                return;
-            }
-        }
-
-        const key = `clickcontrol_samples_${idWifi}`;
-        const amostras = obterAmostrasPosicaoWifi(idWifi);
-        const userEmail = usuarioLogado ? usuarioLogado.email : "anon";
-
-        const idxExistente = amostras.findIndex(a => a.usuario === userEmail && a.origem === origem);
-        const novaAmostra = {
-            lat: Number(userLatAtual.toFixed(6)),
-            lng: Number(userLngAtual.toFixed(6)),
-            acc: Number(acc.toFixed(1)),
-            usuario: userEmail,
-            origem: origem,
-            ts: Date.now()
-        };
-
-        if (idxExistente >= 0) {
-            amostras[idxExistente] = novaAmostra;
-        } else {
-            amostras.push(novaAmostra);
-        }
-
-        localStorage.setItem(key, JSON.stringify(amostras));
-
-        const novoCentro = calcularCentroidePonderado(ponto);
-        if (novoCentro) {
-            ponto.lat_long = `${novoCentro.lat.toFixed(6)}, ${novoCentro.lng.toFixed(6)}`;
-            renderizarAlfinetesNoMapa(true);
-            atualizarCardQrDoMapa(idWifi);
-
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({
-                        acao: "registrar_amostra_posicao",
-                        id_wifi: idWifi,
-                        id_usuario: userEmail,
-                        lat: novaAmostra.lat,
-                        lng: novaAmostra.lng,
-                        precisao_m: novaAmostra.acc,
-                        novo_centro_lat_long: ponto.lat_long,
-                        total_amostras: novoCentro.totalAmostras
-                    })
-                });
-            } catch (e) {}
-        }
-    }
-
-    async function calibrarCentroPinoAgora() {
-        const idWifi = document.getElementById('selectWifiMapa').value;
-        if (!idWifi) return;
-        const btn = document.getElementById('btnCalibrarCentro');
-        btn.disabled = true;
-        btn.textContent = "Calibrando...";
-
-        obterPosicaoAltaPrecisao(
-            null,
-            async (posFinal) => {
-                if (posFinal) {
-                    userLatAtual = posFinal.coords.latitude;
-                    userLngAtual = posFinal.coords.longitude;
-                    melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
-                    atualizarMarcadorUsuarioNoMapa(userLatAtual, userLngAtual, melhorPrecisaoAtual);
-                    await registrarAmostraConexaoWifi(idWifi, "calibracao_manual", false);
-                }
-                btn.disabled = false;
-                btn.textContent = "🎯 Centralizar Pino Aqui";
-            },
-            10000,
-            10
-        );
-    }
-
-    // =========================================================================
-    // REGRAS DE CORES E FILTRO POR VELOCIDADE
-    // =========================================================================
     function obterVelocidadeAtiva(w) {
-        const down = parseFloat(w.down_mbps || w.med_down || w.ult_down || 0);
-        const up = parseFloat(w.up_mbps || w.med_up || w.ult_up || 0);
+        const down = parseFloat(w.down_mbps || w.med_down || 0);
+        const up = parseFloat(w.up_mbps || w.med_up || 0);
         return prioridadeVelocidade === 'upload' ? up : down;
     }
 
     function obterCorPorVelocidade(mbps) {
         const v = parseFloat(mbps) || 0;
-        if (v < 10) return { hex: "#ef4444", nome: "Vermelho (<10 Mbps)", texto: "#ffffff" };
-        if (v < 20) return { hex: "#f97316", nome: "Laranja (10-20 Mbps)", texto: "#ffffff" };
-        if (v < 40) return { hex: "#eab308", nome: "Amarelo (20-40 Mbps)", texto: "#111111" };
-        if (v <= 100) return { hex: "#3b82f6", nome: "Azul (40-100 Mbps)", texto: "#ffffff" };
-        return { hex: "#22c55e", nome: "Verde (>100 Mbps)", texto: "#052e16" };
+        if (v < 10) return { hex: "#ef4444", texto: "#fff" };
+        if (v < 20) return { hex: "#f97316", texto: "#fff" };
+        if (v < 40) return { hex: "#eab308", texto: "#111" };
+        if (v <= 100) return { hex: "#3b82f6", texto: "#fff" };
+        return { hex: "#22c55e", texto: "#052e16" };
     }
 
     function correspondeFaixaVelocidade(mbps) {
@@ -1796,71 +1345,43 @@
         prioridadeVelocidade = tipo;
         document.getElementById('prioDownBtn').classList.toggle('active', tipo === 'download');
         document.getElementById('prioUpBtn').classList.toggle('active', tipo === 'upload');
-        atualizarContadorFiltros();
         renderizarAlfinetesNoMapa();
     }
 
     function alternarFiltro(chave) {
         filtrosAtivos[chave] = !filtrosAtivos[chave];
-        const mapBtnId = {
-            estacionamento: 'filtroEstac',
-            mesas: 'filtroMesas',
-            tomadas: 'filtroTomadas',
-            sinal_rua: 'filtroSinalRua'
-        };
-        document.getElementById(mapBtnId[chave]).classList.toggle('active', filtrosAtivos[chave]);
-        atualizarContadorFiltros();
+        document.getElementById({'estacionamento':'filtroEstac','mesas':'filtroMesas','tomadas':'filtroTomadas','sinal_rua':'filtroSinalRua'}[chave]).classList.toggle('active', filtrosAtivos[chave]);
         renderizarAlfinetesNoMapa();
     }
 
     function definirFiltroVelocidade(faixa) {
         filtroVelocidadeAtivo = (filtroVelocidadeAtivo === faixa && faixa !== 'todos') ? 'todos' : faixa;
-        const mapSpeedId = {
-            todos: 'speedFilterAll',
-            lt10: 'speedFilterLt10',
-            '10_20': 'speedFilter10_20',
-            '20_40': 'speedFilter20_40',
-            '40_100': 'speedFilter40_100',
-            gt100: 'speedFilterGt100'
-        };
-        Object.keys(mapSpeedId).forEach(k => {
-            document.getElementById(mapSpeedId[k]).classList.toggle('active', filtroVelocidadeAtivo === k);
+        ['todos','lt10','10_20','20_40','40_100','gt100'].forEach(k => {
+            document.getElementById({'todos':'speedFilterAll','lt10':'speedFilterLt10','10_20':'speedFilter10_20','20_40':'speedFilter20_40','40_100':'speedFilter40_100','gt100':'speedFilterGt100'}[k]).classList.toggle('active', filtroVelocidadeAtivo === k);
         });
-        atualizarContadorFiltros();
         renderizarAlfinetesNoMapa();
     }
 
-    // =========================================================================
-    // GERADOR PADRÃO DE QR CODE WI-FI (CONEXÃO AUTOMÁTICA)
-    // =========================================================================
-    function escaparCampoWifi(str) {
-        return String(str || "").replace(/([\\;,:"])/g, "\\$1");
+    function limparTodosFiltrosMapa() {
+        prioridadeVelocidade = 'download';
+        filtroVelocidadeAtivo = 'todos';
+        Object.keys(filtrosAtivos).forEach(k => filtrosAtivos[k] = false);
+        renderizarAlfinetesNoMapa();
     }
 
     function gerarPayloadWifiQR(ssid, senha) {
-        const s = escaparCampoWifi(ssid || "Rede_WiFi");
-        const pRaw = String(senha || "").trim();
-        const isAberta = !pRaw || pRaw.toLowerCase() === "aberta" || pRaw.toLowerCase() === "sem senha" || pRaw === "-";
-        if (isAberta) {
-            return `WIFI:T:nopass;S:${s};;`;
-        }
-        const p = escaparCampoWifi(pRaw);
-        return `WIFI:T:WPA;S:${s};P:${p};;`;
+        const s = String(ssid || "").replace(/([\\;,:"])/g, "\\$1");
+        const p = String(senha || "").trim();
+        if (!p || p.toLowerCase() === "aberta") return `WIFI:T:nopass;S:${s};;`;
+        return `WIFI:T:WPA;S:${s};P:${p.replace(/([\\;,:"])/g, "\\$1")};;`;
+    }
+
+    function gerarUrlImagemQR(ssid, senha, tamanho = 260) {
+        return `https://api.qrserver.com/v1/create-qr-code/?size=${tamanho}x${tamanho}&margin=10&data=${encodeURIComponent(gerarPayloadWifiQR(ssid, senha))}`;
     }
 
     function conectarPeloLinkQr(ssid, senha) {
-        const pontoMatch = listaWifisCache.find(w => (w.ssid || w.local) === ssid);
-        if (pontoMatch) {
-            registrarAmostraConexaoWifi(pontoMatch.id, "conexao_qr", true);
-        }
         const payload = gerarPayloadWifiQR(ssid, senha);
-        const qrUrl = gerarUrlImagemQR(ssid, senha, 320);
-        const isAberta = !senha || senha.toLowerCase() === "aberta" || senha.toLowerCase() === "sem senha" || senha === "-";
-
-        if (!isAberta && navigator.clipboard) {
-            navigator.clipboard.writeText(senha).catch(() => {});
-        }
-
         let modal = document.getElementById('modalConexaoWifi');
         if (!modal) {
             modal = document.createElement('div');
@@ -1868,367 +1389,41 @@
             modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
             document.body.appendChild(modal);
         }
-
         modal.innerHTML = `
-            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f8fafc;box-shadow:0 15px 35px rgba(0,0,0,0.8);">
+            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center;color:#f8fafc;">
                 <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
-                <div style="font-size:0.85rem;font-weight:700;margin-bottom:2px;">Rede: ${ssid}</div>
-                <div style="font-size:0.8rem;color:#a1a1aa;margin-bottom:10px;">Senha: <strong style="color:#fff;">${isAberta ? 'Rede Aberta' : senha}</strong> ${!isAberta ? '(copiada!)' : ''}</div>
-                <img src="${qrUrl}" alt="QR Code Wi-Fi" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
-                <div style="font-size:0.72rem;color:#a1a1aa;margin-bottom:10px;word-break:break-all;background:#0b0b0c;padding:6px;border-radius:6px;border:1px solid #27272a;">${payload}</div>
-                <div style="display:flex;flex-direction:column;gap:8px;">
-                    <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;">⚡ Conectar Agora (Link Wi-Fi)</a>
-                    <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-weight:600;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;">Fechar</button>
-                </div>
+                <div style="font-size:0.85rem;font-weight:700;margin-bottom:10px;">Rede: ${ssid}</div>
+                <img src="${gerarUrlImagemQR(ssid, senha, 210)}" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
+                <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;margin-bottom:8px;">⚡ Conectar Agora</a>
+                <button type="button" onclick="document.getElementById('modalConexaoWifi').remove()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
             </div>
         `;
-    }
-
-    function gerarUrlImagemQR(ssid, senha, tamanho = 260) {
-        const payload = gerarPayloadWifiQR(ssid, senha);
-        return `https://api.qrserver.com/v1/create-qr-code/?size=${tamanho}x${tamanho}&margin=10&data=${encodeURIComponent(payload)}`;
     }
 
     function atualizarPreviewQrCadastro() {
         const ssid = document.getElementById('cadSsid').value.trim();
         const senha = document.getElementById('cadSenha').value.trim();
         const box = document.getElementById('cadQrPreviewBox');
-
-        if (!ssid) {
-            box.classList.add('hidden');
-            return;
-        }
-
-        const qrUrl = gerarUrlImagemQR(ssid, senha, 260);
-        const wifiPayloadCad = gerarPayloadWifiQR(ssid, senha);
+        if (!ssid) { box.classList.add('hidden'); return; }
         box.classList.remove('hidden');
-        document.getElementById('cadQrPreviewImg').src = qrUrl;
-        document.getElementById('cadQrPreviewLink').textContent = wifiPayloadCad;
-        const cadOpenBtn = document.getElementById('cadQrOpenUrl');
-        cadOpenBtn.href = wifiPayloadCad;
-        cadOpenBtn.onclick = (e) => { e.preventDefault(); conectarPeloLinkQr(ssid, senha); };
-    }
-
-    // =========================================================================
-    // GALERIA DE FOTOS, STATUS AO VIVO, SEGURANÇA E DETALHES DO PONTO NO MAPA
-    // =========================================================================
-    function obterFotosLocal(ponto) {
-        const keyLocal = `clickcontrol_fotos_${ponto.id}`;
-        let salvasLocal = [];
-        try {
-            salvasLocal = JSON.parse(localStorage.getItem(keyLocal) || "[]");
-        } catch (e) {}
-        const daPlanilha = Array.isArray(ponto.fotos) ? ponto.fotos : (ponto.foto_url ? [ponto.foto_url] : []);
-        return [...daPlanilha, ...salvasLocal];
-    }
-
-    function obterComodidadesLocal(ponto) {
-        if (Array.isArray(ponto.comodidades)) return ponto.comodidades;
-        if (typeof ponto.comodidades === "string" && ponto.comodidades.trim()) {
-            return ponto.comodidades.split(",").map(s => s.trim().toLowerCase());
-        }
-        return [];
+        document.getElementById('cadQrPreviewImg').src = gerarUrlImagemQR(ssid, senha, 260);
+        document.getElementById('cadQrPreviewLink').textContent = gerarPayloadWifiQR(ssid, senha);
     }
 
     function atualizarCardQrDoMapa(idWifi) {
         const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
         if (!ponto) return;
-
-        const ssid = ponto.ssid || ponto.local;
-        const senha = ponto.senha || "";
-        const qrUrl = gerarUrlImagemQR(ssid, senha, 280);
-
-        const resEstCard = obterMediaEstrelas(ponto);
-        const widgetEstEl = document.getElementById('mapaEstrelasTitulo');
-        if (widgetEstEl) widgetEstEl.textContent = `⭐ Avalie este Wi-Fi (Média: ${resEstCard.media}/5 • ${resEstCard.total} voto(s))`;
-
-        const down = parseFloat(ponto.down_mbps || ponto.med_down || 0);
-        const up = parseFloat(ponto.up_mbps || ponto.med_up || 0);
-        const velTexto = (down > 0 || up > 0) ? ` • ⬇️ ${down.toFixed(1)} / ⬆️ ${up.toFixed(1)} Mbps` : "";
-
-        document.getElementById('mapaQrTitle').textContent = `${ponto.local} (Rede: ${ssid})`;
-        document.getElementById('mapaQrSub').textContent = (senha ? `Senha: ${senha}` : `Escaneie para conectar`) + velTexto;
+        linkQrAtualMapa = gerarPayloadWifiQR(ponto.ssid, ponto.senha);
+        document.getElementById('mapaQrTitle').textContent = `${ponto.local} (Rede: ${ponto.ssid})`;
+        document.getElementById('mapaQrSub').textContent = ponto.senha ? `Senha: ${ponto.senha}` : `Rede Aberta`;
         document.getElementById('mapaHorarioInfo').textContent = ponto.horario_sinal ? `🕒 ${ponto.horario_sinal}` : "";
-        const wifiPayloadCard = gerarPayloadWifiQR(ssid, senha);
-        linkQrAtualMapa = wifiPayloadCard;
-        document.getElementById('mapaQrImg').src = qrUrl;
-        document.getElementById('mapaQrLinkText').textContent = wifiPayloadCard;
-        const btnQrCard = document.getElementById('mapaQrDownloadLink');
-        btnQrCard.href = wifiPayloadCard;
-        btnQrCard.onclick = (e) => { e.preventDefault(); conectarPeloLinkQr(ssid, senha); };
-
-        const coords = obterCoordenadasCentroideWifi(ponto);
-        const navBtn = document.getElementById('mapaNavGpsLink');
-        if (coords) {
-            navBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`;
-            navBtn.style.display = "inline-block";
-        } else {
-            navBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ponto.local + " " + ponto.cidade)}`;
-        }
-
-        const liveEl = document.getElementById('mapaLiveStatus');
-        const st = String(ponto.status || "Funcionando");
-        const valData = ponto.ultima_validacao ? ` (${ponto.ultima_validacao})` : "";
-        if (st.toLowerCase().includes("desatualizada") || st.toLowerCase().includes("verificação")) {
-            liveEl.className = "status-pill-live warn";
-            liveEl.textContent = `🔴 ${st}${valData}`;
-        } else {
-            liveEl.className = "status-pill-live";
-            liveEl.textContent = `🟢 ${st}${valData}`;
-        }
-        const centroInfo = calcularCentroidePonderado(ponto);
-        const centroEl = document.getElementById('mapaCentroideInfo');
-        if (centroEl && centroInfo) {
-            centroEl.textContent = centroInfo.totalAmostras > 1
-                ? `🎯 Pino centralizado por ${centroInfo.totalAmostras} conexões reais (precisão até ±${centroInfo.raioMedio.toFixed(1)}m).`
-                : `📍 Posição inicial (1 amostra). Conecte-se ou toque em "Centralizar Pino Aqui" para refinar.`;
-        }
-
-        const secBanner = document.getElementById('mapaSecurityBanner');
-        const isAberta = !senha || senha.toLowerCase() === "aberta" || senha.toLowerCase() === "sem senha";
-        if (isAberta) {
-            secBanner.className = "security-banner open-net";
-            secBanner.innerHTML = `⚠️ <strong>Rede Aberta (Sem Senha):</strong> Tráfego não criptografado. Use <strong>VPN obrigatória</strong> antes de fazer login no Foco Radical ou abrir apps financeiros.`;
-        } else {
-            secBanner.className = "security-banner";
-            secBanner.innerHTML = `🛡️ <strong>Segurança em Rede Compartilhada:</strong> Evite acessar bancos ou alterar senhas. Use VPN ativa e mantenha o compartilhamento de arquivos do notebook desativado.`;
-        }
-
-        const amenitiesDiv = document.getElementById('mapaAmenities');
-        amenitiesDiv.innerHTML = "";
-        const coms = obterComodidadesLocal(ponto);
-        const labelsCom = {
-            estacionamento: "🚗 Estacionamento",
-            mesas: "🪑 Mesas",
-            tomadas: "🔌 Tomadas",
-            sinal_rua: "📡 Sinal no Carro"
-        };
-        coms.forEach(c => {
-            if (labelsCom[c]) {
-                const span = document.createElement('span');
-                span.className = 'amenity-tag';
-                span.textContent = labelsCom[c];
-                amenitiesDiv.appendChild(span);
-            }
-        });
-
-        const galeriaDiv = document.getElementById('mapaGaleriaStrip');
-        galeriaDiv.innerHTML = "";
-        const fotos = obterFotosLocal(ponto);
-        if (fotos.length > 0) {
-            fotos.forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.className = 'gallery-thumb';
-                img.title = 'Toque para ampliar';
-                img.onclick = () => window.open(src, '_blank');
-                galeriaDiv.appendChild(img);
-            });
-        } else {
-            galeriaDiv.innerHTML = `<span style="font-size:0.7rem; color:var(--text-muted);">Sem fotos ainda. Adicione uma foto do ambiente abaixo!</span>`;
-        }
-    }
-
-    async function validarStatusAoVivo(tipo) {
-        const idWifi = document.getElementById('selectWifiMapa').value;
-        const ponto = listaWifisCache.find(w => w.id === idWifi);
-        if (!ponto) return;
-
-        const agoraStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        if (tipo === 'conectou') {
-            ponto.status = "Funcionando";
-            ponto.ultima_validacao = `Hoje ${agoraStr}`;
-            registrarAmostraConexaoWifi(idWifi, "validacao_conectou", true);
-        } else {
-            ponto.alertas_senha = (Number(ponto.alertas_senha) || 0) + 1;
-            ponto.status = ponto.alertas_senha >= 2 ? "Senha Desatualizada" : "Em Verificação";
-        }
-        atualizarCardQrDoMapa(idWifi);
-
-        try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "validar_status_wifi",
-                    id_wifi: idWifi,
-                    tipo: tipo,
-                    id_usuario: usuarioLogado ? usuarioLogado.email : ""
-                })
-            });
-        } catch (e) {}
-    }
-
-    let cidadeOfflineFiltroAtivo = "";
-
-    function normalizarNomeCidade(cidadeStr) {
-        return String(cidadeStr || "").trim();
-    }
-
-    function obterMapaPacotesOffline() {
-        try {
-            return JSON.parse(localStorage.getItem('clickcontrol_offline_cities_map') || "{}");
-        } catch (e) {
-            return {};
-        }
-    }
-
-    function atualizarSeletorCidadesOffline() {
-        const sel = document.getElementById('selectCidadeOffline');
-        if (!sel) return;
-        const valorAtual = sel.value || cidadeOfflineFiltroAtivo;
-        const pacotesSalvos = obterMapaPacotesOffline();
-
-        const contagemCidades = {};
-        listaWifisCache.forEach(w => {
-            const cid = normalizarNomeCidade(w.cidade);
-            if (cid) contagemCidades[cid] = (contagemCidades[cid] || 0) + 1;
-        });
-        Object.keys(pacotesSalvos).forEach(cid => {
-            if (!contagemCidades[cid] && pacotesSalvos[cid]?.wifis) {
-                contagemCidades[cid] = pacotesSalvos[cid].wifis.length;
-            }
-        });
-
-        const cidadesOrdenadas = Object.keys(contagemCidades).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-        sel.innerHTML = `<option value="">🌐 Todas as cidades (${listaWifisCache.length} redes)</option>`;
-
-        cidadesOrdenadas.forEach(cid => {
-            const opt = document.createElement('option');
-            opt.value = cid;
-            const badgeOffline = pacotesSalvos[cid] ? " • 📴 Offline OK" : "";
-            opt.textContent = `🏙️ ${cid} (${contagemCidades[cid]} redes${badgeOffline})`;
-            sel.appendChild(opt);
-        });
-
-        if (valorAtual && cidadesOrdenadas.includes(valorAtual)) {
-            sel.value = valorAtual;
-        }
-    }
-
-    function baixarPacoteOfflineCidade() {
-        const selCidade = document.getElementById('selectCidadeOffline');
-        const idWifi = document.getElementById('selectWifiMapa').value;
-        const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
-        const cidadeAlvo = normalizarNomeCidade(selCidade?.value) || normalizarNomeCidade(ponto?.cidade);
-
-        if (!cidadeAlvo) {
-            alert("Selecione um ponto ou uma cidade primeiro para salvar offline.");
-            return;
-        }
-
-        const pacote = listaWifisCache.filter(w => normalizarNomeCidade(w.cidade).toLowerCase() === cidadeAlvo.toLowerCase());
-        const pacotes = obterMapaPacotesOffline();
-        pacotes[cidadeAlvo] = {
-            cidade: cidadeAlvo,
-            data: new Date().toLocaleString('pt-BR'),
-            wifis: pacote
-        };
-        localStorage.setItem('clickcontrol_offline_cities_map', JSON.stringify(pacotes));
-        atualizarSeletorCidadesOffline();
-        if (selCidade) selCidade.value = cidadeAlvo;
-
-        alert(`✅ Pacote Offline salvo para "${cidadeAlvo}" (${pacote.length} ponto(s)).`);
-    }
-
-    function filtrarOuCarregarCidadeOffline() {
-        const selCidade = document.getElementById('selectCidadeOffline');
-        cidadeOfflineFiltroAtivo = selCidade ? selCidade.value : "";
-
-        const pacotes = obterMapaPacotesOffline();
-        if (cidadeOfflineFiltroAtivo && pacotes[cidadeOfflineFiltroAtivo]?.wifis) {
-            const idsAtuais = new Set(listaWifisCache.map(w => w.id));
-            const faltantes = pacotes[cidadeOfflineFiltroAtivo].wifis.filter(w => !idsAtuais.has(w.id));
-            if (faltantes.length > 0) {
-                listaWifisCache = [...listaWifisCache, ...faltantes];
-            }
-        }
-
-        const ordenada = obterListaFiltradaEOrdenada();
-        preencherSelectsComLista(ordenada);
-        renderizarAlfinetesNoMapa(false);
-
-        const primeiroComCoord = ordenada.find(w => w.coords);
-        if (primeiroComCoord && mapInstance) {
-            mapInstance.setView([primeiroComCoord.coords.lat, primeiroComCoord.coords.lng], 13);
-        }
-    }
-
-    function carregarPacoteOffline() {
-        const pacotes = obterMapaPacotesOffline();
-        const cidadesOffline = Object.keys(pacotes);
-        if (cidadesOffline.length === 0) {
-            alert("Nenhuma cidade salva offline ainda. Escolha uma cidade e toque em '📥 Salvar Cidade'.");
-            return;
-        }
-
-        const selCidade = document.getElementById('selectCidadeOffline');
-        const alvo = (selCidade && selCidade.value && pacotes[selCidade.value])
-            ? selCidade.value
-            : cidadesOffline[cidadesOffline.length - 1];
-
-        const pack = pacotes[alvo];
-        listaWifisCache = pack.wifis;
-        cidadeOfflineFiltroAtivo = alvo;
-        atualizarSeletorCidadesOffline();
-        if (selCidade) selCidade.value = alvo;
-
-        const ordenada = obterListaFiltradaEOrdenada();
-        preencherSelectsComLista(ordenada);
-        renderizarAlfinetesNoMapa(false);
-
-        const primeiroComCoord = ordenada.find(w => w.coords);
-        if (primeiroComCoord && mapInstance) {
-            mapInstance.setView([primeiroComCoord.coords.lat, primeiroComCoord.coords.lng], 13);
-        }
-        alert(`📂 Modo Offline carregado: ${pack.cidade} (${pack.wifis.length} redes • salvo em ${pack.data}).`);
-    }
-
-    function adicionarFotoAoLocalAtual(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const idWifi = document.getElementById('selectWifiMapa').value;
-        comprimirImagemParaBase64(file, 640, 0.72, (base64Img) => {
-            const keyLocal = `clickcontrol_fotos_${idWifi}`;
-            let existentes = [];
-            try { existentes = JSON.parse(localStorage.getItem(keyLocal) || "[]"); } catch (e) {}
-            existentes.push(base64Img);
-            localStorage.setItem(keyLocal, JSON.stringify(existentes));
-            atualizarCardQrDoMapa(idWifi);
-            renderizarAlfinetesNoMapa();
-        });
-    }
-
-    function comprimirImagemParaBase64(file, maxWidth, quality, callback) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                const scale = Math.min(1, maxWidth / img.width);
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width * scale;
-                canvas.height = img.height * scale;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                callback(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
     }
 
     function copiarLinkQrMapa() {
         if (!linkQrAtualMapa) return;
-        navigator.clipboard.writeText(linkQrAtualMapa).then(() => {
-            alert("Link do QR Code copiado!");
-        }).catch(() => {
-            prompt("Copie o link do QR Code abaixo:", linkQrAtualMapa);
-        });
+        navigator.clipboard.writeText(linkQrAtualMapa).then(() => alert("Link copiado!"));
     }
 
-    // =========================================================================
-    // CADASTRO ULTRA-RÁPIDO
-    // =========================================================================
     function marcarRedeAberta() {
         document.getElementById('cadSenha').value = "Aberta";
         atualizarPreviewQrCadastro();
@@ -2236,1998 +1431,34 @@
 
     function alternarComodidadeCadastro(chave) {
         comodidadesCadastro[chave] = !comodidadesCadastro[chave];
-        const mapId = {
-            estacionamento: 'cadPillEstac',
-            mesas: 'cadPillMesas',
-            tomadas: 'cadPillTomadas',
-            sinal_rua: 'cadPillSinalRua'
-        };
-        document.getElementById(mapId[chave]).classList.toggle('active', comodidadesCadastro[chave]);
+        document.getElementById({'estacionamento':'cadPillEstac','mesas':'cadPillMesas','tomadas':'cadPillTomadas','sinal_rua':'cadPillSinalRua'}[chave]).classList.toggle('active', comodidadesCadastro[chave]);
     }
 
     function processarFotoCadastro(event) {
         const file = event.target.files[0];
         if (!file) return;
-        comprimirImagemParaBase64(file, 640, 0.72, (b64) => {
-            fotoCadastroBase64 = b64;
-            document.getElementById('cadFotoPreviewImg').src = b64;
-            document.getElementById('cadFotoPreviewContainer').classList.remove('hidden');
-        });
-    }
-
-    function lerQrCodeDeImagem(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const gpsStatus = document.getElementById('gpsStatus');
-        gpsStatus.textContent = "Lendo QR Code da foto...";
-
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
-                const maxDim = 900;
-                const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
                 const canvas = document.createElement('canvas');
-                canvas.width = Math.round(img.width * scale);
-                canvas.height = Math.round(img.height * scale);
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-                if (typeof jsQR === "undefined") {
-                    gpsStatus.textContent = "⚠️ Leitor de QR Code indisponível offline.";
-                    return;
-                }
-
-                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "attemptBoth" });
-
-                if (code && code.data) {
-                    const txt = code.data.trim();
-                    const matchSsid = txt.match(/S:([^;]+)/i);
-                    const matchPass = txt.match(/P:([^;]+)/i);
-                    if (matchSsid) {
-                        document.getElementById('cadSsid').value = matchSsid[1].replace(/\\([\\;,:"])/g, "$1");
-                        document.getElementById('cadSenha').value = matchPass ? matchPass[1].replace(/\\([\\;,:"])/g, "$1") : "Aberta";
-                        atualizarPreviewQrCadastro();
-                        gpsStatus.textContent = "✅ Rede e senha extraídas automaticamente do QR Code!";
-                        gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
-                    } else {
-                        gpsStatus.textContent = "⚠️ QR Code lido (" + txt.slice(0, 30) + "), mas não contém dados de Wi-Fi.";
-                        gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
-                    }
-                } else {
-                    gpsStatus.textContent = "⚠️ Não foi possível identificar um QR Code nítido na foto.";
-                    gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
-                }
+                const scale = Math.min(1, 640 / img.width);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                fotoCadastroBase64 = canvas.toDataURL('image/jpeg', 0.72);
+                document.getElementById('cadFotoPreviewImg').src = fotoCadastroBase64;
+                document.getElementById('cadFotoPreviewContainer').classList.remove('hidden');
             };
             img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     }
 
-    // =========================================================================
-    // AUTENTICAÇÃO E SESSÃO
-    // =========================================================================
-    function alternarModoAuth(modo) {
-        modoAuth = modo;
-        const groupNome = document.getElementById('groupNome');
-        const submitBtn = document.getElementById('authSubmitBtn');
-        const loginToast = document.getElementById('loginToast');
-        loginToast.style.display = "none";
-
-        if (modo === 'register') {
-            groupNome.classList.remove('hidden');
-            submitBtn.textContent = "Criar Conta e Entrar";
-            document.getElementById('modeRegisterBtn').classList.add('active');
-            document.getElementById('modeLoginBtn').classList.remove('active');
+    function abrirOpcoesLerQr() {
+        if (confirm("Deseja abrir a câmera para fotografar o QR Code?\n(Clique em Cancelar para escolher da galeria)")) {
+            document.getElementById('inputLerQrCamera').click();
         } else {
-            groupNome.classList.add('hidden');
-            submitBtn.textContent = "Entrar no Aplicativo";
-            document.getElementById('modeLoginBtn').classList.add('active');
-            document.getElementById('modeRegisterBtn').classList.remove('active');
+            document.getElementById('inputLerQrGaleria').click();
         }
     }
-
-    function verificarSessao() {
-        try {
-            const savedUser = localStorage.getItem('clickcontrol_user');
-            if (savedUser) {
-                usuarioLogado = JSON.parse(savedUser);
-                mostrarApp();
-            }
-        } catch (e) {}
-    }
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-            for (let r of regs) r.unregister();
-        }).catch(() => {});
-    }
-
-    async function processarAuth() {
-        const nome = document.getElementById('authNome').value.trim();
-        const email = document.getElementById('authEmail').value.trim().toLowerCase();
-        const senha = document.getElementById('authSenha').value.trim();
-        const loginToast = document.getElementById('loginToast');
-        const submitBtn = document.getElementById('authSubmitBtn');
-
-        loginToast.style.display = "block";
-        loginToast.className = "toast";
-        loginToast.textContent = "⏳ Conectando ao servidor...";
-
-        if (!email || !email.includes('@') || !senha) {
-            loginToast.style.display = "block";
-            loginToast.className = "toast error";
-            loginToast.textContent = "Preencha seu e-mail e senha corretamente.";
-            return;
-        }
-
-        if (modoAuth === 'register' && !nome) {
-            loginToast.style.display = "block";
-            loginToast.className = "toast error";
-            loginToast.textContent = "Informe seu nome ou @Instagram para criar a conta.";
-            return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = modoAuth === 'register' ? "Criando conta..." : "Verificando senha...";
-
-        try {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: modoAuth === 'register' ? "cadastrar_usuario" : "login_usuario",
-                    id_usuario: email,
-                    nome: nome,
-                    senha: senha
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.status === "ok") {
-                usuarioLogado = { nome: result.nome || nome, email: email };
-                localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
-                mostrarApp();
-            } else {
-                loginToast.style.display = "block";
-                loginToast.className = "toast error";
-                loginToast.textContent = result.message || "E-mail ou senha inválidos.";
-            }
-        } catch (e) {
-            loginToast.style.display = "block";
-            loginToast.className = "toast error";
-            loginToast.textContent = "Erro de conexão com o Google Apps Script.";
-        }
-
-        submitBtn.disabled = false;
-        submitBtn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
-    }
-
-    function ehUsuarioAdmin() {
-        if (!usuarioLogado || !usuarioLogado.email) return false;
-        const em = usuarioLogado.email.toLowerCase();
-        return em.includes("everton") || em.includes("admin") || usuarioLogado.role === "admin";
-    }
-
-    async function mostrarApp() {
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-
-        // Exibe somente o primeiro nome ou nome curto no botão do menu suspenso
-        const nomeCompleto = usuarioLogado.nome || "Usuário";
-        const primeiroNome = nomeCompleto.split("(")[0].trim().split(" ")[0];
-        document.getElementById('userDisplay').textContent = primeiroNome;
-        document.getElementById('userMenuFullName').textContent = nomeCompleto;
-
-        const isAdm = ehUsuarioAdmin();
-        const menuAdminItem = document.getElementById('menuAdminItem');
-        if (menuAdminItem) menuAdminItem.classList.toggle('hidden', !isAdm);
-
-        inicializarOuAtualizarMapa();
-        atualizarSeletorCidadesOffline();
-        await carregarListaWifis();
-        renderizarAlfinetesNoMapa(false);
-
-        // No Windows (ou dispositivos sem GPS preciso), foca automaticamente no último ponto cadastrado se não houver GPS travado
-        if (userLatAtual === null && listaWifisCache.length > 0 && mapInstance) {
-            const ultimoPonto = listaWifisCache[listaWifisCache.length - 1];
-            const coordsUlt = obterCoordenadasCentroideWifi(ultimoPonto);
-            if (coordsUlt) {
-                mapInstance.setView([coordsUlt.lat, coordsUlt.lng], 15);
-            }
-        }
-
-        iniciarRastreamentoGpsAltaPrecisao(false);
-        carregarPerfilUsuario();
-
-        if (!window._clickControlSyncTimer) {
-            window._clickControlSyncTimer = setInterval(() => {
-                if (usuarioLogado && !document.hidden) {
-                    carregarListaWifis();
-                }
-            }, 25000);
-        }
-    }
-
-    async function sincronizarDadosNuvemManual() {
-        const btn = document.getElementById('btnSyncNuvem');
-        if (btn) {
-            btn.disabled = true;
-            btn.textContent = "⏳ Atualizando...";
-        }
-        await carregarListaWifis();
-        renderizarAlfinetesNoMapa(true);
-        const idAtual = document.getElementById('selectWifiMapa')?.value;
-        if (idAtual) atualizarCardQrDoMapa(idAtual);
-        if (btn) {
-            btn.disabled = false;
-            btn.textContent = "🔄 Atualizar Nuvem";
-        }
-    }
-
-    function sair() {
-        fecharMenuUsuario();
-        localStorage.removeItem('clickcontrol_user');
-        usuarioLogado = null;
-        document.getElementById('authSenha').value = "";
-        document.getElementById('appScreen').classList.add('hidden');
-        document.getElementById('loginScreen').classList.remove('hidden');
-    }
-
-    function mudarAba(aba) {
-        const abas = ['mapa', 'dadosRede', 'testar', 'cadastrar', 'perfil'];
-        abas.forEach(nome => {
-            const div = document.getElementById('aba' + nome.charAt(0).toUpperCase() + nome.slice(1));
-            const btn = document.getElementById('tab' + nome.charAt(0).toUpperCase() + nome.slice(1) + 'Btn');
-            if (div) {
-                if (nome === aba) div.classList.remove('hidden');
-                else div.classList.add('hidden');
-            }
-            if (btn) {
-                if (nome === aba) btn.classList.add('active');
-                else btn.classList.remove('active');
-            }
-        });
-
-        if (aba === 'mapa') {
-            setTimeout(() => {
-                inicializarOuAtualizarMapa();
-            }, 100);
-        } else if (aba === 'dadosRede') {
-            const idAtual = document.getElementById('selectWifiMapa')?.value;
-            if (idAtual) atualizarCardQrDoMapa(idAtual);
-        } else if (aba === 'testar') {
-            atualizarBannerWifiAtualTestar();
-        } else if (aba === 'perfil') {
-            carregarPerfilUsuario();
-        }
-    }
-
-    // =========================================================================
-    // GPS DE ALTA PRECISÃO
-    // =========================================================================
-    let gpsWatchId = null;
-    let melhorPrecisaoAtual = Infinity;
-    let userAccuracyCircle = null;
-    let cadPinMap = null;
-    let cadPinMarker = null;
-
-    let globalWatchIdGps = null;
-    let globalTimerGps = null;
-    let globalFinalizadorGps = null;
-
-    function pararAutoPreencherGps() {
-        if (globalWatchIdGps !== null) {
-            navigator.geolocation.clearWatch(globalWatchIdGps);
-            globalWatchIdGps = null;
-        }
-        if (globalTimerGps !== null) {
-            clearTimeout(globalTimerGps);
-            globalTimerGps = null;
-        }
-        if (globalFinalizadorGps) {
-            globalFinalizadorGps(null, "Busca de GPS cancelada pelo usuário.");
-            globalFinalizadorGps = null;
-        }
-        const gpsBtn = document.getElementById('gpsBtn');
-        const gpsStatus = document.getElementById('gpsStatus');
-        if (gpsBtn) {
-            gpsBtn.disabled = false;
-            gpsBtn.textContent = "📍 Auto-Preencher";
-        }
-        if (gpsStatus) {
-            gpsStatus.textContent = "⏹️ Busca de GPS interrompida.";
-            gpsStatus.style.color = "#b91c1c";
-            gpsStatus.style.fontWeight = "700";
-        }
-    }
-
-    function obterPosicaoAltaPrecisao(onProgress, onFinal, timeoutMs = 12000, alvoRaioMetros = 10) {
-        if (!navigator.geolocation) {
-            if (onFinal) onFinal(null, "GPS não suportado neste navegador.");
-            return;
-        }
-
-        let melhorPos = null;
-        let finalizado = false;
-        globalFinalizadorGps = onFinal;
-
-        const concluir = (pos, erroMsg = null) => {
-            if (finalizado) return;
-            finalizado = true;
-            if (globalWatchIdGps !== null) {
-                navigator.geolocation.clearWatch(globalWatchIdGps);
-                globalWatchIdGps = null;
-            }
-            if (globalTimerGps !== null) {
-                clearTimeout(globalTimerGps);
-                globalTimerGps = null;
-            }
-            globalFinalizadorGps = null;
-            if (onFinal) onFinal(pos, erroMsg);
-        };
-
-        const tentarFallbackBaixaPrecisao = () => {
-            navigator.geolocation.getCurrentPosition(
-                (posFallback) => concluir(posFallback, null),
-                (errFallback) => {
-                    if (melhorPos) concluir(melhorPos, null);
-                    else concluir(null, errFallback && errFallback.code === 1
-                        ? "Permissão de localização bloqueada no navegador."
-                        : "Não foi possível obter GPS automático. Digite o endereço abaixo que localizamos no mapa.");
-                },
-                { enableHighAccuracy: false, maximumAge: 60000, timeout: 7000 }
-            );
-        };
-
-        globalTimerGps = setTimeout(() => {
-            if (melhorPos) concluir(melhorPos, null);
-            else tentarFallbackBaixaPrecisao();
-        }, timeoutMs);
-
-        globalWatchIdGps = navigator.geolocation.watchPosition(
-            (pos) => {
-                const acc = pos.coords.accuracy || 999;
-                if (!melhorPos || acc < (melhorPos.coords.accuracy || 999)) {
-                    melhorPos = pos;
-                }
-                if (onProgress) onProgress(melhorPos);
-
-                if (acc <= alvoRaioMetros) {
-                    clearTimeout(timer);
-                    concluir(melhorPos, null);
-                }
-            },
-            () => {
-                clearTimeout(timer);
-                if (melhorPos) concluir(melhorPos, null);
-                else tentarFallbackBaixaPrecisao();
-            },
-            { enableHighAccuracy: true, maximumAge: 10000, timeout: timeoutMs }
-        );
-    }
-
-    function iniciarRastreamentoGpsAltaPrecisao(forcarReset = false) {
-        if (!navigator.geolocation) return;
-        if (forcarReset && gpsWatchId !== null) {
-            navigator.geolocation.clearWatch(gpsWatchId);
-            gpsWatchId = null;
-            melhorPrecisaoAtual = Infinity;
-        }
-        if (gpsWatchId !== null) return;
-
-        gpsWatchId = navigator.geolocation.watchPosition(
-            async (pos) => {
-                const acc = pos.coords.accuracy || 999;
-                if (userLatAtual === null || acc <= melhorPrecisaoAtual || acc <= 10) {
-                    if (acc < melhorPrecisaoAtual) melhorPrecisaoAtual = acc;
-                    userLatAtual = pos.coords.latitude;
-                    userLngAtual = pos.coords.longitude;
-
-                    const mapStatus = document.getElementById('mapGpsStatus');
-                    const nearStatus = document.getElementById('nearGpsStatus');
-                    const badgeAcc = acc <= 10
-                        ? `🎯 Precisão máxima: ±${acc.toFixed(1)}m`
-                        : `📡 Calibrando GPS: ±${Math.round(acc)}m (aguardando ≤10m...)`;
-
-                    if (mapStatus) {
-                        mapStatus.textContent = badgeAcc;
-                        mapStatus.style.color = acc <= 10 ? "#22c55e" : "#facc15";
-                    }
-                    if (nearStatus) {
-                        nearStatus.textContent = badgeAcc;
-                        nearStatus.style.color = acc <= 10 ? "#22c55e" : "#facc15";
-                    }
-
-                    if (mapInstance) {
-                        atualizarMarcadorUsuarioNoMapa(userLatAtual, userLngAtual, acc);
-                    }
-                    if (acc <= 15 && listaWifisCache.length > 0) {
-                        const proximos = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
-                        if (proximos[0] && proximos[0].distKm !== null && proximos[0].distKm <= 0.08) {
-                            registrarAmostraConexaoWifi(proximos[0].id, "login_presenca", true);
-                        }
-                    }
-                }
-            },
-            () => {},
-            { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
-        );
-    }
-
-    function atualizarMarcadorUsuarioNoMapa(uLat, uLng, acc = 5) {
-        if (!mapInstance) return;
-        if (userMarker) mapInstance.removeLayer(userMarker);
-        if (userAccuracyCircle) mapInstance.removeLayer(userAccuracyCircle);
-
-        const corCirculo = acc <= 10 ? "#facc15" : "#f97316";
-        userAccuracyCircle = L.circle([uLat, uLng], {
-            radius: Math.max(acc, 3),
-            color: corCirculo,
-            fillColor: corCirculo,
-            fillOpacity: 0.16,
-            weight: 1.5
-        }).addTo(mapInstance);
-
-        const iconUser = L.divIcon({
-            className: 'custom-user-pin',
-            html: '<div style="background:#facc15;width:16px;height:16px;border-radius:50%;border:4px solid #111111;box-shadow:0 0 12px rgba(250,204,21,0.95);"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
-        });
-
-        userMarker = L.marker([uLat, uLng], { icon: iconUser })
-            .addTo(mapInstance)
-            .bindPopup(`<b>📍 Você está aqui</b><br><small>Raio de precisão: ±${acc.toFixed(1)}m</small>`);
-    }
-
-    // =========================================================================
-    // CÁLCULO DE DISTÂNCIA E RESOLUÇÃO DE COORDENADAS
-    // =========================================================================
-    function extrairCoordenadas(texto) {
-        if (!texto) return null;
-        const match = String(texto).match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
-        if (match) {
-            return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
-        }
-        return null;
-    }
-
-    function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-
-    async function geocodificarEnderecoEmEtapas(enderecoTexto, cidadeTexto) {
-        const endLimpo = String(enderecoTexto || "").replace(/\([^)]*\)/g, "").trim();
-        const cidLimpa = String(cidadeTexto || "").trim();
-        const ruaSemNumero = endLimpo.split(",")[0].split("-")[0].trim();
-
-        const tentativas = [
-            `${endLimpo}, ${cidLimpa}, Brasil`,
-            ruaSemNumero && cidLimpa ? `${ruaSemNumero}, ${cidLimpa}, Brasil` : "",
-            cidLimpa ? `${cidLimpa}, Brasil` : ""
-        ].filter((q, idx, arr) => q && q !== ", , Brasil" && arr.indexOf(q) === idx);
-
-        for (const q of tentativas) {
-            try {
-                const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`, {
-                    headers: { "Accept-Language": "pt-BR" }
-                });
-                const results = await resp.json();
-                if (results && results.length > 0) {
-                    return `${parseFloat(results[0].lat).toFixed(6)}, ${parseFloat(results[0].lon).toFixed(6)}`;
-                }
-            } catch (e) {}
-        }
-        return null;
-    }
-
-    async function resolverCoordenadasFaltantes() {
-        for (let i = 0; i < listaWifisCache.length; i++) {
-            const w = listaWifisCache[i];
-            if (!extrairCoordenadas(w.lat_long) && (w.lat_long || w.cidade)) {
-                const coordResolvida = await geocodificarEnderecoEmEtapas(w.lat_long, w.cidade);
-                if (coordResolvida) {
-                    w.endereco = w.endereco || w.lat_long;
-                    w.lat_long = coordResolvida;
-                }
-            }
-        }
-    }
-
-    function obterListaFiltradaEOrdenada(uLat = userLatAtual, uLng = userLngAtual) {
-        let lista = listaWifisCache.filter(w => {
-            // Garante remoção de WFI-001 caso ainda exista na planilha
-            if (String(w.id || "").trim().toUpperCase() === "WFI-001") return false;
-            if (cidadeOfflineFiltroAtivo && normalizarNomeCidade(w.cidade).toLowerCase() !== cidadeOfflineFiltroAtivo.toLowerCase()) return false;
-
-            const coms = obterComodidadesLocal(w);
-            if (filtrosAtivos.estacionamento && !coms.includes('estacionamento')) return false;
-            if (filtrosAtivos.mesas && !coms.includes('mesas')) return false;
-            if (filtrosAtivos.tomadas && !coms.includes('tomadas')) return false;
-            if (filtrosAtivos.sinal_rua && !coms.includes('sinal_rua')) return false;
-
-            const velAtiva = obterVelocidadeAtiva(w);
-            if (!correspondeFaixaVelocidade(velAtiva)) return false;
-
-            return true;
-        }).map(w => {
-            const coords = obterCoordenadasCentroideWifi(w);
-            let distKm = null;
-            if (uLat !== null && uLng !== null && coords) {
-                distKm = calcularDistanciaKm(uLat, uLng, coords.lat, coords.lng);
-            }
-            const velAtiva = obterVelocidadeAtiva(w);
-            return { ...w, coords, distKm, velAtiva };
-        });
-
-        lista.sort((a, b) => {
-            if (uLat !== null && uLng !== null && a.distKm !== null && b.distKm !== null) {
-                if (Math.abs(a.distKm - b.distKm) > 0.3) return a.distKm - b.distKm;
-            }
-            return b.velAtiva - a.velAtiva;
-        });
-
-        return lista;
-    }
-
-    function preencherSelectsComLista(listaOrdenada, manterIdSelecionado = null) {
-        const selMapa = document.getElementById('selectWifiMapa');
-        const hiddenTestar = document.getElementById('selectWifi');
-
-        if (selMapa) {
-            selMapa.innerHTML = "";
-            listaOrdenada.forEach(w => {
-                const opt = document.createElement('option');
-                opt.value = w.id;
-                let tagDist = "";
-                if (w.distKm !== null) {
-                    tagDist = w.distKm < 1
-                        ? ` [${Math.round(w.distKm * 1000)}m]`
-                        : ` [${w.distKm.toFixed(1)}km]`;
-                }
-                // Mostra SOMENTE o endereço (sem WFI-xxx e sem nome técnico)
-                opt.textContent = `${formatarEnderecoLimpo(w)}${tagDist}`;
-                selMapa.appendChild(opt);
-            });
-
-            if (manterIdSelecionado && listaOrdenada.some(x => x.id === manterIdSelecionado)) {
-                selMapa.value = manterIdSelecionado;
-            } else if (listaOrdenada.length > 0) {
-                selMapa.value = listaOrdenada[0].id;
-            }
-        }
-
-        const idEscolhido = (selMapa && selMapa.value) ? selMapa.value : (listaOrdenada[0] ? listaOrdenada[0].id : "");
-        if (hiddenTestar) {
-            hiddenTestar.value = idEscolhido;
-        }
-
-        aoTrocarWifi();
-        atualizarBannerWifiAtualTestar();
-        if (idEscolhido) atualizarCardQrDoMapa(idEscolhido);
-    }
-
-    async function selecionarWifiMaisProximo(manualClick = false) {
-        const statusEl = document.getElementById('nearGpsStatus');
-        const btnNear = document.getElementById('btnNearGps');
-
-        if (!navigator.geolocation) {
-            statusEl.textContent = "GPS indisponível neste navegador.";
-            return;
-        }
-
-        if (manualClick) {
-            btnNear.disabled = true;
-            btnNear.textContent = "...";
-        }
-        statusEl.textContent = "Detectando o Wi-Fi mais próximo de você agora...";
-        statusEl.style.color = "#111111"; statusEl.style.fontWeight = "700";
-
-        obterPosicaoAltaPrecisao(
-            (posParcial) => {
-                const acc = posParcial.coords.accuracy || 999;
-                statusEl.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
-            },
-            async (posFinal, erro) => {
-                if (!posFinal) {
-                    statusEl.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    statusEl.style.color = "#b91c1c"; statusEl.style.fontWeight = "700";
-                    btnNear.disabled = false;
-                    btnNear.textContent = "📍 Detectar Wi-Fi Atual";
-                    return;
-                }
-
-                userLatAtual = posFinal.coords.latitude;
-                userLngAtual = posFinal.coords.longitude;
-                melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
-
-                await resolverCoordenadasFaltantes();
-                const listaOrdenada = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
-                preencherSelectsComLista(listaOrdenada, null);
-
-                const maisProximo = listaOrdenada[0];
-                if (maisProximo && maisProximo.distKm !== null) {
-                    const distTxt = maisProximo.distKm < 1
-                        ? `${Math.round(maisProximo.distKm * 1000)}m`
-                        : `${maisProximo.distKm.toFixed(1)} km`;
-                    statusEl.textContent = `🎯 Wi-Fi atual detectado a ${distTxt} (±${melhorPrecisaoAtual.toFixed(1)}m).`;
-                    statusEl.style.color = "#15803d"; statusEl.style.fontWeight = "700";
-                }
-
-                btnNear.disabled = false;
-                btnNear.textContent = "📍 Detectar Wi-Fi Atual";
-            },
-            10000,
-            10
-        );
-    }
-
-    // =========================================================================
-    // MAPA: ALFINETES COLORIDOS POR VELOCIDADE + DECLUTTERING NO ZOOM OUT
-    // =========================================================================
-    function inicializarOuAtualizarMapa() {
-        if (!mapInstance) {
-            const latInicial = userLatAtual || -26.2503;
-            const lngInicial = userLngAtual || -49.3786;
-
-            mapInstance = L.map('miniMap').setView([latInicial, lngInicial], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap'
-            }).addTo(mapInstance);
-
-            wifiMarkersLayer = L.layerGroup().addTo(mapInstance);
-
-            mapInstance.on('zoomend', () => {
-                renderizarAlfinetesNoMapa(true);
-            });
-        } else {
-            mapInstance.invalidateSize();
-        }
-
-        atualizarPosicaoMapa(false);
-    }
-
-    function aplicarFiltroZoomOut(pontosComCoords) {
-        if (!mapInstance) return pontosComCoords;
-        const zoom = mapInstance.getZoom();
-        const notice = document.getElementById('zoomFilterNotice');
-
-        if (zoom >= 14) {
-            notice.textContent = `Zoom detalhado (${zoom}x): exibindo todos os ${pontosComCoords.length} pontos filtrados.`;
-            return pontosComCoords;
-        }
-
-        const cellSizePx = zoom <= 8 ? 85 : (zoom <= 11 ? 65 : 50);
-        const ordenadosPorVelocidade = [...pontosComCoords].sort((a, b) => b.velAtiva - a.velAtiva);
-        const ocupados = new Set();
-        const melhores = [];
-
-        ordenadosPorVelocidade.forEach(p => {
-            const pt = mapInstance.latLngToContainerPoint([p.coords.lat, p.coords.lng]);
-            const cellKey = `${Math.floor(pt.x / cellSizePx)}_${Math.floor(pt.y / cellSizePx)}`;
-            if (!ocupados.has(cellKey)) {
-                ocupados.add(cellKey);
-                melhores.push(p);
-            }
-        });
-
-        notice.textContent = `Zoom afastado (${zoom}x): exibindo os ${melhores.length} melhores pontos de ${prioridadeVelocidade === 'upload' ? 'Upload' : 'Download'}.`;
-        return melhores;
-    }
-
-    function renderizarAlfinetesNoMapa(preservarPopup = false) {
-        if (!mapInstance || !wifiMarkersLayer) return;
-        let idPopupAberto = null;
-        if (preservarPopup) {
-            wifiMarkersLayer.eachLayer(layer => {
-                if (layer.isPopupOpen && layer.isPopupOpen() && layer.wifiId) {
-                    idPopupAberto = layer.wifiId;
-                }
-            });
-        }
-        wifiMarkersLayer.clearLayers();
-
-        const mapStatus = document.getElementById('mapGpsStatus');
-        const listaFiltrada = obterListaFiltradaEOrdenada(userLatAtual, userLngAtual);
-        const manterId = document.getElementById('selectWifiMapa').value;
-        preencherSelectsComLista(listaFiltrada, manterId);
-
-        // Coordenadas padrão aproximadas por cidade caso o ponto venha sem coordenadas da nuvem
-        const coordenadasCidadesPadrao = {
-            "são bento do sul - sc": { lat: -26.2503, lng: -49.3786 },
-            "sao bento do sul - sc": { lat: -26.2503, lng: -49.3786 },
-            "itajai - sc": { lat: -26.9078, lng: -48.6619 },
-            "itajá - sc": { lat: -26.9078, lng: -48.6619 },
-            "joinville - sc": { lat: -26.3045, lng: -48.8464 }
-        };
-
-        // Garante que TODOS os pontos apareçam no mapa, gerando fallback se necessário
-        const pontosComCoords = listaFiltrada.map(w => {
-            if (!w.coords) {
-                const cStr = extrairCoordenadas(w.lat_long || w.endereco || "");
-                if (cStr) {
-                    w.coords = { lat: cStr.lat, lng: cStr.lng, totalAmostras: 1, raioMedio: 25 };
-                } else {
-                    const cidKey = String(w.cidade || "").toLowerCase().trim();
-                    const baseCidade = coordenadasCidadesPadrao[cidKey] || (userLatAtual !== null ? { lat: userLatAtual, lng: userLngAtual } : { lat: -26.2503, lng: -49.3786 });
-                    // Adiciona um pequeno deslocamento aleatório para pontos da mesma cidade não ficarem exatamente sobrepostos
-                    const offsetLat = (Math.random() - 0.5) * 0.012;
-                    const offsetLng = (Math.random() - 0.5) * 0.012;
-                    w.coords = { lat: baseCidade.lat + offsetLat, lng: baseCidade.lng + offsetLng, totalAmostras: 1, raioMedio: 50 };
-                }
-            }
-            return w;
-        });
-
-        const pontosVisiveisNoZoom = aplicarFiltroZoomOut(pontosComCoords);
-
-        pontosVisiveisNoZoom.forEach(w => {
-            const vel = w.velAtiva;
-            const cor = obterCorPorVelocidade(vel);
-            const labelVel = vel > 0 ? `${Math.round(vel)}` : "?";
-
-            const resEstrelasPin = obterMediaEstrelas(w);
-            const labelNota = resEstrelasPin.media ? resEstrelasPin.media.toFixed(1) : "5.0";
-
-            const iconWifi = L.divIcon({
-                className: 'custom-wifi-pin',
-                html: `<div style="background:${cor.hex};color:${cor.texto};font-weight:800;font-size:9px;width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,0.75);"><span style="transform:rotate(45deg);line-height:1;font-size:9px;">⭐${labelNota}</span></div>`,
-                iconSize: [32, 32],
-                iconAnchor: [16, 32]
-            });
-
-            const ssid = w.ssid || w.local;
-            const senha = w.senha || "";
-            const qrUrl = gerarUrlImagemQR(ssid, senha, 200);
-            const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${w.coords.lat},${w.coords.lng}`;
-            const down = parseFloat(w.down_mbps || w.med_down || 0);
-            const up = parseFloat(w.up_mbps || w.med_up || 0);
-            const fotos = obterFotosLocal(w);
-            const fotoHtml = fotos.length > 0 ? `<img src="${fotos[0]}" class="popup-photo-img" alt="Foto do local">` : "";
-
-            const wifiPayload = gerarPayloadWifiQR(ssid, senha);
-            const ssidSafe = String(ssid).replace(/'/g, "\\'");
-            const senhaSafe = String(senha).replace(/'/g, "\\'");
-            const popupHtml = `
-                <div>
-                    <b>${w.local}</b><br>
-                    <span style="color:#4b5563;">${formatarEnderecoLimpo(w)}</span><br>
-                    <span style="font-weight:700; color:#111111;">⬇️ ${down.toFixed(1)} Mbps | ⬆️ ${up.toFixed(1)} Mbps</span><br>
-                    <span>Rede: <b>${ssid}</b> | Senha: <b>${senha || '-'}</b></span><br>
-                    <span style="font-size:0.68rem; color:#b45309;">🎯 Centro de ${w.coords.totalAmostras || 1} conexão(ões)</span>
-                    ${fotoHtml}
-                    <img src="${qrUrl}" class="popup-qr-img" alt="QR Code Wi-Fi">
-                    <a href="${navUrl}" target="_blank" class="popup-btn nav">🧭 Ir até lá</a>
-                    <a href="${wifiPayload}" onclick="event.preventDefault(); conectarPeloLinkQr('${ssidSafe}', '${senhaSafe}');" class="popup-btn">🔗 QR Code</a>
-                    <button type="button" onclick="mudarAba('dadosRede')" class="popup-btn">📶 Dados</button>
-                </div>
-            `;
-
-            const marker = L.marker([w.coords.lat, w.coords.lng], { icon: iconWifi }).bindPopup(popupHtml);
-            marker.wifiId = w.id;
-            marker.on('click', () => {
-                document.getElementById('selectWifiMapa').value = w.id;
-                document.getElementById('selectWifi').value = w.id;
-                aoTrocarWifi();
-                atualizarBannerWifiAtualTestar();
-                atualizarCardQrDoMapa(w.id);
-            });
-
-            wifiMarkersLayer.addLayer(marker);
-            if (idPopupAberto && idPopupAberto === w.id) {
-                marker.openPopup();
-            }
-        });
-
-        mapStatus.textContent = pontosFiltradosResumo(listaFiltrada.length, pontosVisiveisNoZoom.length);
-        mapStatus.style.color = "#111111"; mapStatus.style.fontWeight = "700";
-    }
-
-    function pontosFiltradosResumo(totalFiltrados, visiveisZoom) {
-        if (totalFiltrados === 0) return "Nenhum ponto corresponde aos filtros selecionados.";
-        return `Exibindo ${visiveisZoom} de ${totalFiltrados} pontos (${prioridadeVelocidade === 'upload' ? 'prioridade Upload' : 'prioridade Download'}).`;
-    }
-
-    function atualizarPosicaoMapa(forcarNovoGPS = false) {
-        const mapStatus = document.getElementById('mapGpsStatus');
-        const btnAtualizar = document.getElementById('btnAtualizarMapa');
-
-        const desenharUsuarioEAlfinetes = (uLat, uLng, acc = melhorPrecisaoAtual) => {
-            if (uLat !== null && uLng !== null) {
-                atualizarMarcadorUsuarioNoMapa(uLat, uLng, isFinite(acc) ? acc : 5);
-            }
-            renderizarAlfinetesNoMapa();
-        };
-
-        if (!forcarNovoGPS && userLatAtual !== null && userLngAtual !== null && melhorPrecisaoAtual <= 5) {
-            desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
-            return;
-        }
-
-        if (navigator.geolocation) {
-            btnAtualizar.disabled = true;
-            mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 10m)...";
-            mapStatus.style.color = "#111111"; mapStatus.style.fontWeight = "700";
-
-            obterPosicaoAltaPrecisao(
-                (posParcial) => {
-                    const acc = posParcial.coords.accuracy || 999;
-                    userLatAtual = posParcial.coords.latitude;
-                    userLngAtual = posParcial.coords.longitude;
-                    mapInstance.setView([userLatAtual, userLngAtual], acc <= 15 ? 18 : 16);
-                    desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, acc);
-                    mapStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
-                },
-                async (posFinal) => {
-                    if (posFinal) {
-                        userLatAtual = posFinal.coords.latitude;
-                        userLngAtual = posFinal.coords.longitude;
-                        melhorPrecisaoAtual = posFinal.coords.accuracy || 5;
-                        await resolverCoordenadasFaltantes();
-                        mapInstance.setView([userLatAtual, userLngAtual], 18);
-                        desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
-                        mapStatus.textContent = `🎯 Localização travada com raio de ±${melhorPrecisaoAtual.toFixed(1)}m.`;
-                        mapStatus.style.color = "#15803d"; mapStatus.style.fontWeight = "700";
-                    } else {
-                        desenharUsuarioEAlfinetes(null, null);
-                    }
-                    btnAtualizar.disabled = false;
-                },
-                12000,
-                5
-            );
-        } else {
-            desenharUsuarioEAlfinetes(null, null);
-        }
-    }
-
-    function aoSelecionarNoMapa() {
-        const idSelecionado = document.getElementById('selectWifiMapa').value;
-        document.getElementById('selectWifi').value = idSelecionado;
-        aoTrocarWifi();
-        atualizarBannerWifiAtualTestar();
-        atualizarCardQrDoMapa(idSelecionado);
-
-        const ponto = listaWifisCache.find(w => w.id === idSelecionado);
-        const coords = ponto ? obterCoordenadasCentroideWifi(ponto) : null;
-        if (coords && mapInstance) {
-            mapInstance.setView([coords.lat, coords.lng], 16);
-            setTimeout(() => {
-                if (wifiMarkersLayer) {
-                    wifiMarkersLayer.eachLayer(layer => {
-                        if (layer.wifiId === idSelecionado) {
-                            layer.openPopup();
-                        }
-                    });
-                }
-            }, 250);
-        }
-    }
-
-    function irTestarSelecionadoDoMapa() {
-        const idSelecionado = document.getElementById('selectWifiMapa').value;
-        document.getElementById('selectWifi').value = idSelecionado;
-        aoTrocarWifi();
-        atualizarBannerWifiAtualTestar();
-        mudarAba('testar');
-    }
-
-    // =========================================================================
-    // GEOCODIFICAÇÃO REVERSA + GPS ALTA PRECISÃO + PINO AJUSTÁVEL
-    // =========================================================================
-    function renderizarMinimapaCadastro(latNum, lngNum, accMetros) {
-        const wrap = document.getElementById('cadMiniMapWrap');
-        wrap.classList.remove('hidden');
-
-        if (!cadPinMap) {
-            cadPinMap = L.map('cadMiniMap').setView([latNum, lngNum], 19);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 20,
-                attribution: '© OSM'
-            }).addTo(cadPinMap);
-
-            cadPinMarker = L.marker([latNum, lngNum], { draggable: true }).addTo(cadPinMap);
-            cadPinMarker.on('dragend', () => {
-                const p = cadPinMarker.getLatLng();
-                const nLat = p.lat.toFixed(6);
-                const nLng = p.lng.toFixed(6);
-                ultimaCoordGPS = `${nLat}, ${nLng}`;
-                const inputLoc = document.getElementById('cadLocalizacao');
-                if (/\(-?\d+\.\d+\s*,\s*-?\d+\.\d+\)/.test(inputLoc.value)) {
-                    inputLoc.value = inputLoc.value.replace(/\(-?\d+\.\d+\s*,\s*-?\d+\.\d+\)/, `(${ultimaCoordGPS})`);
-                } else {
-                    inputLoc.value = `${inputLoc.value} (${ultimaCoordGPS})`.trim();
-                }
-                document.getElementById('cadPinHint').textContent = `🎯 Pino ajustado manualmente: ${ultimaCoordGPS}`;
-            });
-        } else {
-            cadPinMap.invalidateSize();
-            cadPinMap.setView([latNum, lngNum], 19);
-            cadPinMarker.setLatLng([latNum, lngNum]);
-        }
-
-        document.getElementById('cadPinHint').textContent = `🎯 Precisão GPS: ±${accMetros.toFixed(1)}m (arraste o pino se precisar de ajuste fino).`;
-    }
-
-        async function pegarEnderecoPorGPS() {
-        const gpsBtn = document.getElementById('gpsBtn');
-        const gpsStatus = document.getElementById('gpsStatus');
-        const inputLoc = document.getElementById('cadLocalizacao');
-        const inputCidade = document.getElementById('cadCidade');
-        const inputNome = document.getElementById('cadNomeLocal');
-        const groupEmpresas = document.getElementById('groupEmpresasProximas');
-        const selectEmpresas = document.getElementById('selectEmpresaProxima');
-
-        if (!navigator.geolocation) {
-            gpsStatus.textContent = "GPS não suportado neste navegador.";
-            return;
-        }
-
-        gpsBtn.disabled = true;
-        gpsBtn.textContent = "Buscando GPS...";
-        gpsStatus.textContent = "Obtendo sinal de GPS de alta precisão (para em ≤10m ou ao tocar Parar)...";
-        gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
-
-        if (groupEmpresas) groupEmpresas.classList.add('hidden');
-
-        obterPosicaoAltaPrecisao(
-            (posParcial) => {
-                const acc = posParcial.coords.accuracy || 999;
-                gpsStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
-                renderizarMinimapaCadastro(posParcial.coords.latitude, posParcial.coords.longitude, acc);
-            },
-            async (posFinal, erro) => {
-                gpsBtn.disabled = false;
-                gpsBtn.textContent = "📍 Auto-Preencher";
-
-                if (!posFinal) {
-                    gpsStatus.textContent = `⚠️ ${erro || "Busca de GPS encerrada."}`;
-                    gpsStatus.style.color = "#b91c1c"; gpsStatus.style.fontWeight = "700";
-                    return;
-                }
-
-                const lat = posFinal.coords.latitude.toFixed(6);
-                const lng = posFinal.coords.longitude.toFixed(6);
-                const acc = posFinal.coords.accuracy || 5;
-                ultimaCoordGPS = `${lat}, ${lng}`;
-                userLatAtual = posFinal.coords.latitude;
-                userLngAtual = posFinal.coords.longitude;
-                melhorPrecisaoAtual = acc;
-
-                inputLoc.value = ultimaCoordGPS;
-                renderizarMinimapaCadastro(posFinal.coords.latitude, posFinal.coords.longitude, acc);
-
-                gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Buscando locais próximos...`;
-                gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
-
-                try {
-                    // Busca reversa detalhada
-                    const urlGeo = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1`;
-                    const resp = await fetch(urlGeo, { headers: { "Accept-Language": "pt-BR" } });
-                    const data = await resp.json();
-                    const addr = data.address || {};
-
-                    const nomeDetectado = data.name || addr.amenity || addr.shop || addr.building || addr.office || "";
-                    if (nomeDetectado && !inputNome.value.trim()) {
-                        inputNome.value = nomeDetectado;
-                    }
-
-                    const rua = addr.road || addr.pedestrian || addr.suburb || "";
-                    const numero = addr.house_number || "S/N";
-                    const bairro = addr.suburb || addr.neighbourhood || "";
-                    const cidade = addr.city || addr.town || addr.village || addr.municipality || "";
-                    const estado = addr.state || "";
-
-                    const mapaUF = {
-                        "Acre": "AC", "Alagoas": "AL", "Amapá": "AP", "Amazonas": "AM",
-                        "Bahia": "BA", "Ceará": "CE", "Distrito Federal": "DF", "Espírito Santo": "ES",
-                        "Goiás": "GO", "Maranhão": "MA", "Mato Grosso": "MT", "Mato Grosso do Sul": "MS",
-                        "Minas Gerais": "MG", "Pará": "PA", "Paraíba": "PB", "Paraná": "PR",
-                        "Pernambuco": "PE", "Piauí": "PI", "Rio de Janeiro": "RJ", "Rio Grande do Norte": "RN",
-                        "Rio Grande do Sul": "RS", "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC",
-                        "São Paulo": "SP", "Sergipe": "SE", "Tocantins": "TO"
-                    };
-                    const uf = mapaUF[estado] || estado;
-
-                    if (rua) {
-                        inputLoc.value = bairro
-                            ? `${rua}, ${numero} - ${bairro} (${ultimaCoordGPS})`
-                            : `${rua}, ${numero} (${ultimaCoordGPS})`;
-                    } else {
-                        inputLoc.value = ultimaCoordGPS;
-                    }
-
-                    if (cidade && !inputCidade.value.trim()) {
-                        inputCidade.value = uf ? `${cidade} - ${uf}` : cidade;
-                    }
-
-                    // Busca estabelecimentos / lojas num raio de ~30m usando Nominatim search box com bounding box pequeno ao redor de lat,lng
-                    const delta = 0.0003; // ~30 metros
-                    const viewbox = `${lng - delta},${lat + delta},${lng + delta},${lat - delta}`;
-                    const urlNearby = `https://nominatim.openstreetmap.org/search?format=jsonv2&bounded=1&viewbox=${viewbox}&q=shop|amenity|commercial|office&limit=8`;
-                    const respNearby = await fetch(urlNearby, { headers: { "Accept-Language": "pt-BR" } });
-                    const locaisProximos = await respNearby.json();
-
-                    if (locaisProximos && locaisProximos.length > 0 && selectEmpresas) {
-                        selectEmpresas.innerHTML = `<option value="">Selecione entre ${locaisProximos.length} local(is) encontrado(s)...</option>`;
-                        window._locaisProximosEncontrados = locaisProximos;
-                        locaisProximos.forEach((p, idx) => {
-                            const opt = document.createElement('option');
-                            opt.value = idx;
-                            opt.textContent = `${p.display_name.split(',')[0]} (${Math.round(p.importance * 30 || 15)}m)`;
-                            selectEmpresas.appendChild(opt);
-                        });
-                        if (groupEmpresas) groupEmpresas.classList.remove('hidden');
-                    }
-                } catch (e) {}
-            },
-            10000, // 10 segundos limite para parada automática igual antes
-            10     // Para automaticamente quando atingir precisão <= 10m
-        );
-    }
-
-    function aoSelecionarEmpresaProxima() {
-        const sel = document.getElementById('selectEmpresaProxima');
-        const idx = sel.value;
-        if (idx === "" || !window._locaisProximosEncontrados) return;
-        const localObj = window._locaisProximosEncontrados[idx];
-        if (!localObj) return;
-
-        document.getElementById('cadNomeLocal').value = localObj.display_name.split(',')[0];
-        document.getElementById('cadLocalizacao').value = `${localObj.display_name} (${Number(localObj.lat).toFixed(6)}, ${Number(localObj.lon).toFixed(6)})`;
-        ultimaCoordGPS = `${Number(localObj.lat).toFixed(6)}, ${Number(localObj.lon).toFixed(6)}`;
-        renderizarMinimapaCadastro(Number(localObj.lat), Number(localObj.lon), 5);
-    }
-
-    async function carregarPerfilUsuario() {
-        if (!usuarioLogado) return;
-        const elNome = document.getElementById('editUserNome');
-        const elEmail = document.getElementById('editUserEmail');
-        if (elNome) elNome.value = usuarioLogado.nome || "";
-        if (elEmail) elEmail.value = usuarioLogado.email || "";
-
-        const btn = document.getElementById('btnAtualizarPerfil');
-        btn.disabled = true;
-        btn.textContent = "Sincronizando pontos...";
-
-        try {
-            const url = `${GOOGLE_SCRIPT_URL}?acao=dados_usuario&id_usuario=${encodeURIComponent(usuarioLogado.email)}`;
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.status === "ok") {
-                document.getElementById('perfilSaldo').textContent = `${data.saldo} pts`;
-                document.getElementById('perfilPlano').textContent = data.plano || "Gratuito";
-                document.getElementById('perfilQtdCadastrados').textContent = data.qtd_cadastrados || 0;
-                document.getElementById('perfilQtdTestes').textContent = data.qtd_testes || 0;
-
-                const listaDiv = document.getElementById('meusWifisLista');
-                if (data.meus_wifis && data.meus_wifis.length > 0) {
-                    listaDiv.innerHTML = "";
-                    data.meus_wifis.forEach(w => {
-                        const qrLink = gerarUrlImagemQR(w.ssid, w.senha, 260);
-                        const item = document.createElement('div');
-                        item.className = 'my-wifi-item';
-                        item.innerHTML = `
-                            <strong>${w.local}</strong> (${w.cidade})
-                            <small>Rede: ${w.ssid} | Senha: ${w.senha} • <a href="${qrLink}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">🔗 Link QR Code</a></small>
-                        `;
-                        listaDiv.appendChild(item);
-                    });
-                } else {
-                    listaDiv.innerHTML = `<div style="color: var(--text-muted); text-align: center; padding: 10px;">Você ainda não cadastrou nenhum ponto de Wi-Fi.</div>`;
-                }
-            }
-        } catch (e) {
-            document.getElementById('meusWifisLista').innerHTML = `<div style="color: #facc15; text-align: center; padding: 10px;">Atualize o código do Apps Script para sincronizar saldo e velocidades.</div>`;
-        }
-
-        atualizarListaAdminWifis();
-        btn.disabled = false;
-        btn.textContent = "🔄 Atualizar Meus Pontos";
-    }
-
-    function mesclarVelocidadesLocais(lista) {
-        let velMap = {};
-        try { velMap = JSON.parse(localStorage.getItem('clickcontrol_vel_overrides') || "{}"); } catch (e) {}
-        return lista.map(w => {
-            const ov = velMap[w.id];
-            const dSheet = parseFloat(w.down_mbps || w.med_down || 0);
-            const uSheet = parseFloat(w.up_mbps || w.med_up || 0);
-            if (ov && (dSheet === 0 && uSheet === 0)) {
-                w.down_mbps = ov.down;
-                w.up_mbps = ov.up;
-                w.med_down = ov.down;
-                w.med_up = ov.up;
-            }
-            return w;
-        });
-    }
-
-    function salvarPontosLocaisPersistentes() {
-        try {
-            localStorage.setItem('clickcontrol_custom_wifis', JSON.stringify(listaWifisCache));
-        } catch (e) {}
-    }
-
-    async function carregarListaWifis() {
-        let locaisSalvos = [];
-        try { locaisSalvos = JSON.parse(localStorage.getItem('clickcontrol_custom_wifis') || "[]"); } catch (e) {}
-
-        try {
-            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`, { cache: "no-store" });
-            const data = await res.json();
-            if (data.wifis && data.wifis.length > 0) {
-                let excluidos = [];
-                try { excluidos = JSON.parse(localStorage.getItem('clickcontrol_excluidos') || "[]"); } catch (e) {}
-                
-                const filtrados = data.wifis.filter(w => {
-                    const wid = String(w.id || "").trim();
-                    if (wid.toUpperCase() === "WFI-001") return false;
-                    if (excluidos.includes(wid)) return false;
-                    return true;
-                });
-                const idsNuvem = new Set(filtrados.map(w => w.id));
-                const pendentesLocais = locaisSalvos.filter(w => w.id && !idsNuvem.has(w.id));
-                listaWifisCache = mesclarVelocidadesLocais([...pendentesLocais, ...filtrados]);
-                salvarPontosLocaisPersistentes();
-                await resolverCoordenadasFaltantes();
-            }
-        } catch (e) {
-            if (locaisSalvos.length > 0) {
-                listaWifisCache = mesclarVelocidadesLocais(locaisSalvos);
-            } else {
-                listaWifisCache = mesclarVelocidadesLocais(listaWifisCache);
-            }
-        }
-
-        atualizarSeletorCidadesOffline();
-        const ordenada = obterListaFiltradaEOrdenada();
-        preencherSelectsComLista(ordenada, document.getElementById('selectWifiMapa')?.value || null);
-        renderizarAlfinetesNoMapa(true);
-    }
-
-    async function executarTesteVelocidadeBackground(idWifi) {
-        try {
-            const downUrls = [
-                "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
-                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
-            ];
-            const upUrls = [
-                "https://httpbin.org/post",
-                "https://postman-echo.com/post"
-            ];
-
-            // 1. Download em background (4 segundos, 4 threads)
-            let bytesDown = 0;
-            let ativoDown = true;
-            const t0Down = performance.now();
-            setTimeout(() => { ativoDown = false; }, 4000);
-
-            await Promise.all(Array.from({ length: 4 }, async (_, idx) => {
-                let i = idx;
-                while (ativoDown) {
-                    const url = `${downUrls[i % downUrls.length]}?bg=${Math.random()}_${Date.now()}`;
-                    i++;
-                    try {
-                        const ctrl = new AbortController();
-                        const tid = setTimeout(() => ctrl.abort(), 4000);
-                        const resp = await fetch(url, { cache: "no-store", signal: ctrl.signal });
-                        const reader = resp.body.getReader();
-                        while (ativoDown) {
-                            const { done, value } = await reader.read();
-                            if (done) break;
-                            bytesDown += value.byteLength;
-                        }
-                        clearTimeout(tid);
-                        ctrl.abort();
-                    } catch (e) { if (!ativoDown) break; }
-                }
-            }));
-
-            const secDown = Math.max((performance.now() - t0Down) / 1000, 0.2);
-            const downBg = Number(((bytesDown * 8) / secDown / (1024 * 1024)).toFixed(1));
-
-            // 2. Upload em background (4 segundos, 3 threads)
-            const chunk = new Uint8Array(1024 * 1024);
-            let bytesUp = 0;
-            let ativoUp = true;
-            const t0Up = performance.now();
-            setTimeout(() => { ativoUp = false; }, 4000);
-
-            await Promise.all(Array.from({ length: 3 }, async (_, idx) => {
-                let i = idx;
-                while (ativoUp) {
-                    const url = `${upUrls[i % upUrls.length]}?bg=${Math.random()}`;
-                    i++;
-                    try {
-                        const ctrl = new AbortController();
-                        const tid = setTimeout(() => ctrl.abort(), 4000);
-                        await fetch(url, { method: "POST", mode: "no-cors", body: chunk, signal: ctrl.signal });
-                        clearTimeout(tid);
-                        if (ativoUp) bytesUp += chunk.byteLength;
-                    } catch (e) { if (!ativoUp) break; }
-                }
-            }));
-
-            const secUp = Math.max((performance.now() - t0Up) / 1000, 0.2);
-            const upBg = Number(((bytesUp * 8) / secUp / (1024 * 1024)).toFixed(1));
-
-            if (downBg <= 0 && upBg <= 0) return;
-
-            let velMap = {};
-            try { velMap = JSON.parse(localStorage.getItem('clickcontrol_vel_overrides') || "{}"); } catch (e) {}
-            velMap[idWifi] = { down: downBg, up: upBg };
-            localStorage.setItem('clickcontrol_vel_overrides', JSON.stringify(velMap));
-
-            const ponto = listaWifisCache.find(w => w.id === idWifi);
-            if (ponto) {
-                ponto.down_mbps = downBg;
-                ponto.up_mbps = upBg;
-                ponto.med_down = downBg;
-                ponto.med_up = upBg;
-            }
-            salvarPontosLocaisPersistentes();
-            renderizarAlfinetesNoMapa(true);
-            if (document.getElementById('selectWifiMapa')?.value === idWifi) {
-                atualizarCardQrDoMapa(idWifi);
-            }
-
-            const mapStatus = document.getElementById('mapGpsStatus');
-            if (mapStatus) {
-                mapStatus.textContent = `⚡ Velocidade inicial medida: ⬇️ ${downBg} Mbps | ⬆️ ${upBg} Mbps`;
-            }
-
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "salvar_teste",
-                    id_wifi: idWifi,
-                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
-                    download_mbps: downBg,
-                    upload_mbps: upBg
-                })
-            });
-        } catch (e) {
-            console.warn("Teste em background ignorado:", e);
-        }
-    }
-
-        async function cadastrarNovoWifi() {
-        const nomeLocal = document.getElementById('cadNomeLocal').value.trim();
-        const cidade = document.getElementById('cadCidade').value.trim();
-        let localizacao = document.getElementById('cadLocalizacao').value.trim();
-        const ssid = document.getElementById('cadSsid').value.trim();
-        const senha = document.getElementById('cadSenha').value.trim();
-        const horarioSinal = document.getElementById('cadHorarioSinal').value.trim();
-        const cadToast = document.getElementById('cadToast');
-        const cadSaveBtn = document.getElementById('cadSaveBtn');
-
-        if (!nomeLocal || !ssid || !senha) {
-            cadToast.style.display = "block";
-            cadToast.className = "toast error";
-            cadToast.textContent = "⚠️ Preencha o Nome do Local, o Nome da Rede (SSID) e a Senha.";
-            return;
-        }
-
-        cadSaveBtn.disabled = true;
-        cadSaveBtn.textContent = "Salvando pino...";
-        cadToast.style.display = "block";
-        cadToast.className = "toast";
-        cadToast.textContent = "⏳ Gravando na rede...";
-
-        // Se o endereço estiver vazio, usa a última coordenada GPS ou a posição padrão
-        if (!localizacao || localizacao.includes("Preenchido pelo botão")) {
-            if (ultimaCoordGPS) {
-                localizacao = `Local GPS (${ultimaCoordGPS})`;
-            } else if (userLatAtual !== null && userLngAtual !== null) {
-                localizacao = `Local GPS (${userLatAtual.toFixed(6)}, ${userLngAtual.toFixed(6)})`;
-            } else {
-                localizacao = `Centro (${cidade || "São Bento do Sul - SC"}) (-26.250300, -49.378600)`;
-            }
-        }
-
-        const qrLinkGerado = gerarUrlImagemQR(ssid, senha, 280);
-        const listaComodidades = Object.keys(comodidadesCadastro).filter(k => comodidadesCadastro[k]);
-        const payloadEnvio = {
-            acao: "cadastrar_wifi",
-            id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
-            nome_local: nomeLocal,
-            cidade_uf: cidade || "São Bento do Sul - SC",
-            lat_long: localizacao,
-            ssid_rede: ssid,
-            senha: senha,
-            link_qrcode: qrLinkGerado,
-            comodidades: listaComodidades.join(","),
-            nota_inicial: notaCadastro,
-            horario_sinal: horarioSinal
-        };
-
-        let novoId = "WFI-" + Date.now();
-        let salvoNaNuvem = false;
-
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 6000); // Timeout de 6 segundos para não travar nunca
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(payloadEnvio),
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-            const rawText = await response.text();
-            try {
-                const result = JSON.parse(rawText);
-                if (result && result.id_wifi) novoId = result.id_wifi;
-                if (result && result.status === "ok") salvoNaNuvem = true;
-            } catch (parseErr) {
-                salvoNaNuvem = true;
-            }
-        } catch (err) {
-            // Tenta envio silencioso em background via no-cors para garantir nuvem
-            try {
-                fetch(GOOGLE_SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payloadEnvio)
-                }).catch(() => {});
-            } catch (e2) {}
-            salvoNaNuvem = false;
-        }
-
-        if (fotoCadastroBase64) {
-            localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
-        }
-
-        const novoPontoObj = {
-            id: novoId,
-            local: nomeLocal,
-            endereco: localizacao.replace(/\([^)]*\)/g, "").trim(),
-            cidade: cidade || "São Bento do Sul - SC",
-            lat_long: localizacao,
-            ssid: ssid,
-            senha: senha,
-            down_mbps: 0,
-            up_mbps: 0,
-            status: "Funcionando",
-            comodidades: listaComodidades,
-            horario_sinal: horarioSinal,
-            ultima_validacao: "Agora",
-            cadastrado_por: usuarioLogado ? usuarioLogado.email : ""
-        };
-
-        listaWifisCache = listaWifisCache.filter(w => w.id !== novoId);
-        listaWifisCache.unshift(novoPontoObj);
-        salvarPontosLocaisPersistentes();
-        atualizarSeletorCidadesOffline();
-
-        cadToast.style.display = "block";
-        cadToast.className = "toast";
-        cadToast.textContent = "✅ Ponto salvo com sucesso! +10 Créditos. Abrindo no mapa...";
-
-        // Limpa formulário
-        document.getElementById('cadNomeLocal').value = "";
-        document.getElementById('cadLocalizacao').value = "";
-        document.getElementById('cadSsid').value = "";
-        document.getElementById('cadSenha').value = "";
-        document.getElementById('cadHorarioSinal').value = "";
-        document.getElementById('cadQrPreviewBox').classList.add('hidden');
-        document.getElementById('cadFotoPreviewContainer').classList.add('hidden');
-        document.getElementById('cadMiniMapWrap').classList.add('hidden');
-        fotoCadastroBase64 = "";
-        ultimaCoordGPS = null;
-
-        executarTesteVelocidadeBackground(novoId);
-        limparTodosFiltrosMapa();
-        cidadeOfflineFiltroAtivo = "";
-
-        mudarAba('mapa');
-
-        setTimeout(() => {
-            if (mapInstance) mapInstance.invalidateSize();
-            const ordenada = obterListaFiltradaEOrdenada();
-            preencherSelectsComLista(ordenada, novoId);
-            document.getElementById('selectWifiMapa').value = novoId;
-            document.getElementById('selectWifi').value = novoId;
-            renderizarAlfinetesNoMapa(false);
-            atualizarCardQrDoMapa(novoId);
-            const coordEx = extrairCoordenadas(localizacao);
-            if (coordEx && mapInstance) {
-                mapInstance.setView([coordEx.lat, coordEx.lng], 17);
-                if (wifiMarkersLayer) {
-                    wifiMarkersLayer.eachLayer(layer => {
-                        if (layer.wifiId === novoId) layer.openPopup();
-                    });
-                }
-            }
-        }, 250);
-
-        carregarPerfilUsuario();
-        cadSaveBtn.disabled = false;
-        cadSaveBtn.textContent = "Salvar Novo Wi-Fi (+10 Créditos)";
-    }
-
-    async function medirDownloadMultiThread() {
-        const statusText = document.getElementById('statusText');
-        const progressBar = document.getElementById('progressBar');
-        const downEl = document.getElementById('downVal');
-
-        statusText.textContent = "Medindo Download (8 conexões simultâneas)...";
-        progressBar.style.width = "15%";
-
-        const baseUrls = [
-            "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/f/ff/Pizigani_1367_Chart_10MB.jpg",
-            "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
-            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
-        ];
-
-        const THREADS = 8;
-        const TEST_DURATION_MS = 5000;
-        let totalBytesDownloaded = 0;
-        let active = true;
-        const startTime = performance.now();
-
-        const uiInterval = setInterval(() => {
-            const elapsedSec = (performance.now() - startTime) / 1000;
-            if (elapsedSec > 0.2 && totalBytesDownloaded > 0) {
-                downEl.textContent = ((totalBytesDownloaded * 8) / elapsedSec / (1024 * 1024)).toFixed(1);
-                progressBar.style.width = Math.min(15 + (elapsedSec / 5) * 35, 50) + "%";
-            }
-        }, 200);
-
-        setTimeout(() => { active = false; }, TEST_DURATION_MS);
-
-        const worker = async (threadId) => {
-            let i = threadId;
-            while (active) {
-                const targetUrl = baseUrls[i % baseUrls.length] + "?nocache=" + Math.random() + "_" + Date.now();
-                i++;
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), TEST_DURATION_MS);
-                    const response = await fetch(targetUrl, { cache: "no-store", signal: controller.signal });
-                    const reader = response.body.getReader();
-                    while (active) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        totalBytesDownloaded += value.byteLength;
-                    }
-                    clearTimeout(timeoutId);
-                    controller.abort();
-                } catch (e) { if (!active) break; }
-            }
-        };
-
-        await Promise.all(Array.from({ length: THREADS }, (_, idx) => worker(idx)));
-        clearInterval(uiInterval);
-
-        const finalElapsedSec = Math.max((performance.now() - startTime) / 1000, 0.1);
-        downloadMbps = ((totalBytesDownloaded * 8) / finalElapsedSec / (1024 * 1024)).toFixed(1);
-        downEl.textContent = downloadMbps;
-        progressBar.style.width = "50%";
-    }
-
-    async function medirUploadMultiThread() {
-        const statusText = document.getElementById('statusText');
-        const progressBar = document.getElementById('progressBar');
-        const upEl = document.getElementById('upVal');
-
-        statusText.textContent = "Medindo Upload (6 conexões simultâneas)...";
-
-        const THREADS = 6;
-        const TEST_DURATION_MS = 5000;
-        const CHUNK_SIZE = 2 * 1024 * 1024;
-        const dummyPayload = new Uint8Array(CHUNK_SIZE);
-
-        const uploadEndpoints = [
-            "https://httpbin.org/post",
-            "https://postman-echo.com/post",
-            "https://reqres.in/api/users"
-        ];
-
-        let totalBytesUploaded = 0;
-        let active = true;
-        const startTime = performance.now();
-
-        const uiInterval = setInterval(() => {
-            const elapsedSec = (performance.now() - startTime) / 1000;
-            if (elapsedSec > 0.2 && totalBytesUploaded > 0) {
-                upEl.textContent = ((totalBytesUploaded * 8) / elapsedSec / (1024 * 1024)).toFixed(1);
-                progressBar.style.width = Math.min(50 + (elapsedSec / 5) * 50, 100) + "%";
-            }
-        }, 200);
-
-        setTimeout(() => { active = false; }, TEST_DURATION_MS);
-
-        const worker = async (threadId) => {
-            let i = threadId;
-            while (active) {
-                const url = uploadEndpoints[i % uploadEndpoints.length] + "?r=" + Math.random();
-                i++;
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), TEST_DURATION_MS);
-                    await fetch(url, { method: "POST", mode: "no-cors", body: dummyPayload, signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    if (active) totalBytesUploaded += CHUNK_SIZE;
-                } catch (e) { if (!active) break; }
-            }
-        };
-
-        await Promise.all(Array.from({ length: THREADS }, (_, idx) => worker(idx)));
-        clearInterval(uiInterval);
-
-        const finalElapsedSec = Math.max((performance.now() - startTime) / 1000, 0.1);
-        uploadMbps = ((totalBytesUploaded * 8) / finalElapsedSec / (1024 * 1024)).toFixed(1);
-        upEl.textContent = uploadMbps;
-        progressBar.style.width = "100%";
-    }
-
-    async function iniciarTeste() {
-        const startBtn = document.getElementById('startBtn');
-        const saveBtn = document.getElementById('saveBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const toastMsg = document.getElementById('toastMsg');
-
-        startBtn.disabled = true;
-        saveBtn.style.display = "none";
-        toastMsg.style.display = "none";
-        progressContainer.style.display = "block";
-        document.getElementById('downVal').textContent = "0.0";
-        document.getElementById('upVal').textContent = "0.0";
-
-        try {
-            await medirDownloadMultiThread();
-            await medirUploadMultiThread();
-
-            startBtn.textContent = "Refazer Teste";
-            startBtn.disabled = false;
-
-            if (localStorage.getItem(getStorageKey()) === "true") {
-                document.getElementById('statusText').textContent = "Teste concluído! Atualize a velocidade do pino no mapa.";
-                saveBtn.textContent = "Atualizar Velocidade no Mapa (0 pts extras)";
-                saveBtn.style.display = "block";
-            } else {
-                document.getElementById('statusText').textContent = "Teste concluído! Salve para ganhar seus créditos.";
-                saveBtn.textContent = "Salvar Resultado (+2 Créditos)";
-                saveBtn.style.display = "block";
-            }
-        } catch (err) {
-            document.getElementById('statusText').textContent = "Falha ao medir a conexão.";
-            startBtn.disabled = false;
-        }
-    }
-
-    async function enviarTesteParaPlanilha() {
-        const saveBtn = document.getElementById('saveBtn');
-        const toastMsg = document.getElementById('toastMsg');
-        const idWifi = document.getElementById('selectWifi').value;
-
-        saveBtn.disabled = true;
-        saveBtn.textContent = "Validando e Gravando...";
-
-        try {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "salvar_teste",
-                    id_wifi: idWifi,
-                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
-                    download_mbps: parseFloat(downloadMbps),
-                    upload_mbps: parseFloat(uploadMbps)
-                })
-            });
-
-            const result = await response.json();
-            localStorage.setItem(getStorageKey(), "true");
-            aoTrocarWifi();
-            toastMsg.style.display = "block";
-
-            const dNovo = Number((parseFloat(downloadMbps) || 0).toFixed(1));
-            const uNovo = Number((parseFloat(uploadMbps) || 0).toFixed(1));
-
-            let velMap = {};
-            try { velMap = JSON.parse(localStorage.getItem('clickcontrol_vel_overrides') || "{}"); } catch (e) {}
-            velMap[idWifi] = { down: dNovo, up: uNovo };
-            localStorage.setItem('clickcontrol_vel_overrides', JSON.stringify(velMap));
-
-            const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
-            if (pontoLocal) {
-                pontoLocal.down_mbps = dNovo;
-                pontoLocal.up_mbps = uNovo;
-                pontoLocal.med_down = dNovo;
-                pontoLocal.med_up = uNovo;
-            }
-
-            if (result.status === "duplicate") {
-                toastMsg.className = "toast";
-                toastMsg.textContent = "✅ Velocidade atualizada no pino e na nuvem (crédito de 1ª avaliação já resgatado).";
-            } else {
-                toastMsg.className = "toast";
-                toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
-            }
-
-            try { await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true); } catch (e) {}
-            try { await carregarListaWifis(); } catch (e) {}
-
-            const pontoPosSync = listaWifisCache.find(w => w.id === idWifi);
-            if (pontoPosSync && (!parseFloat(pontoPosSync.down_mbps) && !parseFloat(pontoPosSync.med_down))) {
-                pontoPosSync.down_mbps = dNovo;
-                pontoPosSync.up_mbps = uNovo;
-                pontoPosSync.med_down = dNovo;
-                pontoPosSync.med_up = uNovo;
-            }
-
-            try { renderizarAlfinetesNoMapa(true); } catch (e) {}
-            try { atualizarCardQrDoMapa(idWifi); } catch (e) {}
-            try { carregarPerfilUsuario(); } catch (e) {}
-        } catch (error) {
-            saveBtn.disabled = false;
-            saveBtn.textContent = "Tentar Salvar Novamente";
-            toastMsg.style.display = "block";
-            toastMsg.className = "toast error";
-            toastMsg.textContent = "⚠️ Falha ao comunicar com o servidor: " + (error && error.message ? error.message : "verifique a implantação do Apps Script.");
-        }
-    }
-
-    // =========================================================================
-    // RECUPERAÇÃO DE SENHA
-    // =========================================================================
-    function alternarRecuperacaoSenha(mostrar) {
-        const box = document.getElementById('boxRecuperarSenha');
-        const toast = document.getElementById('loginToast');
-        toast.style.display = "none";
-        if (mostrar) {
-            box.classList.remove('hidden');
-            const emailAtual = document.getElementById('authEmail').value.trim();
-            if (emailAtual) document.getElementById('recEmail').value = emailAtual;
-        } else {
-            box.classList.add('hidden');
-        }
-    }
-
-    async function solicitarCodigoRecuperacao() {
-        const email = document.getElementById('recEmail').value.trim().toLowerCase();
-        const toast = document.getElementById('loginToast');
-        const btn = document.getElementById('btnEnviarCodigoRec');
-
-        if (!email || !email.includes('@')) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Digite um e-mail válido para recuperação.";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Enviando código...";
-
-        try {
-            const resp = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "solicitar_recuperacao_senha",
-                    id_usuario: email
-                })
-            });
-            const data = await resp.json();
-            toast.style.display = "block";
-            if (data.status === "ok") {
-                toast.className = "toast";
-                toast.textContent = "📩 Código enviado para o seu e-mail! Verifique sua caixa de entrada ou spam.";
-                document.getElementById('recStepCodigo').classList.remove('hidden');
-            } else {
-                toast.className = "toast error";
-                toast.textContent = data.message || "E-mail não encontrado na base de usuários.";
-            }
-        } catch (e) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Erro ao enviar código.";
-        }
-
-        btn.disabled = false;
-        btn.textContent = "📩 Enviar Código por E-mail";
-    }
-
-    async function confirmarNovaSenhaRecuperacao() {
-        const email = document.getElementById('recEmail').value.trim().toLowerCase();
-        const codigo = document.getElementById('recCodigo').value.trim();
-        const novaSenha = document.getElementById('recNovaSenha').value.trim();
-        const toast = document.getElementById('loginToast');
-        const btn = document.getElementById('btnConfirmarNovaSenha');
-
-        if (!codigo || !novaSenha || novaSenha.length < 4) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Informe o código recebido e uma nova senha (mínimo 4 caracteres).";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.textContent = "Salvando nova senha...";
-
-        try {
-            const resp = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "redefinir_senha_codigo",
-                    id_usuario: email,
-                    codigo: codigo,
-                    nova_senha: novaSenha
-                })
-            });
-            const data = await resp.json();
-            toast.style.display = "block";
-            if (data.status === "ok") {
-                toast.className = "toast";
-                toast.textContent = "✅ Senha redefinida com sucesso! Já pode entrar abaixo.";
-                document.getElementById('authEmail').value = email;
-                document.getElementById('authSenha').value = novaSenha;
-                document.getElementById('boxRecuperarSenha').classList.add('hidden');
-            } else {
-                toast.className = "toast error";
-                toast.textContent = data.message || "Código inválido ou expirado.";
-            }
-        } catch (e) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Erro de comunicação ao redefinir senha.";
-        }
-
-        btn.disabled = false;
-        btn.textContent = "✅ Salvar Nova Senha";
-    }
-
-    // =========================================================================
-    // ADMINISTRAÇÃO DE PONTOS E USUÁRIOS
-    // =========================================================================
-    function atualizarListaAdminWifis() {
-        const sel = document.getElementById('adminSelectWifi');
-        if (!sel) return;
-        const atual = sel.value;
-        sel.innerHTML = "";
-        listaWifisCache.forEach(w => {
-            const opt = document.createElement('option');
-            opt.value = w.id;
-            opt.textContent = `${w.local} (${w.cidade || ''})`;
-            sel.appendChild(opt);
-        });
-        if (atual && listaWifisCache.some(x => x.id === atual)) {
-            sel.value = atual;
-        }
-        carregarDadosAdminWifi();
-    }
-
-    function carregarDadosAdminWifi() {
-        const id = document.getElementById('adminSelectWifi').value;
-        const w = listaWifisCache.find(x => x.id === id);
-        if (!w) return;
-        document.getElementById('adminEditLocal').value = w.local || "";
-        document.getElementById('adminEditSsid').value = w.ssid || "";
-        document.getElementById('adminEditSenha').value = w.senha || "";
-        const c = obterCoordenadasCentroideWifi(w);
-        document.getElementById('adminEditCoords').value = c ? `${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}` : (w.lat_long || "");
-    }
-
-    function adminUsarMeuGpsAtual() {
-        if (userLatAtual !== null && userLngAtual !== null) {
-            document.getElementById('adminEditCoords').value = `${userLatAtual.toFixed(6)}, ${userLngAtual.toFixed(6)}`;
-        } else {
-            alert("Aguardando leitura do GPS. Abra a aba Mapa e toque em 📍 Perto primeiro.");
-        }
-    }
-
-    async function salvarEdicaoAdminWifi() {
-        const id = document.getElementById('adminSelectWifi').value;
-        const local = document.getElementById('adminEditLocal').value.trim();
-        const ssid = document.getElementById('adminEditSsid').value.trim();
-        const senha = document.getElementById('adminEditSenha').value.trim();
-        const coords = document.getElementById('adminEditCoords').value.trim();
-        const toast = document.getElementById('adminToast');
-
-        const w = listaWifisCache.find(x => x.id === id);
-        if (w) {
-            w.local = local;
-            w.ssid = ssid;
-            w.senha = senha;
-            w.lat_long = coords;
-            localStorage.removeItem(`clickcontrol_samples_${id}`);
-        }
-
-        renderizarAlfinetesNoMapa(true);
-        atualizarCardQrDoMapa(id);
-
-        try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_editar_wifi",
-                    admin_email: usuarioLogado ? usuarioLogado.email : "",
-                    id_wifi: id,
-                    nome_local: local,
-                    ssid_rede: ssid,
-                    senha: senha,
-                    lat_long: coords
-                })
-            });
-            toast.style.display = "block";
-            toast.className = "toast";
-            toast.textContent = `✅ Ponto atualizado com sucesso!`;
-        } catch (e) {
-            toast.style.display = "block";
-            toast.className = "toast warning";
-            toast.textContent = `⚠️ Atualizado localmente.`;
-        }
-    }
-
-    async function excluirPontoAdminWifi() {
-        const id = document.getElementById('adminSelectWifi').value;
-        const w = listaWifisCache.find(x => x.id === id);
-        if (!w) return;
-        if (!confirm(`Tem certeza que deseja excluir o ponto "${w.local}"?`)) return;
-
-        // Remove do array principal e salva imediatamente no localStorage para não voltar mais
-        listaWifisCache = listaWifisCache.filter(x => x.id !== id);
-        salvarPontosLocaisPersistentes();
-
-        // Adiciona à lista de excluídos locais para evitar que sincronizações da nuvem tragam de volta
-        let excluidos = [];
-        try { excluidos = JSON.parse(localStorage.getItem('clickcontrol_excluidos') || "[]"); } catch (e) {}
-        if (!excluidos.includes(id)) excluidos.push(id);
-        localStorage.setItem('clickcontrol_excluidos', JSON.stringify(excluidos));
-
-        localStorage.removeItem(`clickcontrol_samples_${id}`);
-        renderizarAlfinetesNoMapa();
-        atualizarListaAdminWifis();
-        atualizarSeletorCidadesOffline();
-
-        const toast = document.getElementById('adminToast');
-        try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_excluir_wifi",
-                    admin_email: usuarioLogado ? usuarioLogado.email : "",
-                    id_wifi: id
-                })
-            });
-            toast.style.display = "block";
-            toast.className = "toast";
-            toast.textContent = `🗑️ Ponto removido com sucesso.`;
-        } catch (e) {
-            toast.style.display = "block";
-            toast.className = "toast warning";
-            toast.textContent = `⚠️ Removido da visualização.`;
-        }
-    }
-
-    async function adminRedefinirSenhaUsuario() {
-        const emailAlvo = document.getElementById('adminResetUserEmail').value.trim().toLowerCase();
-        const novaSenha = document.getElementById('adminResetUserPass').value.trim();
-        const toast = document.getElementById('adminToast');
-
-        if (!emailAlvo || !novaSenha) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Informe o e-mail do usuário e a nova senha provisória.";
-            return;
-        }
-
-        try {
-            const resp = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_redefinir_senha",
-                    admin_email: usuarioLogado ? usuarioLogado.email : "",
-                    id_usuario: emailAlvo,
-                    nova_senha: novaSenha
-                })
-            });
-            const data = await resp.json();
-            toast.style.display = "block";
-            toast.className = data.status === "ok" ? "toast" : "toast error";
-            toast.textContent = data.status === "ok"
-                ? `✅ Senha de ${emailAlvo} alterada para "${novaSenha}".`
-                : (data.message || "Não foi possível alterar a senha.");
-        } catch (e) {
-            toast.style.display = "block";
-            toast.className = "toast error";
-            toast.textContent = "Erro de conexão ao redefinir senha pelo Admin.";
-        }
-    }
-
-    
-    let notaCadastro = 5;
-    function selecionarNotaCadastro(nota) {
-        notaCadastro = nota;
-        for (let i = 1; i <= 5; i++) {
-            const s = document.getElementById('cstar' + i);
-            if (s) {
-                if (i <= nota) s.style.filter = "none";
-                else s.style.filter = "grayscale(100%)";
-            }
-        }
-        const t = document.getElementById('cadNotaTexto');
-        if (t) t.textContent = nota.toFixed(1) + " estrelas";
-    }
-
-    function obterMediaEstrelas(ponto) {
-        let notasArr = [];
-        try {
-            notasArr = JSON.parse(localStorage.getItem(`clickcontrol_notas_${ponto.id}`) || "[]");
-        } catch(e) {}
-        
-        if (ponto.nota_inicial && !notasArr.includes(Number(ponto.nota_inicial))) {
-            notasArr.push(Number(ponto.nota_inicial));
-        }
-        if (Array.isArray(ponto.todas_notas)) {
-            notasArr = [...notasArr, ...ponto.todas_notas];
-        }
-        if (notasArr.length === 0) {
-            return { media: parseFloat(ponto.media_estrelas || ponto.nota || 4.8), total: 1 };
-        }
-        const soma = notasArr.reduce((a, b) => a + b, 0);
-        return { media: Number((soma / notasArr.length).toFixed(1)), total: notasArr.length };
-    }
-
-    async function avaliarWifiComEstrelas(idWifi, nota) {
-        const key = `clickcontrol_notas_${idWifi}`;
-        let notas = [];
-        try { notas = JSON.parse(localStorage.getItem(key) || "[]"); } catch(e) {}
-        notas.push(nota);
-        localStorage.setItem(key, JSON.stringify(notas));
-
-        const ponto = listaWifisCache.find(w => w.id === idWifi);
-        if (ponto) {
-            const resMed = obterMediaEstrelas(ponto);
-            ponto.media_estrelas = resMed.media;
-        }
-
-        renderizarAlfinetesNoMapa(true);
-        atualizarCardQrDoMapa(idWifi);
-
-        try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "avaliar_estrelas",
-                    id_wifi: idWifi,
-                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon",
-                    nota: nota
-                })
-            });
-        } catch(e) {}
-        alert(`⭐ Obrigado! Sua nota (${nota} estrelas) foi registrada.`);
-    }
-
-    verificarSessao();
-</script>
-
-</body>
-</html>
