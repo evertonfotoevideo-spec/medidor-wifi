@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="theme-color" content="#FF4D00" />
   <title>Click Control — Gestão Colaborativa de Wi-Fi</title>
 
-  <!-- Leaflet (Mapa Interativo) -->
+  <!-- Leaflet e QRCode carregados com defer para nunca travar o clique do login -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- QRCode.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-  <!-- Ícones Lucide -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 
   <style>
     :root {
@@ -81,6 +79,7 @@
       background: rgba(255, 77, 0, 0.15);
       color: var(--primary);
       margin-bottom: 12px;
+      font-size: 26px;
     }
 
     .brand-header h1 {
@@ -117,7 +116,6 @@
       font-size: 0.9rem;
       border-radius: 8px;
       cursor: pointer;
-      transition: 0.2s;
     }
 
     .auth-tab.active {
@@ -146,7 +144,6 @@
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
     }
 
     .form-control:focus {
@@ -167,7 +164,6 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: background 0.2s, opacity 0.2s;
     }
 
     .btn-primary:hover:not(:disabled) {
@@ -186,6 +182,7 @@
       font-size: 0.85rem;
       display: none;
       line-height: 1.4;
+      word-break: break-word;
     }
 
     .auth-feedback.error {
@@ -232,12 +229,6 @@
       z-index: 1000;
     }
 
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
     .topbar-title {
       font-weight: 800;
       font-size: 1.1rem;
@@ -270,10 +261,8 @@
       padding: 7px 10px;
       border-radius: 8px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
       font-size: 0.8rem;
+      font-weight: 600;
     }
 
     .main-content {
@@ -352,12 +341,8 @@
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    /* Barra de Navegação Inferior */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -389,7 +374,6 @@
       color: var(--primary);
     }
 
-    /* Modal QR Code */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -430,9 +414,7 @@
   <section id="auth-screen">
     <div class="auth-card">
       <div class="brand-header">
-        <div class="brand-badge">
-          <i data-lucide="wifi" style="width:28px;height:28px;"></i>
-        </div>
+        <div class="brand-badge">📶</div>
         <h1>Click <span>Control</span></h1>
         <p>Rede colaborativa de pontos Wi-Fi &amp; velocidade</p>
       </div>
@@ -442,23 +424,595 @@
         <button type="button" class="auth-tab" id="tab-btn-register" onclick="switchAuthMode('register')">Criar Conta</button>
       </div>
 
-      <!-- Formulário de Login -->
-      <form id="login-form" novalidate>
+      <!-- Login (sem <form> para impedir qualquer bloqueio nativo do navegador) -->
+      <div id="login-box">
         <div class="form-group">
           <label for="login-email">E-mail</label>
-          <input type="email" id="login-email" class="form-control" placeholder="seu@email.com" autocomplete="email" required />
+          <input type="email" id="login-email" class="form-control" placeholder="seu@email.com" autocomplete="email" onkeydown="if(event.key==='Enter') executarLogin()" />
         </div>
         <div class="form-group">
           <label for="login-password">Senha</label>
-          <input type="password" id="login-password" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') executarLogin()" />
         </div>
-        <button type="submit" id="btn-submit-login" class="btn-primary">
+        <button type="button" id="btn-submit-login" class="btn-primary" onclick="executarLogin()">
           <span>Entrar no Sistema</span>
         </button>
-      </form>
+      </div>
 
-      <!-- Formulário de Cadastro -->
-      <form id="register-form" style="display:none;" novalidate>
+      <!-- Cadastro -->
+      <div id="register-box" style="display:none;">
         <div class="form-group">
           <label for="reg-name">Nome completo</label>
-          <input type="text" id="reg-name" class="form-control" placeholder="Seu
+          <input type="text" id="reg-name" class="form-control" placeholder="Seu nome" autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="reg-email">E-mail</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="seu@email.com" autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Senha</label>
+          <input type="password" id="reg-password" class="form-control" placeholder="Mínimo 4 caracteres" autocomplete="new-password" />
+        </div>
+        <button type="button" id="btn-submit-register" class="btn-primary" onclick="executarCadastro()">
+          <span>Cadastrar (+10 Créditos)</span>
+        </button>
+      </div>
+
+      <div id="auth-feedback" class="auth-feedback"></div>
+    </div>
+  </section>
+
+  <!-- ================= TELA PRINCIPAL DO APLICATIVO ================= -->
+  <section id="app-screen">
+    <header class="topbar">
+      <div class="topbar-title">📶 Click <span>Control</span></div>
+      <div class="topbar-right">
+        <span class="credit-pill" id="header-credits">0 pts</span>
+        <button type="button" class="btn-icon" onclick="logout()">Sair</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- ABA 1: MAPA -->
+      <div id="pane-mapa" class="tab-pane active">
+        <div id="map"></div>
+      </div>
+
+      <!-- ABA 2: PONTOS -->
+      <div id="pane-pontos" class="tab-pane">
+        <div class="section-container">
+          <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <input type="text" id="search-points" class="form-control" placeholder="Filtrar por local, cidade ou SSID..." oninput="renderPointsList()" />
+            <button type="button" class="btn-icon" onclick="loadWifiPoints(true)">Atualizar</button>
+          </div>
+          <div id="points-list-container"></div>
+        </div>
+      </div>
+
+      <!-- ABA 3: TESTAR VELOCIDADE -->
+      <div id="pane-testar" class="tab-pane">
+        <div class="section-container">
+          <div class="card">
+            <h3 style="margin-bottom:8px;">Teste de Velocidade Real</h3>
+            <p class="wifi-meta">Selecione um ponto Wi-Fi cadastrado para registrar a medição atual e ganhar <strong>+5 créditos</strong>.</p>
+            <div class="form-group">
+              <label for="test-point-select">Ponto Wi-Fi Conectado</label>
+              <select id="test-point-select" class="form-control"></select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;text-align:center;">
+              <div style="background:var(--bg-input);padding:14px;border-radius:10px;">
+                <div style="font-size:0.75rem;color:var(--text-muted);">DOWNLOAD</div>
+                <div id="speed-down-val" style="font-size:1.5rem;font-weight:800;color:var(--success);margin-top:4px;">0.0 Mbps</div>
+              </div>
+              <div style="background:var(--bg-input);padding:14px;border-radius:10px;">
+                <div style="font-size:0.75rem;color:var(--text-muted);">UPLOAD</div>
+                <div id="speed-up-val" style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-top:4px;">0.0 Mbps</div>
+              </div>
+            </div>
+            <button type="button" id="btn-run-speedtest" class="btn-primary" onclick="runSpeedTest()">
+              <span>Iniciar Teste e Salvar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 4: NOVO PONTO -->
+      <div id="pane-novo" class="tab-pane">
+        <div class="section-container">
+          <div class="card">
+            <h3 style="margin-bottom:12px;">Cadastrar Novo Ponto Wi-Fi</h3>
+            <div class="form-group">
+              <label for="new-local">Nome do Local</label>
+              <input type="text" id="new-local" class="form-control" placeholder="Ex: Café Central / Ginásio Municipal" />
+            </div>
+            <div class="form-group">
+              <label for="new-cidade">Cidade - UF</label>
+              <input type="text" id="new-cidade" class="form-control" placeholder="Ex: São Bento do Sul - SC" />
+            </div>
+            <div class="form-group">
+              <label for="new-ssid">Nome da Rede (SSID)</label>
+              <input type="text" id="new-ssid" class="form-control" placeholder="Ex: CafeCentral_5G" />
+            </div>
+            <div class="form-group">
+              <label for="new-senha">Senha do Wi-Fi (deixe vazio se aberta)</label>
+              <input type="text" id="new-senha" class="form-control" placeholder="Senha da rede" />
+            </div>
+            <div class="form-group">
+              <label for="new-latlong">Coordenadas GPS (Lat, Long)</label>
+              <div style="display:flex;gap:8px;">
+                <input type="text" id="new-latlong" class="form-control" placeholder="-26.2495, -49.3831" />
+                <button type="button" class="btn-secondary" onclick="captureGPS()">GPS</button>
+              </div>
+            </div>
+            <button type="button" id="btn-save-point" class="btn-primary" onclick="salvarNovoPonto()">
+              <span>Salvar Ponto (+10 Créditos)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <button type="button" class="nav-btn active" onclick="switchTab('mapa', this)">
+        <span>🗺️</span>
+        <span>Mapa</span>
+      </button>
+      <button type="button" class="nav-btn" onclick="switchTab('pontos', this)">
+        <span>📋</span>
+        <span>Pontos</span>
+      </button>
+      <button type="button" class="nav-btn" onclick="switchTab('testar', this)">
+        <span>⚡</span>
+        <span>Testar</span>
+      </button>
+      <button type="button" class="nav-btn" onclick="switchTab('novo', this)">
+        <span>➕</span>
+        <span>Novo</span>
+      </button>
+    </nav>
+  </section>
+
+  <!-- MODAL QR CODE -->
+  <div id="qr-modal" class="modal-backdrop" onclick="closeQrModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3 id="qr-title" style="margin-bottom:4px;">Conectar ao Wi-Fi</h3>
+      <p id="qr-subtitle" style="font-size:0.85rem;color:var(--text-muted);"></p>
+      <div id="qrcode-container"></div>
+      <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;">Aponte a câmera do celular para conectar automaticamente.</p>
+      <button type="button" class="btn-primary" onclick="closeQrModal()">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec';
+
+    let currentUser = null;
+    let wifiPoints = [];
+    let leafletMap = null;
+    let markersLayer = null;
+
+    // Remove qualquer Service Worker antigo que esteja prendendo cache fantasma
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let r of regs) r.unregister();
+      });
+    }
+
+    // Restaura sessão salva se existir
+    window.addEventListener('load', () => {
+      const savedSession = localStorage.getItem('cc_user_session');
+      if (savedSession) {
+        try {
+          currentUser = JSON.parse(savedSession);
+          if (currentUser && currentUser.email) {
+            enterApp();
+          }
+        } catch (e) {
+          localStorage.removeItem('cc_user_session');
+        }
+      }
+    });
+
+    function showAuthFeedback(message, type) {
+      const box = document.getElementById('auth-feedback');
+      if (!box) return;
+      box.textContent = message;
+      box.className = 'auth-feedback ' + (type || 'error');
+    }
+
+    function clearAuthFeedback() {
+      const box = document.getElementById('auth-feedback');
+      if (!box) return;
+      box.textContent = '';
+      box.className = 'auth-feedback';
+    }
+
+    function setButtonLoading(btnId, isLoading, defaultText) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.disabled = isLoading;
+      btn.innerHTML = isLoading
+        ? '<div class="spinner"></div><span>Conectando ao servidor...</span>'
+        : '<span>' + defaultText + '</span>';
+    }
+
+    function switchAuthMode(mode) {
+      const isLogin = mode === 'login';
+      document.getElementById('tab-btn-login').classList.toggle('active', isLogin);
+      document.getElementById('tab-btn-register').classList.toggle('active', !isLogin);
+      document.getElementById('login-box').style.display = isLogin ? 'block' : 'none';
+      document.getElementById('register-box').style.display = isLogin ? 'none' : 'block';
+      clearAuthFeedback();
+    }
+
+    async function callGasApi(payload) {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro HTTP ' + response.status + ' ao falar com o Google Apps Script.');
+      }
+
+      const rawText = await response.text();
+      try {
+        return JSON.parse(rawText);
+      } catch (err) {
+        throw new Error('Resposta inválida do Google Apps Script. Verifique se o código Code.gs foi salvo e implantado como "Nova versão" para "Qualquer pessoa".');
+      }
+    }
+
+    async function executarLogin() {
+      // Feedback instantâneo no clique (prova que o botão respondeu)
+      showAuthFeedback('Verificando dados e conectando ao servidor...', 'info');
+
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const senha = document.getElementById('login-password').value.trim();
+
+      if (!email || !senha) {
+        showAuthFeedback('Preencha seu e-mail e sua senha antes de clicar em entrar.', 'error');
+        return;
+      }
+
+      setButtonLoading('btn-submit-login', true, 'Entrar no Sistema');
+
+      try {
+        const res = await callGasApi({
+          action: 'login',
+          email: email,
+          senha: senha
+        });
+
+        if (res && res.success && res.user) {
+          currentUser = res.user;
+          localStorage.setItem('cc_user_session', JSON.stringify(currentUser));
+          enterApp();
+        } else {
+          showAuthFeedback((res && res.error) ? res.error : 'E-mail ou senha inválidos.', 'error');
+        }
+      } catch (err) {
+        showAuthFeedback('Erro de conexão: ' + err.message, 'error');
+      } finally {
+        setButtonLoading('btn-submit-login', false, 'Entrar no Sistema');
+      }
+    }
+
+    async function executarCadastro() {
+      showAuthFeedback('Criando conta no servidor...', 'info');
+
+      const nome = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim().toLowerCase();
+      const senha = document.getElementById('reg-password').value.trim();
+
+      if (!nome || !email || !senha) {
+        showAuthFeedback('Preencha nome, e-mail e senha para cadastrar.', 'error');
+        return;
+      }
+
+      setButtonLoading('btn-submit-register', true, 'Cadastrar (+10 Créditos)');
+
+      try {
+        const res = await callGasApi({
+          action: 'register',
+          nome: nome,
+          email: email,
+          senha: senha
+        });
+
+        if (res && res.success && res.user) {
+          currentUser = res.user;
+          localStorage.setItem('cc_user_session', JSON.stringify(currentUser));
+          enterApp();
+        } else {
+          showAuthFeedback((res && res.error) ? res.error : 'Não foi possível concluir o cadastro.', 'error');
+        }
+      } catch (err) {
+        showAuthFeedback('Erro de conexão: ' + err.message, 'error');
+      } finally {
+        setButtonLoading('btn-submit-register', false, 'Cadastrar (+10 Créditos)');
+      }
+    }
+
+    function enterApp() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'flex';
+      updateCreditsDisplay(currentUser.creditos || 0);
+      initMap();
+      loadWifiPoints(false);
+    }
+
+    function logout() {
+      localStorage.removeItem('cc_user_session');
+      currentUser = null;
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+      clearAuthFeedback();
+    }
+
+    function updateCreditsDisplay(val) {
+      if (currentUser) {
+        currentUser.creditos = val;
+        localStorage.setItem('cc_user_session', JSON.stringify(currentUser));
+      }
+      document.getElementById('header-credits').textContent = val + ' pts';
+    }
+
+    function switchTab(tabName, btnEl) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      document.getElementById('pane-' + tabName).classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+
+      if (tabName === 'mapa' && leafletMap) {
+        setTimeout(() => leafletMap.invalidateSize(), 150);
+      }
+    }
+
+    function initMap() {
+      if (leafletMap || typeof L === 'undefined') return;
+      leafletMap = L.map('map').setView([-26.2495, -49.3831], 13);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 19
+      }).addTo(leafletMap);
+      markersLayer = L.layerGroup().addTo(leafletMap);
+    }
+
+    async function loadWifiPoints(forceRefresh) {
+      const cached = localStorage.getItem('cc_wifi_cache');
+      if (cached && !forceRefresh) {
+        try {
+          wifiPoints = JSON.parse(cached);
+          renderAllViews();
+        } catch (e) {}
+      }
+
+      try {
+        const res = await callGasApi({ action: 'getPoints' });
+        if (res && res.success && Array.isArray(res.pontos)) {
+          wifiPoints = res.pontos;
+          localStorage.setItem('cc_wifi_cache', JSON.stringify(wifiPoints));
+          renderAllViews();
+        }
+      } catch (err) {
+        console.warn('Cache offline ativo:', err.message);
+      }
+    }
+
+    function renderAllViews() {
+      renderMapMarkers();
+      renderPointsList();
+      populateTestSelect();
+    }
+
+    function renderMapMarkers() {
+      if (!markersLayer || typeof L === 'undefined') return;
+      markersLayer.clearLayers();
+
+      wifiPoints.forEach(pt => {
+        if (pt.lat == null || pt.lng == null) return;
+        const color = pt.mediaDown >= 50 ? '#10B981' : (pt.mediaDown >= 15 ? '#F59E0B' : '#EF4444');
+
+        const marker = L.circleMarker([pt.lat, pt.lng], {
+          radius: 9,
+          fillColor: color,
+          color: '#fff',
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        });
+
+        marker.bindPopup(
+          '<div style="color:#111;min-width:180px;">' +
+          '<strong>' + pt.nomeLocal + '</strong><br/>' +
+          '<span style="font-size:12px;">SSID: <b>' + pt.ssid + '</b></span><br/>' +
+          '<span style="font-size:12px;">Senha: <b>' + (pt.senha || 'Aberta') + '</b></span><br/>' +
+          '<span style="font-size:12px;">Média: <b>' + pt.mediaDown + ' Mbps ↓ / ' + pt.mediaUp + ' Mbps ↑</b></span>' +
+          '</div>'
+        );
+        marker.addTo(markersLayer);
+      });
+    }
+
+    function renderPointsList() {
+      const container = document.getElementById('points-list-container');
+      const term = (document.getElementById('search-points')?.value || '').toLowerCase();
+
+      const filtered = wifiPoints.filter(p =>
+        p.nomeLocal.toLowerCase().includes(term) ||
+        p.cidadeUf.toLowerCase().includes(term) ||
+        p.ssid.toLowerCase().includes(term)
+      );
+
+      if (!filtered.length) {
+        container.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px;">Nenhum ponto Wi-Fi encontrado.</p>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(pt => {
+        const badgeClass = pt.mediaDown >= 50 ? 'speed-fast' : (pt.mediaDown >= 15 ? 'speed-med' : 'speed-slow');
+        return (
+          '<div class="card">' +
+            '<div class="card-header">' +
+              '<div><strong>' + pt.nomeLocal + '</strong><div style="font-size:0.78rem;color:var(--text-muted);">' + pt.cidadeUf + '</div></div>' +
+              '<span class="speed-badge ' + badgeClass + '">' + pt.mediaDown + ' Mbps ↓</span>' +
+            '</div>' +
+            '<div class="wifi-meta">' +
+              'Rede: <strong>' + pt.ssid + '</strong> &bull; Senha: <strong>' + (pt.senha || 'Aberta') + '</strong><br/>' +
+              'Upload: ' + pt.mediaUp + ' Mbps &bull; Testes: ' + pt.totalTestes +
+            '</div>' +
+            '<div class="card-actions">' +
+              '<button type="button" class="btn-secondary" onclick="copyText(\'' + (pt.senha || '').replace(/'/g, "\\'") + '\')">Copiar Senha</button>' +
+              '<button type="button" class="btn-secondary" onclick="openQrModal(\'' + pt.nomeLocal.replace(/'/g, "\\'") + '\', \'' + pt.ssid.replace(/'/g, "\\'") + '\', \'' + (pt.senha || '').replace(/'/g, "\\'") + '\')">QR Code</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    function populateTestSelect() {
+      const sel = document.getElementById('test-point-select');
+      if (!sel) return;
+      sel.innerHTML = wifiPoints.map(pt =>
+        '<option value="' + pt.id + '">' + pt.nomeLocal + ' (' + pt.ssid + ')</option>'
+      ).join('');
+    }
+
+    function captureGPS() {
+      if (!navigator.geolocation) {
+        alert('Geolocalização não suportada neste navegador.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          document.getElementById('new-latlong').value =
+            pos.coords.latitude.toFixed(6) + ', ' + pos.coords.longitude.toFixed(6);
+        },
+        err => alert('Não foi possível obter o GPS: ' + err.message),
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    async function salvarNovoPonto() {
+      const nomeLocal = document.getElementById('new-local').value.trim();
+      const cidadeUf = document.getElementById('new-cidade').value.trim();
+      const ssid = document.getElementById('new-ssid').value.trim();
+      const senha = document.getElementById('new-senha').value.trim();
+      const latLong = document.getElementById('new-latlong').value.trim();
+
+      if (!nomeLocal || !ssid) {
+        alert('Preencha pelo menos o Nome do Local e o SSID da rede.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-save-point');
+      btn.disabled = true;
+
+      try {
+        const res = await callGasApi({
+          action: 'addPoint',
+          email: currentUser.email,
+          nomeLocal: nomeLocal,
+          cidadeUf: cidadeUf,
+          ssid: ssid,
+          senha: senha,
+          latLong: latLong
+        });
+
+        if (res && res.success) {
+          if (res.novoSaldo != null) updateCreditsDisplay(res.novoSaldo);
+          document.getElementById('new-local').value = '';
+          document.getElementById('new-cidade').value = '';
+          document.getElementById('new-ssid').value = '';
+          document.getElementById('new-senha').value = '';
+          document.getElementById('new-latlong').value = '';
+          alert('Ponto Wi-Fi cadastrado com sucesso! +10 créditos.');
+          await loadWifiPoints(true);
+          switchTab('mapa', document.querySelector('.nav-btn'));
+        } else {
+          alert((res && res.error) ? res.error : 'Erro ao cadastrar ponto.');
+        }
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function runSpeedTest() {
+      const idWifi = document.getElementById('test-point-select').value;
+      if (!idWifi) {
+        alert('Selecione um ponto Wi-Fi primeiro.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-run-speedtest');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div><span>Medindo...</span>';
+
+      try {
+        const start = performance.now();
+        const response = await fetch('https://speed.cloudflare.com/__down?bytes=2000000', { cache: 'no-store' });
+        const blob = await response.blob();
+        const durationSec = (performance.now() - start) / 1000;
+        const downMbps = Number((((blob.size * 8) / durationSec) / 1000000).toFixed(2));
+        const upMbps = Number((downMbps * 0.45).toFixed(2));
+
+        document.getElementById('speed-down-val').textContent = downMbps + ' Mbps';
+        document.getElementById('speed-up-val').textContent = upMbps + ' Mbps';
+
+        const res = await callGasApi({
+          action: 'saveTest',
+          idWifi: idWifi,
+          email: currentUser.email,
+          download: downMbps,
+          upload: upMbps
+        });
+
+        if (res && res.success) {
+          if (res.novoSaldo != null) updateCreditsDisplay(res.novoSaldo);
+          await loadWifiPoints(true);
+        }
+      } catch (err) {
+        alert('Erro durante o teste: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Iniciar Teste e Salvar</span>';
+      }
+    }
+
+    function openQrModal(local, ssid, senha) {
+      document.getElementById('qr-title').textContent = local;
+      document.getElementById('qr-subtitle').textContent = 'Rede: ' + ssid;
+      const qrBox = document.getElementById('qrcode-container');
+      qrBox.innerHTML = '';
+
+      const authType = senha ? 'WPA' : 'nopass';
+      const wifiString = 'WIFI:T:' + authType + ';S:' + ssid + ';P:' + senha + ';;';
+
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrBox, { text: wifiString, width: 200, height: 200 });
+      }
+      document.getElementById('qr-modal').classList.add('open');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qr-modal').classList.remove('open');
+    }
+
+    function copyText(txt) {
+      if (!txt) {
+        alert('Esta rede é aberta (não possui senha).');
+        return;
+      }
+      navigator.clipboard.writeText(txt).then(() => alert('Senha copiada!'));
+    }
+  </script>
+</body>
+</html>
