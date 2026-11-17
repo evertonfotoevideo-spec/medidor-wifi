@@ -2873,7 +2873,20 @@
         const manterId = document.getElementById('selectWifiMapa').value;
         preencherSelectsComLista(listaFiltrada, manterId);
 
-        const pontosComCoords = listaFiltrada.filter(w => w.coords);
+        // Garante que mesmo pontos sem coordenadas precisas ganhem um fallback geográfico para nunca sumirem do mapa
+        const pontosComCoords = listaFiltrada.map(w => {
+            if (!w.coords) {
+                const cStr = extrairCoordenadas(w.lat_long || w.endereco);
+                if (cStr) {
+                    w.coords = { lat: cStr.lat, lng: cStr.lng, totalAmostras: 1, raioMedio: 25 };
+                } else if (userLatAtual !== null && userLngAtual !== null) {
+                    // Ponto de fallback próximo ao usuário se não tiver nenhuma coordenada
+                    w.coords = { lat: userLatAtual + (Math.random() - 0.5) * 0.01, lng: userLngAtual + (Math.random() - 0.5) * 0.01, totalAmostras: 1, raioMedio: 50 };
+                }
+            }
+            return w;
+        }).filter(w => w.coords);
+
         const pontosVisiveisNoZoom = aplicarFiltroZoomOut(pontosComCoords);
 
         pontosVisiveisNoZoom.forEach(w => {
