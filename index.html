@@ -1144,9 +1144,10 @@
             <div class="quick-box">
                 <h4>⚡ Cadastro Expresso (Zero Digitação)</h4>
                 <p>Puxe o endereço + nome do lugar pelo GPS ou leia a foto do QR Code da parede:</p>
-                <div class="quick-actions">
-                    <button type="button" class="btn-quick" id="gpsBtn" onclick="pegarEnderecoPorGPS()">📍 Auto-Preencher Local</button>
-                    <button type="button" class="btn-quick alt" onclick="document.getElementById('inputLerQrFoto').click()">📷 Ler QR Code Wi-Fi</button>
+                <div class="quick-actions" style="grid-template-columns: 2fr 1.2fr 1fr; gap:6px;">
+                    <button type="button" class="btn-quick" id="gpsBtn" onclick="pegarEnderecoPorGPS()">📍 Auto-Preencher</button>
+                    <button type="button" class="btn-quick" id="pararGpsBtn" style="background:#ef4444; color:#fff;" onclick="pararAutoPreencherGps()">⏹️ Parar</button>
+                    <button type="button" class="btn-quick alt" onclick="document.getElementById('inputLerQrFoto').click()">📷 Ler QR</button>
                 </div>
                 <input type="file" id="inputLerQrFoto" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
                 <div class="helper-text" id="gpsStatus" style="margin-top:6px;">Toque em "Auto-Preencher Local" para detectar comércio, rua e cidade.</div>
@@ -2480,6 +2481,36 @@
     let cadPinMap = null;
     let cadPinMarker = null;
 
+    let globalWatchIdGps = null;
+    let globalTimerGps = null;
+    let globalFinalizadorGps = null;
+
+    function pararAutoPreencherGps() {
+        if (globalWatchIdGps !== null) {
+            navigator.geolocation.clearWatch(globalWatchIdGps);
+            globalWatchIdGps = null;
+        }
+        if (globalTimerGps !== null) {
+            clearTimeout(globalTimerGps);
+            globalTimerGps = null;
+        }
+        if (globalFinalizadorGps) {
+            globalFinalizadorGps(null, "Busca de GPS cancelada pelo usuário.");
+            globalFinalizadorGps = null;
+        }
+        const gpsBtn = document.getElementById('gpsBtn');
+        const gpsStatus = document.getElementById('gpsStatus');
+        if (gpsBtn) {
+            gpsBtn.disabled = false;
+            gpsBtn.textContent = "📍 Auto-Preencher";
+        }
+        if (gpsStatus) {
+            gpsStatus.textContent = "⏹️ Busca de GPS interrompida.";
+            gpsStatus.style.color = "#b91c1c";
+            gpsStatus.style.fontWeight = "700";
+        }
+    }
+
     function obterPosicaoAltaPrecisao(onProgress, onFinal, timeoutMs = 12000, alvoRaioMetros = 10) {
         if (!navigator.geolocation) {
             if (onFinal) onFinal(null, "GPS não suportado neste navegador.");
@@ -2488,14 +2519,20 @@
 
         let melhorPos = null;
         let finalizado = false;
-        let watchId = null;
+        globalFinalizadorGps = onFinal;
 
         const concluir = (pos, erroMsg = null) => {
             if (finalizado) return;
             finalizado = true;
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
+            if (globalWatchIdGps !== null) {
+                navigator.geolocation.clearWatch(globalWatchIdGps);
+                globalWatchIdGps = null;
             }
+            if (globalTimerGps !== null) {
+                clearTimeout(globalTimerGps);
+                globalTimerGps = null;
+            }
+            globalFinalizadorGps = null;
             if (onFinal) onFinal(pos, erroMsg);
         };
 
@@ -2512,12 +2549,12 @@
             );
         };
 
-        const timer = setTimeout(() => {
+        globalTimerGps = setTimeout(() => {
             if (melhorPos) concluir(melhorPos, null);
             else tentarFallbackBaixaPrecisao();
         }, timeoutMs);
 
-        watchId = navigator.geolocation.watchPosition(
+        globalWatchIdGps = navigator.geolocation.watchPosition(
             (pos) => {
                 const acc = pos.coords.accuracy || 999;
                 if (!melhorPos || acc < (melhorPos.coords.accuracy || 999)) {
@@ -3256,7 +3293,15 @@
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&t=${Date.now()}`, { cache: "no-store" });
             const data = await res.json();
             if (data.wifis && data.wifis.length > 0) {
-                const filtrados = data.wifis.filter(w => String(w.id || "").trim().toUpperCase() !== "WFI-001");
+                let excluidos = [];
+                try { excluidos = JSON.parse(localStorage.getItem('clickcontrol_excluidos') || "[]"); } catch (e) {}
+                
+                const filtrados = data.wifis.filter(w => {
+                    const wid = String(w.id || "").trim();
+                    if (wid.toUpperCase() === "WFI-001") return false;
+                    if (excluidos.includes(wid)) return false;
+                    return true;
+                });
                 const idsNuvem = new Set(filtrados.map(w => w.id));
                 const pendentesLocais = locaisSalvos.filter(w => w.id && !idsNuvem.has(w.id));
                 listaWifisCache = mesclarVelocidadesLocais([...pendentesLocais, ...filtrados]);
@@ -4007,10 +4052,20 @@
         if (!w) return;
         if (!confirm(`Tem certeza que deseja excluir o ponto "${w.local}"?`)) return;
 
+        // Remove do array principal e salva imediatamente no localStorage para não voltar mais
         listaWifisCache = listaWifisCache.filter(x => x.id !== id);
+        salvarPontosLocaisPersistentes();
+
+        // Adiciona à lista de excluídos locais para evitar que sincronizações da nuvem tragam de volta
+        let excluidos = [];
+        try { excluidos = JSON.parse(localStorage.getItem('clickcontrol_excluidos') || "[]"); } catch (e) {}
+        if (!excluidos.includes(id)) excluidos.push(id);
+        localStorage.setItem('clickcontrol_excluidos', JSON.stringify(excluidos));
+
         localStorage.removeItem(`clickcontrol_samples_${id}`);
         renderizarAlfinetesNoMapa();
         atualizarListaAdminWifis();
+        atualizarSeletorCidadesOffline();
 
         const toast = document.getElementById('adminToast');
         try {
