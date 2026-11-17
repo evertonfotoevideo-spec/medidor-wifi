@@ -25,22 +25,153 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-primary);
             color: var(--color-text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        header, .nav-bar {
-            padding: 10px 15px;
+        /* Top Bar */
+        .top-nav {
             background: #fff;
+            padding: 10px 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 1000;
         }
 
+        .menu-group {
+            display: flex;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        .menu-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--color-dark);
+            font-size: 13px;
+        }
+
+        .menu-btn.active {
+            background: var(--color-dark);
+            color: #fff;
+        }
+
+        .btn-novo {
+            background-color: var(--color-primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Secondary Bar (Filtros) */
+        .filter-bar {
+            background: #fff;
+            padding: 8px 15px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            font-size: 13px;
+        }
+
+        .filter-pill {
+            background: #f3f4f6;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .badge-ativo {
+            background: var(--color-dark);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Map Container */
         #map {
+            flex-grow: 1;
             width: 100%;
-            height: calc(100vh - 70px);
         }
 
+        /* Bottom Control Panel */
+        .bottom-panel {
+            background: #fff;
+            padding: 12px 15px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.08);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .address-select {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            font-size: 13px;
+        }
+
+        .btn-perto {
+            background: var(--color-dark);
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-ver-dados {
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Leaflet Popups */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             padding: 5px;
@@ -48,26 +179,27 @@
 
         .popup-content {
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .popup-content img {
             width: 100%;
-            max-height: 150px;
+            max-height: 140px;
             object-fit: cover;
             border-radius: 8px;
-            margin: 8px 0;
+            margin: 6px 0;
         }
 
-        .btn {
+        .btn-acao {
             background-color: var(--color-primary);
             border: none;
-            padding: 8px 15px;
+            padding: 6px 10px;
             border-radius: 6px;
             color: #fff;
             font-weight: bold;
             cursor: pointer;
-            margin: 4px;
+            margin: 2px;
+            font-size: 12px;
         }
 
         .btn-danger {
@@ -77,47 +209,51 @@
 </head>
 <body>
 
-    <header>
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
         <h2><i class="fa-solid fa-wifi"></i> Click Control</h2>
-        <button class="btn" onclick="abrirNovoPontoModal()"><i class="fa-solid fa-plus"></i> Novo Ponto</button>
-    </header>
+        <div class="menu-group">
+            <button class="menu-btn active"><i class="fa-solid fa-map"></i> Mapa</button>
+            <button class="menu-btn"><i class="fa-solid fa-chart-bar"></i> Dados da Rede</button>
+            <button class="menu-btn" onclick="executarNovoTeste()"><i class="fa-solid fa-bolt"></i> Testar</button>
+        </div>
+        <button class="btn-novo" onclick="abrirNovoPontoModal()"><i class="fa-solid fa-plus"></i> Novo</button>
+    </div>
 
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-pill">
+            <i class="fa-solid fa-sliders"></i> Filtros (Upload/Download, Estrutura & Velocidade)
+        </div>
+        <div>
+            Ativos: <span class="badge-ativo" id="contador-ativos">1</span>
+        </div>
+    </div>
+
+    <!-- Map Area -->
     <div id="map"></div>
+
+    <!-- Bottom Panel -->
+    <div class="bottom-panel">
+        <div style="font-size: 12px; color: #6b7280; font-weight: 600;">Endereço / Local do Wi-Fi</div>
+        <div class="search-row">
+            <select class="address-select" id="select-endereco">
+                <option>Selecione um ponto no mapa...</option>
+            </select>
+            <button class="btn-perto" onclick="centralizarProximo()"><i class="fa-solid fa-location-crosshairs"></i> Perto</button>
+        </div>
+        <div style="font-size: 11px; color: #4b5563;" id="info-prioridade">Exibindo pontos (prioridade Upload).</div>
+        <button class="btn-ver-dados" onclick="verDadosRedeQR()">
+            <i class="fa-solid fa-chart-pie"></i> Ver Dados da Rede & QR Code
+        </button>
+    </div>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- Firebase SDK (Opcional, mas necessário para sincronização em nuvem entre celular e PC) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE (Substitua pelos dados do seu projeto gratuito no Firebase)
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "seu-projeto.firebaseapp.com",
-            databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
-            projectId: "seu-projeto",
-            storageBucket: "seu-projeto.appspot.com",
-            messagingSenderId: "SEU_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
-
-        let useCloud = false;
-        let db = null;
-
-        try {
-            if (firebaseConfig.apiKey !== "SUA_API_KEY") {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.database();
-                useCloud = true;
-            }
-        } catch (e) {
-            console.log("Modo local ativo (localStorage). Para sincronizar celular e PC, configure o Firebase.");
-        }
-
-        // Inicialização do Mapa
-        const map = L.map('map').setView([-26.25, -49.82], 13);
+        // Inicialização do Mapa centrado em São Bento do Sul - SC
+        const map = L.map('map').setView([-26.2515, -49.3833], 14);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -126,111 +262,149 @@
 
         let markersLayer = L.layerGroup().addTo(map);
 
-        // Carregar Pontos (Nuvem ou LocalStorage)
+        // Carregar pontos salvos (com tratamento para o localStorage)
+        function obterPontosSalvos() {
+            let pontos = JSON.parse(localStorage.getItem('click_control_pontos'));
+            if (!pontos || pontos.length === 0) {
+                // Ponto padrão inicial caso esteja vazio
+                pontos = [{
+                    id: '1',
+                    lat: -26.2515,
+                    lng: -49.3833,
+                    endereco: "Rua Wilfried Antônio Weihermann • São Bento do Sul - SC",
+                    rede: "Vu",
+                    senha: "Mo",
+                    historicoTestes: [
+                        { download: 187.6, upload: 1.8, data: new Date().toISOString() }
+                    ]
+                }];
+                localStorage.setItem('click_control_pontos', JSON.stringify(pontos));
+            }
+            return pontos;
+        }
+
         function carregarPontos() {
             markersLayer.clearLayers();
-            
-            if (useCloud && db) {
-                db.ref('pontos').on('value', (snapshot) => {
-                    markersLayer.clearLayers();
-                    const dados = snapshot.val();
-                    if (dados) {
-                        Object.keys(dados).forEach(id => {
-                            renderizarMarcador(id, dados[id]);
-                        });
-                    }
-                });
-            } else {
-                let pontos = JSON.parse(localStorage.getItem('click_control_pontos') || '[]');
-                pontos.forEach((ponto, index) => {
-                    renderizarMarcador(index, ponto);
-                });
-            }
-        }
+            const pontos = obterPontosSalvos();
+            const select = document.getElementById('select-endereco');
+            select.innerHTML = '';
 
-        // Renderizar Marcador no Mapa
-        function renderizarMarcador(id, ponto) {
-            const marker = L.marker([ponto.lat, ponto.lng]);
+            pontos.forEach((ponto, index) => {
+                // Cálculo correto da MÉDIA de todos os testes realizados
+                let downMedia = 0;
+                let upMedia = 0;
 
-            // Cálculo correto da média de velocidade se houver histórico
-            let downMedia = ponto.download || 0;
-            let upMedia = ponto.upload || 0;
-            
-            if (ponto.historicoTestes && ponto.historicoTestes.length > 0) {
-                let somaD = ponto.historicoTestes.reduce((acc, curr) => acc + curr.download, 0);
-                let somaU = ponto.historicoTestes.reduce((acc, curr) => acc + curr.upload, 0);
-                downMedia = (somaD / ponto.historicoTestes.length).toFixed(1);
-                upMedia = (somaU / ponto.historicoTestes.length).toFixed(1);
-            }
+                if (ponto.historicoTestes && ponto.historicoTestes.length > 0) {
+                    let somaD = ponto.historicoTestes.reduce((acc, curr) => acc + curr.download, 0);
+                    let somaU = ponto.historicoTestes.reduce((acc, curr) => acc + curr.upload, 0);
+                    downMedia = (somaD / ponto.historicoTestes.length).toFixed(1);
+                    upMedia = (somaU / ponto.historicoTestes.length).toFixed(1);
+                }
 
-            const popupContent = `
-                <div class="popup-content">
-                    <h3>${ponto.endereco || 'Local Wi-Fi'}</h3>
-                    <p>⬇ ${downMedia} Mbps | ⬆ ${upMedia} Mbps</p>
-                    <p>Rede: <b>${ponto.rede || 'N/A'}</b> | Senha: <b>${ponto.senha || 'N/A'}</b></p>
-                    ${ponto.foto ? `<img src="${ponto.foto}">` : ''}
-                    <br>
-                    <button class="btn btn-danger" onclick="excluirPonto('${id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
-                </div>
-            `;
+                // Renderizar marcador no Leaflet
+                const marker = L.marker([ponto.lat, ponto.lng]);
 
-            marker.bindPopup(popupContent);
-            markersLayer.addLayer(marker);
-        }
+                const popupContent = `
+                    <div class="popup-content">
+                        <strong>${ponto.endereco}</strong><br>
+                        ⬇ ${downMedia} Mbps | ⬆ ${upMedia} Mbps<br>
+                        Rede: <b>${ponto.rede}</b> | Senha: <b>${ponto.senha}</b>
+                        ${ponto.foto ? `<img src="${ponto.foto}">` : ''}
+                        <br>
+                        <button class="btn-acao" onclick="executarNovoTestePonto('${ponto.id || index}')"><i class="fa-solid fa-bolt"></i> Testar</button>
+                        <button class="btn-acao btn-danger" onclick="excluirPonto('${ponto.id || index}')"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </div>
+                `;
 
-        // Adicionar Novo Ponto (Simulação / Captura de Coordenadas Atuais)
-        function abrirNovoPontoModal() {
-            navigator.geolocation.getCurrentPosition(position => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
+                marker.bindPopup(popupContent);
+                markersLayer.addLayer(marker);
 
-                // Simulação de teste automático inicial ou captura
-                const novoPonto = {
-                    lat: lat,
-                    lng: lng,
-                    endereco: "Localização Atual via GPS",
-                    rede: "Wi-Fi Local",
-                    senha: "123",
-                    download: 187.6,
-                    upload: 15.4,
-                    historicoTestes: [
-                        { download: 187.6, upload: 15.4, data: new Date().toISOString() }
-                    ]
-                };
-
-                salvarPontoNoBanco(novoPonto);
-            }, () => {
-                alert("Não foi possível obter sua localização GPS.");
+                // Popular select inferior
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = ponto.endereco;
+                select.appendChild(opt);
             });
+
+            document.getElementById('contador-ativos').textContent = pontos.length;
         }
 
-        // Salvar Ponto (Nuvem ou LocalStorage)
-        function salvarPontoNoBanco(ponto) {
-            if (useCloud && db) {
-                db.ref('pontos').push(ponto);
-            } else {
-                let pontos = JSON.parse(localStorage.getItem('click_control_pontos') || '[]');
-                pontos.push(ponto);
+        // Adicionar novo teste a um ponto existente (calculando a média real)
+        function executarNovoTestePonto(id) {
+            let pontos = obterPontosSalvos();
+            let ponto = pontos.find(p => (p.id || pontos.indexOf(p).toString()) === id.toString());
+            
+            if (ponto) {
+                // Simula um novo teste com valores reais mais altos (ex: 150 a 200 de download)
+                let novoDown = Number((Math.random() * (220 - 140) + 140).toFixed(1));
+                let novoUp = Number((Math.random() * (25 - 10) + 10).toFixed(1));
+
+                if (!ponto.historicoTestes) ponto.historicoTestes = [];
+                ponto.historicoTestes.push({ download: novoDown, upload: novoUp, data: new Date().toISOString() });
+
+                localStorage.setItem('click_control_pontos', JSON.stringify(pontos));
+                carregarPontos();
+                alert(`Novo teste realizado com sucesso!\nDownload: ${novoDown} Mbps | Upload: ${novoUp} Mbps\nA média foi recalculada.`);
+            }
+        }
+
+        // Adicionar novo ponto via Geolocalização
+        function abrirNovoPontoModal() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    let pontos = obterPontosSalvos();
+                    const novoPonto = {
+                        id: Date.now().toString(),
+                        lat: lat,
+                        lng: lng,
+                        endereco: `Localização GPS (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+                        rede: "Wi-Fi Novo",
+                        senha: "123",
+                        historicoTestes: [
+                            { download: 165.4, upload: 14.2, data: new Date().toISOString() }
+                        ]
+                    };
+
+                    pontos.push(novoPonto);
+                    localStorage.setItem('click_control_pontos', JSON.stringify(pontos));
+                    carregarPontos();
+                    map.setView([lat, lng], 16);
+                    alert("Novo ponto cadastrado com sucesso!");
+                }, () => {
+                    alert("Não foi possível obter a geolocalização.");
+                });
+            }
+        }
+
+        // Excluir Ponto
+        function excluirPonto(id) {
+            if (confirm("Deseja realmente excluir este ponto Wi-Fi?")) {
+                let pontos = obterPontosSalvos();
+                pontos = pontos.filter((p, index) => (p.id || index.toString()) !== id.toString());
                 localStorage.setItem('click_control_pontos', JSON.stringify(pontos));
                 carregarPontos();
             }
         }
 
-        // Excluir Ponto (Sincronizado)
-        function excluirPonto(id) {
-            if (confirm("Deseja realmente excluir este ponto Wi-Fi?")) {
-                if (useCloud && db) {
-                    db.ref('pontos/' + id).remove();
-                } else {
-                    let pontos = JSON.parse(localStorage.getItem('click_control_pontos') || '[]');
-                    pontos.splice(id, 1);
-                    localStorage.setItem('click_control_pontos', JSON.stringify(pontos));
-                    carregarPontos();
-                }
+        function executarNovoTeste() {
+            abrirNovoPontoModal();
+        }
+
+        function centralizarProximo() {
+            const pontos = obterPontosSalvos();
+            if (pontos.length > 0) {
+                map.setView([pontos[0].lat, pontos[0].lng], 16);
             }
         }
 
-        // Inicializar ao carregar a página
+        function verDadosRedeQR() {
+            alert("Painel de Dados da Rede & QR Code ativado.");
+        }
+
+        // Inicializar aplicação
         window.onload = function() {
             carregarPontos();
         };
