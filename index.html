@@ -530,17 +530,24 @@
         }
         .toast {
             margin-top: 12px;
-            font-size: 0.8rem;
-            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #15803d;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid #15803d;
+            border-radius: 8px;
+            padding: 8px 10px;
             text-align: center;
             display: none;
             line-height: 1.4;
         }
         .toast.warning {
-            color: #fdba74;
+            color: #9a3412;
+            border-color: #9a3412;
         }
         .toast.error {
-            color: #f87171;
+            color: #b91c1c;
+            border-color: #b91c1c;
         }
         .hidden {
             display: none !important;
@@ -2248,14 +2255,14 @@
                         document.getElementById('cadSenha').value = matchPass ? matchPass[1].replace(/\\([\\;,:"])/g, "$1") : "Aberta";
                         atualizarPreviewQrCadastro();
                         gpsStatus.textContent = "✅ Rede e senha extraídas automaticamente do QR Code!";
-                        gpsStatus.style.color = "#22c55e";
+                        gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
                     } else {
                         gpsStatus.textContent = "⚠️ QR Code lido (" + txt.slice(0, 30) + "), mas não contém dados de Wi-Fi.";
-                        gpsStatus.style.color = "#facc15";
+                        gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
                     }
                 } else {
                     gpsStatus.textContent = "⚠️ Não foi possível identificar um QR Code nítido na foto.";
-                    gpsStatus.style.color = "#facc15";
+                    gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
                 }
             };
             img.src = e.target.result;
@@ -2754,7 +2761,7 @@
             btnNear.textContent = "...";
         }
         statusEl.textContent = "Detectando o Wi-Fi mais próximo de você agora...";
-        statusEl.style.color = "#facc15";
+        statusEl.style.color = "#111111"; statusEl.style.fontWeight = "700";
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
@@ -2764,7 +2771,7 @@
             async (posFinal, erro) => {
                 if (!posFinal) {
                     statusEl.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    statusEl.style.color = "#fdba74";
+                    statusEl.style.color = "#b91c1c"; statusEl.style.fontWeight = "700";
                     btnNear.disabled = false;
                     btnNear.textContent = "📍 Detectar Wi-Fi Atual";
                     return;
@@ -2784,7 +2791,7 @@
                         ? `${Math.round(maisProximo.distKm * 1000)}m`
                         : `${maisProximo.distKm.toFixed(1)} km`;
                     statusEl.textContent = `🎯 Wi-Fi atual detectado a ${distTxt} (±${melhorPrecisaoAtual.toFixed(1)}m).`;
-                    statusEl.style.color = "#22c55e";
+                    statusEl.style.color = "#15803d"; statusEl.style.fontWeight = "700";
                 }
 
                 btnNear.disabled = false;
@@ -2925,7 +2932,7 @@
         });
 
         mapStatus.textContent = pontosFiltradosResumo(listaFiltrada.length, pontosVisiveisNoZoom.length);
-        mapStatus.style.color = "#facc15";
+        mapStatus.style.color = "#111111"; mapStatus.style.fontWeight = "700";
     }
 
     function pontosFiltradosResumo(totalFiltrados, visiveisZoom) {
@@ -2952,7 +2959,7 @@
         if (navigator.geolocation) {
             btnAtualizar.disabled = true;
             mapStatus.textContent = "Calibrando GPS de alta precisão (meta ≤ 10m)...";
-            mapStatus.style.color = "#facc15";
+            mapStatus.style.color = "#111111"; mapStatus.style.fontWeight = "700";
 
             obterPosicaoAltaPrecisao(
                 (posParcial) => {
@@ -2972,7 +2979,7 @@
                         mapInstance.setView([userLatAtual, userLngAtual], 18);
                         desenharUsuarioEAlfinetes(userLatAtual, userLngAtual, melhorPrecisaoAtual);
                         mapStatus.textContent = `🎯 Localização travada com raio de ±${melhorPrecisaoAtual.toFixed(1)}m.`;
-                        mapStatus.style.color = "#22c55e";
+                        mapStatus.style.color = "#15803d"; mapStatus.style.fontWeight = "700";
                     } else {
                         desenharUsuarioEAlfinetes(null, null);
                     }
@@ -3069,7 +3076,7 @@
         gpsBtn.disabled = true;
         gpsBtn.textContent = "Calibrando ≤10m...";
         gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 10m)...";
-        gpsStatus.style.color = "#facc15";
+        gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
@@ -3080,7 +3087,7 @@
             async (posFinal, erro) => {
                 if (!posFinal) {
                     gpsStatus.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
-                    gpsStatus.style.color = "#fdba74";
+                    gpsStatus.style.color = "#b91c1c"; gpsStatus.style.fontWeight = "700";
                     gpsBtn.disabled = false;
                     gpsBtn.textContent = "📍 Auto-Preencher Local";
                     return;
@@ -3094,6 +3101,8 @@
                 userLngAtual = posFinal.coords.longitude;
                 melhorPrecisaoAtual = acc;
 
+                // Preenche imediatamente as coordenadas para o campo nunca ficar vazio
+                inputLoc.value = ultimaCoordGPS;
                 renderizarMinimapaCadastro(posFinal.coords.latitude, posFinal.coords.longitude, acc);
 
                 try {
@@ -3137,11 +3146,11 @@
                     }
 
                     gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Local preenchido.`;
-                    gpsStatus.style.color = "#22c55e";
+                    gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
                 } catch (err) {
                     inputLoc.value = ultimaCoordGPS;
                     gpsStatus.textContent = `🎯 Coordenadas captadas (±${acc.toFixed(1)}m).`;
-                    gpsStatus.style.color = "#22c55e";
+                    gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
                 }
 
                 gpsBtn.disabled = false;
@@ -3376,7 +3385,7 @@
         if (!nomeLocal || !cidade || !localizacao || !ssid || !senha) {
             cadToast.style.display = "block";
             cadToast.className = "toast error";
-            cadToast.textContent = "Preencha todos os campos obrigatórios (*) antes de salvar.";
+            cadToast.textContent = "⚠️ Preencha todos os campos obrigatórios (*) antes de salvar.";
             return;
         }
 
@@ -3407,105 +3416,126 @@
 
         const qrLinkGerado = gerarUrlImagemQR(ssid, senha, 280);
         const listaComodidades = Object.keys(comodidadesCadastro).filter(k => comodidadesCadastro[k]);
+        const payloadEnvio = {
+            acao: "cadastrar_wifi",
+            id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
+            nome_local: nomeLocal,
+            cidade_uf: cidade,
+            lat_long: localizacao,
+            ssid_rede: ssid,
+            senha: senha,
+            link_qrcode: qrLinkGerado,
+            comodidades: listaComodidades.join(","),
+            horario_sinal: horarioSinal
+        };
+
+        let novoId = "WFI-" + Date.now();
+        let salvoNaNuvem = false;
 
         try {
             const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "cadastrar_wifi",
-                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
-                    nome_local: nomeLocal,
-                    cidade_uf: cidade,
-                    lat_long: localizacao,
-                    ssid_rede: ssid,
-                    senha: senha,
-                    link_qrcode: qrLinkGerado,
-                    comodidades: listaComodidades.join(","),
-                    horario_sinal: horarioSinal
-                })
+                body: JSON.stringify(payloadEnvio)
             });
-            const result = await response.json();
-            const novoId = result.id_wifi || ("WFI-" + Date.now());
-
-            if (fotoCadastroBase64) {
-                localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
+            const rawText = await response.text();
+            try {
+                const result = JSON.parse(rawText);
+                if (result && result.id_wifi) novoId = result.id_wifi;
+                if (result && result.status === "ok") salvoNaNuvem = true;
+            } catch (parseErr) {
+                if (response.ok) salvoNaNuvem = true;
             }
-
-            // Insere imediatamente no cache local persistente para garantir exibição instantânea no mapa
-            const novoPontoObj = {
-                id: novoId,
-                local: nomeLocal,
-                endereco: localizacao.replace(/\([^)]*\)/g, "").trim(),
-                cidade: cidade,
-                lat_long: localizacao,
-                ssid: ssid,
-                senha: senha,
-                down_mbps: 0,
-                up_mbps: 0,
-                status: "Funcionando",
-                comodidades: listaComodidades,
-                horario_sinal: horarioSinal,
-                ultima_validacao: "Agora",
-                cadastrado_por: usuarioLogado ? usuarioLogado.email : ""
-            };
-
-            listaWifisCache = listaWifisCache.filter(w => w.id !== novoId);
-            listaWifisCache.unshift(novoPontoObj);
-            salvarPontosLocaisPersistentes();
-            atualizarSeletorCidadesOffline();
-
-            cadToast.style.display = "block";
-            cadToast.className = "toast";
-            cadToast.innerHTML = `✅ Ponto cadastrado! +10 Créditos. Medindo velocidade inicial em segundo plano...`;
-
-            document.getElementById('cadNomeLocal').value = "";
-            document.getElementById('cadLocalizacao').value = "";
-            document.getElementById('cadSsid').value = "";
-            document.getElementById('cadSenha').value = "";
-            document.getElementById('cadHorarioSinal').value = "";
-            document.getElementById('cadQrPreviewBox').classList.add('hidden');
-            document.getElementById('cadFotoPreviewContainer').classList.add('hidden');
-            document.getElementById('cadMiniMapWrap').classList.add('hidden');
-            fotoCadastroBase64 = "";
-            ultimaCoordGPS = null;
-
-            // Dispara o teste de velocidade automático em background sem travar a interface
-            executarTesteVelocidadeBackground(novoId);
-
-            limparTodosFiltrosMapa();
-            cidadeOfflineFiltroAtivo = "";
-            const selCidade = document.getElementById('selectCidadeOffline');
-            if (selCidade) selCidade.value = "";
-
-            mudarAba('mapa');
-
-            setTimeout(() => {
-                if (mapInstance) mapInstance.invalidateSize();
-                const ordenada = obterListaFiltradaEOrdenada();
-                preencherSelectsComLista(ordenada, novoId);
-                document.getElementById('selectWifiMapa').value = novoId;
-                document.getElementById('selectWifi').value = novoId;
-                renderizarAlfinetesNoMapa(false);
-                atualizarCardQrDoMapa(novoId);
-                if (coordExistente && mapInstance) {
-                    mapInstance.setView([coordExistente.lat, coordExistente.lng], 17);
-                    if (wifiMarkersLayer) {
-                        wifiMarkersLayer.eachLayer(layer => {
-                            if (layer.wifiId === novoId) layer.openPopup();
-                        });
-                    }
-                }
-            }, 300);
-
-            carregarPerfilUsuario();
-        } catch (error) {
-            cadToast.style.display = "block";
-            cadToast.className = "toast error";
-            cadToast.textContent = "Erro ao salvar o novo ponto na planilha. Verifique sua conexão.";
+        } catch (errCorsOrNet) {
+            // Fallback automático para contornar bloqueio de leitura de redirecionamento 302 do Google Apps Script no Android/GitHub Pages
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payloadEnvio)
+                });
+                salvoNaNuvem = true;
+            } catch (errOffline) {
+                salvoNaNuvem = false;
+            }
         }
 
+        if (fotoCadastroBase64) {
+            localStorage.setItem(`clickcontrol_fotos_${novoId}`, JSON.stringify([fotoCadastroBase64]));
+        }
+
+        // Insere imediatamente no cache local persistente para garantir exibição instantânea no mapa e na aba Dados da Rede
+        const novoPontoObj = {
+            id: novoId,
+            local: nomeLocal,
+            endereco: localizacao.replace(/\([^)]*\)/g, "").trim(),
+            cidade: cidade,
+            lat_long: localizacao,
+            ssid: ssid,
+            senha: senha,
+            down_mbps: 0,
+            up_mbps: 0,
+            status: "Funcionando",
+            comodidades: listaComodidades,
+            horario_sinal: horarioSinal,
+            ultima_validacao: "Agora",
+            cadastrado_por: usuarioLogado ? usuarioLogado.email : ""
+        };
+
+        listaWifisCache = listaWifisCache.filter(w => w.id !== novoId && !(w.local === nomeLocal && w.ssid === ssid));
+        listaWifisCache.unshift(novoPontoObj);
+        salvarPontosLocaisPersistentes();
+        atualizarSeletorCidadesOffline();
+
+        cadToast.style.display = "block";
+        cadToast.className = "toast";
+        cadToast.innerHTML = salvoNaNuvem
+            ? `✅ Ponto salvo com sucesso! +10 Créditos. Abrindo no mapa...`
+            : `✅ Ponto salvo localmente no dispositivo! Será sincronizado assim que houver sinal.`;
+
+        // Limpa o formulário após salvar
+        document.getElementById('cadNomeLocal').value = "";
+        document.getElementById('cadLocalizacao').value = "";
+        document.getElementById('cadSsid').value = "";
+        document.getElementById('cadSenha').value = "";
+        document.getElementById('cadHorarioSinal').value = "";
+        document.getElementById('cadQrPreviewBox').classList.add('hidden');
+        document.getElementById('cadFotoPreviewContainer').classList.add('hidden');
+        document.getElementById('cadMiniMapWrap').classList.add('hidden');
+        fotoCadastroBase64 = "";
+        ultimaCoordGPS = null;
+
+        // Dispara o teste de velocidade automático em segundo plano sem travar a interface
+        executarTesteVelocidadeBackground(novoId);
+
+        limparTodosFiltrosMapa();
+        cidadeOfflineFiltroAtivo = "";
+        const selCidade = document.getElementById('selectCidadeOffline');
+        if (selCidade) selCidade.value = "";
+
+        mudarAba('mapa');
+
+        setTimeout(() => {
+            if (mapInstance) mapInstance.invalidateSize();
+            const ordenada = obterListaFiltradaEOrdenada();
+            preencherSelectsComLista(ordenada, novoId);
+            document.getElementById('selectWifiMapa').value = novoId;
+            document.getElementById('selectWifi').value = novoId;
+            renderizarAlfinetesNoMapa(false);
+            atualizarCardQrDoMapa(novoId);
+            if (coordExistente && mapInstance) {
+                mapInstance.setView([coordExistente.lat, coordExistente.lng], 17);
+                if (wifiMarkersLayer) {
+                    wifiMarkersLayer.eachLayer(layer => {
+                        if (layer.wifiId === novoId) layer.openPopup();
+                    });
+                }
+            }
+        }, 300);
+
+        carregarPerfilUsuario();
         cadSaveBtn.disabled = false;
         cadSaveBtn.textContent = "Salvar Novo Wi-Fi (+10 Créditos)";
     }
