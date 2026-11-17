@@ -1157,6 +1157,12 @@
                 <label for="cadNomeLocal">Nome do Estabelecimento / Local *</label>
                 <input type="text" id="cadNomeLocal" placeholder="Ex: Posto Ipiranga Beira-Rio">
             </div>
+            <div class="form-group hidden" id="groupEmpresasProximas">
+                <label for="selectEmpresaProxima">🏢 Empresas / Lojas próximas (raio de 30m)</label>
+                <select id="selectEmpresaProxima" onchange="aoSelecionarEmpresaProxima()">
+                    <option value="">Selecione um local encontrado...</option>
+                </select>
+            </div>
 
             <div class="form-group">
                 <label for="cadLocalizacao">Endereço Completo (Rua, Número) ou GPS *</label>
@@ -3124,12 +3130,14 @@
         document.getElementById('cadPinHint').textContent = `🎯 Precisão GPS: ±${accMetros.toFixed(1)}m (arraste o pino se precisar de ajuste fino).`;
     }
 
-    async function pegarEnderecoPorGPS() {
+        async function pegarEnderecoPorGPS() {
         const gpsBtn = document.getElementById('gpsBtn');
         const gpsStatus = document.getElementById('gpsStatus');
         const inputLoc = document.getElementById('cadLocalizacao');
         const inputCidade = document.getElementById('cadCidade');
         const inputNome = document.getElementById('cadNomeLocal');
+        const groupEmpresas = document.getElementById('groupEmpresasProximas');
+        const selectEmpresas = document.getElementById('selectEmpresaProxima');
 
         if (!navigator.geolocation) {
             gpsStatus.textContent = "GPS não suportado neste navegador.";
@@ -3137,22 +3145,25 @@
         }
 
         gpsBtn.disabled = true;
-        gpsBtn.textContent = "Calibrando ≤10m...";
-        gpsStatus.textContent = "Calibrando GPS de alta precisão (aguardando raio ≤ 10m)...";
+        gpsBtn.textContent = "Buscando GPS...";
+        gpsStatus.textContent = "Obtendo sinal de GPS de alta precisão (para em ≤10m ou ao tocar Parar)...";
         gpsStatus.style.color = "#111111"; gpsStatus.style.fontWeight = "700";
+
+        if (groupEmpresas) groupEmpresas.classList.add('hidden');
 
         obterPosicaoAltaPrecisao(
             (posParcial) => {
                 const acc = posParcial.coords.accuracy || 999;
-                gpsStatus.textContent = `📡 Refinando posição: ±${acc.toFixed(1)}m...`;
+                gpsStatus.textContent = `📡 Refinando GPS: ±${acc.toFixed(1)}m...`;
                 renderizarMinimapaCadastro(posParcial.coords.latitude, posParcial.coords.longitude, acc);
             },
             async (posFinal, erro) => {
+                gpsBtn.disabled = false;
+                gpsBtn.textContent = "📍 Auto-Preencher";
+
                 if (!posFinal) {
-                    gpsStatus.textContent = `⚠️ ${erro || "Permissão de GPS negada."}`;
+                    gpsStatus.textContent = `⚠️ ${erro || "Busca de GPS encerrada."}`;
                     gpsStatus.style.color = "#b91c1c"; gpsStatus.style.fontWeight = "700";
-                    gpsBtn.disabled = false;
-                    gpsBtn.textContent = "📍 Auto-Preencher Local";
                     return;
                 }
 
@@ -3164,17 +3175,20 @@
                 userLngAtual = posFinal.coords.longitude;
                 melhorPrecisaoAtual = acc;
 
-                // Preenche imediatamente as coordenadas para o campo nunca ficar vazio
                 inputLoc.value = ultimaCoordGPS;
                 renderizarMinimapaCadastro(posFinal.coords.latitude, posFinal.coords.longitude, acc);
 
+                gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Buscando locais próximos...`;
+                gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
+
                 try {
+                    // Busca reversa detalhada
                     const urlGeo = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&addressdetails=1`;
                     const resp = await fetch(urlGeo, { headers: { "Accept-Language": "pt-BR" } });
                     const data = await resp.json();
                     const addr = data.address || {};
 
-                    const nomeDetectado = data.name || addr.amenity || addr.shop || addr.building || "";
+                    const nomeDetectado = data.name || addr.amenity || addr.shop || addr.building || addr.office || "";
                     if (nomeDetectado && !inputNome.value.trim()) {
                         inputNome.value = nomeDetectado;
                     }
@@ -3208,25 +3222,44 @@
                         inputCidade.value = uf ? `${cidade} - ${uf}` : cidade;
                     }
 
-                    gpsStatus.textContent = `🎯 GPS travado (±${acc.toFixed(1)}m)! Local preenchido.`;
-                    gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
-                } catch (err) {
-                    inputLoc.value = ultimaCoordGPS;
-                    gpsStatus.textContent = `🎯 Coordenadas captadas (±${acc.toFixed(1)}m).`;
-                    gpsStatus.style.color = "#15803d"; gpsStatus.style.fontWeight = "700";
-                }
+                    // Busca estabelecimentos / lojas num raio de ~30m usando Nominatim search box com bounding box pequeno ao redor de lat,lng
+                    const delta = 0.0003; // ~30 metros
+                    const viewbox = `${lng - delta},${lat + delta},${lng + delta},${lat - delta}`;
+                    const urlNearby = `https://nominatim.openstreetmap.org/search?format=jsonv2&bounded=1&viewbox=${viewbox}&q=shop|amenity|commercial|office&limit=8`;
+                    const respNearby = await fetch(urlNearby, { headers: { "Accept-Language": "pt-BR" } });
+                    const locaisProximos = await respNearby.json();
 
-                gpsBtn.disabled = false;
-                gpsBtn.textContent = "📍 Auto-Preencher Local";
+                    if (locaisProximos && locaisProximos.length > 0 && selectEmpresas) {
+                        selectEmpresas.innerHTML = `<option value="">Selecione entre ${locaisProximos.length} local(is) encontrado(s)...</option>`;
+                        window._locaisProximosEncontrados = locaisProximos;
+                        locaisProximos.forEach((p, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = idx;
+                            opt.textContent = `${p.display_name.split(',')[0]} (${Math.round(p.importance * 30 || 15)}m)`;
+                            selectEmpresas.appendChild(opt);
+                        });
+                        if (groupEmpresas) groupEmpresas.classList.remove('hidden');
+                    }
+                } catch (e) {}
             },
-            12000,
-            10
+            10000, // 10 segundos limite para parada automática igual antes
+            10     // Para automaticamente quando atingir precisão <= 10m
         );
     }
 
-    // =========================================================================
-    // ABA 4: CARREGAR DADOS DO PERFIL, SALDO E PONTOS DO USUÁRIO
-    // =========================================================================
+    function aoSelecionarEmpresaProxima() {
+        const sel = document.getElementById('selectEmpresaProxima');
+        const idx = sel.value;
+        if (idx === "" || !window._locaisProximosEncontrados) return;
+        const localObj = window._locaisProximosEncontrados[idx];
+        if (!localObj) return;
+
+        document.getElementById('cadNomeLocal').value = localObj.display_name.split(',')[0];
+        document.getElementById('cadLocalizacao').value = `${localObj.display_name} (${Number(localObj.lat).toFixed(6)}, ${Number(localObj.lon).toFixed(6)})`;
+        ultimaCoordGPS = `${Number(localObj.lat).toFixed(6)}, ${Number(localObj.lon).toFixed(6)}`;
+        renderizarMinimapaCadastro(Number(localObj.lat), Number(localObj.lon), 5);
+    }
+
     async function carregarPerfilUsuario() {
         if (!usuarioLogado) return;
         const elNome = document.getElementById('editUserNome');
