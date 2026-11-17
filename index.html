@@ -719,6 +719,35 @@
         </div>
 
         <button type="button" class="btn" id="authSubmitBtn" onclick="processarAuth()">Entrar no Aplicativo</button>
+        <div style="text-align:center; margin-top:10px;">
+            <button type="button" class="auth-link" style="font-size:0.78rem; color:#93c5fd;" onclick="alternarRecuperacaoSenha(true)">🔑 Esqueci minha senha</button>
+        </div>
+
+        <!-- Painel de Recuperação de Senha -->
+        <div id="boxRecuperarSenha" class="hidden" style="margin-top:14px; padding:12px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px;">
+            <div style="font-size:0.84rem; font-weight:700; color:var(--primary); margin-bottom:6px;">🔐 Recuperar ou Redefinir Senha</div>
+            <p style="font-size:0.74rem; color:var(--text-muted); margin-bottom:8px;">Informe seu e-mail cadastrado para receber um código de recuperação no seu e-mail.</p>
+            <div class="form-group" style="margin-bottom:8px;">
+                <input type="email" id="recEmail" placeholder="Digite seu e-mail cadastrado">
+            </div>
+            <button type="button" class="btn-mini" id="btnEnviarCodigoRec" style="width:100%; background:var(--secondary); color:#fff; padding:8px;" onclick="solicitarCodigoRecuperacao()">📩 Enviar Código por E-mail</button>
+
+            <div id="recStepCodigo" class="hidden" style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="recCodigo">Código recebido no E-mail *</label>
+                    <input type="text" id="recCodigo" placeholder="Ex: 482910">
+                </div>
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="recNovaSenha">Nova Senha *</label>
+                    <input type="password" id="recNovaSenha" placeholder="Digite a nova senha">
+                </div>
+                <button type="button" class="btn" id="btnConfirmarNovaSenha" onclick="confirmarNovaSenhaRecuperacao()">✅ Salvar Nova Senha</button>
+            </div>
+            <div style="text-align:right; margin-top:8px;">
+                <button type="button" class="btn-logout" onclick="alternarRecuperacaoSenha(false)">Fechar</button>
+            </div>
+        </div>
+
         <div class="toast" id="loginToast"></div>
     </div>
 
@@ -999,6 +1028,61 @@
             </div>
 
             <button type="button" class="btn" style="margin-top: 10px;" id="btnAtualizarPerfil" onclick="carregarPerfilUsuario()">🔄 Atualizar Meus Pontos</button>
+
+            <!-- PAINEL ADMINISTRADOR (MODERAR PONTOS, CORRIGIR PINOS E GERENCIAR SENHAS) -->
+            <div id="adminPanelBox" style="margin-top:16px; padding:12px; background:#141c18; border:1px solid #3b82f6; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <strong style="color:#93c5fd; font-size:0.86rem;">🛡️ Administração de Pontos & Usuários</strong>
+                    <span id="adminBadgeStatus" style="font-size:0.7rem; background:rgba(59,130,246,0.2); color:#93c5fd; padding:2px 8px; border-radius:10px;">Modo Admin</span>
+                </div>
+                <p style="font-size:0.73rem; color:var(--text-muted); margin-bottom:10px;">Corrija coordenadas, altere senhas desatualizadas, remova pontos duplicados ou redefina a senha de um usuário.</p>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminSelectWifi">Selecionar Ponto para Editar / Excluir</label>
+                    <select id="adminSelectWifi" onchange="carregarDadosAdminWifi()"></select>
+                </div>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminEditLocal">Nome do Local</label>
+                    <input type="text" id="adminEditLocal">
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="adminEditSsid">Rede (SSID)</label>
+                        <input type="text" id="adminEditSsid">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="adminEditSenha">Senha Wi-Fi</label>
+                        <input type="text" id="adminEditSenha">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:8px;">
+                    <label for="adminEditCoords">Coordenadas (Lat, Long)</label>
+                    <div class="gps-row">
+                        <input type="text" id="adminEditCoords" placeholder="-26.250300, -49.378600">
+                        <button type="button" class="btn-gps" onclick="adminUsarMeuGpsAtual()">📍 Meu GPS</button>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                    <button type="button" class="btn" style="padding:9px; font-size:0.8rem;" onclick="salvarEdicaoAdminWifi()">💾 Salvar Alterações</button>
+                    <button type="button" class="btn" style="padding:9px; font-size:0.8rem; background:#ef4444; color:#fff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir Ponto</button>
+                </div>
+
+                <!-- Redefinição rápida de senha de usuário pelo Admin -->
+                <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:6px;">
+                    <div style="font-size:0.78rem; font-weight:700; color:#fbbf24; margin-bottom:6px;">🔑 Redefinir Senha de Usuário (Suporte)</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px;">
+                        <input type="email" id="adminResetUserEmail" placeholder="E-mail do usuário" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
+                        <input type="text" id="adminResetUserPass" placeholder="Nova senha provisória" style="background:var(--bg-color); border:1px solid var(--border); color:#fff; padding:7px 9px; border-radius:7px; font-size:0.78rem;">
+                    </div>
+                    <button type="button" class="btn-mini" style="width:100%; background:#2563eb; color:#fff; padding:7px;" onclick="adminRedefinirSenhaUsuario()">🔄 Aplicar Nova Senha ao Usuário</button>
+                </div>
+
+                <div class="toast" id="adminToast"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -1738,10 +1822,20 @@
         submitBtn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
     }
 
+    function ehUsuarioAdmin() {
+        if (!usuarioLogado || !usuarioLogado.email) return false;
+        const em = usuarioLogado.email.toLowerCase();
+        return em.includes("everton") || em.includes("admin") || usuarioLogado.role === "admin";
+    }
+
     async function mostrarApp() {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
         document.getElementById('userDisplay').textContent = usuarioLogado.nome;
+        const adminBox = document.getElementById('adminPanelBox');
+        if (adminBox) {
+            adminBox.classList.toggle('hidden', !ehUsuarioAdmin());
+        }
         setTimeout(() => {
             inicializarOuAtualizarMapa();
         }, 80);
@@ -2466,6 +2560,7 @@
             document.getElementById('meusWifisLista').innerHTML = `<div style="color: #fbbf24; text-align: center; padding: 10px;">Atualize o código do Apps Script para sincronizar saldo e velocidades.</div>`;
         }
 
+        atualizarListaAdminWifis();
         btn.disabled = false;
         btn.textContent = "🔄 Atualizar Meus Pontos";
     }
@@ -2771,14 +2866,301 @@
             } else {
                 toastMsg.className = "toast";
                 toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
+
+                // Atualiza imediatamente a velocidade no cache local (caso a planilha demore ou não tenha recalculado ainda)
+                const pontoLocal = listaWifisCache.find(w => w.id === idWifi);
+                if (pontoLocal) {
+                    const dNovo = parseFloat(downloadMbps) || 0;
+                    const uNovo = parseFloat(uploadMbps) || 0;
+                    const dAnt = parseFloat(pontoLocal.down_mbps || pontoLocal.med_down || 0);
+                    const uAnt = parseFloat(pontoLocal.up_mbps || pontoLocal.med_up || 0);
+                    pontoLocal.down_mbps = dAnt > 0 ? Number(((dAnt + dNovo) / 2).toFixed(1)) : dNovo;
+                    pontoLocal.up_mbps = uAnt > 0 ? Number(((uAnt + uNovo) / 2).toFixed(1)) : uNovo;
+                    pontoLocal.med_down = pontoLocal.down_mbps;
+                    pontoLocal.med_up = pontoLocal.up_mbps;
+                }
+
                 await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true);
                 await carregarListaWifis();
+
+                // Garante que se a planilha retornou 0/vazio para o ponto recém-testado, o valor medido prevaleça na tela
+                const pontoPosSync = listaWifisCache.find(w => w.id === idWifi);
+                if (pontoPosSync && (!parseFloat(pontoPosSync.down_mbps) && !parseFloat(pontoPosSync.med_down))) {
+                    pontoPosSync.down_mbps = parseFloat(downloadMbps) || 0;
+                    pontoPosSync.up_mbps = parseFloat(uploadMbps) || 0;
+                }
+
+                renderizarAlfinetesNoMapa(true);
+                atualizarCardQrDoMapa(idWifi);
                 carregarPerfilUsuario();
             }
         } catch (error) {
             saveBtn.disabled = false;
             saveBtn.textContent = "Tentar Salvar Novamente";
             alert("Erro ao conectar com a planilha.");
+        }
+    }
+
+
+    // =========================================================================
+    // RECUPERAÇÃO DE SENHA (E-MAIL + CÓDIGO)
+    // =========================================================================
+    function alternarRecuperacaoSenha(mostrar) {
+        const box = document.getElementById('boxRecuperarSenha');
+        const toast = document.getElementById('loginToast');
+        toast.style.display = "none";
+        if (mostrar) {
+            box.classList.remove('hidden');
+            const emailAtual = document.getElementById('authEmail').value.trim();
+            if (emailAtual) document.getElementById('recEmail').value = emailAtual;
+        } else {
+            box.classList.add('hidden');
+        }
+    }
+
+    async function solicitarCodigoRecuperacao() {
+        const email = document.getElementById('recEmail').value.trim().toLowerCase();
+        const toast = document.getElementById('loginToast');
+        const btn = document.getElementById('btnEnviarCodigoRec');
+
+        if (!email || !email.includes('@')) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Digite um e-mail válido para recuperação.";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Enviando código...";
+
+        try {
+            const resp = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "solicitar_recuperacao_senha",
+                    id_usuario: email
+                })
+            });
+            const data = await resp.json();
+            toast.style.display = "block";
+            if (data.status === "ok") {
+                toast.className = "toast";
+                toast.textContent = "📩 Código enviado para o seu e-mail! Verifique sua caixa de entrada ou spam.";
+                document.getElementById('recStepCodigo').classList.remove('hidden');
+            } else {
+                toast.className = "toast error";
+                toast.textContent = data.message || "E-mail não encontrado na base de usuários.";
+            }
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro ao enviar código. Atualize o Google Apps Script com suporte a recuperação de senha.";
+        }
+
+        btn.disabled = false;
+        btn.textContent = "📩 Enviar Código por E-mail";
+    }
+
+    async function confirmarNovaSenhaRecuperacao() {
+        const email = document.getElementById('recEmail').value.trim().toLowerCase();
+        const codigo = document.getElementById('recCodigo').value.trim();
+        const novaSenha = document.getElementById('recNovaSenha').value.trim();
+        const toast = document.getElementById('loginToast');
+        const btn = document.getElementById('btnConfirmarNovaSenha');
+
+        if (!codigo || !novaSenha || novaSenha.length < 4) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Informe o código recebido e uma nova senha (mínimo 4 caracteres).";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Salvando nova senha...";
+
+        try {
+            const resp = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "redefinir_senha_codigo",
+                    id_usuario: email,
+                    codigo: codigo,
+                    nova_senha: novaSenha
+                })
+            });
+            const data = await resp.json();
+            toast.style.display = "block";
+            if (data.status === "ok") {
+                toast.className = "toast";
+                toast.textContent = "✅ Senha redefinida com sucesso! Já pode entrar abaixo.";
+                document.getElementById('authEmail').value = email;
+                document.getElementById('authSenha').value = novaSenha;
+                document.getElementById('boxRecuperarSenha').classList.add('hidden');
+            } else {
+                toast.className = "toast error";
+                toast.textContent = data.message || "Código inválido ou expirado.";
+            }
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro de comunicação ao redefinir senha.";
+        }
+
+        btn.disabled = false;
+        btn.textContent = "✅ Salvar Nova Senha";
+    }
+
+    // =========================================================================
+    // ADMINISTRAÇÃO DE PONTOS E USUÁRIOS (MODERADOR / ADMIN)
+    // =========================================================================
+    function atualizarListaAdminWifis() {
+        const sel = document.getElementById('adminSelectWifi');
+        if (!sel) return;
+        const atual = sel.value;
+        sel.innerHTML = "";
+        listaWifisCache.forEach(w => {
+            const opt = document.createElement('option');
+            opt.value = w.id;
+            opt.textContent = `${w.id} - ${w.local} (${w.cidade || ''})`;
+            sel.appendChild(opt);
+        });
+        if (atual && listaWifisCache.some(x => x.id === atual)) {
+            sel.value = atual;
+        }
+        carregarDadosAdminWifi();
+    }
+
+    function carregarDadosAdminWifi() {
+        const id = document.getElementById('adminSelectWifi').value;
+        const w = listaWifisCache.find(x => x.id === id);
+        if (!w) return;
+        document.getElementById('adminEditLocal').value = w.local || "";
+        document.getElementById('adminEditSsid').value = w.ssid || "";
+        document.getElementById('adminEditSenha').value = w.senha || "";
+        const c = obterCoordenadasCentroideWifi(w);
+        document.getElementById('adminEditCoords').value = c ? `${c.lat.toFixed(6)}, ${c.lng.toFixed(6)}` : (w.lat_long || "");
+    }
+
+    function adminUsarMeuGpsAtual() {
+        if (userLatAtual !== null && userLngAtual !== null) {
+            document.getElementById('adminEditCoords').value = `${userLatAtual.toFixed(6)}, ${userLngAtual.toFixed(6)}`;
+        } else {
+            alert("Aguardando leitura do GPS. Abra a aba Mapa e toque em 📍 Perto primeiro.");
+        }
+    }
+
+    async function salvarEdicaoAdminWifi() {
+        const id = document.getElementById('adminSelectWifi').value;
+        const local = document.getElementById('adminEditLocal').value.trim();
+        const ssid = document.getElementById('adminEditSsid').value.trim();
+        const senha = document.getElementById('adminEditSenha').value.trim();
+        const coords = document.getElementById('adminEditCoords').value.trim();
+        const toast = document.getElementById('adminToast');
+
+        const w = listaWifisCache.find(x => x.id === id);
+        if (w) {
+            w.local = local;
+            w.ssid = ssid;
+            w.senha = senha;
+            w.lat_long = coords;
+            // Limpa amostras locais antigas para assumir a coordenada oficial definida pelo admin
+            localStorage.removeItem(`clickcontrol_samples_${id}`);
+        }
+
+        renderizarAlfinetesNoMapa(true);
+        atualizarCardQrDoMapa(id);
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_editar_wifi",
+                    admin_email: usuarioLogado ? usuarioLogado.email : "",
+                    id_wifi: id,
+                    nome_local: local,
+                    ssid_rede: ssid,
+                    senha: senha,
+                    lat_long: coords
+                })
+            });
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = `✅ Ponto ${id} atualizado com sucesso!`;
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast warning";
+            toast.textContent = `⚠️ Atualizado localmente. Sincronize o Apps Script para gravar na planilha.`;
+        }
+    }
+
+    async function excluirPontoAdminWifi() {
+        const id = document.getElementById('adminSelectWifi').value;
+        const w = listaWifisCache.find(x => x.id === id);
+        if (!w) return;
+        if (!confirm(`Tem certeza que deseja excluir o ponto "${w.local}" (${id})?`)) return;
+
+        listaWifisCache = listaWifisCache.filter(x => x.id !== id);
+        localStorage.removeItem(`clickcontrol_samples_${id}`);
+        renderizarAlfinetesNoMapa();
+        atualizarListaAdminWifis();
+
+        const toast = document.getElementById('adminToast');
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_excluir_wifi",
+                    admin_email: usuarioLogado ? usuarioLogado.email : "",
+                    id_wifi: id
+                })
+            });
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = `🗑️ Ponto ${id} removido com sucesso.`;
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast warning";
+            toast.textContent = `⚠️ Removido da visualização.`;
+        }
+    }
+
+    async function adminRedefinirSenhaUsuario() {
+        const emailAlvo = document.getElementById('adminResetUserEmail').value.trim().toLowerCase();
+        const novaSenha = document.getElementById('adminResetUserPass').value.trim();
+        const toast = document.getElementById('adminToast');
+
+        if (!emailAlvo || !novaSenha) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Informe o e-mail do usuário e a nova senha provisória.";
+            return;
+        }
+
+        try {
+            const resp = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_redefinir_senha",
+                    admin_email: usuarioLogado ? usuarioLogado.email : "",
+                    id_usuario: emailAlvo,
+                    nova_senha: novaSenha
+                })
+            });
+            const data = await resp.json();
+            toast.style.display = "block";
+            toast.className = data.status === "ok" ? "toast" : "toast error";
+            toast.textContent = data.status === "ok"
+                ? `✅ Senha de ${emailAlvo} alterada para "${novaSenha}".`
+                : (data.message || "Não foi possível alterar a senha.");
+        } catch (e) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "Erro de conexão ao redefinir senha pelo Admin.";
         }
     }
 
