@@ -2910,19 +2910,32 @@
         const manterId = document.getElementById('selectWifiMapa').value;
         preencherSelectsComLista(listaFiltrada, manterId);
 
-        // Garante que mesmo pontos sem coordenadas precisas ganhem um fallback geográfico para nunca sumirem do mapa
+        // Coordenadas padrão aproximadas por cidade caso o ponto venha sem coordenadas da nuvem
+        const coordenadasCidadesPadrao = {
+            "são bento do sul - sc": { lat: -26.2503, lng: -49.3786 },
+            "sao bento do sul - sc": { lat: -26.2503, lng: -49.3786 },
+            "itajai - sc": { lat: -26.9078, lng: -48.6619 },
+            "itajá - sc": { lat: -26.9078, lng: -48.6619 },
+            "joinville - sc": { lat: -26.3045, lng: -48.8464 }
+        };
+
+        // Garante que TODOS os pontos apareçam no mapa, gerando fallback se necessário
         const pontosComCoords = listaFiltrada.map(w => {
             if (!w.coords) {
-                const cStr = extrairCoordenadas(w.lat_long || w.endereco);
+                const cStr = extrairCoordenadas(w.lat_long || w.endereco || "");
                 if (cStr) {
                     w.coords = { lat: cStr.lat, lng: cStr.lng, totalAmostras: 1, raioMedio: 25 };
-                } else if (userLatAtual !== null && userLngAtual !== null) {
-                    // Ponto de fallback próximo ao usuário se não tiver nenhuma coordenada
-                    w.coords = { lat: userLatAtual + (Math.random() - 0.5) * 0.01, lng: userLngAtual + (Math.random() - 0.5) * 0.01, totalAmostras: 1, raioMedio: 50 };
+                } else {
+                    const cidKey = String(w.cidade || "").toLowerCase().trim();
+                    const baseCidade = coordenadasCidadesPadrao[cidKey] || (userLatAtual !== null ? { lat: userLatAtual, lng: userLngAtual } : { lat: -26.2503, lng: -49.3786 });
+                    // Adiciona um pequeno deslocamento aleatório para pontos da mesma cidade não ficarem exatamente sobrepostos
+                    const offsetLat = (Math.random() - 0.5) * 0.012;
+                    const offsetLng = (Math.random() - 0.5) * 0.012;
+                    w.coords = { lat: baseCidade.lat + offsetLat, lng: baseCidade.lng + offsetLng, totalAmostras: 1, raioMedio: 50 };
                 }
             }
             return w;
-        }).filter(w => w.coords);
+        });
 
         const pontosVisiveisNoZoom = aplicarFiltroZoomOut(pontosComCoords);
 
