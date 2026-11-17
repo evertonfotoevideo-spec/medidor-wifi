@@ -3450,11 +3450,12 @@
         try {
             const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
+                redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     acao: "salvar_teste",
                     id_wifi: idWifi,
-                    id_usuario: usuarioLogado.email,
+                    id_usuario: usuarioLogado ? usuarioLogado.email : "anon@clickcontrol.app",
                     download_mbps: parseFloat(downloadMbps),
                     upload_mbps: parseFloat(uploadMbps)
                 })
@@ -3489,8 +3490,8 @@
                 toastMsg.textContent = "✅ Resultado salvo na planilha! +2 Créditos na sua carteira.";
             }
 
-            await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true);
-            await carregarListaWifis();
+            try { await registrarAmostraConexaoWifi(idWifi, "teste_velocidade", true); } catch (e) {}
+            try { await carregarListaWifis(); } catch (e) {}
 
             const pontoPosSync = listaWifisCache.find(w => w.id === idWifi);
             if (pontoPosSync && (!parseFloat(pontoPosSync.down_mbps) && !parseFloat(pontoPosSync.med_down))) {
@@ -3500,13 +3501,15 @@
                 pontoPosSync.med_up = uNovo;
             }
 
-            renderizarAlfinetesNoMapa(true);
-            atualizarCardQrDoMapa(idWifi);
-            carregarPerfilUsuario();
+            try { renderizarAlfinetesNoMapa(true); } catch (e) {}
+            try { atualizarCardQrDoMapa(idWifi); } catch (e) {}
+            try { carregarPerfilUsuario(); } catch (e) {}
         } catch (error) {
             saveBtn.disabled = false;
             saveBtn.textContent = "Tentar Salvar Novamente";
-            alert("Erro ao conectar com a planilha.");
+            toastMsg.style.display = "block";
+            toastMsg.className = "toast error";
+            toastMsg.textContent = "⚠️ Falha ao comunicar com o servidor: " + (error && error.message ? error.message : "verifique a implantação do Apps Script.");
         }
     }
 
