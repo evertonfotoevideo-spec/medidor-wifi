@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v38 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v39 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v38</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v39</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v38</h1>
+                <h1 id="appTitle">CLICK CONTROL v39</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1064,12 +1064,11 @@
             </div>
 
             <div class="form-group">
-                <label>Velocidade Estimada (Opcional — se não estiver conectado agora)</label>
-                <div class="gps-row">
-                    <input type="number" id="cadDownEstimado" placeholder="⬇️ Download (Mbps)" min="0" step="0.1">
-                    <input type="number" id="cadUpEstimado" placeholder="⬆️ Upload (Mbps)" min="0" step="0.1">
-                </div>
-                <div class="helper-text">Deixe em branco para medir automaticamente na próxima conexão pelo link/QR.</div>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; color:var(--text-main); font-size:0.84rem;">
+                    <input type="checkbox" id="cadEstouConectado" style="width:18px; height:18px; accent-color:#111111; cursor:pointer;">
+                    <span>📶 Estou conectado nesta rede? <strong>Sim</strong></span>
+                </label>
+                <div class="helper-text">Se marcado, fará o teste de velocidade automaticamente após cadastrar. Se desmarcado, ficará com alfinete roxo claro até a 1ª conexão/teste.</div>
             </div>
 
             <div class="form-group">
@@ -1201,6 +1200,17 @@
                     <input type="text" id="adminWifiHorario">
                 </div>
 
+                <div class="gps-row" style="margin-bottom:8px;">
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label for="adminWifiDown">⬇️ Download Estimado (Mbps)</label>
+                        <input type="number" id="adminWifiDown" min="0" step="0.1" placeholder="Ex: 50">
+                    </div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label for="adminWifiUp">⬆️ Upload Estimado (Mbps)</label>
+                        <input type="number" id="adminWifiUp" min="0" step="0.1" placeholder="Ex: 25">
+                    </div>
+                </div>
+
                 <div class="form-group" style="margin-bottom:10px;">
                     <label>Estrutura do Local</label>
                     <div class="filter-pills">
@@ -1225,7 +1235,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v38";
+    const APP_VERSION = "v39";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1511,7 +1521,12 @@
         }
     }
 
-    function obterCorVelocidade(mbps) {
+    function pontoNuncaTestado(w) {
+        return (Number(w?.down_mbps) || 0) <= 0 && (Number(w?.up_mbps) || 0) <= 0;
+    }
+
+    function obterCorVelocidade(mbps, nuncaTestado = false) {
+        if (nuncaTestado) return "#c084fc";
         const v = Number(mbps) || 0;
         if (v < 10) return "#ef4444";
         if (v < 20) return "#f97316";
@@ -1547,7 +1562,9 @@
 
     function filtrarPontosAtivos() {
         return listaWifisCache.filter(w => {
+            const nunca = pontoNuncaTestado(w);
             const vel = prioridadeVelocidade === 'upload' ? (Number(w.up_mbps) || 0) : (Number(w.down_mbps) || 0);
+            if (filtroVelocidadeAtivo !== 'todos' && nunca) return false;
             if (filtroVelocidadeAtivo === 'lt10' && vel >= 10) return false;
             if (filtroVelocidadeAtivo === '10_20' && (vel < 10 || vel >= 20)) return false;
             if (filtroVelocidadeAtivo === '20_40' && (vel < 20 || vel >= 40)) return false;
@@ -1580,17 +1597,19 @@
             const coords = parseCoordenadasPonto(w);
             if (!coords) return;
 
+            const nuncaTestado = pontoNuncaTestado(w);
             const velRef = prioridadeVelocidade === 'upload' ? (Number(w.up_mbps) || 0) : (Number(w.down_mbps) || 0);
-            const cor = obterCorVelocidade(velRef);
+            const cor = obterCorVelocidade(velRef, nuncaTestado);
             const isSel = (w.id === idSelecionado);
-            const downTxt = w.down_mbps ? `${Number(w.down_mbps).toFixed(1)} Mbps` : "--";
-            const upTxt = w.up_mbps ? `${Number(w.up_mbps).toFixed(1)} Mbps` : "--";
+            const downTxt = w.down_mbps ? `${Number(w.down_mbps).toFixed(1)} Mbps` : "Não testado";
+            const upTxt = w.up_mbps ? `${Number(w.up_mbps).toFixed(1)} Mbps` : "Não testado";
             const senhaTxt = (!w.senha || String(w.senha).toLowerCase() === 'aberta') ? '🔓 Aberta' : `🔑 ${w.senha}`;
 
             const popupHtml = `
                 <div style="text-align:center; padding:2px;">
                     <div style="font-weight:900; font-size:0.88rem; color:#111111; margin-bottom:2px;">📶 ${w.local || "Ponto Wi-Fi"}</div>
                     <div style="font-size:0.74rem; color:#3f3f46; margin-bottom:6px;">${w.cidade || ""}</div>
+                    ${nuncaTestado ? `<div style="background:#f3e8ff;color:#6b21a8;border:1px solid #c084fc;border-radius:6px;padding:3px 6px;font-size:0.7rem;font-weight:800;margin-bottom:6px;">🟣 Nunca testado — conecte para medir</div>` : ""}
                     ${(w.foto_base64 || w.foto_url) ? `<img src="${w.foto_base64 || w.foto_url}" style="width:100%;max-height:95px;object-fit:cover;border-radius:8px;border:1px solid #111111;margin-bottom:6px;">` : ""}
                     <div style="background:#fef9c3; border:1px solid #111111; border-radius:8px; padding:6px; margin-bottom:6px; font-size:0.75rem;">
                         <div><strong>Rede:</strong> ${w.ssid || "--"}</div>
@@ -1601,6 +1620,7 @@
                         <span>⬆️ ${upTxt}</span>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px;">
+                        <button type="button" onclick="conectarPeloLinkQr('${String(w.ssid || "").replace(/'/g, "\'")}', '${String(w.senha || "").replace(/'/g, "\'")}', '${w.id}')" style="background:#16a34a; color:#ffffff; border:none; border-radius:6px; padding:6px 8px; font-size:0.74rem; font-weight:800; cursor:pointer;">🔗 Conectar & Medir Agora</button>
                         <button type="button" onclick="selecionarPontoDoPopup('${w.id}', 'dadosRede')" style="background:#111111; color:#facc15; border:none; border-radius:6px; padding:6px 8px; font-size:0.74rem; font-weight:800; cursor:pointer;">📶 Ver Dados & QR Code</button>
                         <button type="button" onclick="selecionarPontoDoPopup('${w.id}', 'testar')" style="background:#facc15; color:#111111; border:1px solid #111111; border-radius:6px; padding:6px 8px; font-size:0.74rem; font-weight:800; cursor:pointer;">⚡ Testar Velocidade</button>
                     </div>
@@ -2267,6 +2287,7 @@
             return;
         }
 
+        const estouConectado = Boolean(document.getElementById('cadEstouConectado')?.checked);
         const comsSelecionadas = Object.keys(comodidadesCadastro).filter(k => comodidadesCadastro[k]).join(", ");
         btn.disabled = true;
         btn.textContent = "Salvando na planilha...";
@@ -2290,8 +2311,8 @@
                     senha,
                     horario_sinal: horario,
                     comodidades: comsSelecionadas,
-                    down_mbps: Number(document.getElementById('cadDownEstimado')?.value) || 0,
-                    up_mbps: Number(document.getElementById('cadUpEstimado')?.value) || 0,
+                    down_mbps: 0,
+                    up_mbps: 0,
                     nota: notaCadastro,
                     foto_base64: fotoCadastroBase64
                 })
@@ -2308,8 +2329,8 @@
                 ssid: ssid,
                 ssid_rede: ssid,
                 senha: senha,
-                down_mbps: Number(document.getElementById('cadDownEstimado')?.value) || 0,
-                up_mbps: Number(document.getElementById('cadUpEstimado')?.value) || 0,
+                down_mbps: 0,
+                up_mbps: 0,
                 status: "Funcionando",
                 comodidades: comsSelecionadas,
                 horario_sinal: horario,
@@ -2327,7 +2348,9 @@
 
             toast.style.display = "block";
             toast.className = "toast";
-            toast.textContent = data.message || "✅ Ponto salvo com sucesso! +10 Créditos.";
+            toast.textContent = estouConectado
+                ? "✅ Ponto cadastrado! Iniciando teste de velocidade da rede conectada..."
+                : (data.message || "✅ Ponto salvo com sucesso! +10 Créditos (alfinete roxo até o 1º teste).");
             pararAutoPreencherGps();
             await carregarListaWifis();
             document.getElementById('selectWifiMapa').value = novoPontoLocal.id;
@@ -2335,10 +2358,18 @@
             atualizarCardQrDoMapa(novoPontoLocal.id);
             renderizarAlfinetesNoMapa();
             const cNovo = parseCoordenadasPonto(novoPontoLocal);
-            setTimeout(() => {
-                mudarAba('mapa', true);
-                if (cNovo && mapInstance) mapInstance.setView([cNovo.lat, cNovo.lng], 17);
-            }, 900);
+            if (estouConectado) {
+                setTimeout(() => {
+                    atualizarBannerTesteAtual(novoPontoLocal.id);
+                    mudarAba('testar', true);
+                    setTimeout(() => iniciarTeste(null, true), 500);
+                }, 700);
+            } else {
+                setTimeout(() => {
+                    mudarAba('mapa', true);
+                    if (cNovo && mapInstance) mapInstance.setView([cNovo.lat, cNovo.lng], 17);
+                }, 900);
+            }
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast error";
@@ -2388,6 +2419,8 @@
         document.getElementById('adminWifiSsid').value = ponto.ssid || "";
         document.getElementById('adminWifiSenha').value = ponto.senha || "";
         document.getElementById('adminWifiHorario').value = ponto.horario_sinal || "";
+        document.getElementById('adminWifiDown').value = Number(ponto.down_mbps) || "";
+        document.getElementById('adminWifiUp').value = Number(ponto.up_mbps) || "";
 
         const coms = String(ponto.comodidades || "").toLowerCase();
         ['estacionamento', 'mesas', 'tomadas', 'sinal_rua'].forEach(k => {
@@ -2429,6 +2462,8 @@
                     ssid_rede: document.getElementById('adminWifiSsid').value.trim(),
                     senha: document.getElementById('adminWifiSenha').value.trim(),
                     horario_sinal: document.getElementById('adminWifiHorario').value.trim(),
+                    down_mbps: Number(document.getElementById('adminWifiDown').value) || 0,
+                    up_mbps: Number(document.getElementById('adminWifiUp').value) || 0,
                     comodidades: coms
                 })
             });
