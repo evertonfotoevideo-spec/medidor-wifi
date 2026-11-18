@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v46 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v47 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v46</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v47</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v46</h1>
+                <h1 id="appTitle">CLICK CONTROL v47</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1282,6 +1282,17 @@
 
                 <div style="margin-top:14px; padding-top:12px; border-top:2px solid #111111;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="font-size:0.86rem; color:var(--primary);">👥 Usuários & Créditos (<span id="adminQtdUsuarios">0</span>)</strong>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px; background:#111111; color:#facc15;" onclick="alternarListaUsuariosAdmin()">👥 Ver / Editar Usuários</button>
+                    </div>
+                    <div id="adminBoxUsuarios" class="hidden" style="background:#ffffff; border:1px solid #111111; border-radius:10px; padding:8px; margin-bottom:10px;">
+                        <input type="text" id="adminBuscaUsuario" placeholder="Filtrar usuário por nome ou e-mail..." oninput="renderizarListaUsuariosAdmin()" style="width:100%; padding:7px 9px; border:1px solid #111; border-radius:7px; font-size:0.78rem; margin-bottom:8px;">
+                        <div id="adminListaUsuarios" style="display:flex; flex-direction:column; gap:6px; max-height:240px; overflow-y:auto;"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top:10px; padding-top:12px; border-top:2px solid #111111;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                         <strong style="font-size:0.86rem; color:var(--primary);">🚨 Problemas Relatados & Sugestões (<span id="adminQtdProblemas">0</span>)</strong>
                         <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="carregarProblemasAdmin()">🔄 Atualizar</button>
                     </div>
@@ -1296,7 +1307,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v46";
+    const APP_VERSION = "v47";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -2194,6 +2205,13 @@
     function renderizarListaRedesMinimizadas() {
         const container = document.getElementById('listaRedesMinimizadas');
         if (!container) return;
+        const detalhesEl = document.getElementById('detalhesRedeExpandida');
+        const idAbertoAntes = (detalhesEl && !detalhesEl.classList.contains('hidden') && container.contains(detalhesEl))
+            ? (detalhesEl.parentElement?.id || '').replace('slotDetalhes_', '')
+            : '';
+        if (detalhesEl && container.contains(detalhesEl)) {
+            document.getElementById('abaDadosRede').appendChild(detalhesEl);
+        }
 
         const itensComDist = listaWifisCache.map(w => {
             const c = parseCoordenadasPonto(w);
@@ -2236,6 +2254,14 @@
                 </div>
             `;
         }).join("");
+
+        if (idAbertoAntes && detalhesEl) {
+            const novoSlot = document.getElementById('slotDetalhes_' + idAbertoAntes);
+            if (novoSlot) {
+                novoSlot.appendChild(detalhesEl);
+                detalhesEl.classList.remove('hidden');
+            }
+        }
     }
 
     function expandirDetalhesRede(idWifi) {
@@ -2623,15 +2649,7 @@
             if (!jaCentralizouGpsCadastro) {
                 renderizarMinimapaCadastro(pos.coords.latitude, pos.coords.longitude);
                 jaCentralizouGpsCadastro = true;
-                try {
-                    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
-                    const geo = await r.json();
-                    if (geo && geo.address) {
-                        const cidade = geo.address.city || geo.address.town || geo.address.municipality || "";
-                        const uf = geo.address.state_code || geo.address.state || "";
-                        if (cidade) document.getElementById('cadCidade').value = uf ? `${cidade} - ${uf}` : cidade;
-                    }
-                } catch (e) {}
+                await preencherEnderecoCompletoPorCoords(pos.coords.latitude, pos.coords.longitude);
             } else if (cadPinMarker) {
                 cadPinMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
             }
@@ -2653,6 +2671,61 @@
         document.getElementById('gpsStatus').textContent = "Busca de GPS interrompida.";
     }
 
+    function abreviarEstadoBr(ufRaw) {
+        if (!ufRaw) return "";
+        const s = String(ufRaw).trim();
+        if (s.length === 2) return s.toUpperCase();
+        const mapa = {
+            "acre":"AC","alagoas":"AL","amapá":"AP","amapa":"AP","amazonas":"AM","bahia":"BA",
+            "ceará":"CE","ceara":"CE","distrito federal":"DF","espírito santo":"ES","espirito santo":"ES",
+            "goiás":"GO","goias":"GO","maranhão":"MA","maranhao":"MA","mato grosso":"MT","mato grosso do sul":"MS",
+            "minas gerais":"MG","pará":"PA","para":"PA","paraíba":"PB","paraiba":"PB","paraná":"PR","parana":"PR",
+            "pernambuco":"PE","piauí":"PI","piaui":"PI","rio de janeiro":"RJ","rio grande do norte":"RN",
+            "rio grande do sul":"RS","rondônia":"RO","rondonia":"RO","roraima":"RR","santa catarina":"SC",
+            "são paulo":"SP","sao paulo":"SP","sergipe":"SE","tocantins":"TO"
+        };
+        return mapa[s.toLowerCase()] || s;
+    }
+
+    async function preencherEnderecoCompletoPorCoords(latNum, lngNum) {
+        const lat = Number(latNum).toFixed(6);
+        const lng = Number(lngNum).toFixed(6);
+        ultimaCoordGPS = `${lat}, ${lng}`;
+        const status = document.getElementById('gpsStatus');
+        if (status) status.textContent = "🔍 Buscando rua, número mais próximo e cidade...";
+        try {
+            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${lat}&lon=${lng}`, {
+                headers: { "Accept-Language": "pt-BR" }
+            });
+            const geo = await r.json();
+            if (geo && geo.address) {
+                const a = geo.address;
+                const rua = a.road || a.pedestrian || a.street || a.avenue || a.highway || "";
+                const numero = a.house_number || "";
+                const bairro = a.suburb || a.neighbourhood || a.quarter || a.district || "";
+                const cidade = a.city || a.town || a.village || a.municipality || "";
+                const uf = abreviarEstadoBr(a.state_code || a.state || "");
+
+                const ruaComNum = [rua, numero ? `nº ${numero}` : "s/n"].filter(Boolean).join(", ");
+                const endFormatado = [ruaComNum, bairro].filter(Boolean).join(" - ");
+                document.getElementById('cadLocalizacao').value = endFormatado
+                    ? `${endFormatado} (${lat}, ${lng})`
+                    : `${lat}, ${lng}`;
+
+                if (cidade) {
+                    document.getElementById('cadCidade').value = uf ? `${cidade} - ${uf}` : cidade;
+                }
+                if (geo.name && !document.getElementById('cadNomeLocal').value.trim()) {
+                    document.getElementById('cadNomeLocal').value = geo.name;
+                }
+                if (status) status.textContent = `✅ Endereço detectado: ${endFormatado || ultimaCoordGPS}`;
+                return;
+            }
+        } catch (e) {}
+        document.getElementById('cadLocalizacao').value = ultimaCoordGPS;
+        if (status) status.textContent = `📍 Coordenadas capturadas: ${ultimaCoordGPS}`;
+    }
+
     let cadPinMap = null, cadPinMarker = null;
     function renderizarMinimapaCadastro(lat, lng) {
         document.getElementById('cadMiniMapWrap').classList.remove('hidden');
@@ -2660,10 +2733,10 @@
             cadPinMap = L.map('cadMiniMap').setView([lat, lng], 18);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cadPinMap);
             cadPinMarker = L.marker([lat, lng], { draggable: true }).addTo(cadPinMap);
-            cadPinMarker.on('dragend', () => {
+            cadPinMarker.on('dragend', async () => {
                 const p = cadPinMarker.getLatLng();
                 ultimaCoordGPS = `${p.lat.toFixed(6)}, ${p.lng.toFixed(6)}`;
-                document.getElementById('cadLocalizacao').value = ultimaCoordGPS;
+                await preencherEnderecoCompletoPorCoords(p.lat, p.lng);
             });
         } else {
             cadPinMap.invalidateSize();
@@ -2696,6 +2769,27 @@
             toast.style.display = "block";
             toast.className = "toast error";
             toast.textContent = "Preencha todos os campos obrigatórios (*).";
+            return;
+        }
+
+        // Bloqueio anti-duplicidade: mesma rede (SSID) + mesmo nome/local ou coordenadas a menos de 40 metros
+        const normTxt = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+        const mNovaCoord = localizacao.match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+        const duplicado = listaWifisCache.find(w => {
+            const mesmoSsid = normTxt(w.ssid) === normTxt(ssid);
+            const mesmoLocal = normTxt(w.local) === normTxt(local) && normTxt(w.cidade) === normTxt(cidade);
+            let muitoPerto = false;
+            const cExist = parseCoordenadasPonto(w);
+            if (mNovaCoord && cExist) {
+                const distKm = calcularDistanciaKm(parseFloat(mNovaCoord[1]), parseFloat(mNovaCoord[2]), cExist.lat, cExist.lng);
+                muitoPerto = distKm < 0.04; // 40 metros
+            }
+            return (mesmoSsid && (mesmoLocal || muitoPerto)) || (mesmoLocal && muitoPerto);
+        });
+        if (duplicado) {
+            toast.style.display = "block";
+            toast.className = "toast warning";
+            toast.textContent = `⚠️ Este ponto já está cadastrado (${duplicado.local} - Rede: ${duplicado.ssid})! Evitamos o cadastro duplicado.`;
             return;
         }
 
@@ -3250,6 +3344,7 @@
             if (data.wifis && Array.isArray(data.wifis)) {
                 const cacheAnterior = {};
                 listaWifisCache.forEach(item => { if (item && item.id) cacheAnterior[item.id] = item; });
+                const chavesVistas = new Set();
                 listaWifisCache = data.wifis.map(w => {
                     const norm = normalizarPontoWifi(w);
                     const ant = cacheAnterior[norm.id];
@@ -3265,6 +3360,11 @@
                         if (!norm.cidade && ant.cidade) norm.cidade = ant.cidade;
                     }
                     return norm;
+                }).filter(w => {
+                    const chaveUnica = `${String(w.local || "").toLowerCase().trim()}|${String(w.ssid || "").toLowerCase().trim()}|${String(w.cidade || "").toLowerCase().trim()}`;
+                    if (chavesVistas.has(chaveUnica)) return false;
+                    chavesVistas.add(chaveUnica);
+                    return true;
                 });
                 localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
             }
@@ -3647,6 +3747,90 @@
             </div>
         `;
         }).join("");
+    }
+
+    let usuariosAdminCache = [];
+
+    async function alternarListaUsuariosAdmin() {
+        if (bloquearClickFantasma('adm_users_toggle', 350)) return;
+        const box = document.getElementById('adminBoxUsuarios');
+        if (!box) return;
+        box.classList.toggle('hidden');
+        if (!box.classList.contains('hidden')) {
+            await carregarUsuariosAdmin();
+        }
+    }
+
+    async function carregarUsuariosAdmin() {
+        const listaEl = document.getElementById('adminListaUsuarios');
+        if (listaEl) listaEl.innerHTML = `<div style="font-size:0.75rem; text-align:center; padding:8px;">Carregando usuários...</div>`;
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_usuarios_admin&admin_email=${encodeURIComponent(usuarioLogado?.email || "")}&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && Array.isArray(data.usuarios)) {
+                usuariosAdminCache = data.usuarios;
+                const qtdEl = document.getElementById('adminQtdUsuarios');
+                if (qtdEl) qtdEl.textContent = usuariosAdminCache.length;
+                renderizarListaUsuariosAdmin();
+            }
+        } catch (e) {
+            if (listaEl) listaEl.innerHTML = `<div style="font-size:0.75rem; color:#b91c1c; text-align:center; padding:8px;">Erro ao carregar lista de usuários.</div>`;
+        }
+    }
+
+    function renderizarListaUsuariosAdmin() {
+        const listaEl = document.getElementById('adminListaUsuarios');
+        if (!listaEl) return;
+        const termo = (document.getElementById('adminBuscaUsuario')?.value || "").toLowerCase().trim();
+        const filtrados = usuariosAdminCache.filter(u => {
+            if (!termo) return true;
+            return `${u.nome || ""} ${u.email || ""}`.toLowerCase().includes(termo);
+        });
+        if (filtrados.length === 0) {
+            listaEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px;">Nenhum usuário encontrado.</div>`;
+            return;
+        }
+        listaEl.innerHTML = filtrados.map((u, idx) => `
+            <div style="background:#fef9c3; border:1px solid #111111; border-radius:8px; padding:7px 8px; font-size:0.75rem; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <div style="min-width:0; flex:1;">
+                    <div style="font-weight:800; color:#111111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">👤 ${u.nome || "Sem nome"}</div>
+                    <div style="font-size:0.7rem; color:#3f3f46; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">✉️ ${u.email}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                    <input type="number" id="admPtsUser_${idx}" value="${Number(u.saldo) || 0}" style="width:62px; padding:4px 6px; border:1px solid #111; border-radius:6px; font-size:0.76rem; font-weight:800; text-align:center;">
+                    <button type="button" onclick="salvarPontosUsuarioAdmin('${u.email}', 'admPtsUser_${idx}')" style="background:#111111; color:#facc15; border:none; border-radius:6px; padding:5px 8px; font-size:0.7rem; font-weight:800; cursor:pointer;">💾</button>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    async function salvarPontosUsuarioAdmin(emailAlvo, inputId) {
+        if (bloquearClickFantasma('adm_save_pts', 400)) return;
+        const novoSaldo = Number(document.getElementById(inputId)?.value);
+        if (isNaN(novoSaldo)) return;
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_gerenciar_usuario",
+                    admin_email: usuarioLogado?.email || "",
+                    id_usuario: emailAlvo,
+                    novo_saldo: novoSaldo
+                })
+            });
+            const data = await res.json();
+            if (data.status === "ok") {
+                const u = usuariosAdminCache.find(item => item.email === emailAlvo);
+                if (u) u.saldo = novoSaldo;
+                alert(`✅ Pontos de ${emailAlvo} atualizados para ${novoSaldo} créditos!`);
+            } else {
+                alert(data.message || "Erro ao atualizar pontos.");
+            }
+        } catch (e) {
+            alert("Erro de conexão ao salvar pontos.");
+        }
     }
 
     async function carregarProblemasAdmin() {
