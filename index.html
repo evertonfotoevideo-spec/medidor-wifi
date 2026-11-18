@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v35 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v36 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v35</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v36</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v35</h1>
+                <h1 id="appTitle">CLICK CONTROL v36</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1216,7 +1216,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v35";
+    const APP_VERSION = "v36";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1905,9 +1905,11 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "registrar_teste",
+                    acao: "salvar_teste",
                     id_wifi: idWifi,
                     id_usuario: usuarioLogado?.email || "",
+                    download_mbps: ultimoDownMedido,
+                    upload_mbps: ultimoUpMedido,
                     down_mbps: ultimoDownMedido,
                     up_mbps: ultimoUpMedido,
                     lat: userLatAtual,
@@ -2136,6 +2138,10 @@
                 body: JSON.stringify({
                     acao: "cadastrar_wifi",
                     id_usuario: usuarioLogado?.email || "",
+                    nome_local: local,
+                    cidade_uf: cidade,
+                    lat_long: localizacao,
+                    ssid_rede: ssid,
                     local,
                     localizacao,
                     cidade,
@@ -2148,12 +2154,39 @@
                 })
             });
             const data = await res.json();
+            const novoPontoLocal = {
+                id: data.id_wifi || ("WFI-" + Date.now()),
+                local: local,
+                cidade: cidade,
+                lat_long: localizacao,
+                localizacao: localizacao,
+                ssid: ssid,
+                senha: senha,
+                down_mbps: 0,
+                up_mbps: 0,
+                status: "Funcionando",
+                comodidades: comsSelecionadas,
+                horario_sinal: horario,
+                cadastrado_por: usuarioLogado?.email || ""
+            };
+            listaWifisCache.push(novoPontoLocal);
+            localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+            popularSelectWifis();
+            document.getElementById('selectWifiMapa').value = novoPontoLocal.id;
+            document.getElementById('selectWifi').value = novoPontoLocal.id;
+            renderizarAlfinetesNoMapa();
+            resolverCoordenadasFaltantes();
+
             toast.style.display = "block";
             toast.className = "toast";
             toast.textContent = data.message || "✅ Ponto salvo com sucesso! +10 Créditos.";
             pararAutoPreencherGps();
             await carregarListaWifis();
-            setTimeout(() => mudarAba('mapa', true), 1200);
+            const cNovo = parseCoordenadasPonto(novoPontoLocal);
+            setTimeout(() => {
+                mudarAba('mapa', true);
+                if (cNovo && mapInstance) mapInstance.setView([cNovo.lat, cNovo.lng], 16);
+            }, 900);
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast error";
@@ -2234,13 +2267,14 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "editar_wifi_admin",
+                    acao: "admin_editar_wifi",
+                    admin_email: usuarioLogado?.email || "",
                     id_usuario: usuarioLogado?.email || "",
                     id_wifi: idWifi,
-                    local: document.getElementById('adminWifiLocal').value.trim(),
-                    localizacao: document.getElementById('adminWifiEndereco').value.trim(),
-                    cidade: document.getElementById('adminWifiCidade').value.trim(),
-                    ssid: document.getElementById('adminWifiSsid').value.trim(),
+                    nome_local: document.getElementById('adminWifiLocal').value.trim(),
+                    lat_long: document.getElementById('adminWifiEndereco').value.trim(),
+                    cidade_uf: document.getElementById('adminWifiCidade').value.trim(),
+                    ssid_rede: document.getElementById('adminWifiSsid').value.trim(),
                     senha: document.getElementById('adminWifiSenha').value.trim(),
                     horario_sinal: document.getElementById('adminWifiHorario').value.trim(),
                     comodidades: coms
@@ -2275,7 +2309,8 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "excluir_wifi_admin",
+                    acao: "admin_excluir_wifi",
+                    admin_email: usuarioLogado?.email || "",
                     id_usuario: usuarioLogado?.email || "",
                     id_wifi: idWifi
                 })
@@ -2313,10 +2348,10 @@
     async function carregarPerfilUsuario() {
         if (!usuarioLogado?.email) return;
         try {
-            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=perfil_usuario&id_usuario=${encodeURIComponent(usuarioLogado.email)}`);
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=dados_usuario&id_usuario=${encodeURIComponent(usuarioLogado.email)}`);
             const data = await res.json();
-            if (data.creditos !== undefined) {
-                document.getElementById('perfilSaldo').textContent = data.creditos;
+            if (data.saldo !== undefined || data.creditos !== undefined) {
+                document.getElementById('perfilSaldo').textContent = data.saldo !== undefined ? data.saldo : data.creditos;
             }
         } catch (e) {}
     }
@@ -2334,7 +2369,7 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "atualizar_usuario",
+                    acao: "atualizar_dados_usuario",
                     id_usuario: usuarioLogado.email,
                     nome: novoNome,
                     nova_senha: novaSenha
@@ -2404,7 +2439,7 @@
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ acao: "confirmar_recuperacao_senha", id_usuario: email, codigo, nova_senha: novaSenha })
+                body: JSON.stringify({ acao: "redefinir_senha_codigo", id_usuario: email, codigo, nova_senha: novaSenha })
             });
             const data = await res.json();
             toast.style.display = "block";
