@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v37 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v38 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v37</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v38</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v37</h1>
+                <h1 id="appTitle">CLICK CONTROL v38</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1064,6 +1064,15 @@
             </div>
 
             <div class="form-group">
+                <label>Velocidade Estimada (Opcional — se não estiver conectado agora)</label>
+                <div class="gps-row">
+                    <input type="number" id="cadDownEstimado" placeholder="⬇️ Download (Mbps)" min="0" step="0.1">
+                    <input type="number" id="cadUpEstimado" placeholder="⬆️ Upload (Mbps)" min="0" step="0.1">
+                </div>
+                <div class="helper-text">Deixe em branco para medir automaticamente na próxima conexão pelo link/QR.</div>
+            </div>
+
+            <div class="form-group">
                 <label>Estrutura do Local (Opcional)</label>
                 <div class="filter-pills">
                     <div class="filter-pill" id="cadPillEstac" onclick="alternarComodidadeCadastro('estacionamento')">🚗 Estacionamento</div>
@@ -1216,7 +1225,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v37";
+    const APP_VERSION = "v38";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1755,16 +1764,55 @@
         return `https://api.qrserver.com/v1/create-qr-code/?size=${tamanho}x${tamanho}&margin=10&data=${encodeURIComponent(gerarPayloadWifiQR(ssid, senha))}`;
     }
 
+    let pendenteAutoTesteWifiId = null;
+
     function abrirModalQrCodeAtual() {
         if (bloquearClickFantasma('modal_qr', 400)) return;
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi) || listaWifisCache[0];
         if (!ponto) return;
-        conectarPeloLinkQr(ponto.ssid, ponto.senha);
+        conectarPeloLinkQr(ponto.ssid, ponto.senha, ponto.id);
     }
 
-    function conectarPeloLinkQr(ssid, senha) {
+    function iniciarConexaoEAutoTeste(idWifi) {
+        pendenteAutoTesteWifiId = idWifi || document.getElementById('selectWifiMapa')?.value;
+        if (pendenteAutoTesteWifiId) {
+            localStorage.setItem('clickcontrol_autoteste_wifi_id', pendenteAutoTesteWifiId);
+        }
+        setTimeout(() => {
+            if (document.visibilityState === 'visible' && pendenteAutoTesteWifiId) {
+                executarAutoTestePosConexao(pendenteAutoTesteWifiId);
+            }
+        }, 4500);
+    }
+
+    function executarAutoTestePosConexao(idWifi) {
+        if (!idWifi || testeEmAndamento) return;
+        pendenteAutoTesteWifiId = null;
+        localStorage.removeItem('clickcontrol_autoteste_wifi_id');
+        fecharModalQrCode();
+        const sel = document.getElementById('selectWifiMapa');
+        if (sel) sel.value = idWifi;
+        document.getElementById('selectWifi').value = idWifi;
+        atualizarBannerTesteAtual(idWifi);
+        mudarAba('testar', true);
+        setTimeout(() => {
+            iniciarTeste(null, true);
+        }, 700);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            const idPend = pendenteAutoTesteWifiId || localStorage.getItem('clickcontrol_autoteste_wifi_id');
+            if (idPend) {
+                setTimeout(() => executarAutoTestePosConexao(idPend), 1200);
+            }
+        }
+    });
+
+    function conectarPeloLinkQr(ssid, senha, idWifi = null) {
         ativarEscudoTransicao(400);
+        const targetId = idWifi || document.getElementById('selectWifiMapa')?.value || "";
         const payload = gerarPayloadWifiQR(ssid, senha);
         let modal = document.getElementById('modalConexaoWifi');
         if (!modal) {
@@ -1778,7 +1826,8 @@
                 <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
                 <div style="font-size:0.85rem;font-weight:700;margin-bottom:10px;">Rede: ${ssid}</div>
                 <img src="${gerarUrlImagemQR(ssid, senha, 210)}" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
-                <a href="${payload}" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;margin-bottom:8px;">⚡ Conectar Agora</a>
+                <a href="${payload}" onclick="iniciarConexaoEAutoTeste('${targetId}')" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;margin-bottom:8px;">⚡ Conectar Agora & Medir</a>
+                <button type="button" onclick="executarAutoTestePosConexao('${targetId}')" style="background:#16a34a;color:#ffffff;border:none;font-weight:800;font-size:0.8rem;padding:9px;border-radius:8px;cursor:pointer;width:100%;margin-bottom:8px;">✅ Já Conectei — Medir & Salvar na Média</button>
                 <button type="button" onclick="fecharModalQrCode()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
             </div>
         `;
@@ -1865,13 +1914,13 @@
         document.getElementById('testarWifiEnderecoAtual').textContent = `${ponto.localizacao || ponto.lat_long || ""} ${ponto.cidade ? "• " + ponto.cidade : ""}`;
     }
 
-    async function iniciarTeste(ev) {
+    async function iniciarTeste(ev, salvarAutomatico = false) {
         if (ev) {
             ev.preventDefault();
             ev.stopPropagation();
         }
         if (testeEmAndamento) return;
-        if (bloquearClickFantasma('btn_iniciar_teste', 800)) return;
+        if (!salvarAutomatico && bloquearClickFantasma('btn_iniciar_teste', 800)) return;
 
         const btn = document.getElementById('startBtn');
         const saveBtn = document.getElementById('saveBtn');
@@ -1893,33 +1942,75 @@
         upEl.textContent = "...";
 
         try {
-            statusText.textContent = "⬇️ Medindo velocidade de Download...";
-            progressBar.style.width = "35%";
-            const bytesDown = 2500000;
+            // 1. Aquecimento de conexão (elimina latência DNS/TLS/TCP Slow Start do 1º teste)
+            statusText.textContent = "🔄 Estabilizando conexão (aquecimento TCP)...";
+            progressBar.style.width = "20%";
+            await Promise.all([
+                fetch(`https://speed.cloudflare.com/__down?bytes=600000&_w1=${Date.now()}`, { cache: "no-store" }).then(r => r.arrayBuffer()),
+                fetch(`https://speed.cloudflare.com/__down?bytes=600000&_w2=${Date.now()}`, { cache: "no-store" }).then(r => r.arrayBuffer())
+            ]);
+
+            // 2. Download multi-thread paralelo (4 fluxos simultâneos por ~3.5s, padrão Google/M-Lab)
+            statusText.textContent = "⬇️ Medindo Download real (4 fluxos paralelos)...";
+            progressBar.style.width = "45%";
+            const chunkDown = 3500000;
+            const numThreadsDown = 4;
+            let bytesRecebidos = 0;
             const t0Down = performance.now();
-            const respDown = await fetch(`https://speed.cloudflare.com/__down?bytes=${bytesDown}&_=${Date.now()}`, { cache: "no-store" });
-            await respDown.arrayBuffer();
+
+            await Promise.all(Array.from({ length: numThreadsDown }, async (_, idx) => {
+                const resp = await fetch(`https://speed.cloudflare.com/__down?bytes=${chunkDown}&_t=${idx}_${Date.now()}`, { cache: "no-store" });
+                const reader = resp.body ? resp.body.getReader() : null;
+                if (reader) {
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        bytesRecebidos += value.byteLength;
+                        const elapsed = (performance.now() - t0Down) / 1000;
+                        if (elapsed > 0.25) {
+                            const instMbps = (bytesRecebidos * 8) / elapsed / 1000000;
+                            downEl.textContent = instMbps.toFixed(1);
+                        }
+                    }
+                } else {
+                    const buf = await resp.arrayBuffer();
+                    bytesRecebidos += buf.byteLength;
+                }
+            }));
+
             const durDown = Math.max(0.15, (performance.now() - t0Down) / 1000);
-            ultimoDownMedido = Number(((bytesDown * 8) / durDown / 1000000).toFixed(2));
+            ultimoDownMedido = Number(((bytesRecebidos * 8) / durDown / 1000000).toFixed(2));
             downEl.textContent = ultimoDownMedido.toFixed(1);
 
-            statusText.textContent = "⬆️ Medindo velocidade de Upload (Envio)...";
+            // 3. Upload multi-thread paralelo (3 fluxos simultâneos após aquecimento)
+            statusText.textContent = "⬆️ Medindo Upload real (3 fluxos paralelos)...";
             progressBar.style.width = "75%";
-            const bytesUp = 1000000;
-            const payloadUp = new Uint8Array(bytesUp);
+            const warmupUp = new Uint8Array(250000);
+            await fetch(`https://speed.cloudflare.com/__up?_wu=${Date.now()}`, { method: "POST", body: warmupUp, mode: "no-cors" });
+
+            const chunkUp = 1500000;
+            const numThreadsUp = 3;
+            const payloadUp = new Uint8Array(chunkUp);
             const t0Up = performance.now();
-            await fetch(`https://speed.cloudflare.com/__up?_=${Date.now()}`, {
-                method: "POST",
-                body: payloadUp,
-                mode: "no-cors"
-            });
+            await Promise.all(Array.from({ length: numThreadsUp }, (_, idx) =>
+                fetch(`https://speed.cloudflare.com/__up?_tu=${idx}_${Date.now()}`, {
+                    method: "POST",
+                    body: payloadUp,
+                    mode: "no-cors"
+                })
+            ));
             const durUp = Math.max(0.18, (performance.now() - t0Up) / 1000);
-            ultimoUpMedido = Number(((bytesUp * 8) / durUp / 1000000).toFixed(2));
+            ultimoUpMedido = Number(((chunkUp * numThreadsUp * 8) / durUp / 1000000).toFixed(2));
             upEl.textContent = ultimoUpMedido.toFixed(1);
 
             progressBar.style.width = "100%";
-            statusText.textContent = "✅ Teste concluído! Salve o resultado para ganhar +2 Créditos.";
-            saveBtn.style.display = "block";
+            if (salvarAutomatico) {
+                statusText.textContent = "✅ Conectado e medido! Salvando automaticamente na média do local...";
+                await enviarTesteParaPlanilha(null, true);
+            } else {
+                statusText.textContent = "✅ Teste concluído! Salve o resultado para incluir na média (+2 Créditos).";
+                saveBtn.style.display = "block";
+            }
         } catch (err) {
             statusText.textContent = "⚠️ Falha ao medir velocidade. Verifique sua conexão.";
             downEl.textContent = "--";
@@ -1931,12 +2022,12 @@
         }
     }
 
-    async function enviarTesteParaPlanilha(ev) {
+    async function enviarTesteParaPlanilha(ev, automatico = false) {
         if (ev) {
             ev.preventDefault();
             ev.stopPropagation();
         }
-        if (bloquearClickFantasma('btn_salvar_teste', 800)) return;
+        if (!automatico && bloquearClickFantasma('btn_salvar_teste', 800)) return;
 
         const saveBtn = document.getElementById('saveBtn');
         const toast = document.getElementById('toastMsg');
@@ -1965,9 +2056,13 @@
             const data = await res.json();
             toast.style.display = "block";
             toast.className = "toast";
-            toast.textContent = data.message || "✅ Resultado salvo! +2 Créditos adicionados.";
+            toast.textContent = automatico
+                ? `✅ Velocidade (${ultimoDownMedido.toFixed(1)}M ⬇️ / ${ultimoUpMedido.toFixed(1)}M ⬆️) incluída na média do ponto!`
+                : (data.message || "✅ Resultado salvo na média do ponto! +2 Créditos adicionados.");
             saveBtn.style.display = "none";
-            carregarListaWifis();
+            await carregarListaWifis();
+            atualizarCardQrDoMapa(idWifi);
+            renderizarAlfinetesNoMapa();
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast error";
@@ -2195,6 +2290,8 @@
                     senha,
                     horario_sinal: horario,
                     comodidades: comsSelecionadas,
+                    down_mbps: Number(document.getElementById('cadDownEstimado')?.value) || 0,
+                    up_mbps: Number(document.getElementById('cadUpEstimado')?.value) || 0,
                     nota: notaCadastro,
                     foto_base64: fotoCadastroBase64
                 })
@@ -2211,8 +2308,8 @@
                 ssid: ssid,
                 ssid_rede: ssid,
                 senha: senha,
-                down_mbps: 0,
-                up_mbps: 0,
+                down_mbps: Number(document.getElementById('cadDownEstimado')?.value) || 0,
+                up_mbps: Number(document.getElementById('cadUpEstimado')?.value) || 0,
                 status: "Funcionando",
                 comodidades: comsSelecionadas,
                 horario_sinal: horario,
