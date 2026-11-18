@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v45 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v46 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -164,7 +164,7 @@
         }
         .tabs {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 4px;
             margin-bottom: 12px;
             background-color: var(--input-bg);
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v45</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v46</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v45</h1>
+                <h1 id="appTitle">CLICK CONTROL v46</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -828,6 +828,7 @@
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('favoritos')">⭐ Favoritos</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('meus_wifis')">📶 Meus Wi-Fis Cadastrados</button>
+                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('testar')">⚡ Testar Velocidade Manual</button>
                     <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                 </div>
@@ -837,7 +838,6 @@
         <div class="tabs">
             <button type="button" class="tab-btn active" id="tabMapaBtn" onclick="mudarAba('mapa')">🗺️ Mapa</button>
             <button type="button" class="tab-btn" id="tabDadosRedeBtn" onclick="mudarAba('dadosRede')">📶 Dados da Rede</button>
-            <button type="button" class="tab-btn" id="tabTestarBtn" onclick="mudarAba('testar')">⚡ Testar</button>
             <button type="button" class="tab-btn" id="tabCadastrarBtn" onclick="mudarAba('cadastrar')">➕ Novo</button>
         </div>
 
@@ -1296,7 +1296,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v45";
+    const APP_VERSION = "v46";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1306,7 +1306,7 @@
     let userLatAtual = null;
     let userLngAtual = null;
     let prioridadeVelocidade = 'download';
-    let filtroVelocidadeAtivo = 'todos';
+    let filtrosVelocidadeAtivos = [];
     let filtrosAtivos = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
     let comodidadesCadastro = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
     let comodidadesAdmin = { estacionamento: false, mesas: false, tomadas: false, sinal_rua: false };
@@ -1412,6 +1412,10 @@
         };
         document.getElementById('tituloSecaoUsuario').textContent = titulos[opcao] || '👤 Perfil';
 
+        if (opcao === 'testar') {
+            mudarAba('testar', true);
+            return;
+        }
         if (opcao === 'dados_usuario') {
             document.getElementById('secaoDadosUsuario').classList.remove('hidden');
             document.getElementById('editUserEmail').value = usuarioLogado?.email || "";
@@ -1448,7 +1452,7 @@
     function atualizarContadorFiltros() {
         let count = 0;
         if (prioridadeVelocidade !== 'download') count++;
-        if (filtroVelocidadeAtivo !== 'todos') count++;
+        count += filtrosVelocidadeAtivos.length;
         Object.values(filtrosAtivos).forEach(v => { if (v) count++; });
         document.getElementById('filterCountBadge').textContent = `Ativos: ${count}`;
     }
@@ -1477,18 +1481,24 @@
     }
 
     function definirFiltroVelocidade(faixa) {
-        if (bloquearClickFantasma('speed_filter', 300)) return;
-        filtroVelocidadeAtivo = (filtroVelocidadeAtivo === faixa && faixa !== 'todos') ? 'todos' : faixa;
+        if (bloquearClickFantasma('speed_filter', 250)) return;
+        if (faixa === 'todos') {
+            filtrosVelocidadeAtivos = [];
+        } else {
+            const idx = filtrosVelocidadeAtivos.indexOf(faixa);
+            if (idx >= 0) filtrosVelocidadeAtivos.splice(idx, 1);
+            else filtrosVelocidadeAtivos.push(faixa);
+        }
         const ids = {
-            'todos': 'speedFilterAll',
             'lt10': 'speedFilterLt10',
             '10_20': 'speedFilter10_20',
             '20_40': 'speedFilter20_40',
             '40_100': 'speedFilter40_100',
             'gt100': 'speedFilterGt100'
         };
+        document.getElementById('speedFilterAll').classList.toggle('active', filtrosVelocidadeAtivos.length === 0);
         Object.keys(ids).forEach(k => {
-            document.getElementById(ids[k]).classList.toggle('active', filtroVelocidadeAtivo === k);
+            document.getElementById(ids[k]).classList.toggle('active', filtrosVelocidadeAtivos.includes(k));
         });
         atualizarContadorFiltros();
         renderizarAlfinetesNoMapa();
@@ -1497,7 +1507,7 @@
     function limparTodosFiltrosMapa() {
         if (bloquearClickFantasma('limpar_filtros', 300)) return;
         prioridadeVelocidade = 'download';
-        filtroVelocidadeAtivo = 'todos';
+        filtrosVelocidadeAtivos = [];
         Object.keys(filtrosAtivos).forEach(k => filtrosAtivos[k] = false);
         document.getElementById('prioDownBtn').classList.add('active');
         document.getElementById('prioUpBtn').classList.remove('active');
@@ -1631,12 +1641,18 @@
         return listaWifisCache.filter(w => {
             const nunca = pontoNuncaTestado(w);
             const vel = prioridadeVelocidade === 'upload' ? (Number(w.up_mbps) || 0) : (Number(w.down_mbps) || 0);
-            if (filtroVelocidadeAtivo !== 'todos' && nunca) return false;
-            if (filtroVelocidadeAtivo === 'lt10' && vel >= 10) return false;
-            if (filtroVelocidadeAtivo === '10_20' && (vel < 10 || vel >= 20)) return false;
-            if (filtroVelocidadeAtivo === '20_40' && (vel < 20 || vel >= 40)) return false;
-            if (filtroVelocidadeAtivo === '40_100' && (vel < 40 || vel > 100)) return false;
-            if (filtroVelocidadeAtivo === 'gt100' && vel <= 100) return false;
+            if (filtrosVelocidadeAtivos.length > 0) {
+                if (nunca) return false;
+                const bateFaixa = filtrosVelocidadeAtivos.some(f => {
+                    if (f === 'lt10') return vel < 10;
+                    if (f === '10_20') return vel >= 10 && vel < 20;
+                    if (f === '20_40') return vel >= 20 && vel < 40;
+                    if (f === '40_100') return vel >= 40 && vel <= 100;
+                    if (f === 'gt100') return vel > 100;
+                    return false;
+                });
+                if (!bateFaixa) return false;
+            }
 
             const coms = String(w.comodidades || "").toLowerCase();
             if (filtrosAtivos.estacionamento && !coms.includes('estacionamento') && !w.estacionamento) return false;
@@ -2206,14 +2222,17 @@
             const estrelaFav = ehWifiFavorito(w.id) ? "⭐ " : "";
 
             return `
-                <div onclick="expandirDetalhesRede('${w.id}')" style="background:${corCaixa}; color:${corTexto}; border:2px solid #111111; border-radius:12px; padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; box-shadow:0 3px 8px rgba(0,0,0,0.18);">
-                    <div style="min-width:0; flex:1;">
-                        <div style="font-weight:900; font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${estrelaFav}${w.local || "Ponto Wi-Fi"}</div>
-                        <div style="font-size:0.74rem; opacity:0.92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">📍 ${enderecoTxt || "Endereço não informado"}</div>
+                <div class="rede-accordion-item" data-wifi-id="${w.id}">
+                    <div onclick="expandirDetalhesRede('${w.id}')" style="background:${corCaixa}; color:${corTexto}; border:2px solid #111111; border-radius:12px; padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; box-shadow:0 3px 8px rgba(0,0,0,0.18);">
+                        <div style="min-width:0; flex:1;">
+                            <div style="font-weight:900; font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${estrelaFav}${w.local || "Ponto Wi-Fi"}</div>
+                            <div style="font-size:0.74rem; opacity:0.92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">📍 ${enderecoTxt || "Endereço não informado"}</div>
+                        </div>
+                        <div style="background:rgba(17,17,17,0.85); color:#facc15; padding:4px 8px; border-radius:999px; font-size:0.72rem; font-weight:800; white-space:nowrap; flex-shrink:0;">
+                            ${distTxt}
+                        </div>
                     </div>
-                    <div style="background:rgba(17,17,17,0.85); color:#facc15; padding:4px 8px; border-radius:999px; font-size:0.72rem; font-weight:800; white-space:nowrap; flex-shrink:0;">
-                        ${distTxt}
-                    </div>
+                    <div class="rede-accordion-slot" id="slotDetalhes_${w.id}"></div>
                 </div>
             `;
         }).join("");
@@ -2221,19 +2240,38 @@
 
     function expandirDetalhesRede(idWifi) {
         if (bloquearClickFantasma('expandir_rede', 300)) return;
+        const detalhesEl = document.getElementById('detalhesRedeExpandida');
+        const slot = document.getElementById('slotDetalhes_' + idWifi);
+        if (!detalhesEl) return;
+
+        // Se já está aberto exatamente neste item, minimiza ao clicar novamente
+        if (slot && slot.contains(detalhesEl) && !detalhesEl.classList.contains('hidden')) {
+            minimizarDetalhesRede();
+            return;
+        }
+
         const sel = document.getElementById('selectWifiMapa');
         if (sel) sel.value = idWifi;
         document.getElementById('selectWifi').value = idWifi;
         atualizarCardQrDoMapa(idWifi);
         atualizarBannerTesteAtual(idWifi);
         atualizarBotaoFavoritoAtual(idWifi);
-        document.getElementById('detalhesRedeExpandida').classList.remove('hidden');
-        document.getElementById('detalhesRedeExpandida').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        if (slot) {
+            slot.appendChild(detalhesEl);
+        }
+        detalhesEl.classList.remove('hidden');
+        detalhesEl.style.marginTop = "6px";
+        detalhesEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function minimizarDetalhesRede() {
         if (bloquearClickFantasma('minimizar_rede', 300)) return;
-        document.getElementById('detalhesRedeExpandida').classList.add('hidden');
+        const detalhesEl = document.getElementById('detalhesRedeExpandida');
+        if (detalhesEl) {
+            detalhesEl.classList.add('hidden');
+            document.getElementById('abaDadosRede').appendChild(detalhesEl);
+        }
     }
 
     function copiarLinkQrMapa() {
@@ -3267,9 +3305,48 @@
     }
 
     function filtrarOuCarregarCidadeOffline() {}
-    function avaliarWifiComEstrelas(idWifi, nota) {
+    async function avaliarWifiComEstrelas(idWifi, nota) {
         if (bloquearClickFantasma('avaliar_estrela', 450)) return;
-        alert(`⭐ Obrigado! Você avaliou este ponto com ${nota} estrelas.`);
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        const emailUser = (usuarioLogado?.email || "anonimo").toLowerCase().trim();
+        const chaveVotos = 'clickcontrol_votos_estrelas';
+        let votosObj = {};
+        try { votosObj = JSON.parse(localStorage.getItem(chaveVotos) || '{}'); } catch (e) {}
+        if (!votosObj[idWifi]) votosObj[idWifi] = {};
+        const jaVotouAntes = votosObj[idWifi][emailUser] !== undefined;
+        votosObj[idWifi][emailUser] = Number(nota);
+        localStorage.setItem(chaveVotos, JSON.stringify(votosObj));
+
+        const valores = Object.values(votosObj[idWifi]).map(Number).filter(n => n >= 1 && n <= 5);
+        const mediaCalc = valores.length > 0 ? Number((valores.reduce((a, b) => a + b, 0) / valores.length).toFixed(1)) : Number(nota);
+        ponto.nota = mediaCalc;
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+        atualizarCardQrDoMapa(idWifi);
+
+        alert(jaVotouAntes
+            ? `⭐ Seu voto foi atualizado para ${nota} estrela(s)! Média atual: ${mediaCalc}/5`
+            : `⭐ Obrigado! Voto de ${nota} estrela(s) registrado. Média atual: ${mediaCalc}/5`);
+
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "avaliar_wifi",
+                    id_wifi: idWifi,
+                    id_usuario: emailUser,
+                    nota: Number(nota)
+                })
+            });
+            const data = await res.json();
+            if (data && data.media_nota) {
+                ponto.nota = Number(data.media_nota);
+                localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+                atualizarCardQrDoMapa(idWifi);
+            }
+        } catch (e) {}
     }
     function navegarParaPontoDoMapa(idWifi) {
         if (bloquearClickFantasma('nav_popup', 350)) return;
@@ -3491,9 +3568,89 @@
         } catch (e) {}
     }
 
-    async function carregarProblemasAdmin() {
+    let problemasAdminCache = [];
+
+    function obterStatusProblemasLocal() {
+        try { return JSON.parse(localStorage.getItem('clickcontrol_problemas_status') || '{}'); } catch (e) { return {}; }
+    }
+
+    function salvarStatusProblemaLocal(idProb, status) {
+        const mapa = obterStatusProblemasLocal();
+        mapa[idProb] = status;
+        localStorage.setItem('clickcontrol_problemas_status', JSON.stringify(mapa));
+    }
+
+    async function alterarStatusProblemaAdmin(idProb, novoStatus) {
+        salvarStatusProblemaLocal(idProb, novoStatus);
+        const item = problemasAdminCache.find(p => p.id === idProb);
+        if (item) item.status_resolucao = novoStatus;
+        renderizarListaProblemasAdmin();
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "atualizar_status_problema",
+                    admin_email: usuarioLogado?.email || "",
+                    id_problema: idProb,
+                    status_resolucao: novoStatus
+                })
+            });
+        } catch (e) {}
+    }
+
+    function renderizarListaProblemasAdmin() {
         const box = document.getElementById('adminListaProblemas');
         const qtdEl = document.getElementById('adminQtdProblemas');
+        if (!box) return;
+        const statusLocal = obterStatusProblemasLocal();
+        problemasAdminCache.forEach(p => {
+            if (statusLocal[p.id]) p.status_resolucao = statusLocal[p.id];
+            else if (!p.status_resolucao) p.status_resolucao = "Pendente";
+        });
+
+        // Pendentes sempre no topo, Resolvidos abaixo
+        const ordenados = [...problemasAdminCache].sort((a, b) => {
+            const aRes = String(a.status_resolucao).toLowerCase() === "resolvido" ? 1 : 0;
+            const bRes = String(b.status_resolucao).toLowerCase() === "resolvido" ? 1 : 0;
+            return aRes - bRes;
+        });
+
+        const qtdPendentes = ordenados.filter(p => String(p.status_resolucao).toLowerCase() !== "resolvido").length;
+        if (qtdEl) qtdEl.textContent = `${qtdPendentes} pendente(s) / ${ordenados.length} total`;
+
+        if (ordenados.length === 0) {
+            box.innerHTML = `<div style="font-size:0.76rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">Nenhum problema relatado até o momento.</div>`;
+            return;
+        }
+
+        box.innerHTML = ordenados.map(p => {
+            const resolvido = String(p.status_resolucao).toLowerCase() === "resolvido";
+            const bgCard = resolvido ? "#dbeafe" : "#fee2e2";
+            const borderCard = resolvido ? "#1d4ed8" : "#dc2626";
+            const tituloColor = resolvido ? "#1e3a8a" : "#991b1b";
+            return `
+            <div style="background:${bgCard}; border:2px solid ${borderCard}; border-radius:8px; padding:8px; font-size:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; font-weight:800; color:${tituloColor}; margin-bottom:4px;">
+                    <span>${resolvido ? "🔵" : "🔴"} ${p.tipo || "Problema"} • ${p.nome_local || ""}</span>
+                    <select onchange="alterarStatusProblemaAdmin('${p.id}', this.value)" style="background:${resolvido ? '#1d4ed8' : '#dc2626'}; color:#ffffff; border:1px solid #111; border-radius:6px; padding:2px 6px; font-size:0.7rem; font-weight:800; cursor:pointer;">
+                        <option value="Pendente" ${!resolvido ? "selected" : ""}>🔴 Pendente</option>
+                        <option value="Resolvido" ${resolvido ? "selected" : ""}>🔵 Resolvido</option>
+                    </select>
+                </div>
+                <div style="color:#111111; margin-bottom:5px;">${p.descricao || ""}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#3f3f46;">
+                    <span>Por: ${p.usuario || "Usuário"} • ${p.data || ""}</span>
+                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
+                </div>
+            </div>
+        `;
+        }).join("");
+    }
+
+    async function carregarProblemasAdmin() {
+        const box = document.getElementById('adminListaProblemas');
         if (!box) return;
         let lista = [];
         try {
@@ -3503,28 +3660,19 @@
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_problemas&_=${Date.now()}`);
             const data = await res.json();
             if (data && Array.isArray(data.problemas)) {
-                const idsLocais = new Set(lista.map(i => i.id));
-                data.problemas.forEach(p => { if (!idsLocais.has(p.id)) lista.push(p); });
+                const mapById = {};
+                lista.forEach(i => { mapById[i.id] = i; });
+                data.problemas.forEach(p => {
+                    if (mapById[p.id]) {
+                        mapById[p.id] = { ...mapById[p.id], ...p };
+                    } else {
+                        lista.push(p);
+                    }
+                });
             }
         } catch (e) {}
-        if (qtdEl) qtdEl.textContent = lista.length;
-        if (lista.length === 0) {
-            box.innerHTML = `<div style="font-size:0.76rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">Nenhum problema relatado até o momento.</div>`;
-            return;
-        }
-        box.innerHTML = lista.map(p => `
-            <div style="background:#ffffff; border:1px solid #111111; border-radius:8px; padding:8px; font-size:0.75rem;">
-                <div style="display:flex; justify-content:space-between; font-weight:800; color:#b91c1c; margin-bottom:2px;">
-                    <span>${p.tipo || "Problema"} • ${p.nome_local || ""}</span>
-                    <span style="color:#52525b; font-weight:600;">${p.data || ""}</span>
-                </div>
-                <div style="color:#111111; margin-bottom:4px;">${p.descricao || ""}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#52525b;">
-                    <span>Por: ${p.usuario || "Usuário"}</span>
-                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
-                </div>
-            </div>
-        `).join("");
+        problemasAdminCache = lista;
+        renderizarListaProblemasAdmin();
     }
 
     function selecionarPontoNoAdmin(idWifi) {
@@ -3684,6 +3832,28 @@
         } catch (e) {}
     }
 
+    async function excluirComentarioDoPonto(idWifi, idComentario) {
+        if (bloquearClickFantasma('excluir_com', 400)) return;
+        if (!confirm("Deseja realmente excluir este comentário?")) return;
+        const lista = obterComentariosDoPonto(idWifi).filter(c => c.id !== idComentario);
+        salvarComentariosDoPonto(idWifi, lista);
+        renderizarComentariosDoPonto(idWifi);
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "excluir_comentario",
+                    admin_email: usuarioLogado?.email || "",
+                    id_usuario: usuarioLogado?.email || "",
+                    id_wifi: idWifi,
+                    id_comentario: idComentario
+                })
+            });
+        } catch (e) {}
+    }
+
     function renderizarComentariosDoPonto(idWifi) {
         const listaEl = document.getElementById('listaComentariosLocal');
         const contEl = document.getElementById('contadorComentariosLocal');
@@ -3694,11 +3864,18 @@
             listaEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px;">Seja o primeiro a comentar e enviar fotos deste local!</div>`;
             return;
         }
-        listaEl.innerHTML = coms.map(c => `
+        const meuEmail = (usuarioLogado?.email || "").toLowerCase().trim();
+        const souAdmin = ehAdministrador();
+        listaEl.innerHTML = coms.map(c => {
+            const podeExcluir = souAdmin || (meuEmail && String(c.email || "").toLowerCase().trim() === meuEmail);
+            return `
             <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:10px; padding:8px; font-size:0.76rem;">
-                <div style="display:flex; justify-content:space-between; font-weight:800; color:#111111; margin-bottom:3px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; font-weight:800; color:#111111; margin-bottom:3px;">
                     <span>👤 ${c.autor || "Usuário"}</span>
-                    <span style="font-size:0.68rem; color:#52525b; font-weight:600;">${c.data || ""}</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span style="font-size:0.68rem; color:#52525b; font-weight:600;">${c.data || ""}</span>
+                        ${podeExcluir ? `<button type="button" onclick="excluirComentarioDoPonto('${idWifi}', '${c.id}')" title="Excluir comentário" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:2px 6px;font-size:0.68rem;font-weight:800;cursor:pointer;">🗑️ Excluir</button>` : ""}
+                    </div>
                 </div>
                 ${c.texto ? `<div style="color:#18181b; margin-bottom:5px; line-height:1.35;">${c.texto}</div>` : ""}
                 ${Array.isArray(c.fotos) && c.fotos.length > 0 ? `
@@ -3707,7 +3884,8 @@
                     </div>
                 ` : ""}
             </div>
-        `).join("");
+        `;
+        }).join("");
     }
     function calibrarCentroPinoAgora() {
         if (bloquearClickFantasma('calibrar_centro', 550)) return;
