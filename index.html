@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v36 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v37 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v36</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v37</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v36</h1>
+                <h1 id="appTitle">CLICK CONTROL v37</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1216,7 +1216,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v36";
+    const APP_VERSION = "v37";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1426,8 +1426,42 @@
     /* ============================================================
        MAPA, ALFINETES E POPUP COMPLETO
     ============================================================ */
+    function normalizarPontoWifi(w) {
+        if (!w || typeof w !== 'object') return w;
+        const regexCoord = /(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/;
+        const campos = [w.lat_long, w.localizacao, w.endereco, w.senha, w.ssid];
+        let coordEncontrada = null;
+        for (const c of campos) {
+            const m = String(c || "").match(regexCoord);
+            if (m) {
+                coordEncontrada = `${m[1]}, ${m[2]}`;
+                w.lat = parseFloat(m[1]);
+                w.lng = parseFloat(m[2]);
+                break;
+            }
+        }
+        // Se o backend antigo leu colunas D(SSID), E(Senha), F(Lat_Long) deslocadas:
+        if (regexCoord.test(String(w.senha || "")) && !regexCoord.test(String(w.lat_long || ""))) {
+            const realSsid = String(w.lat_long || "").trim();
+            const realSenha = String(w.ssid || "").trim();
+            const realCoord = String(w.senha || "").trim();
+            if (realSsid && !regexCoord.test(realSsid)) w.ssid = realSsid;
+            if (realSenha && !regexCoord.test(realSenha)) w.senha = realSenha;
+            w.lat_long = realCoord;
+            w.localizacao = realCoord;
+        } else if (coordEncontrada && !w.lat_long) {
+            w.lat_long = coordEncontrada;
+        }
+        if (!w.local && w.nome_local) w.local = w.nome_local;
+        if (!w.cidade && w.cidade_uf) w.cidade = w.cidade_uf;
+        if (!w.ssid && w.ssid_rede) w.ssid = w.ssid_rede;
+        if (!w.foto_base64 && w.foto_url) w.foto_base64 = w.foto_url;
+        return w;
+    }
+
     function parseCoordenadasPonto(ponto) {
         if (!ponto) return null;
+        normalizarPontoWifi(ponto);
         if (ponto.lat && ponto.lng && !isNaN(parseFloat(ponto.lat)) && !isNaN(parseFloat(ponto.lng))) {
             return { lat: parseFloat(ponto.lat), lng: parseFloat(ponto.lng) };
         }
@@ -1444,10 +1478,10 @@
         for (let i = 0; i < listaWifisCache.length; i++) {
             const w = listaWifisCache[i];
             if (!parseCoordenadasPonto(w)) {
-                const endTexto = String(w.lat_long || w.localizacao || w.endereco || w.local || "").trim();
+                const endTexto = String(w.lat_long || w.localizacao || w.endereco || "").trim();
                 const cidTexto = String(w.cidade || "").trim();
-                const q = [endTexto, cidTexto, "Brasil"].filter(Boolean).join(", ");
-                if (q && q !== "Brasil") {
+                if (endTexto && endTexto.length > 3 && !/^\d+$/.test(endTexto)) {
+                    const q = [endTexto, cidTexto, "Brasil"].filter(Boolean).join(", ");
                     try {
                         const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`, {
                             headers: { "Accept-Language": "pt-BR" }
@@ -1548,6 +1582,7 @@
                 <div style="text-align:center; padding:2px;">
                     <div style="font-weight:900; font-size:0.88rem; color:#111111; margin-bottom:2px;">📶 ${w.local || "Ponto Wi-Fi"}</div>
                     <div style="font-size:0.74rem; color:#3f3f46; margin-bottom:6px;">${w.cidade || ""}</div>
+                    ${(w.foto_base64 || w.foto_url) ? `<img src="${w.foto_base64 || w.foto_url}" style="width:100%;max-height:95px;object-fit:cover;border-radius:8px;border:1px solid #111111;margin-bottom:6px;">` : ""}
                     <div style="background:#fef9c3; border:1px solid #111111; border-radius:8px; padding:6px; margin-bottom:6px; font-size:0.75rem;">
                         <div><strong>Rede:</strong> ${w.ssid || "--"}</div>
                         <div><strong>Senha:</strong> ${senhaTxt}</div>
@@ -1791,6 +1826,17 @@
             if (coms.includes('tomadas') || ponto.tomadas) tags.push("🔌 Tomadas");
             if (coms.includes('sinal_rua') || ponto.sinal_rua) tags.push("📡 Sinal no Carro");
             amDiv.innerHTML = tags.map(t => `<span class="amenity-tag">${t}</span>`).join("");
+        }
+
+        const galeriaDiv = document.getElementById('mapaGaleriaStrip');
+        if (galeriaDiv) {
+            const fotos = [];
+            if (ponto.foto_base64) fotos.push(ponto.foto_base64);
+            if (ponto.foto_url && ponto.foto_url !== ponto.foto_base64) fotos.push(ponto.foto_url);
+            if (Array.isArray(ponto.fotos)) {
+                ponto.fotos.forEach(f => { if (f && !fotos.includes(f)) fotos.push(f); });
+            }
+            galeriaDiv.innerHTML = fotos.map(src => `<img src="${src}" class="gallery-thumb" onclick="window.open(this.src, '_blank')" alt="Foto do local">`).join("");
         }
     }
 
@@ -2154,38 +2200,47 @@
                 })
             });
             const data = await res.json();
-            const novoPontoLocal = {
+            const novoPontoLocal = normalizarPontoWifi({
                 id: data.id_wifi || ("WFI-" + Date.now()),
                 local: local,
+                nome_local: local,
                 cidade: cidade,
+                cidade_uf: cidade,
                 lat_long: localizacao,
                 localizacao: localizacao,
                 ssid: ssid,
+                ssid_rede: ssid,
                 senha: senha,
                 down_mbps: 0,
                 up_mbps: 0,
                 status: "Funcionando",
                 comodidades: comsSelecionadas,
                 horario_sinal: horario,
+                nota: notaCadastro,
+                foto_base64: fotoCadastroBase64 || "",
                 cadastrado_por: usuarioLogado?.email || ""
-            };
+            });
             listaWifisCache.push(novoPontoLocal);
             localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
             popularSelectWifis();
             document.getElementById('selectWifiMapa').value = novoPontoLocal.id;
             document.getElementById('selectWifi').value = novoPontoLocal.id;
+            atualizarCardQrDoMapa(novoPontoLocal.id);
             renderizarAlfinetesNoMapa();
-            resolverCoordenadasFaltantes();
 
             toast.style.display = "block";
             toast.className = "toast";
             toast.textContent = data.message || "✅ Ponto salvo com sucesso! +10 Créditos.";
             pararAutoPreencherGps();
             await carregarListaWifis();
+            document.getElementById('selectWifiMapa').value = novoPontoLocal.id;
+            document.getElementById('selectWifi').value = novoPontoLocal.id;
+            atualizarCardQrDoMapa(novoPontoLocal.id);
+            renderizarAlfinetesNoMapa();
             const cNovo = parseCoordenadasPonto(novoPontoLocal);
             setTimeout(() => {
                 mudarAba('mapa', true);
-                if (cNovo && mapInstance) mapInstance.setView([cNovo.lat, cNovo.lng], 16);
+                if (cNovo && mapInstance) mapInstance.setView([cNovo.lat, cNovo.lng], 17);
             }, 900);
         } catch (e) {
             toast.style.display = "block";
@@ -2561,7 +2616,24 @@
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&_=${Date.now()}`);
             const data = await res.json();
             if (data.wifis && Array.isArray(data.wifis)) {
-                listaWifisCache = data.wifis;
+                const cacheAnterior = {};
+                listaWifisCache.forEach(item => { if (item && item.id) cacheAnterior[item.id] = item; });
+                listaWifisCache = data.wifis.map(w => {
+                    const norm = normalizarPontoWifi(w);
+                    const ant = cacheAnterior[norm.id];
+                    if (ant) {
+                        if (!norm.foto_base64 && ant.foto_base64) norm.foto_base64 = ant.foto_base64;
+                        if (!parseCoordenadasPonto(norm) && parseCoordenadasPonto(ant)) {
+                            norm.lat_long = ant.lat_long;
+                            norm.lat = ant.lat;
+                            norm.lng = ant.lng;
+                        }
+                        if (!norm.local && ant.local) norm.local = ant.local;
+                        if (!norm.ssid && ant.ssid) norm.ssid = ant.ssid;
+                        if (!norm.cidade && ant.cidade) norm.cidade = ant.cidade;
+                    }
+                    return norm;
+                });
                 localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
             }
         } catch (e) {
@@ -2614,7 +2686,33 @@
         if (bloquearClickFantasma('calibrar_centro', 550)) return;
         alert("🎯 Coordenadas calibradas com a sua posição atual!");
     }
-    function adicionarFotoAoLocalAtual() {}
+    function adicionarFotoAoLocalAtual(event) {
+        const file = event?.target?.files?.[0];
+        if (!file) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const scale = Math.min(1, 640 / img.width);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                const b64 = canvas.toDataURL('image/jpeg', 0.72);
+                ponto.foto_base64 = b64;
+                if (!Array.isArray(ponto.fotos)) ponto.fotos = [];
+                ponto.fotos.push(b64);
+                localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+                atualizarCardQrDoMapa(idWifi);
+                renderizarAlfinetesNoMapa();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
 
     // Limpeza de caches antigos do navegador antes de iniciar
     if ('caches' in window) {
