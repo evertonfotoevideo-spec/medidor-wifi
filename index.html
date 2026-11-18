@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v42 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v43 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v42</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v43</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v42</h1>
+                <h1 id="appTitle">CLICK CONTROL v43</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1246,7 +1246,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v42";
+    const APP_VERSION = "v43";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1943,10 +1943,33 @@
         }
     });
 
+    function acionarConexaoDiretaWifi(ssid, senha, targetId) {
+        iniciarConexaoEAutoTeste(targetId);
+        const isWindows = /Windows/i.test(navigator.userAgent || "");
+        const p = String(senha || "").trim();
+        const isAberta = !p || p.toLowerCase() === "aberta";
+        if (isWindows) {
+            if (!isAberta && navigator.clipboard) {
+                navigator.clipboard.writeText(p).catch(() => {});
+            }
+            window.location.href = "ms-availablenetworks:";
+            const aviso = document.getElementById('avisoConexaoWifiModal');
+            if (aviso) {
+                aviso.style.display = "block";
+                aviso.innerHTML = isAberta
+                    ? `Selecione <strong>${ssid}</strong> na lista do Windows.`
+                    : `Senha <strong>${p}</strong> copiada! Selecione <strong>${ssid}</strong> no Windows e cole (Ctrl+V).`;
+            }
+            return;
+        }
+        window.location.href = gerarPayloadWifiQR(ssid, senha);
+    }
+
     function conectarPeloLinkQr(ssid, senha, idWifi = null) {
         ativarEscudoTransicao(400);
         const targetId = idWifi || document.getElementById('selectWifiMapa')?.value || "";
-        const linkDireto = gerarLinkDiretoConexaoWifi(ssid, senha);
+        const ssidEsc = String(ssid || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+        const senhaEsc = String(senha || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
         let modal = document.getElementById('modalConexaoWifi');
         if (!modal) {
             modal = document.createElement('div');
@@ -1959,8 +1982,8 @@
                 <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:4px;">📶 Conectar ao Wi-Fi</div>
                 <div style="font-size:0.85rem;font-weight:700;margin-bottom:10px;">Rede: ${ssid}</div>
                 <img src="${gerarUrlImagemQR(ssid, senha, 210)}" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
-                <a href="${linkDireto}" onclick="iniciarConexaoEAutoTeste('${targetId}')" style="background:#facc15;color:#111111;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;text-decoration:none;display:block;margin-bottom:8px;">⚡ Conectar</a>
-                <button type="button" onclick="executarTesteEmBackground('${targetId}')" style="background:#16a34a;color:#ffffff;border:none;font-weight:800;font-size:0.8rem;padding:9px;border-radius:8px;cursor:pointer;width:100%;margin-bottom:8px;">✅ Já Conectei (Medir em 2º Plano)</button>
+                <button type="button" onclick="acionarConexaoDiretaWifi('${ssidEsc}', '${senhaEsc}', '${targetId}')" style="background:#facc15;color:#111111;border:none;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;cursor:pointer;width:100%;margin-bottom:8px;">⚡ Conectar</button>
+                <div id="avisoConexaoWifiModal" style="display:none;background:#27272a;border:1px solid #facc15;border-radius:8px;padding:8px;font-size:0.75rem;color:#fef08a;margin-bottom:8px;line-height:1.35;"></div>
                 <button type="button" onclick="fecharModalQrCode()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
             </div>
         `;
