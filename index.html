@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v41 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v42 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v41</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v42</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v41</h1>
+                <h1 id="appTitle">CLICK CONTROL v42</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1246,7 +1246,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v41";
+    const APP_VERSION = "v42";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1870,16 +1870,7 @@
     }
 
     function gerarLinkDiretoConexaoWifi(ssid, senha) {
-        const s = String(ssid || "");
-        const p = String(senha || "").trim();
-        const isAberta = !p || p.toLowerCase() === "aberta";
-        const isAndroid = /Android/i.test(navigator.userAgent || "");
-        if (isAndroid) {
-            const passParam = isAberta ? "" : `;S.P=${encodeURIComponent(p)}`;
-            const typeParam = isAberta ? "nopass" : "WPA";
-            return `intent://connect#Intent;scheme=wifi;S.S=${encodeURIComponent(s)};S.T=${typeParam}${passParam};end`;
-        }
-        return gerarPayloadWifiQR(s, p);
+        return gerarPayloadWifiQR(ssid, senha);
     }
 
     async function executarTesteEmBackground(idWifi) {
@@ -1891,15 +1882,15 @@
         if (statusMapa) statusMapa.textContent = "⚡ Medindo velocidade da rede em segundo plano...";
         try {
             await Promise.all([
-                fetch(`https://speed.cloudflare.com/__down?bytes=600000&_bw1=${Date.now()}`, { cache: "no-store", signal: sig }).then(r => r.arrayBuffer()),
-                fetch(`https://speed.cloudflare.com/__down?bytes=600000&_bw2=${Date.now()}`, { cache: "no-store", signal: sig }).then(r => r.arrayBuffer())
+                fetch(`https://speed.cloudflare.com/__down?bytes=600000&_bw1=${Date.now()}`, { cache: "no-store" }).then(r => r.arrayBuffer()),
+                fetch(`https://speed.cloudflare.com/__down?bytes=600000&_bw2=${Date.now()}`, { cache: "no-store" }).then(r => r.arrayBuffer())
             ]);
             const chunkDown = 3000000;
             const numThreadsDown = 4;
             let bytesRecebidos = 0;
             const t0Down = performance.now();
             await Promise.all(Array.from({ length: numThreadsDown }, async (_, idx) => {
-                const resp = await fetch(`https://speed.cloudflare.com/__down?bytes=${chunkDown}&_bt=${idx}_${Date.now()}`, { cache: "no-store", signal: sig });
+                const resp = await fetch(`https://speed.cloudflare.com/__down?bytes=${chunkDown}&_bt=${idx}_${Date.now()}`, { cache: "no-store" });
                 const buf = await resp.arrayBuffer();
                 bytesRecebidos += buf.byteLength;
             }));
