@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v47 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v48 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -45,8 +45,77 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 6px;
+        }
+        body.mapa-fit-screen {
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow: hidden;
+        }
+        body.mapa-fit-screen .container {
+            height: calc(100dvh - 12px);
+            display: flex;
+            flex-direction: column;
             padding: 10px;
+            overflow: hidden;
+        }
+        body.mapa-fit-screen #appScreen {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        body.mapa-fit-screen .top-navbar {
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            flex-shrink: 0;
+        }
+        body.mapa-fit-screen .tabs {
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+        body.mapa-fit-screen #abaMapa {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        body.mapa-fit-screen #abaMapa .filter-toolbar {
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+        body.mapa-fit-screen #abaMapa #miniMap {
+            flex: 1;
+            height: auto;
+            min-height: 140px;
+            margin-bottom: 4px;
+        }
+        body.mapa-fit-screen #abaMapa #zoomFilterNotice {
+            margin-bottom: 4px;
+            font-size: 0.68rem;
+            flex-shrink: 0;
+        }
+        body.mapa-fit-screen #abaMapa .map-bottom-controls {
+            flex-shrink: 0;
+            margin-top: 0;
+            margin-bottom: 4px;
+        }
+        body.mapa-fit-screen #abaMapa .map-bottom-controls label {
+            display: none;
+        }
+        body.mapa-fit-screen #abaMapa .map-bottom-controls .helper-text {
+            margin-top: 2px;
+            font-size: 0.68rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        body.mapa-fit-screen #abaMapa .btn-map-dados {
+            margin-top: 2px !important;
+            padding: 9px 12px;
+            font-size: 0.84rem;
+            flex-shrink: 0;
         }
         .container {
             background-color: var(--card-bg);
@@ -749,7 +818,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v47</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v48</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +878,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v47</h1>
+                <h1 id="appTitle">CLICK CONTROL v48</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -884,7 +953,7 @@
             <div id="miniMap"></div>
             <div class="helper-text" id="zoomFilterNotice" style="text-align:center; margin-bottom:8px;">Zoom afastado: mostrando melhores pontos.</div>
 
-            <div class="form-group" style="margin-top: 4px;">
+            <div class="form-group map-bottom-controls" style="margin-top: 4px;">
                 <label for="selectWifiMapa">Endereço / Local do Wi-Fi</label>
                 <div class="gps-row">
                     <select id="selectWifiMapa" onchange="aoSelecionarNoMapa()"></select>
@@ -893,7 +962,7 @@
                 <div class="helper-text" id="mapGpsStatus">Carregando mapa...</div>
             </div>
 
-            <button type="button" class="btn" style="margin-top: 6px;" onclick="mudarAba('dadosRede')">📶 Ver Dados da Rede & QR Code</button>
+            <button type="button" class="btn btn-map-dados" style="margin-top: 6px;" onclick="mudarAba('dadosRede')">📶 Ver Dados da Rede & QR Code</button>
         </div>
 
         <!-- ABA 2: DADOS DA REDE -->
@@ -903,11 +972,14 @@
                 <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
             </div>
 
-            <div style="display:flex; gap:6px; align-items:center; margin-bottom:10px;">
-                <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="flex:1; padding:7px 10px; font-size:0.78rem; border-radius:8px;">
-                    <option value="">🌐 Todas as cidades (Online / Nuvem)</option>
+            <div style="display:grid; grid-template-columns: 1fr 1.6fr auto; gap:6px; align-items:center; margin-bottom:10px;">
+                <select id="selectEstadoDadosRede" onchange="aoMudarEstadoDadosRede()" style="padding:7px 8px; font-size:0.78rem; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-weight:600;">
+                    <option value="">🗺️ Estado</option>
                 </select>
-                <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
+                <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="padding:7px 8px; font-size:0.78rem; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-weight:600;">
+                    <option value="">🏙️ Todas as cidades</option>
+                </select>
+                <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap; padding:7px 9px;" onclick="carregarPacoteOffline()">📂 Offline</button>
             </div>
 
             <div id="listaRedesMinimizadas" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
@@ -1307,7 +1379,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v47";
+    const APP_VERSION = "v48";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -2202,9 +2274,47 @@
         return `${distKm.toFixed(1)} km`;
     }
 
+    function popularFiltrosEstadoCidadeDadosRede() {
+        const selEst = document.getElementById('selectEstadoDadosRede');
+        const selCid = document.getElementById('selectCidadeOffline');
+        if (!selEst || !selCid) return;
+
+        const estAtual = selEst.value;
+        const cidAtual = selCid.value;
+
+        const estados = new Set();
+        const cidades = new Set();
+
+        listaWifisCache.forEach(w => {
+            const loc = extrairLocalizacaoPonto(w);
+            if (loc.estado) estados.add(loc.estado);
+            if ((!estAtual || loc.estado === estAtual) && loc.cidade) {
+                cidades.add(loc.cidade);
+            }
+        });
+
+        selEst.innerHTML = `<option value="">🗺️ Estado (Todos)</option>` + Array.from(estados).sort().map(e => `<option value="${e}">${e}</option>`).join("");
+        if (estAtual && estados.has(estAtual)) selEst.value = estAtual;
+
+        selCid.innerHTML = `<option value="">🏙️ Cidade (Todas)</option>` + Array.from(cidades).sort().map(c => `<option value="${c}">${c}</option>`).join("");
+        if (cidAtual && cidades.has(cidAtual)) selCid.value = cidAtual;
+    }
+
+    function aoMudarEstadoDadosRede() {
+        const selCid = document.getElementById('selectCidadeOffline');
+        if (selCid) selCid.value = "";
+        popularFiltrosEstadoCidadeDadosRede();
+        renderizarListaRedesMinimizadas();
+    }
+
     function renderizarListaRedesMinimizadas() {
         const container = document.getElementById('listaRedesMinimizadas');
         if (!container) return;
+        popularFiltrosEstadoCidadeDadosRede();
+
+        const filtroEst = document.getElementById('selectEstadoDadosRede')?.value || "";
+        const filtroCid = document.getElementById('selectCidadeOffline')?.value || "";
+
         const detalhesEl = document.getElementById('detalhesRedeExpandida');
         const idAbertoAntes = (detalhesEl && !detalhesEl.classList.contains('hidden') && container.contains(detalhesEl))
             ? (detalhesEl.parentElement?.id || '').replace('slotDetalhes_', '')
@@ -2213,7 +2323,14 @@
             document.getElementById('abaDadosRede').appendChild(detalhesEl);
         }
 
-        const itensComDist = listaWifisCache.map(w => {
+        const listaFiltrada = listaWifisCache.filter(w => {
+            const loc = extrairLocalizacaoPonto(w);
+            if (filtroEst && loc.estado !== filtroEst) return false;
+            if (filtroCid && loc.cidade !== filtroCid) return false;
+            return true;
+        });
+
+        const itensComDist = listaFiltrada.map(w => {
             const c = parseCoordenadasPonto(w);
             let distKm = Infinity;
             if (c && userLatAtual !== null && userLngAtual !== null) {
@@ -2687,38 +2804,90 @@
         return mapa[s.toLowerCase()] || s;
     }
 
+    async function buscarNumeroPredialMaisProximo(lat, lng, ruaAlvo = "") {
+        try {
+            const query = `[out:json][timeout:6];(node(around:65,${lat},${lng})["addr:housenumber"];way(around:65,${lat},${lng})["addr:housenumber"];);out center 15;`;
+            const resp = await fetch("https://overpass-api.de/api/interpreter", {
+                method: "POST",
+                body: "data=" + encodeURIComponent(query)
+            });
+            const data = await resp.json();
+            if (!data || !Array.isArray(data.elements) || data.elements.length === 0) return null;
+
+            const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            const ruaNorm = norm(ruaAlvo);
+            let melhor = null;
+            let menorDist = Infinity;
+
+            data.elements.forEach(el => {
+                const tags = el.tags || {};
+                const num = tags["addr:housenumber"];
+                if (!num) return;
+                const elLat = el.lat !== undefined ? el.lat : el.center?.lat;
+                const elLng = el.lon !== undefined ? el.lon : el.center?.lon;
+                if (elLat === undefined || elLng === undefined) return;
+
+                let dist = calcularDistanciaKm(Number(lat), Number(lng), Number(elLat), Number(elLng));
+                const streetTag = norm(tags["addr:street"] || "");
+                if (ruaNorm && streetTag && (streetTag.includes(ruaNorm) || ruaNorm.includes(streetTag))) {
+                    dist *= 0.4; // Prioriza números na mesma rua
+                }
+                if (dist < menorDist) {
+                    menorDist = dist;
+                    melhor = {
+                        numero: String(num).trim(),
+                        rua: tags["addr:street"] || ""
+                    };
+                }
+            });
+            return melhor;
+        } catch (e) {
+            return null;
+        }
+    }
+
     async function preencherEnderecoCompletoPorCoords(latNum, lngNum) {
         const lat = Number(latNum).toFixed(6);
         const lng = Number(lngNum).toFixed(6);
         ultimaCoordGPS = `${lat}, ${lng}`;
         const status = document.getElementById('gpsStatus');
-        if (status) status.textContent = "🔍 Buscando rua, número mais próximo e cidade...";
+        if (status) status.textContent = "🔍 Buscando rua e número predial mais próximo...";
         try {
-            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${lat}&lon=${lng}`, {
-                headers: { "Accept-Language": "pt-BR" }
-            });
-            const geo = await r.json();
-            if (geo && geo.address) {
-                const a = geo.address;
-                const rua = a.road || a.pedestrian || a.street || a.avenue || a.highway || "";
-                const numero = a.house_number || "";
-                const bairro = a.suburb || a.neighbourhood || a.quarter || a.district || "";
-                const cidade = a.city || a.town || a.village || a.municipality || "";
-                const uf = abreviarEstadoBr(a.state_code || a.state || "");
+            const [nomResp, bdcResp] = await Promise.all([
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${lat}&lon=${lng}`, {
+                    headers: { "Accept-Language": "pt-BR" }
+                }).then(r => r.json()).catch(() => null),
+                fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=pt`)
+                    .then(r => r.json()).catch(() => null)
+            ]);
 
+            const a = (nomResp && nomResp.address) ? nomResp.address : {};
+            let rua = a.road || a.pedestrian || a.street || a.avenue || a.highway || "";
+            let numero = a.house_number || "";
+            const bairro = a.suburb || a.neighbourhood || a.quarter || a.district || (bdcResp && bdcResp.locality) || "";
+            const cidade = a.city || a.town || a.village || a.municipality || (bdcResp && bdcResp.city) || "";
+            const uf = abreviarEstadoBr(a.state_code || a.state || (bdcResp && bdcResp.principalSubdivisionCode) || (bdcResp && bdcResp.principalSubdivision) || "");
+
+            if (!numero) {
+                const maisProx = await buscarNumeroPredialMaisProximo(lat, lng, rua);
+                if (maisProx) {
+                    numero = maisProx.numero;
+                    if (!rua && maisProx.rua) rua = maisProx.rua;
+                }
+            }
+
+            if (rua || numero || bairro) {
                 const ruaComNum = [rua, numero ? `nº ${numero}` : "s/n"].filter(Boolean).join(", ");
                 const endFormatado = [ruaComNum, bairro].filter(Boolean).join(" - ");
-                document.getElementById('cadLocalizacao').value = endFormatado
-                    ? `${endFormatado} (${lat}, ${lng})`
-                    : `${lat}, ${lng}`;
+                document.getElementById('cadLocalizacao').value = `${endFormatado} (${lat}, ${lng})`;
 
                 if (cidade) {
                     document.getElementById('cadCidade').value = uf ? `${cidade} - ${uf}` : cidade;
                 }
-                if (geo.name && !document.getElementById('cadNomeLocal').value.trim()) {
-                    document.getElementById('cadNomeLocal').value = geo.name;
+                if (nomResp && nomResp.name && !document.getElementById('cadNomeLocal').value.trim()) {
+                    document.getElementById('cadNomeLocal').value = nomResp.name;
                 }
-                if (status) status.textContent = `✅ Endereço detectado: ${endFormatado || ultimaCoordGPS}`;
+                if (status) status.textContent = `✅ Endereço detectado: ${endFormatado}`;
                 return;
             }
         } catch (e) {}
@@ -3292,6 +3461,7 @@
 
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
+        document.body.classList.add('mapa-fit-screen');
         const pName = (usuarioLogado.nome || "Usuário").split(" ")[0];
         document.getElementById('userDisplay').textContent = pName;
         document.getElementById('userMenuFullName').textContent = usuarioLogado.nome;
@@ -3309,6 +3479,7 @@
         ativarEscudoTransicao(550);
         localStorage.removeItem('clickcontrol_user');
         usuarioLogado = null;
+        document.body.classList.remove('mapa-fit-screen');
         document.getElementById('appScreen').classList.add('hidden');
         document.getElementById('loginScreen').classList.remove('hidden');
     }
@@ -3322,6 +3493,7 @@
             const btn = document.getElementById('tab' + n.charAt(0).toUpperCase() + n.slice(1) + 'Btn');
             if (btn) btn.classList.toggle('active', n === aba);
         });
+        document.body.classList.toggle('mapa-fit-screen', aba === 'mapa');
         if (aba === 'mapa') inicializarOuAtualizarMapa();
         else if (aba === 'dadosRede') {
             document.getElementById('detalhesRedeExpandida')?.classList.add('hidden');
@@ -3404,7 +3576,9 @@
         }
     }
 
-    function filtrarOuCarregarCidadeOffline() {}
+    function filtrarOuCarregarCidadeOffline() {
+        renderizarListaRedesMinimizadas();
+    }
     async function avaliarWifiComEstrelas(idWifi, nota) {
         if (bloquearClickFantasma('avaliar_estrela', 450)) return;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
