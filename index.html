@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v43 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v45 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -749,7 +749,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v43</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v45</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -809,7 +809,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v43</h1>
+                <h1 id="appTitle">CLICK CONTROL v45</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -903,17 +903,11 @@
                 <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
             </div>
 
-            <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
-                <div style="display:flex; gap:6px;">
-                    <button type="button" class="btn-mini" id="btnSyncNuvem" style="flex:1; margin-top:0; background:#111111; color:#facc15;" onclick="sincronizarDadosNuvemManual()">🔄 Atualizar Nuvem</button>
-                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="baixarPacoteOfflineCidade()">📥 Salvar Cidade</button>
-                </div>
-                <div style="display:flex; gap:6px; align-items:center;">
-                    <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="flex:1; padding:7px 10px; font-size:0.78rem; border-radius:8px;">
-                        <option value="">🌐 Todas as cidades (Online / Nuvem)</option>
-                    </select>
-                    <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
-                </div>
+            <div style="display:flex; gap:6px; align-items:center; margin-bottom:10px;">
+                <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="flex:1; padding:7px 10px; font-size:0.78rem; border-radius:8px;">
+                    <option value="">🌐 Todas as cidades (Online / Nuvem)</option>
+                </select>
+                <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap;" onclick="carregarPacoteOffline()">📂 Abrir Offline</button>
             </div>
 
             <div id="listaRedesMinimizadas" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
@@ -924,31 +918,34 @@
                     <button type="button" class="btn-mini" id="btnFavoritarRedeAtual" style="margin-top:0; background:#fef08a; color:#111111; border:1px solid #111111; font-weight:800;" onclick="alternarFavoritoWifiAtual()">☆ Favoritar</button>
                 </div>
 
-                <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:10px; margin-bottom:10px; text-align:center;">
-                    <div style="font-size:0.78rem; font-weight:700; color:var(--primary); margin-bottom:4px;" id="mapaEstrelasTitulo">⭐ Nota do Local (Média: 4.8/5)</div>
-                    <div style="display:flex; justify-content:center; gap:6px; font-size:1.4rem; cursor:pointer;" id="mapaEstrelasBotoes">
-                        <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 1)">⭐</span>
-                        <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 2)">⭐</span>
-                        <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 3)">⭐</span>
-                        <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 4)">⭐</span>
-                        <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 5)">⭐</span>
-                    </div>
-                </div>
-
                 <div class="qr-card" id="mapaQrCard">
-                    <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">Conexão Wi-Fi</div>
-                    <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
-                    <div class="hidden" style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px; text-align:left;">
+                        <div>
+                            <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">Conexão Wi-Fi</div>
+                            <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
+                            <div class="hidden" style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
+                        </div>
+                        <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:8px; padding:3px 6px; text-align:right; flex-shrink:0;">
+                            <div style="font-size:0.62rem; font-weight:700; color:var(--text-muted);" id="mapaEstrelasTitulo">⭐ 4.8/5</div>
+                            <div style="display:flex; gap:1px; font-size:0.72rem; cursor:pointer; line-height:1.1;" id="mapaEstrelasBotoes">
+                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 1)">⭐</span>
+                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 2)">⭐</span>
+                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 3)">⭐</span>
+                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 4)">⭐</span>
+                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 5)">⭐</span>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="live-status-bar">
                         <span class="status-pill-live" id="mapaLiveStatus">🟢 Funcionando agora</span>
                         <div style="display:flex; gap:5px; flex-wrap:wrap;">
                             <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('conectou')">👍 Conectou</button>
-                            <button type="button" class="btn-mini" id="btnCalibrarCentro" style="margin-top:0; padding:4px 8px; background:var(--primary); color:var(--primary-text);" onclick="calibrarCentroPinoAgora()">🎯 Centralizar Pino Aqui</button>
-                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('senha_alterada')">⚠️ Senha mudou</button>
+                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="validarStatusAoVivo('nao_conectou')">👎 Não conectou</button>
+                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="abrirModalNovaSenhaWifi()">🔑 Senha mudou</button>
+                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="abrirModalSugerirAlteracao()">✏️ Sugerir alteração</button>
                         </div>
                     </div>
-                    <div class="helper-text" id="mapaCentroideInfo" style="margin-bottom:6px; color:#713f12; font-weight:600;">🎯 Centro calculado a partir das medições e calibragens dos usuários.</div>
 
                     <div class="security-banner" id="mapaSecurityBanner">
                         🛡️ <strong>Segurança em Campo:</strong> Use VPN ativa ao acessar redes públicas e evite transações bancárias.
@@ -957,19 +954,43 @@
                     <div class="amenities-badges" id="mapaAmenities"></div>
 
                     <div class="gallery-strip" id="mapaGaleriaStrip"></div>
-                    <div>
+                    <div style="display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:4px;">
                         <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
-                        <button type="button" class="btn-mini" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
+                        <button type="button" class="btn-mini" style="margin-top:0;" onclick="abrirModalGaleriaPonto()">🖼️ Galeria (<span id="qtdFotosGaleriaBtn">0</span>)</button>
+                        <button type="button" class="btn-mini" style="margin-top:0;" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
                     </div>
 
                     <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top:10px;">
                         <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:var(--primary); color:var(--primary-text); font-weight:800;">🧭 Ir até lá (Maps/Waze)</a>
                         <button type="button" class="btn-mini" onclick="abrirModalQrCodeAtual()">🔗 Ver QR Code</button>
+                        <button type="button" class="btn-mini" onclick="abrirModalRelatarProblema()">⚠️ Relatar problema</button>
                         <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
                     </div>
                 </div>
 
-                <button type="button" class="btn" onclick="irTestarSelecionadoDoMapa()">⚡ Testar Este Wi-Fi Selecionado</button>
+                <!-- COMENTÁRIOS E AVALIAÇÕES COM FOTO (ESTILO SHOPEE / MERCADO LIVRE) -->
+                <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="font-size:0.84rem; color:var(--primary);">💬 Comentários e Fotos do Local</strong>
+                        <span id="contadorComentariosLocal" style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">0 avaliações</span>
+                    </div>
+
+                    <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:10px; padding:8px; margin-bottom:10px;">
+                        <textarea id="inputComentarioLocal" rows="2" placeholder="Conte como é o sinal, atendimento, tomadas ou mesas deste local..." style="width:100%; border:1px solid var(--border); border-radius:8px; padding:7px; font-size:0.78rem; resize:vertical; background:#fff; color:#111;"></textarea>
+                        <div id="previewFotosComentario" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap;">
+                            <div style="display:flex; gap:5px;">
+                                <input type="file" id="inputFotoComentarioCam" accept="image/*" capture="environment" class="hidden" onchange="adicionarFotoComentario(event)">
+                                <input type="file" id="inputFotoComentarioGal" accept="image/*" multiple class="hidden" onchange="adicionarFotoComentario(event)">
+                                <button type="button" class="btn-mini" style="margin-top:0; padding:5px 8px;" onclick="document.getElementById('inputFotoComentarioCam').click()">📷 Foto</button>
+                                <button type="button" class="btn-mini" style="margin-top:0; padding:5px 8px;" onclick="document.getElementById('inputFotoComentarioGal').click()">🖼️ Galeria</button>
+                            </div>
+                            <button type="button" class="btn-mini" id="btnEnviarComentarioLocal" style="margin-top:0; background:var(--primary); color:var(--primary-text); font-weight:800; padding:6px 12px;" onclick="enviarComentarioComFotos()">Publicar Comentário</button>
+                        </div>
+                    </div>
+
+                    <div id="listaComentariosLocal" style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto;"></div>
+                </div>
             </div>
         </div>
 
@@ -1168,7 +1189,28 @@
             <!-- PAINEL ADMIN COMPLETO RESTAURADO -->
             <div id="adminPanelBox" class="hidden" style="padding:12px; background:#fef9c3; border:2px solid #111111; border-radius:12px;">
                 <div style="font-size:0.9rem; font-weight:800; color:var(--primary); margin-bottom:4px;">🛡️ Painel Administrador — Gestão de Wi-Fis</div>
-                <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">Selecione qualquer ponto cadastrado na rede para editar dados, senha, horário, estrutura ou excluir.</p>
+                <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">Filtre por País, Estado ou Cidade, gerencie pontos ou veja os problemas relatados pelos usuários.</p>
+
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-bottom:8px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="adminFiltroPais" style="font-size:0.7rem;">🌎 País</label>
+                        <select id="adminFiltroPais" onchange="aoMudarFiltroPaisAdmin()" style="padding:7px 6px; font-size:0.76rem;">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="adminFiltroEstado" style="font-size:0.7rem;">🗺️ Estado</label>
+                        <select id="adminFiltroEstado" onchange="aoMudarFiltroEstadoAdmin()" style="padding:7px 6px; font-size:0.76rem;">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="adminFiltroCidade" style="font-size:0.7rem;">🏙️ Cidade</label>
+                        <select id="adminFiltroCidade" onchange="popularSelectAdminWifis()" style="padding:7px 6px; font-size:0.76rem;">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div class="form-group" style="margin-bottom:8px;">
                     <label for="adminFiltroWifi">🔍 Filtrar Ponto (Nome, Cidade ou Rede)</label>
@@ -1237,6 +1279,14 @@
                     <button type="button" class="btn" id="btnExcluirAdminWifi" style="flex:1; background:#dc2626; color:#ffffff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir</button>
                 </div>
                 <div class="toast" id="adminToast"></div>
+
+                <div style="margin-top:14px; padding-top:12px; border-top:2px solid #111111;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="font-size:0.86rem; color:var(--primary);">🚨 Problemas Relatados & Sugestões (<span id="adminQtdProblemas">0</span>)</strong>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="carregarProblemasAdmin()">🔄 Atualizar</button>
+                    </div>
+                    <div id="adminListaProblemas" style="display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -1246,7 +1296,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v43";
+    const APP_VERSION = "v45";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1377,7 +1427,9 @@
             renderizarMeusWifis();
         } else if (opcao === 'admin') {
             document.getElementById('adminPanelBox').classList.remove('hidden');
+            popularFiltrosLocalizacaoAdmin();
             popularSelectAdminWifis();
+            carregarProblemasAdmin();
         }
     }
 
@@ -1625,7 +1677,6 @@
                     <div style="font-weight:900; font-size:0.88rem; color:#111111; margin-bottom:2px;">📶 ${w.local || "Ponto Wi-Fi"}</div>
                     <div style="font-size:0.74rem; color:#3f3f46; margin-bottom:6px;">${w.cidade || ""}</div>
                     ${nuncaTestado ? `<div style="background:#f3e8ff;color:#6b21a8;border:1px solid #c084fc;border-radius:6px;padding:3px 6px;font-size:0.7rem;font-weight:800;margin-bottom:6px;">🟣 Nunca testado — conecte para medir</div>` : ""}
-                    ${(w.foto_base64 || w.foto_url) ? `<img src="${w.foto_base64 || w.foto_url}" style="width:100%;max-height:95px;object-fit:cover;border-radius:8px;border:1px solid #111111;margin-bottom:6px;">` : ""}
                     <div style="background:#fef9c3; border:1px solid #111111; border-radius:8px; padding:6px; margin-bottom:6px; font-size:0.75rem;">
                         <div><strong>Rede:</strong> ${w.ssid || "--"}</div>
                         <div><strong>Senha:</strong> ${senhaTxt}</div>
@@ -1636,6 +1687,8 @@
                     </div>
                     <div style="display:flex; flex-direction:column; gap:5px;">
                         <button type="button" onclick="conectarPeloLinkQr('${String(w.ssid || "").replace(/'/g, "\'")}', '${String(w.senha || "").replace(/'/g, "\'")}', '${w.id}')" style="background:#16a34a; color:#ffffff; border:none; border-radius:6px; padding:8px 10px; font-size:0.78rem; font-weight:800; cursor:pointer;">🔗 Conectar</button>
+                        <button type="button" onclick="navegarParaPontoDoMapa('${w.id}')" style="background:#2563eb; color:#ffffff; border:none; border-radius:6px; padding:7px 10px; font-size:0.76rem; font-weight:800; cursor:pointer;">🧭 Navegar</button>
+                        <button type="button" onclick="abrirDadosRedeDoPopup('${w.id}')" style="background:#111111; color:#facc15; border:none; border-radius:6px; padding:7px 10px; font-size:0.76rem; font-weight:800; cursor:pointer;">📶 Dados da rede</button>
                     </div>
                 </div>
             `;
@@ -1945,24 +1998,29 @@
 
     function acionarConexaoDiretaWifi(ssid, senha, targetId) {
         iniciarConexaoEAutoTeste(targetId);
-        const isWindows = /Windows/i.test(navigator.userAgent || "");
         const p = String(senha || "").trim();
         const isAberta = !p || p.toLowerCase() === "aberta";
-        if (isWindows) {
-            if (!isAberta && navigator.clipboard) {
-                navigator.clipboard.writeText(p).catch(() => {});
-            }
-            window.location.href = "ms-availablenetworks:";
-            const aviso = document.getElementById('avisoConexaoWifiModal');
-            if (aviso) {
-                aviso.style.display = "block";
-                aviso.innerHTML = isAberta
-                    ? `Selecione <strong>${ssid}</strong> na lista do Windows.`
-                    : `Senha <strong>${p}</strong> copiada! Selecione <strong>${ssid}</strong> no Windows e cole (Ctrl+V).`;
-            }
-            return;
+        if (!isAberta && navigator.clipboard) {
+            navigator.clipboard.writeText(p).catch(() => {});
         }
-        window.location.href = gerarPayloadWifiQR(ssid, senha);
+        const isAndroid = /Android/i.test(navigator.userAgent || "");
+        const isWindows = /Windows/i.test(navigator.userAgent || "");
+        if (isAndroid) {
+            const s = String(ssid || "");
+            const intentUrl = isAberta
+                ? `intent:#Intent;action=android.settings.WIFI_SETTINGS;S.ssid=${encodeURIComponent(s)};end`
+                : `intent:#Intent;action=android.settings.WIFI_SETTINGS;S.ssid=${encodeURIComponent(s)};S.password=${encodeURIComponent(p)};end`;
+            window.location.href = intentUrl;
+        } else if (isWindows) {
+            window.location.href = "ms-availablenetworks:";
+        }
+        const aviso = document.getElementById('avisoConexaoWifiModal');
+        if (aviso) {
+            aviso.style.display = "block";
+            aviso.innerHTML = isAberta
+                ? `Selecione a rede <strong>${ssid}</strong> nas configurações de Wi-Fi.`
+                : `Senha <strong>${p}</strong> copiada! Selecione <strong>${ssid}</strong> no Wi-Fi e cole a senha.`;
+        }
     }
 
     function conectarPeloLinkQr(ssid, senha, idWifi = null) {
@@ -2031,16 +2089,14 @@
             amDiv.innerHTML = tags.map(t => `<span class="amenity-tag">${t}</span>`).join("");
         }
 
+        const fotos = obterTodasFotosDoPonto(ponto);
+        const qtdBtn = document.getElementById('qtdFotosGaleriaBtn');
+        if (qtdBtn) qtdBtn.textContent = fotos.length;
         const galeriaDiv = document.getElementById('mapaGaleriaStrip');
         if (galeriaDiv) {
-            const fotos = [];
-            if (ponto.foto_base64) fotos.push(ponto.foto_base64);
-            if (ponto.foto_url && ponto.foto_url !== ponto.foto_base64) fotos.push(ponto.foto_url);
-            if (Array.isArray(ponto.fotos)) {
-                ponto.fotos.forEach(f => { if (f && !fotos.includes(f)) fotos.push(f); });
-            }
-            galeriaDiv.innerHTML = fotos.map(src => `<img src="${src}" class="gallery-thumb" onclick="window.open(this.src, '_blank')" alt="Foto do local">`).join("");
+            galeriaDiv.innerHTML = fotos.map((src, idx) => `<img src="${src}" class="gallery-thumb" onclick="abrirModalGaleriaPonto(${idx})" alt="Foto do local">`).join("");
         }
+        renderizarComentariosDoPonto(ponto.id);
     }
 
 
@@ -2714,13 +2770,81 @@
         document.getElementById(ids[chave]).classList.toggle('active', comodidadesAdmin[chave]);
     }
 
+    function extrairLocalizacaoPonto(w) {
+        const cidBruta = String(w.cidade || w.cidade_uf || "").trim();
+        let pais = String(w.pais || "").trim() || "Brasil";
+        let estado = "";
+        let cidade = cidBruta;
+        const partes = cidBruta.split(/\s*[-–/,]\s*/).map(p => p.trim()).filter(Boolean);
+        if (partes.length >= 3) {
+            cidade = partes[0];
+            estado = partes[1].toUpperCase();
+            pais = partes[2];
+        } else if (partes.length === 2) {
+            cidade = partes[0];
+            estado = partes[1].toUpperCase();
+        }
+        return { pais, estado, cidade };
+    }
+
+    function popularFiltrosLocalizacaoAdmin() {
+        const selPais = document.getElementById('adminFiltroPais');
+        const selEst = document.getElementById('adminFiltroEstado');
+        const selCid = document.getElementById('adminFiltroCidade');
+        if (!selPais || !selEst || !selCid) return;
+
+        const paisAtual = selPais.value;
+        const estAtual = selEst.value;
+        const cidAtual = selCid.value;
+
+        const paises = new Set();
+        const estados = new Set();
+        const cidades = new Set();
+
+        listaWifisCache.forEach(w => {
+            const loc = extrairLocalizacaoPonto(w);
+            if (loc.pais) paises.add(loc.pais);
+            if ((!paisAtual || loc.pais === paisAtual) && loc.estado) estados.add(loc.estado);
+            if ((!paisAtual || loc.pais === paisAtual) && (!estAtual || loc.estado === estAtual) && loc.cidade) cidades.add(loc.cidade);
+        });
+
+        selPais.innerHTML = `<option value="">Todos</option>` + Array.from(paises).sort().map(p => `<option value="${p}">${p}</option>`).join("");
+        if (paisAtual && paises.has(paisAtual)) selPais.value = paisAtual;
+
+        selEst.innerHTML = `<option value="">Todos</option>` + Array.from(estados).sort().map(e => `<option value="${e}">${e}</option>`).join("");
+        if (estAtual && estados.has(estAtual)) selEst.value = estAtual;
+
+        selCid.innerHTML = `<option value="">Todas</option>` + Array.from(cidades).sort().map(c => `<option value="${c}">${c}</option>`).join("");
+        if (cidAtual && cidades.has(cidAtual)) selCid.value = cidAtual;
+    }
+
+    function aoMudarFiltroPaisAdmin() {
+        document.getElementById('adminFiltroEstado').value = "";
+        document.getElementById('adminFiltroCidade').value = "";
+        popularFiltrosLocalizacaoAdmin();
+        popularSelectAdminWifis();
+    }
+
+    function aoMudarFiltroEstadoAdmin() {
+        document.getElementById('adminFiltroCidade').value = "";
+        popularFiltrosLocalizacaoAdmin();
+        popularSelectAdminWifis();
+    }
+
     function popularSelectAdminWifis() {
         const sel = document.getElementById('adminSelectWifi');
         if (!sel) return;
         const termo = (document.getElementById('adminFiltroWifi')?.value || "").toLowerCase().trim();
+        const fPais = document.getElementById('adminFiltroPais')?.value || "";
+        const fEst = document.getElementById('adminFiltroEstado')?.value || "";
+        const fCid = document.getElementById('adminFiltroCidade')?.value || "";
         const atual = sel.value;
         sel.innerHTML = "";
         const filtrados = listaWifisCache.filter(w => {
+            const loc = extrairLocalizacaoPonto(w);
+            if (fPais && loc.pais !== fPais) return false;
+            if (fEst && loc.estado !== fEst) return false;
+            if (fCid && loc.cidade !== fCid) return false;
             if (!termo) return true;
             const alvo = `${w.local || ""} ${w.cidade || ""} ${w.ssid || ""}`.toLowerCase();
             return alvo.includes(termo);
@@ -3147,11 +3271,443 @@
         if (bloquearClickFantasma('avaliar_estrela', 450)) return;
         alert(`⭐ Obrigado! Você avaliou este ponto com ${nota} estrelas.`);
     }
+    function navegarParaPontoDoMapa(idWifi) {
+        if (bloquearClickFantasma('nav_popup', 350)) return;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        const c = parseCoordenadasPonto(ponto);
+        const url = c
+            ? `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`
+            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((ponto.local || "") + " " + (ponto.cidade || ""))}`;
+        window.open(url, '_blank');
+    }
+
+    function abrirDadosRedeDoPopup(idWifi) {
+        if (bloquearClickFantasma('dados_popup', 350)) return;
+        const sel = document.getElementById('selectWifiMapa');
+        if (sel) sel.value = idWifi;
+        document.getElementById('selectWifi').value = idWifi;
+        mudarAba('dadosRede', true);
+        expandirDetalhesRede(idWifi);
+    }
+
     function validarStatusAoVivo(tipo) {
         if (bloquearClickFantasma('status_vivo', 450)) return;
-        document.getElementById('mapaLiveStatus').textContent = tipo === 'conectou'
-            ? "🟢 Confirmado agora por você"
-            : "⚠️ Alerta de senha enviada";
+        const el = document.getElementById('mapaLiveStatus');
+        if (tipo === 'conectou') {
+            el.textContent = "🟢 Confirmado agora por você";
+            el.style.color = "#22c55e";
+        } else if (tipo === 'nao_conectou') {
+            el.textContent = "🔴 Não conectou (reportado)";
+            el.style.color = "#ef4444";
+        } else {
+            el.textContent = "⚠️ Alerta de senha enviada";
+            el.style.color = "#facc15";
+        }
+    }
+
+    function criarModalDinamico(idModal, conteudoHtml) {
+        let modal = document.getElementById(idModal);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = idModal;
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.86);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+            document.body.appendChild(modal);
+        }
+        modal.innerHTML = conteudoHtml;
+        return modal;
+    }
+
+    function fecharModalDinamico(idModal) {
+        ativarEscudoTransicao(350);
+        const m = document.getElementById(idModal);
+        if (m) m.remove();
+    }
+
+    function abrirModalNovaSenhaWifi() {
+        if (bloquearClickFantasma('modal_nova_senha', 350)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:350px;width:100%;color:#111111;">
+                <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">🔑 Atualizar Senha da Rede</div>
+                <div style="font-size:0.76rem;color:#3f3f46;margin-bottom:10px;">Ponto: <strong>${ponto.local}</strong> (${ponto.ssid})</div>
+                <input type="text" id="inputNovaSenhaModal" placeholder="Digite a nova senha do Wi-Fi" style="width:100%;padding:10px;border:1px solid #111111;border-radius:8px;font-size:0.86rem;margin-bottom:10px;background:#fff;">
+                <div style="display:flex;gap:8px;">
+                    <button type="button" onclick="confirmarNovaSenhaModal()" style="flex:2;background:#111111;color:#facc15;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">💾 Salvar Nova Senha</button>
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="flex:1;background:#e4e4e7;color:#111111;border:1px solid #111111;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">Cancelar</button>
+                </div>
+            </div>
+        `);
+    }
+
+    async function confirmarNovaSenhaModal() {
+        const novaSenha = document.getElementById('inputNovaSenhaModal')?.value.trim();
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!novaSenha || !ponto) return;
+        ponto.senha = novaSenha;
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+        atualizarCardQrDoMapa(idWifi);
+        renderizarAlfinetesNoMapa();
+        document.getElementById('mapaLiveStatus').textContent = "🔑 Senha atualizada por você";
+        fecharModalDinamico('modalAcaoRede');
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "relatar_problema",
+                    tipo: "Nova Senha Informada",
+                    id_wifi: idWifi,
+                    nome_local: ponto.local,
+                    cidade_uf: ponto.cidade || "",
+                    descricao: `Nova senha informada pelo usuário: ${novaSenha}`,
+                    nova_senha: novaSenha,
+                    id_usuario: usuarioLogado?.email || ""
+                })
+            });
+        } catch (e) {}
+    }
+
+    function abrirModalSugerirAlteracao() {
+        if (bloquearClickFantasma('modal_sugerir', 350)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:360px;width:100%;color:#111111;">
+                <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">✏️ Sugerir Alteração no Local</div>
+                <div style="font-size:0.76rem;color:#3f3f46;margin-bottom:10px;">${ponto.local} (${ponto.cidade || ""})</div>
+                <input type="text" id="sugerirNomeLocal" value="${ponto.local || ""}" placeholder="Nome do estabelecimento" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;margin-bottom:8px;background:#fff;">
+                <input type="text" id="sugerirSsidLocal" value="${ponto.ssid || ""}" placeholder="Nome da rede (SSID)" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;margin-bottom:8px;background:#fff;">
+                <textarea id="sugerirObsLocal" rows="3" placeholder="Descreva o que precisa ser alterado (horário, endereço, estrutura, senha...)" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;margin-bottom:10px;background:#fff;"></textarea>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" onclick="enviarSugestaoAlteracaoModal()" style="flex:2;background:#111111;color:#facc15;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">📩 Enviar Sugestão</button>
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="flex:1;background:#e4e4e7;color:#111111;border:1px solid #111111;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">Fechar</button>
+                </div>
+            </div>
+        `);
+    }
+
+    async function enviarSugestaoAlteracaoModal() {
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        const nomeSug = document.getElementById('sugerirNomeLocal')?.value.trim();
+        const ssidSug = document.getElementById('sugerirSsidLocal')?.value.trim();
+        const obsSug = document.getElementById('sugerirObsLocal')?.value.trim();
+        if (!ponto || (!obsSug && nomeSug === ponto.local && ssidSug === ponto.ssid)) return;
+        const resumo = `Nome: ${nomeSug} | SSID: ${ssidSug} | Detalhes: ${obsSug || "Atualização de dados"}`;
+        salvarProblemaLocalCache({
+            id: "PRB-" + Date.now(),
+            tipo: "Sugestão de Alteração",
+            id_wifi: idWifi,
+            nome_local: ponto.local,
+            cidade_uf: ponto.cidade || "",
+            descricao: resumo,
+            usuario: usuarioLogado?.email || "Anônimo",
+            data: new Date().toLocaleString("pt-BR")
+        });
+        fecharModalDinamico('modalAcaoRede');
+        alert("✅ Sugestão enviada para o administrador!");
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "relatar_problema",
+                    tipo: "Sugestão de Alteração",
+                    id_wifi: idWifi,
+                    nome_local: ponto.local,
+                    cidade_uf: ponto.cidade || "",
+                    descricao: resumo,
+                    id_usuario: usuarioLogado?.email || ""
+                })
+            });
+        } catch (e) {}
+    }
+
+    function abrirModalRelatarProblema() {
+        if (bloquearClickFantasma('modal_problema', 350)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:360px;width:100%;color:#111111;">
+                <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">⚠️ Relatar Problema</div>
+                <div style="font-size:0.76rem;color:#3f3f46;margin-bottom:10px;">Ponto: <strong>${ponto.local}</strong></div>
+                <textarea id="inputTextoProblema" rows="4" placeholder="Descreva o problema encontrado neste ponto Wi-Fi..." style="width:100%;padding:10px;border:1px solid #111111;border-radius:8px;font-size:0.84rem;margin-bottom:10px;background:#fff;"></textarea>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" onclick="enviarRelatoProblema()" style="flex:2;background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">🚨 Enviar Problema</button>
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="flex:1;background:#e4e4e7;color:#111111;border:1px solid #111111;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">Cancelar</button>
+                </div>
+            </div>
+        `);
+    }
+
+    function salvarProblemaLocalCache(item) {
+        try {
+            const lista = JSON.parse(localStorage.getItem('clickcontrol_problemas_cache') || '[]');
+            lista.unshift(item);
+            localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(lista));
+        } catch (e) {}
+    }
+
+    async function enviarRelatoProblema() {
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        const texto = document.getElementById('inputTextoProblema')?.value.trim();
+        if (!texto || !ponto) return;
+        salvarProblemaLocalCache({
+            id: "PRB-" + Date.now(),
+            tipo: "Problema Relatado",
+            id_wifi: idWifi,
+            nome_local: ponto.local,
+            cidade_uf: ponto.cidade || "",
+            descricao: texto,
+            usuario: usuarioLogado?.email || "Anônimo",
+            data: new Date().toLocaleString("pt-BR")
+        });
+        fecharModalDinamico('modalAcaoRede');
+        alert("✅ Problema enviado! O administrador receberá seu relato.");
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "relatar_problema",
+                    tipo: "Problema Relatado",
+                    id_wifi: idWifi,
+                    nome_local: ponto.local,
+                    cidade_uf: ponto.cidade || "",
+                    descricao: texto,
+                    id_usuario: usuarioLogado?.email || ""
+                })
+            });
+        } catch (e) {}
+    }
+
+    async function carregarProblemasAdmin() {
+        const box = document.getElementById('adminListaProblemas');
+        const qtdEl = document.getElementById('adminQtdProblemas');
+        if (!box) return;
+        let lista = [];
+        try {
+            lista = JSON.parse(localStorage.getItem('clickcontrol_problemas_cache') || '[]');
+        } catch (e) {}
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_problemas&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && Array.isArray(data.problemas)) {
+                const idsLocais = new Set(lista.map(i => i.id));
+                data.problemas.forEach(p => { if (!idsLocais.has(p.id)) lista.push(p); });
+            }
+        } catch (e) {}
+        if (qtdEl) qtdEl.textContent = lista.length;
+        if (lista.length === 0) {
+            box.innerHTML = `<div style="font-size:0.76rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">Nenhum problema relatado até o momento.</div>`;
+            return;
+        }
+        box.innerHTML = lista.map(p => `
+            <div style="background:#ffffff; border:1px solid #111111; border-radius:8px; padding:8px; font-size:0.75rem;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:#b91c1c; margin-bottom:2px;">
+                    <span>${p.tipo || "Problema"} • ${p.nome_local || ""}</span>
+                    <span style="color:#52525b; font-weight:600;">${p.data || ""}</span>
+                </div>
+                <div style="color:#111111; margin-bottom:4px;">${p.descricao || ""}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#52525b;">
+                    <span>Por: ${p.usuario || "Usuário"}</span>
+                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function selecionarPontoNoAdmin(idWifi) {
+        const sel = document.getElementById('adminSelectWifi');
+        if (sel) {
+            sel.value = idWifi;
+            carregarDadosAdminWifi();
+        }
+    }
+
+    /* ============================================================
+       GALERIA DE FOTOS & COMENTÁRIOS COM FOTO (SHOPEE / MERCADO LIVRE)
+    ============================================================ */
+    let fotosPendentesComentario = [];
+
+    function obterComentariosDoPonto(idWifi) {
+        try {
+            const todos = JSON.parse(localStorage.getItem('clickcontrol_comentarios_wifi') || '{}');
+            return Array.isArray(todos[idWifi]) ? todos[idWifi] : [];
+        } catch (e) { return []; }
+    }
+
+    function salvarComentariosDoPonto(idWifi, lista) {
+        try {
+            const todos = JSON.parse(localStorage.getItem('clickcontrol_comentarios_wifi') || '{}');
+            todos[idWifi] = lista;
+            localStorage.setItem('clickcontrol_comentarios_wifi', JSON.stringify(todos));
+        } catch (e) {}
+    }
+
+    function obterTodasFotosDoPonto(ponto) {
+        if (!ponto) return [];
+        const fotos = [];
+        if (ponto.foto_base64) fotos.push(ponto.foto_base64);
+        if (ponto.foto_url && !fotos.includes(ponto.foto_url)) fotos.push(ponto.foto_url);
+        if (Array.isArray(ponto.fotos)) {
+            ponto.fotos.forEach(f => { if (f && !fotos.includes(f)) fotos.push(f); });
+        }
+        const coms = obterComentariosDoPonto(ponto.id);
+        coms.forEach(c => {
+            if (Array.isArray(c.fotos)) {
+                c.fotos.forEach(f => { if (f && !fotos.includes(f)) fotos.push(f); });
+            }
+        });
+        return fotos;
+    }
+
+    function abrirModalGaleriaPonto(indiceInicial = 0) {
+        if (bloquearClickFantasma('modal_galeria', 350)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        const fotos = obterTodasFotosDoPonto(ponto);
+        if (fotos.length === 0) {
+            alert("Ainda não há fotos enviadas para este ponto.");
+            return;
+        }
+        const idx = Math.max(0, Math.min(indiceInicial, fotos.length - 1));
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:14px;max-width:400px;width:100%;color:#f8fafc;text-align:center;">
+                <div style="font-size:0.9rem;font-weight:900;color:#facc15;margin-bottom:8px;">🖼️ Galeria — ${ponto.local} (${fotos.length} foto(s))</div>
+                <img id="imgPrincipalGaleriaModal" src="${fotos[idx]}" style="width:100%;max-height:260px;object-fit:contain;background:#000;border-radius:10px;border:1px solid #3f3f46;margin-bottom:8px;">
+                <div style="display:flex;gap:6px;overflow-x:auto;justify-content:center;padding:4px 0;margin-bottom:10px;">
+                    ${fotos.map((src, i) => `<img src="${src}" onclick="document.getElementById('imgPrincipalGaleriaModal').src='${src}'" style="width:58px;height:46px;object-fit:cover;border-radius:6px;border:2px solid ${i === idx ? '#facc15' : '#3f3f46'};cursor:pointer;flex-shrink:0;">`).join("")}
+                </div>
+                <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;border-radius:8px;padding:8px;width:100%;font-weight:700;cursor:pointer;">Fechar Galeria</button>
+            </div>
+        `);
+    }
+
+    function adicionarFotoComentario(event) {
+        const files = Array.from(event?.target?.files || []);
+        if (!files.length) return;
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scale = Math.min(1, 640 / img.width);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const b64 = canvas.toDataURL('image/jpeg', 0.72);
+                    fotosPendentesComentario.push(b64);
+                    renderizarPreviewFotosComentario();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        event.target.value = "";
+    }
+
+    function removerFotoPendenteComentario(idx) {
+        fotosPendentesComentario.splice(idx, 1);
+        renderizarPreviewFotosComentario();
+    }
+
+    function renderizarPreviewFotosComentario() {
+        const prev = document.getElementById('previewFotosComentario');
+        if (!prev) return;
+        prev.innerHTML = fotosPendentesComentario.map((src, i) => `
+            <div style="position:relative;display:inline-block;">
+                <img src="${src}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #111;">
+                <button type="button" onclick="removerFotoPendenteComentario(${i})" style="position:absolute;top:-5px;right:-5px;background:#dc2626;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:0.65rem;font-weight:900;cursor:pointer;">×</button>
+            </div>
+        `).join("");
+    }
+
+    async function enviarComentarioComFotos() {
+        if (bloquearClickFantasma('enviar_comentario', 500)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        const texto = document.getElementById('inputComentarioLocal')?.value.trim();
+        if (!ponto || (!texto && fotosPendentesComentario.length === 0)) return;
+
+        const novoCom = {
+            id: "COM-" + Date.now(),
+            autor: usuarioLogado?.nome || "Usuário",
+            email: usuarioLogado?.email || "",
+            texto: texto,
+            fotos: [...fotosPendentesComentario],
+            data: new Date().toLocaleDateString("pt-BR")
+        };
+
+        const lista = obterComentariosDoPonto(idWifi);
+        lista.unshift(novoCom);
+        salvarComentariosDoPonto(idWifi, lista);
+
+        // Adiciona automaticamente as fotos do comentário à galeria do ponto
+        if (!Array.isArray(ponto.fotos)) ponto.fotos = [];
+        novoCom.fotos.forEach(f => {
+            if (!ponto.fotos.includes(f)) ponto.fotos.push(f);
+        });
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+
+        document.getElementById('inputComentarioLocal').value = "";
+        fotosPendentesComentario = [];
+        renderizarPreviewFotosComentario();
+        atualizarCardQrDoMapa(idWifi);
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "salvar_comentario",
+                    id_wifi: idWifi,
+                    autor: novoCom.autor,
+                    id_usuario: novoCom.email,
+                    texto: novoCom.texto,
+                    fotos: novoCom.fotos
+                })
+            });
+        } catch (e) {}
+    }
+
+    function renderizarComentariosDoPonto(idWifi) {
+        const listaEl = document.getElementById('listaComentariosLocal');
+        const contEl = document.getElementById('contadorComentariosLocal');
+        if (!listaEl) return;
+        const coms = obterComentariosDoPonto(idWifi);
+        if (contEl) contEl.textContent = `${coms.length} avaliação(ões)`;
+        if (coms.length === 0) {
+            listaEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px;">Seja o primeiro a comentar e enviar fotos deste local!</div>`;
+            return;
+        }
+        listaEl.innerHTML = coms.map(c => `
+            <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:10px; padding:8px; font-size:0.76rem;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:#111111; margin-bottom:3px;">
+                    <span>👤 ${c.autor || "Usuário"}</span>
+                    <span style="font-size:0.68rem; color:#52525b; font-weight:600;">${c.data || ""}</span>
+                </div>
+                ${c.texto ? `<div style="color:#18181b; margin-bottom:5px; line-height:1.35;">${c.texto}</div>` : ""}
+                ${Array.isArray(c.fotos) && c.fotos.length > 0 ? `
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        ${c.fotos.map(src => `<img src="${src}" onclick="abrirModalGaleriaPonto(0)" style="width:62px;height:62px;object-fit:cover;border-radius:8px;border:1px solid #111;cursor:pointer;">`).join("")}
+                    </div>
+                ` : ""}
+            </div>
+        `).join("");
     }
     function calibrarCentroPinoAgora() {
         if (bloquearClickFantasma('calibrar_centro', 550)) return;
