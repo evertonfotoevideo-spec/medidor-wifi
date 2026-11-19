@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v50 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v51 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -818,7 +818,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v50</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v51</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -878,7 +878,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v50</h1>
+                <h1 id="appTitle">CLICK CONTROL v51</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -1379,7 +1379,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v50";
+    const APP_VERSION = "v51";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -1657,10 +1657,16 @@
         for (let i = 0; i < listaWifisCache.length; i++) {
             const w = listaWifisCache[i];
             if (!parseCoordenadasPonto(w)) {
+                const localTexto = String(w.local || "").trim();
                 const endTexto = String(w.lat_long || w.localizacao || w.endereco || "").trim();
                 const cidTexto = String(w.cidade || "").trim();
-                if (endTexto && endTexto.length > 3 && !/^\d+$/.test(endTexto)) {
-                    const q = [endTexto, cidTexto, "Brasil"].filter(Boolean).join(", ");
+                const tentativas = [
+                    [localTexto, endTexto, cidTexto, "Brasil"].filter(Boolean).join(", "),
+                    [endTexto, cidTexto, "Brasil"].filter(Boolean).join(", "),
+                    [localTexto, cidTexto, "Brasil"].filter(Boolean).join(", ")
+                ].filter((q, idx, arr) => q.length > 5 && !/^\d+$/.test(endTexto) && arr.indexOf(q) === idx);
+
+                for (const q of tentativas) {
                     try {
                         const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`, {
                             headers: { "Accept-Language": "pt-BR" }
@@ -1670,6 +1676,7 @@
                             w.lat = parseFloat(res[0].lat);
                             w.lng = parseFloat(res[0].lon);
                             atualizou = true;
+                            break;
                         }
                     } catch (e) {}
                 }
@@ -2172,7 +2179,7 @@
         const c = parseCoordenadasPonto(ponto);
         const navLink = document.getElementById('mapaNavGpsLink');
         if (navLink) {
-            const buscaMaps = [ponto.local, ponto.localizacao || ponto.lat_long || ponto.endereco, ponto.cidade].filter(Boolean).join(", ");
+            const buscaMaps = [ponto.local, ponto.localizacao || ponto.lat_long || ponto.endereco, ponto.cidade, "Brasil"].filter(Boolean).join(", ");
             navLink.href = c
                 ? `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`
                 : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(buscaMaps)}`;
@@ -3628,7 +3635,7 @@
         const ponto = listaWifisCache.find(w => w.id === idWifi);
         if (!ponto) return;
         const c = parseCoordenadasPonto(ponto);
-        const buscaMaps = [ponto.local, ponto.localizacao || ponto.lat_long || ponto.endereco, ponto.cidade].filter(Boolean).join(", ");
+        const buscaMaps = [ponto.local, ponto.localizacao || ponto.lat_long || ponto.endereco, ponto.cidade, "Brasil"].filter(Boolean).join(", ");
         const url = c
             ? `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(buscaMaps)}`;
