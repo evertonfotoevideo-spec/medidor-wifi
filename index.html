@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v55 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v56 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1054,7 +1054,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v55</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v56</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1115,7 +1115,7 @@
         <!-- TELA INICIAL (SOMENTE BOTÃO DE WI-FI VISÍVEL + MENU DO USUÁRIO) -->
         <div id="homeScreen" class="home-screen-wrap">
             <div class="home-header-bar">
-                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL v55</span>
+                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL v56</span>
                 <div class="user-dropdown-wrap" id="homeUserDropdownWrap">
                     <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuarioHome(event)">
                         <span>👤</span>
@@ -1161,7 +1161,7 @@
             <div style="display:flex; align-items:center; gap:8px;">
                 <button type="button" onclick="voltarTelaInicial()" title="Voltar para Tela Inicial" style="background:#111111; color:#facc15; border:none; border-radius:10px; padding:7px 9px; font-size:0.78rem; font-weight:900; cursor:pointer; flex-shrink:0;">🏠 Início</button>
                 <div class="brand-block">
-                    <h1 id="appTitle">CLICK CONTROL v55</h1>
+                    <h1 id="appTitle">CLICK CONTROL v56</h1>
                     <p>Rede Wi-Fi de Campo • Foco Radical</p>
                 </div>
             </div>
@@ -1661,7 +1661,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v55";
+    const APP_VERSION = "v56";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -2595,21 +2595,25 @@
         const cidAtual = selCid.value;
 
         const estados = new Set();
-        const cidades = new Set();
+        const cidadesMap = new Map();
 
         listaWifisCache.forEach(w => {
             const loc = extrairLocalizacaoPonto(w);
             if (loc.estado) estados.add(loc.estado);
-            if ((!estAtual || loc.estado === estAtual) && loc.cidade) {
-                cidades.add(loc.cidade);
+            if ((!estAtual || loc.estado === estAtual) && loc.cidadeKey) {
+                if (!cidadesMap.has(loc.cidadeKey)) {
+                    cidadesMap.set(loc.cidadeKey, loc.cidade);
+                }
             }
         });
 
         selEst.innerHTML = `<option value="">🗺️ Estado (Todos)</option>` + Array.from(estados).sort().map(e => `<option value="${e}">${e}</option>`).join("");
         if (estAtual && estados.has(estAtual)) selEst.value = estAtual;
 
-        selCid.innerHTML = `<option value="">🏙️ Cidade (Todas)</option>` + Array.from(cidades).sort().map(c => `<option value="${c}">${c}</option>`).join("");
-        if (cidAtual && cidades.has(cidAtual)) selCid.value = cidAtual;
+        const cidAtualKey = chaveNormalizadaCidade(cidAtual);
+        const listaCidades = Array.from(cidadesMap.entries()).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'));
+        selCid.innerHTML = `<option value="">🏙️ Cidade (Todas)</option>` + listaCidades.map(([key, label]) => `<option value="${key}">${label}</option>`).join("");
+        if (cidAtualKey && cidadesMap.has(cidAtualKey)) selCid.value = cidAtualKey;
     }
 
     function aoMudarEstadoDadosRede() {
@@ -2638,7 +2642,7 @@
         const listaFiltrada = listaWifisCache.filter(w => {
             const loc = extrairLocalizacaoPonto(w);
             if (filtroEst && loc.estado !== filtroEst) return false;
-            if (filtroCid && loc.cidade !== filtroCid) return false;
+            if (filtroCid && loc.cidadeKey !== chaveNormalizadaCidade(filtroCid)) return false;
             return true;
         });
 
@@ -3383,6 +3387,26 @@
         document.getElementById(ids[chave]).classList.toggle('active', comodidadesAdmin[chave]);
     }
 
+    function normalizarTextoCidade(nome) {
+        let s = String(nome || "").trim().replace(/\s+/g, " ");
+        if (!s) return "";
+        const preposicoes = new Set(["de", "da", "do", "das", "dos", "e"]);
+        return s.toLowerCase().split(" ").map((p, idx) => {
+            if (idx > 0 && preposicoes.has(p)) return p;
+            return p.charAt(0).toUpperCase() + p.slice(1);
+        }).join(" ");
+    }
+
+    function chaveNormalizadaCidade(nome) {
+        return String(nome || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9\s]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
     function extrairLocalizacaoPonto(w) {
         const cidBruta = String(w.cidade || w.cidade_uf || "").trim();
         let pais = String(w.pais || "").trim() || "Brasil";
@@ -3397,7 +3421,8 @@
             cidade = partes[0];
             estado = partes[1].toUpperCase();
         }
-        return { pais, estado, cidade };
+        cidade = normalizarTextoCidade(cidade);
+        return { pais, estado, cidade, cidadeKey: chaveNormalizadaCidade(cidade) };
     }
 
     function popularFiltrosLocalizacaoAdmin() {
@@ -3412,13 +3437,17 @@
 
         const paises = new Set();
         const estados = new Set();
-        const cidades = new Set();
+        const cidadesMap = new Map();
 
         listaWifisCache.forEach(w => {
             const loc = extrairLocalizacaoPonto(w);
             if (loc.pais) paises.add(loc.pais);
             if ((!paisAtual || loc.pais === paisAtual) && loc.estado) estados.add(loc.estado);
-            if ((!paisAtual || loc.pais === paisAtual) && (!estAtual || loc.estado === estAtual) && loc.cidade) cidades.add(loc.cidade);
+            if ((!paisAtual || loc.pais === paisAtual) && (!estAtual || loc.estado === estAtual) && loc.cidadeKey) {
+                if (!cidadesMap.has(loc.cidadeKey)) {
+                    cidadesMap.set(loc.cidadeKey, loc.cidade);
+                }
+            }
         });
 
         selPais.innerHTML = `<option value="">Todos</option>` + Array.from(paises).sort().map(p => `<option value="${p}">${p}</option>`).join("");
@@ -3427,8 +3456,10 @@
         selEst.innerHTML = `<option value="">Todos</option>` + Array.from(estados).sort().map(e => `<option value="${e}">${e}</option>`).join("");
         if (estAtual && estados.has(estAtual)) selEst.value = estAtual;
 
-        selCid.innerHTML = `<option value="">Todas</option>` + Array.from(cidades).sort().map(c => `<option value="${c}">${c}</option>`).join("");
-        if (cidAtual && cidades.has(cidAtual)) selCid.value = cidAtual;
+        const cidAtualKey = chaveNormalizadaCidade(cidAtual);
+        const listaCidadesAdm = Array.from(cidadesMap.entries()).sort((a, b) => a[1].localeCompare(b[1], 'pt-BR'));
+        selCid.innerHTML = `<option value="">Todas</option>` + listaCidadesAdm.map(([key, label]) => `<option value="${key}">${label}</option>`).join("");
+        if (cidAtualKey && cidadesMap.has(cidAtualKey)) selCid.value = cidAtualKey;
     }
 
     function aoMudarFiltroPaisAdmin() {
@@ -3457,7 +3488,7 @@
             const loc = extrairLocalizacaoPonto(w);
             if (fPais && loc.pais !== fPais) return false;
             if (fEst && loc.estado !== fEst) return false;
-            if (fCid && loc.cidade !== fCid) return false;
+            if (fCid && loc.cidadeKey !== chaveNormalizadaCidade(fCid)) return false;
             if (!termo) return true;
             const alvo = `${w.local || ""} ${w.cidade || ""} ${w.ssid || ""}`.toLowerCase();
             return alvo.includes(termo);
