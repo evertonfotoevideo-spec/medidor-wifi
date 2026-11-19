@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v57 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control 1.000 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1054,7 +1054,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v57</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.000</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1115,7 +1115,7 @@
         <!-- TELA INICIAL (SOMENTE BOTÃO DE WI-FI VISÍVEL + MENU DO USUÁRIO) -->
         <div id="homeScreen" class="home-screen-wrap">
             <div class="home-header-bar">
-                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL v57</span>
+                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL 1.000</span>
                 <div class="user-dropdown-wrap" id="homeUserDropdownWrap">
                     <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuarioHome(event)">
                         <span>👤</span>
@@ -1161,7 +1161,7 @@
             <div style="display:flex; align-items:center; gap:8px;">
                 <button type="button" onclick="voltarTelaInicial()" title="Voltar para Tela Inicial" style="background:#111111; color:#facc15; border:none; border-radius:10px; padding:7px 9px; font-size:0.78rem; font-weight:900; cursor:pointer; flex-shrink:0;">🏠 Início</button>
                 <div class="brand-block">
-                    <h1 id="appTitle">CLICK CONTROL v57</h1>
+                    <h1 id="appTitle">CLICK CONTROL 1.000</h1>
                     <p>Rede Wi-Fi de Campo • Foco Radical</p>
                 </div>
             </div>
@@ -1661,7 +1661,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v57";
+    const APP_VERSION = "1.000";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -2186,8 +2186,15 @@
                 }).addTo(mapInstance).bindPopup("📍 Você está aqui");
             }
             selecionarWifiMaisProximo(false);
-        }, () => {
-            statusEl.textContent = "Não foi possível obter o GPS agora.";
+        }, async () => {
+            await obterLocalizacaoAutomaticaApp(true);
+            if (userLatAtual !== null && userLngAtual !== null) {
+                statusEl.textContent = `📍 Localização aproximada ativa (${userLatAtual.toFixed(5)}, ${userLngAtual.toFixed(5)})`;
+                if (mapInstance) mapInstance.setView([userLatAtual, userLngAtual], 14);
+                renderizarListaRedesMinimizadas();
+            } else {
+                statusEl.textContent = "Não foi possível obter o GPS agora.";
+            }
         }, { enableHighAccuracy: true, timeout: 10000 });
     }
 
@@ -2578,6 +2585,48 @@
         document.getElementById('selectWifi').value = idWifi;
         mudarAba('dadosRede', true);
         expandirDetalhesRede(idWifi);
+    }
+
+
+    async function obterLocalizacaoAutomaticaApp(forcarAtualizacao = false) {
+        if (!forcarAtualizacao && userLatAtual !== null && userLngAtual !== null) return;
+
+        // 1. Tenta GPS / Location nativo do navegador (Android / Windows Location)
+        if (navigator.geolocation) {
+            const obteveGps = await new Promise((resolve) => {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    userLatAtual = pos.coords.latitude;
+                    userLngAtual = pos.coords.longitude;
+                    resolve(true);
+                }, () => resolve(false), { enableHighAccuracy: true, timeout: 7000, maximumAge: 60000 });
+            });
+            if (obteveGps) {
+                renderizarListaRedesMinimizadas();
+                return;
+            }
+        }
+
+        // 2. Fallback por geolocalização de rede/IP (essencial para Windows/PC sem GPS hardware ou permissão bloqueada)
+        try {
+            const resp = await fetch("https://ipapi.co/json/", { cache: "no-store" });
+            const geo = await resp.json();
+            if (geo && geo.latitude && geo.longitude) {
+                userLatAtual = Number(geo.latitude);
+                userLngAtual = Number(geo.longitude);
+                renderizarListaRedesMinimizadas();
+                return;
+            }
+        } catch (e) {}
+
+        try {
+            const resp2 = await fetch("https://get.geojs.io/v1/ip/geo.json", { cache: "no-store" });
+            const geo2 = await resp2.json();
+            if (geo2 && geo2.latitude && geo2.longitude) {
+                userLatAtual = Number(geo2.latitude);
+                userLngAtual = Number(geo2.longitude);
+                renderizarListaRedesMinimizadas();
+            }
+        } catch (e) {}
     }
 
     function formatarDistanciaTexto(distKm) {
@@ -3891,6 +3940,7 @@
         const greetEl = document.getElementById('homeGreetingName');
         if (greetEl) greetEl.textContent = `Olá, ${pName}`;
         atualizarVisibilidadeAdmin();
+        obterLocalizacaoAutomaticaApp();
         carregarListaWifis();
 
         setTimeout(() => {
@@ -3931,12 +3981,8 @@
         else if (aba === 'dadosRede') {
             document.getElementById('detalhesRedeExpandida')?.classList.add('hidden');
             renderizarListaRedesMinimizadas();
-            if (userLatAtual === null && navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    userLatAtual = pos.coords.latitude;
-                    userLngAtual = pos.coords.longitude;
-                    renderizarListaRedesMinimizadas();
-                }, () => {}, { enableHighAccuracy: true, timeout: 6000 });
+            if (userLatAtual === null || userLngAtual === null) {
+                obterLocalizacaoAutomaticaApp(true);
             }
         }
         else if (aba === 'testar') atualizarBannerTesteAtual(document.getElementById('selectWifiMapa')?.value);
