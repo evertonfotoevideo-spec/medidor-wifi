@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v51 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v52 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -818,7 +818,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v51</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v52</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -878,7 +878,7 @@
     <div id="appScreen" class="hidden">
         <div class="top-navbar">
             <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v51</h1>
+                <h1 id="appTitle">CLICK CONTROL v52</h1>
                 <p>Rede Wi-Fi de Campo • Foco Radical</p>
             </div>
 
@@ -997,14 +997,14 @@
                             <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
                             <div class="hidden" style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
                         </div>
-                        <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:8px; padding:3px 6px; text-align:right; flex-shrink:0;">
-                            <div style="font-size:0.62rem; font-weight:700; color:var(--text-muted);" id="mapaEstrelasTitulo">⭐ 4.8/5</div>
-                            <div style="display:flex; gap:1px; font-size:0.72rem; cursor:pointer; line-height:1.1;" id="mapaEstrelasBotoes">
-                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 1)">⭐</span>
-                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 2)">⭐</span>
-                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 3)">⭐</span>
-                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 4)">⭐</span>
-                                <span onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 5)">⭐</span>
+                        <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:8px; padding:4px 8px; text-align:center; flex-shrink:0;">
+                            <div style="font-size:0.65rem; font-weight:800; color:var(--text-main); margin-bottom:2px;" id="mapaEstrelasTitulo">Nota do Local</div>
+                            <div style="display:flex; gap:2px; font-size:0.78rem; cursor:pointer; line-height:1.1; justify-content:center;" id="mapaEstrelasBotoes">
+                                <span id="mstar1" onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 1)">⭐</span>
+                                <span id="mstar2" onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 2)">⭐</span>
+                                <span id="mstar3" onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 3)">⭐</span>
+                                <span id="mstar4" onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 4)">⭐</span>
+                                <span id="mstar5" onclick="avaliarWifiComEstrelas(document.getElementById('selectWifiMapa').value, 5)">⭐</span>
                             </div>
                         </div>
                     </div>
@@ -1026,17 +1026,14 @@
                     <div class="amenities-badges" id="mapaAmenities"></div>
 
                     <div class="gallery-strip" id="mapaGaleriaStrip"></div>
-                    <div style="display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:4px;">
-                        <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
-                        <button type="button" class="btn-mini" style="margin-top:0;" onclick="abrirModalGaleriaPonto()">🖼️ Galeria (<span id="qtdFotosGaleriaBtn">0</span>)</button>
-                        <button type="button" class="btn-mini" style="margin-top:0;" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Adicionar Foto do Lugar</button>
-                    </div>
-
-                    <div style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top:10px;">
-                        <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="text-decoration: none; background:var(--primary); color:var(--primary-text); font-weight:800;">🧭 Ir até lá (Maps/Waze)</a>
-                        <button type="button" class="btn-mini" onclick="abrirModalQrCodeAtual()">🔗 Ver QR Code</button>
-                        <button type="button" class="btn-mini" onclick="abrirModalRelatarProblema()">⚠️ Relatar problema</button>
-                        <button type="button" class="btn-mini" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
+                    <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
+                    <div style="display:flex; gap:4px; justify-content:space-between; align-items:stretch; flex-wrap:nowrap; margin-top:8px;">
+                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
+                        <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15; text-decoration:none; background:var(--primary); color:var(--primary-text); font-weight:800; display:flex; align-items:center; justify-content:center; text-align:center;">🧭 Ir até lá</a>
+                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="abrirModalQrCodeAtual()">🔗 QR Code</button>
+                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="abrirModalRelatarProblema()">⚠️ Problema</button>
+                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Foto</button>
+                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="abrirModalGaleriaPonto()">🖼️ Galeria (<span id="qtdFotosGaleriaBtn">0</span>)</button>
                     </div>
                 </div>
 
@@ -1379,7 +1376,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v51";
+    const APP_VERSION = "v52";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -2174,7 +2171,14 @@
             horarioEl.textContent = "";
             horarioEl.classList.add('hidden');
         }
-        document.getElementById('mapaEstrelasTitulo').textContent = `⭐ Nota do Local (Média: ${ponto.nota || "4.8"}/5)`;
+        document.getElementById('mapaEstrelasTitulo').textContent = "Nota do Local";
+        const notaArred = Math.max(0, Math.min(5, Math.round(Number(ponto.nota) || 0)));
+        for (let i = 1; i <= 5; i++) {
+            const stEl = document.getElementById('mstar' + i);
+            if (stEl) {
+                stEl.style.filter = i <= notaArred ? "none" : "grayscale(100%) opacity(0.45)";
+            }
+        }
 
         const c = parseCoordenadasPonto(ponto);
         const navLink = document.getElementById('mapaNavGpsLink');
