@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v56 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v57 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1054,7 +1054,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v56</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v57</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1115,7 +1115,7 @@
         <!-- TELA INICIAL (SOMENTE BOTÃO DE WI-FI VISÍVEL + MENU DO USUÁRIO) -->
         <div id="homeScreen" class="home-screen-wrap">
             <div class="home-header-bar">
-                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL v56</span>
+                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL v57</span>
                 <div class="user-dropdown-wrap" id="homeUserDropdownWrap">
                     <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuarioHome(event)">
                         <span>👤</span>
@@ -1161,7 +1161,7 @@
             <div style="display:flex; align-items:center; gap:8px;">
                 <button type="button" onclick="voltarTelaInicial()" title="Voltar para Tela Inicial" style="background:#111111; color:#facc15; border:none; border-radius:10px; padding:7px 9px; font-size:0.78rem; font-weight:900; cursor:pointer; flex-shrink:0;">🏠 Início</button>
                 <div class="brand-block">
-                    <h1 id="appTitle">CLICK CONTROL v56</h1>
+                    <h1 id="appTitle">CLICK CONTROL v57</h1>
                     <p>Rede Wi-Fi de Campo • Foco Radical</p>
                 </div>
             </div>
@@ -1661,7 +1661,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v56";
+    const APP_VERSION = "v57";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -3765,31 +3765,60 @@
         btn.textContent = "Conectando...";
         toast.style.display = "none";
 
+        const acaoAtual = modoAuth === 'register' ? "cadastrar_usuario" : "login_usuario";
+        const payload = {
+            acao: acaoAtual,
+            id_usuario: email,
+            senha: senha,
+            nome: nome
+        };
+
         try {
-            const res = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: modoAuth === 'register' ? "cadastrar_usuario" : "login_usuario",
+            let data = null;
+
+            // Tentativa 1: POST padrão
+            try {
+                const res = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    redirect: "follow",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                const textoResp = await res.text();
+                data = JSON.parse(textoResp);
+            } catch (errPost) {
+                data = null;
+            }
+
+            // Tentativa 2: Fallback GET para WebView Android quando o redirect 302 do POST é bloqueado
+            if (!data || !data.status) {
+                const params = new URLSearchParams({
+                    acao: acaoAtual,
                     id_usuario: email,
                     senha: senha,
-                    nome: nome
-                })
-            });
-            const data = await res.json();
-            if (data.status === "ok") {
+                    nome: nome,
+                    _: Date.now()
+                });
+                const resGet = await fetch(`${GOOGLE_SCRIPT_URL}?${params.toString()}`, {
+                    method: "GET",
+                    redirect: "follow"
+                });
+                const textoGet = await resGet.text();
+                data = JSON.parse(textoGet);
+            }
+
+            if (data && data.status === "ok") {
                 usuarioLogado = {
                     nome: data.nome || nome || "Usuário",
                     email: email,
-                    isAdmin: data.isAdmin === true || ADMIN_EMAILS.includes(email)
+                    isAdmin: data.isAdmin === true || data.is_admin === true || ADMIN_EMAILS.includes(email)
                 };
                 localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
                 mostrarApp();
             } else {
                 toast.style.display = "block";
                 toast.className = "toast error";
-                toast.textContent = data.message || "E-mail ou senha incorretos.";
+                toast.textContent = (data && data.message) ? data.message : "E-mail ou senha incorretos.";
             }
         } catch (e) {
             toast.style.display = "block";
