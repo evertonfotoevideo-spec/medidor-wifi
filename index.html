@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control v52 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control v53 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -810,6 +810,242 @@
         .my-wifi-item:last-child {
             border-bottom: none;
         }
+
+        /* TELA INICIAL (DASHBOARD PRINCIPAL INSPIRADO NO LAYOUT ENVIADO) */
+        .home-screen-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .home-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 2px;
+        }
+        .home-profile-hero {
+            text-align: center;
+            padding: 4px 0 2px;
+        }
+        .home-avatar-circle {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #111111;
+            color: #facc15;
+            border: 2px solid #111111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            margin: 0 auto 8px;
+            box-shadow: 0 4px 12px rgba(17, 17, 17, 0.25);
+        }
+        .home-greeting {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #111111;
+            line-height: 1.15;
+        }
+        .home-location-sub {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #3f3f46;
+            letter-spacing: 0.5px;
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+        .home-search-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .home-search-filter-icon {
+            background: #ffffff;
+            color: #111111;
+            border: 1px solid #111111;
+            border-radius: 10px;
+            width: 38px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .home-search-bar {
+            flex: 1;
+            background: #111111;
+            color: #fef08a;
+            border: 1px solid #111111;
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .home-section-label {
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: #111111;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border-bottom: 1.5px solid #111111;
+            padding-bottom: 5px;
+        }
+        .home-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+        }
+        .home-tile {
+            background: #111111;
+            color: #facc15;
+            border: 2px solid #111111;
+            border-radius: 16px;
+            padding: 13px 6px 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(17, 17, 17, 0.22);
+            transition: transform 0.12s, background-color 0.15s;
+            position: relative;
+        }
+        .home-tile:active {
+            transform: scale(0.97);
+        }
+        .home-tile.active-wifi {
+            background: #18181b;
+            border: 2px solid #111111;
+            box-shadow: 0 6px 16px rgba(17, 17, 17, 0.35);
+        }
+        .home-tile.demo-module {
+            opacity: 0.92;
+        }
+        .home-tile-icon {
+            font-size: 1.55rem;
+            line-height: 1;
+        }
+        .home-tile-title {
+            font-size: 0.66rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            text-align: center;
+            line-height: 1.15;
+            color: #fef08a;
+        }
+        .home-tile-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #facc15;
+            color: #111111;
+            font-size: 0.52rem;
+            font-weight: 900;
+            padding: 1px 5px;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .home-tile-badge.soon {
+            background: #3f3f46;
+            color: #fef08a;
+        }
+        .home-schedule-card {
+            background: #ffffff;
+            border: 1.5px solid #111111;
+            border-radius: 18px;
+            padding: 12px;
+            box-shadow: 0 6px 16px rgba(17, 17, 17, 0.16);
+        }
+        .home-schedule-title {
+            font-size: 0.72rem;
+            font-weight: 900;
+            color: #111111;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+        .home-month-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #111111;
+            margin-bottom: 8px;
+        }
+        .home-days-strip {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .home-day-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+        .home-day-name {
+            font-size: 0.56rem;
+            font-weight: 800;
+            color: #52525b;
+            text-transform: uppercase;
+        }
+        .home-day-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #111111;
+        }
+        .home-day-num.active-day {
+            background: #111111;
+            color: #facc15;
+        }
+        .home-event-banner {
+            background: #111111;
+            color: #fef08a;
+            border-radius: 12px;
+            padding: 9px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .home-event-banner-info {
+            font-size: 0.72rem;
+            line-height: 1.25;
+        }
+        .home-event-banner-info strong {
+            display: block;
+            color: #facc15;
+            font-size: 0.78rem;
+        }
+        .home-event-banner-cta {
+            border-left: 1px solid #3f3f46;
+            padding-left: 10px;
+            font-size: 0.72rem;
+            font-weight: 900;
+            color: #facc15;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
     </style>
 </head>
 <body>
@@ -818,7 +1054,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v52</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL v53</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -876,10 +1112,102 @@
 
     <!-- TELA 2: PAINEL PRINCIPAL (LOGADO) -->
     <div id="appScreen" class="hidden">
+        <!-- TELA INICIAL (HUB PRINCIPAL COM PONTOS DE WI-FI + MÓDULOS ILUSTRATIVOS) -->
+        <div id="homeScreen" class="home-screen-wrap">
+            <div class="home-header-bar">
+                <span style="font-size:0.75rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL v53</span>
+                <button type="button" onclick="sair()" style="background:#111111; color:#facc15; border:none; border-radius:999px; padding:5px 11px; font-size:0.72rem; font-weight:800; cursor:pointer;">🚪 Sair</button>
+            </div>
+
+            <div class="home-profile-hero">
+                <div class="home-avatar-circle">📸</div>
+                <div class="home-greeting" id="homeGreetingName">Olá, Fotógrafo</div>
+                <div class="home-location-sub" id="homeLocationSub">📍 SANTA CATARINA, BR • FOCO RADICAL</div>
+            </div>
+
+            <div class="home-search-row">
+                <button type="button" class="home-search-filter-icon" onclick="entrarModuloWifi('mapa')" title="Abrir Filtros de Wi-Fi">🎛️</button>
+                <div class="home-search-bar" onclick="entrarModuloWifi('mapa')">
+                    <span>🔍</span>
+                    <span>Buscar pontos de Wi-Fi, eventos ou cidades...</span>
+                </div>
+            </div>
+
+            <div class="home-section-label">MENU PRINCIPAL</div>
+
+            <div class="home-menu-grid">
+                <button type="button" class="home-tile active-wifi" onclick="entrarModuloWifi('mapa')">
+                    <span class="home-tile-badge">Ativo</span>
+                    <span class="home-tile-icon">📶</span>
+                    <span class="home-tile-title">Pontos de Wi-Fi</span>
+                </button>
+
+                <button type="button" class="home-tile demo-module" onclick="abrirAvisoModuloIlustrativo('Oportunidades Foco Market')">
+                    <span class="home-tile-badge soon">Em breve</span>
+                    <span class="home-tile-icon">🏃</span>
+                    <span class="home-tile-title">Eventos & Corridas</span>
+                </button>
+
+                <button type="button" class="home-tile demo-module" onclick="abrirAvisoModuloIlustrativo('Minha Agenda de Coberturas')">
+                    <span class="home-tile-badge soon">Em breve</span>
+                    <span class="home-tile-icon">📅</span>
+                    <span class="home-tile-title">Minha Agenda</span>
+                </button>
+
+                <button type="button" class="home-tile demo-module" onclick="abrirAvisoModuloIlustrativo('Financeiro & Metas')">
+                    <span class="home-tile-badge soon">Em breve</span>
+                    <span class="home-tile-icon">💰</span>
+                    <span class="home-tile-title">Financeiro</span>
+                </button>
+
+                <button type="button" class="home-tile demo-module" onclick="abrirAvisoModuloIlustrativo('Checklist de Equipamentos')">
+                    <span class="home-tile-badge soon">Em breve</span>
+                    <span class="home-tile-icon">🎒</span>
+                    <span class="home-tile-title">Checklist Gear</span>
+                </button>
+
+                <button type="button" class="home-tile demo-module" onclick="abrirAvisoModuloIlustrativo('Caronas & Mercado Usados')">
+                    <span class="home-tile-badge soon">Em breve</span>
+                    <span class="home-tile-icon">🚗</span>
+                    <span class="home-tile-title">Comunidade</span>
+                </button>
+            </div>
+
+            <div class="home-schedule-card">
+                <div class="home-schedule-title">AGENDA DE COBERTURAS (ILUSTRATIVO)</div>
+                <div class="home-month-bar">
+                    <span>‹</span>
+                    <span>Novembro 2026</span>
+                    <span>›</span>
+                </div>
+                <div class="home-days-strip">
+                    <div class="home-day-col"><span class="home-day-name">DOM</span><span class="home-day-num">15</span></div>
+                    <div class="home-day-col"><span class="home-day-name">SEG</span><span class="home-day-num">16</span></div>
+                    <div class="home-day-col"><span class="home-day-name">TER</span><span class="home-day-num">17</span></div>
+                    <div class="home-day-col"><span class="home-day-name">QUA</span><span class="home-day-num">18</span></div>
+                    <div class="home-day-col"><span class="home-day-name">QUI</span><span class="home-day-num active-day">19</span></div>
+                    <div class="home-day-col"><span class="home-day-name">SEX</span><span class="home-day-num">20</span></div>
+                    <div class="home-day-col"><span class="home-day-name">SÁB</span><span class="home-day-num">21</span></div>
+                </div>
+                <div class="home-event-banner" onclick="entrarModuloWifi('mapa')">
+                    <div class="home-event-banner-info">
+                        <strong>Rede Wi-Fi de Campo • Foco Radical</strong>
+                        <span>Consulte e cadastre pontos de upload rápido</span>
+                    </div>
+                    <div class="home-event-banner-cta">ABRIR WI-FI ›</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ÁREA DE PONTOS DE WI-FI (FUNCIONAL) -->
+        <div id="wifiModuleArea" class="hidden" style="display:flex; flex-direction:column; flex:1; min-height:0;">
         <div class="top-navbar">
-            <div class="brand-block">
-                <h1 id="appTitle">CLICK CONTROL v52</h1>
-                <p>Rede Wi-Fi de Campo • Foco Radical</p>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" onclick="voltarTelaInicial()" title="Voltar para Tela Inicial" style="background:#111111; color:#facc15; border:none; border-radius:10px; padding:7px 9px; font-size:0.78rem; font-weight:900; cursor:pointer; flex-shrink:0;">🏠 Início</button>
+                <div class="brand-block">
+                    <h1 id="appTitle">CLICK CONTROL v53</h1>
+                    <p>Rede Wi-Fi de Campo • Foco Radical</p>
+                </div>
             </div>
 
             <div class="user-dropdown-wrap" id="userDropdownWrap">
@@ -1369,6 +1697,7 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 </div>
 
@@ -1376,7 +1705,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "v52";
+    const APP_VERSION = "v53";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -3466,6 +3795,39 @@
         }
     }
 
+    function entrarModuloWifi(abaInicial = 'mapa') {
+        if (bloquearClickFantasma('entrar_wifi', 350)) return;
+        ativarEscudoTransicao(450);
+        const mapEl = document.getElementById('miniMap');
+        if (mapEl) mapEl.style.pointerEvents = 'none';
+
+        document.getElementById('homeScreen').classList.add('hidden');
+        const wifiArea = document.getElementById('wifiModuleArea');
+        wifiArea.classList.remove('hidden');
+        wifiArea.style.display = 'flex';
+        mudarAba(abaInicial, true);
+
+        setTimeout(() => {
+            if (mapEl) mapEl.style.pointerEvents = 'auto';
+        }, 450);
+    }
+
+    function voltarTelaInicial() {
+        if (bloquearClickFantasma('voltar_home', 350)) return;
+        ativarEscudoTransicao(380);
+        fecharMenuUsuario();
+        document.body.classList.remove('mapa-fit-screen');
+        const wifiArea = document.getElementById('wifiModuleArea');
+        wifiArea.classList.add('hidden');
+        wifiArea.style.display = 'none';
+        document.getElementById('homeScreen').classList.remove('hidden');
+    }
+
+    function abrirAvisoModuloIlustrativo(nomeModulo) {
+        if (bloquearClickFantasma('mod_demo', 350)) return;
+        alert(`🚧 ${nomeModulo}\n\nEste módulo está em exibição ilustrativa na Tela Inicial e será ativado nas próximas versões. Toque em "Pontos de Wi-Fi" para acessar a área funcional.`);
+    }
+
     function mostrarApp() {
         ativarEscudoTransicao(650);
         const mapEl = document.getElementById('miniMap');
@@ -3473,12 +3835,20 @@
 
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('appScreen').classList.remove('hidden');
-        document.body.classList.add('mapa-fit-screen');
+        document.body.classList.remove('mapa-fit-screen');
+
+        // Abre na Tela Inicial
+        document.getElementById('homeScreen').classList.remove('hidden');
+        const wifiArea = document.getElementById('wifiModuleArea');
+        wifiArea.classList.add('hidden');
+        wifiArea.style.display = 'none';
+
         const pName = (usuarioLogado.nome || "Usuário").split(" ")[0];
         document.getElementById('userDisplay').textContent = pName;
         document.getElementById('userMenuFullName').textContent = usuarioLogado.nome;
+        const greetEl = document.getElementById('homeGreetingName');
+        if (greetEl) greetEl.textContent = `Olá, ${pName}`;
         atualizarVisibilidadeAdmin();
-        inicializarOuAtualizarMapa();
         carregarListaWifis();
 
         setTimeout(() => {
@@ -3500,6 +3870,15 @@
         if (!ignorarTrava && bloquearClickFantasma('aba_' + aba, 350)) return;
         ativarEscudoTransicao(380);
         fecharMenuUsuario();
+        const homeEl = document.getElementById('homeScreen');
+        const wifiArea = document.getElementById('wifiModuleArea');
+        if (homeEl && !homeEl.classList.contains('hidden')) {
+            homeEl.classList.add('hidden');
+        }
+        if (wifiArea && wifiArea.classList.contains('hidden')) {
+            wifiArea.classList.remove('hidden');
+            wifiArea.style.display = 'flex';
+        }
         ['mapa', 'dadosRede', 'testar', 'cadastrar', 'perfil'].forEach(n => {
             document.getElementById('aba' + n.charAt(0).toUpperCase() + n.slice(1)).classList.toggle('hidden', n !== aba);
             const btn = document.getElementById('tab' + n.charAt(0).toUpperCase() + n.slice(1) + 'Btn');
