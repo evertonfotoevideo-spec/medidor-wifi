@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control 1.000 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control 1.008 (Web) - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -129,10 +129,11 @@
         .top-navbar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
-            margin-bottom: 12px;
-            padding-bottom: 10px;
+            margin-top: -6px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--border);
             position: relative;
         }
@@ -820,8 +821,24 @@
         .home-header-bar {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 4px 2px;
+            align-items: flex-start;
+            padding: 0 2px;
+            margin-top: -6px;
+        }
+        .home-user-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+            margin-top: -2px;
+        }
+        .app-version-corner {
+            font-size: 0.425rem;
+            font-weight: 800;
+            color: #111111;
+            letter-spacing: 0.4px;
+            line-height: 1;
+            padding-right: 4px;
         }
         .home-profile-hero {
             text-align: center;
@@ -1054,7 +1071,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.000</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.007</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1115,7 +1132,8 @@
         <!-- TELA INICIAL (SOMENTE BOTÃO DE WI-FI VISÍVEL + MENU DO USUÁRIO) -->
         <div id="homeScreen" class="home-screen-wrap">
             <div class="home-header-bar">
-                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px;">CLICK CONTROL 1.000</span>
+                <span style="font-size:0.85rem; font-weight:900; color:#111111; letter-spacing:0.5px; padding-top:4px;">CLICK CONTROL</span>
+                <div class="home-user-col">
                 <div class="user-dropdown-wrap" id="homeUserDropdownWrap">
                     <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuarioHome(event)">
                         <span>👤</span>
@@ -1135,6 +1153,8 @@
                         <button type="button" class="user-menu-item hidden" id="homeMenuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                         <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                     </div>
+                </div>
+                <span class="app-version-corner">v1.008</span>
                 </div>
             </div>
 
@@ -1161,11 +1181,12 @@
             <div style="display:flex; align-items:center; gap:8px;">
                 <button type="button" onclick="voltarTelaInicial()" title="Voltar para Tela Inicial" style="background:#111111; color:#facc15; border:none; border-radius:10px; padding:7px 9px; font-size:0.78rem; font-weight:900; cursor:pointer; flex-shrink:0;">🏠 Início</button>
                 <div class="brand-block">
-                    <h1 id="appTitle">CLICK CONTROL 1.000</h1>
+                    <h1 id="appTitle">CLICK CONTROL</h1>
                     <p>Rede Wi-Fi de Campo • Foco Radical</p>
                 </div>
             </div>
 
+            <div class="home-user-col">
             <div class="user-dropdown-wrap" id="userDropdownWrap">
                 <button type="button" class="user-trigger-btn" onclick="alternarMenuUsuario(event)">
                     <span>👤</span>
@@ -1185,6 +1206,8 @@
                     <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                 </div>
+            </div>
+            <span class="app-version-corner">v1.008</span>
             </div>
         </div>
 
@@ -1256,21 +1279,22 @@
                 <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="mudarAba('mapa')">← Voltar ao Mapa</button>
             </div>
 
-            <div style="display:grid; grid-template-columns: 1fr 1.6fr auto; gap:6px; align-items:center; margin-bottom:10px;">
-                <select id="selectEstadoDadosRede" onchange="aoMudarEstadoDadosRede()" style="padding:7px 8px; font-size:0.78rem; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-weight:600;">
+            <div style="display:grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr) auto; gap:5px; align-items:center; margin-bottom:10px; width:100%;">
+                <select id="selectEstadoDadosRede" onchange="aoMudarEstadoDadosRede()" style="width:100%; min-width:0; padding:7px 4px; font-size:0.74rem; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-weight:600; text-overflow:ellipsis;">
                     <option value="">🗺️ Estado</option>
                 </select>
-                <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="padding:7px 8px; font-size:0.78rem; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-weight:600;">
+                <select id="selectCidadeOffline" onchange="filtrarOuCarregarCidadeOffline()" style="width:100%; min-width:0; padding:7px 4px; font-size:0.74rem; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main); font-weight:600; text-overflow:ellipsis;">
                     <option value="">🏙️ Todas as cidades</option>
                 </select>
-                <button type="button" class="btn-mini" style="margin-top:0; white-space:nowrap; padding:7px 9px;" onclick="carregarPacoteOffline()">📂 Offline</button>
+                <button type="button" class="btn-gps" id="btnPertoDadosRede" style="padding:7px 8px; font-size:0.74rem; white-space:nowrap; flex-shrink:0;" onclick="atualizarPertoDadosRede()">📍 Perto</button>
             </div>
 
             <div id="listaRedesMinimizadas" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
 
             <div id="detalhesRedeExpandida" class="hidden">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; flex-wrap:wrap;">
                     <button type="button" class="btn-mini" style="margin-top:0; background:#111111; color:#facc15;" onclick="minimizarDetalhesRede()">▲ Minimizar Rede</button>
+                    <button type="button" class="btn-mini" style="margin-top:0; background:#2563eb; color:#ffffff; border-color:#111111; font-weight:800;" onclick="verRedeAtualNoMapaDoApp()">🗺️ Ver no mapa</button>
                     <button type="button" class="btn-mini" id="btnFavoritarRedeAtual" style="margin-top:0; background:#fef08a; color:#111111; border:1px solid #111111; font-weight:800;" onclick="alternarFavoritoWifiAtual()">☆ Favoritar</button>
                 </div>
 
@@ -1431,7 +1455,11 @@
 
             <div class="form-group">
                 <label for="cadSsid">Nome da Rede Wi-Fi (SSID) *</label>
-                <input type="text" id="cadSsid" placeholder="Nome exato">
+                <div class="gps-row">
+                    <input type="text" id="cadSsid" placeholder="Nome exato">
+                    <button type="button" class="btn-gps" style="background:#111111; color:#facc15;" onclick="detectarSsidConectadoAtual(true)">📶 Detectar SSID</button>
+                </div>
+                <div class="helper-text" id="statusSsidConectadoCad"></div>
             </div>
 
             <div class="form-group">
@@ -1661,7 +1689,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "1.000";
+    const APP_VERSION = "1.008";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
 
@@ -2010,9 +2038,107 @@
         });
     }
 
+    let mapaJaCentralizouNoUsuario = false;
+    let watchIdMapaUsuario = null;
+
+    function salvarUltimaPosicaoUsuario(lat, lng) {
+        if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) return;
+        userLatAtual = Number(lat);
+        userLngAtual = Number(lng);
+        try {
+            localStorage.setItem('clickcontrol_last_user_pos', JSON.stringify({ lat: userLatAtual, lng: userLngAtual, ts: Date.now() }));
+        } catch (e) {}
+    }
+
+    function restaurarUltimaPosicaoUsuario() {
+        if (userLatAtual !== null && userLngAtual !== null) return true;
+        try {
+            const raw = localStorage.getItem('clickcontrol_last_user_pos');
+            if (raw) {
+                const p = JSON.parse(raw);
+                if (p && typeof p.lat === 'number' && typeof p.lng === 'number') {
+                    userLatAtual = p.lat;
+                    userLngAtual = p.lng;
+                    return true;
+                }
+            }
+        } catch (e) {}
+        return false;
+    }
+
+    function atualizarMarcadorUsuarioNoMapa(centralizar = false) {
+        if (!mapInstance || userLatAtual === null || userLngAtual === null) return;
+        if (userPosMarker) {
+            userPosMarker.setLatLng([userLatAtual, userLngAtual]);
+            if (!mapInstance.hasLayer(userPosMarker)) {
+                userPosMarker.addTo(mapInstance);
+            }
+            userPosMarker.bringToFront();
+        } else {
+            userPosMarker = L.circleMarker([userLatAtual, userLngAtual], {
+                radius: 9,
+                fillColor: "#2563eb",
+                color: "#ffffff",
+                weight: 3,
+                fillOpacity: 0.95
+            }).addTo(mapInstance).bindPopup("📍 Você está aqui");
+            userPosMarker.bringToFront();
+        }
+        if (centralizar || !mapaJaCentralizouNoUsuario) {
+            mapInstance.setView([userLatAtual, userLngAtual], 15);
+            mapaJaCentralizouNoUsuario = true;
+        }
+        const statusEl = document.getElementById('mapGpsStatus');
+        if (statusEl) {
+            statusEl.textContent = `📍 Sua localização (${userLatAtual.toFixed(5)}, ${userLngAtual.toFixed(5)})`;
+        }
+    }
+
+    async function iniciarRastreamentoPosicaoUsuario() {
+        if (watchIdMapaUsuario !== null) return;
+        watchIdMapaUsuario = "starting";
+        const capGeo = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
+        if (capGeo && typeof capGeo.watchPosition === 'function') {
+            try {
+                if (typeof capGeo.requestPermissions === 'function') {
+                    try { await capGeo.requestPermissions(); } catch (e) {}
+                }
+                const wid = await capGeo.watchPosition({ enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }, (pos) => {
+                    if (pos && pos.coords) {
+                        salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
+                        atualizarMarcadorUsuarioNoMapa(false);
+                        renderizarListaRedesMinimizadas();
+                    }
+                });
+                watchIdMapaUsuario = wid || "cap_active";
+                return;
+            } catch (e) {
+                watchIdMapaUsuario = null;
+            }
+        }
+        if (!navigator.geolocation) {
+            watchIdMapaUsuario = null;
+            return;
+        }
+        try {
+            watchIdMapaUsuario = navigator.geolocation.watchPosition((pos) => {
+                salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
+                atualizarMarcadorUsuarioNoMapa(false);
+                renderizarListaRedesMinimizadas();
+            }, () => {}, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+        } catch (e) {
+            watchIdMapaUsuario = null;
+        }
+    }
+
     function inicializarOuAtualizarMapa() {
+        restaurarUltimaPosicaoUsuario();
+        const latInicial = (userLatAtual !== null) ? userLatAtual : -26.2503;
+        const lngInicial = (userLngAtual !== null) ? userLngAtual : -49.3786;
+        const zoomInicial = (userLatAtual !== null) ? 15 : 13;
+
         if (!mapInstance) {
-            mapInstance = L.map('miniMap').setView([-26.2503, -49.3786], 13);
+            mapInstance = L.map('miniMap').setView([latInicial, lngInicial], zoomInicial);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap'
             }).addTo(mapInstance);
@@ -2021,6 +2147,12 @@
         } else {
             setTimeout(() => mapInstance.invalidateSize(), 120);
         }
+
+        if (userLatAtual !== null && userLngAtual !== null) {
+            atualizarMarcadorUsuarioNoMapa(!mapaJaCentralizouNoUsuario);
+        }
+        atualizarPosicaoMapa(false, true);
+        iniciarRastreamentoPosicaoUsuario();
         renderizarAlfinetesNoMapa();
     }
 
@@ -2161,41 +2293,76 @@
         }
     }
 
-    function atualizarPosicaoMapa(forcarAlerta = false) {
-        if (bloquearClickFantasma('gps_mapa', 500)) return;
+    async function obterPosicaoNativaCapacitor(timeoutMs = 10000) {
+        try {
+            const capGeo = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
+            if (!capGeo) return null;
+            if (typeof capGeo.requestPermissions === 'function') {
+                try { await capGeo.requestPermissions(); } catch (e) {}
+            }
+            const pos = await capGeo.getCurrentPosition({
+                enableHighAccuracy: true,
+                timeout: timeoutMs,
+                maximumAge: 15000
+            });
+            if (pos && pos.coords) return pos;
+        } catch (e) {
+            try {
+                const capGeo = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
+                const posLow = await capGeo.getCurrentPosition({
+                    enableHighAccuracy: false,
+                    timeout: 8000,
+                    maximumAge: 60000
+                });
+                if (posLow && posLow.coords) return posLow;
+            } catch (e2) {}
+        }
+        return null;
+    }
+
+    async function obterPosicaoComFallbackAndroid(timeoutAlta = 10000) {
+        const posCap = await obterPosicaoNativaCapacitor(timeoutAlta);
+        if (posCap) return posCap;
+
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                resolve(null);
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => resolve(pos),
+                () => {
+                    navigator.geolocation.getCurrentPosition(
+                        (posLow) => resolve(posLow),
+                        () => resolve(null),
+                        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
+                    );
+                },
+                { enableHighAccuracy: true, timeout: timeoutAlta, maximumAge: 15000 }
+            );
+        });
+    }
+
+    async function atualizarPosicaoMapa(forcarAlerta = false, automatico = false) {
+        if (!automatico && bloquearClickFantasma('gps_mapa', 500)) return;
         const statusEl = document.getElementById('mapGpsStatus');
-        if (!navigator.geolocation) {
-            statusEl.textContent = "GPS não suportado neste navegador.";
+        if (statusEl && userLatAtual === null) statusEl.textContent = "Buscando sua localização...";
+
+        const pos = await obterPosicaoComFallbackAndroid(15000);
+        if (pos && pos.coords) {
+            salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
+            atualizarMarcadorUsuarioNoMapa(!automatico || !mapaJaCentralizouNoUsuario);
+            iniciarRastreamentoPosicaoUsuario();
+            renderizarListaRedesMinimizadas();
+            selecionarWifiMaisProximo(false);
             return;
         }
-        statusEl.textContent = "Buscando sua localização...";
-        navigator.geolocation.getCurrentPosition((pos) => {
-            userLatAtual = pos.coords.latitude;
-            userLngAtual = pos.coords.longitude;
-            statusEl.textContent = `📍 Localização atualizada (${userLatAtual.toFixed(5)}, ${userLngAtual.toFixed(5)})`;
 
-            if (mapInstance) {
-                mapInstance.setView([userLatAtual, userLngAtual], 15);
-                if (userPosMarker) mapInstance.removeLayer(userPosMarker);
-                userPosMarker = L.circleMarker([userLatAtual, userLngAtual], {
-                    radius: 8,
-                    fillColor: "#2563eb",
-                    color: "#ffffff",
-                    weight: 2,
-                    fillOpacity: 0.95
-                }).addTo(mapInstance).bindPopup("📍 Você está aqui");
-            }
-            selecionarWifiMaisProximo(false);
-        }, async () => {
-            await obterLocalizacaoAutomaticaApp(true);
-            if (userLatAtual !== null && userLngAtual !== null) {
-                statusEl.textContent = `📍 Localização aproximada ativa (${userLatAtual.toFixed(5)}, ${userLngAtual.toFixed(5)})`;
-                if (mapInstance) mapInstance.setView([userLatAtual, userLngAtual], 14);
-                renderizarListaRedesMinimizadas();
-            } else {
-                statusEl.textContent = "Não foi possível obter o GPS agora.";
-            }
-        }, { enableHighAccuracy: true, timeout: 10000 });
+        if (userLatAtual !== null && userLngAtual !== null) {
+            atualizarMarcadorUsuarioNoMapa(!automatico);
+        } else if (statusEl) {
+            statusEl.textContent = "Aguardando sinal real do GPS. Verifique se a Localização está ativa.";
+        }
     }
 
     function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
@@ -2208,13 +2375,13 @@
         return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    function selecionarWifiMaisProximo(manual = false) {
+    async function selecionarWifiMaisProximo(manual = false) {
         if (manual && bloquearClickFantasma('near_gps', 500)) return;
         const statusEl = document.getElementById('nearGpsStatus');
-        if (!navigator.geolocation) return;
 
         if (statusEl) statusEl.textContent = "Detectando ponto mais próximo...";
-        navigator.geolocation.getCurrentPosition((pos) => {
+        const pos = await obterPosicaoComFallbackAndroid(10000);
+        if (pos && pos.coords) {
             userLatAtual = pos.coords.latitude;
             userLngAtual = pos.coords.longitude;
 
@@ -2241,9 +2408,9 @@
             } else if (statusEl) {
                 statusEl.textContent = "Nenhum ponto com coordenadas próximas encontrado.";
             }
-        }, () => {
+        } else {
             if (statusEl) statusEl.textContent = "GPS indisponível no momento.";
-        }, { enableHighAccuracy: true, timeout: 10000 });
+        }
     }
 
     /* ============================================================
@@ -2298,11 +2465,27 @@
         } catch (e) {}
     }
 
+    function podeAtualizarPosicaoDoPino(ponto, ssidAtual, latAtual, lngAtual) {
+        if (!ponto || !ssidAtual || latAtual === null || lngAtual === null) return false;
+        const normSsid = s => String(s || "").replace(/^"|"$/g, "").trim().toLowerCase();
+        const sAtual = normSsid(ssidAtual);
+        const sPino = normSsid(ponto.ssid);
+        if (!sAtual || !sPino || sAtual !== sPino) return false;
+        const coordsPino = parseCoordenadasPonto(ponto);
+        if (!coordsPino) return false;
+        const distMetros = calcularDistanciaKm(latAtual, lngAtual, coordsPino.lat, coordsPino.lng) * 1000;
+        return distMetros <= 20;
+    }
+
     function capturarGpsConexaoParaCentroide(idWifi) {
         if (!navigator.geolocation || !idWifi) return;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
         navigator.geolocation.getCurrentPosition(async (pos) => {
             userLatAtual = pos.coords.latitude;
             userLngAtual = pos.coords.longitude;
+            const ssidAtual = await obterNomeRedeWifiConectada();
+            if (!podeAtualizarPosicaoDoPino(ponto, ssidAtual, userLatAtual, userLngAtual)) return;
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
@@ -2319,11 +2502,14 @@
         }, () => {}, { enableHighAccuracy: true, timeout: 10000 });
     }
 
+    function normalizarSsidComparacao(s) {
+        return String(s || "").replace(/^"|"$/g, "").trim().toLowerCase();
+    }
+
     function iniciarConexaoEAutoTeste(idWifi) {
         pendenteAutoTesteWifiId = idWifi || document.getElementById('selectWifiMapa')?.value;
         if (pendenteAutoTesteWifiId) {
             localStorage.setItem('clickcontrol_autoteste_wifi_id', pendenteAutoTesteWifiId);
-            capturarGpsConexaoParaCentroide(pendenteAutoTesteWifiId);
         }
         setTimeout(() => {
             if (document.visibilityState === 'visible' && pendenteAutoTesteWifiId) {
@@ -2336,13 +2522,62 @@
         return gerarPayloadWifiQR(ssid, senha);
     }
 
+    async function verificarSsidAntesDeMedir(ponto, tentativas = 4) {
+        if (!ponto || !ponto.ssid) return { ok: false, ssidAtual: "" };
+        const esperado = normalizarSsidComparacao(ponto.ssid);
+        let ultimoSsid = "";
+        for (let i = 0; i < tentativas; i++) {
+            const atual = await obterNomeRedeWifiConectada(true);
+            ultimoSsid = atual;
+            if (atual && normalizarSsidComparacao(atual) === esperado) {
+                return { ok: true, ssidAtual: atual };
+            }
+            if (i < tentativas - 1) {
+                await new Promise(r => setTimeout(r, 1500));
+            }
+        }
+        return { ok: false, ssidAtual: ultimoSsid };
+    }
+
     async function executarTesteEmBackground(idWifi) {
         if (!idWifi || testeEmAndamento) return;
+        const pontoBg = listaWifisCache.find(w => w.id === idWifi);
+        const statusMapa = document.getElementById('mapGpsStatus');
+        const avisoModal = document.getElementById('avisoConexaoWifiModal');
+
+        if (!pontoBg) {
+            pendenteAutoTesteWifiId = null;
+            localStorage.removeItem('clickcontrol_autoteste_wifi_id');
+            return;
+        }
+
+        if (statusMapa) statusMapa.textContent = `🔍 Conferindo se o Wi-Fi conectado é "${pontoBg.ssid}"...`;
+        if (avisoModal) {
+            avisoModal.style.display = "block";
+            avisoModal.innerHTML = `🔍 Conferindo conexão com a rede <strong>${pontoBg.ssid}</strong>...`;
+        }
+
+        const checkSsid = await verificarSsidAntesDeMedir(pontoBg, 4);
+        if (!checkSsid.ok) {
+            pendenteAutoTesteWifiId = null;
+            localStorage.removeItem('clickcontrol_autoteste_wifi_id');
+            const redeDetectadaTxt = checkSsid.ssidAtual ? `"${checkSsid.ssidAtual}"` : "não identificada (autorize Localização e Wi-Fi nas permissões do app)";
+            const msgErro = `⚠️ Conexão não confirmada com "${pontoBg.ssid}" (rede atual: ${redeDetectadaTxt}). O teste de velocidade e a posição do pino NÃO foram alterados.`;
+            if (statusMapa) statusMapa.textContent = msgErro;
+            if (avisoModal) {
+                avisoModal.style.display = "block";
+                avisoModal.innerHTML = msgErro;
+            }
+            return;
+        }
+
+        // SSID confirmado! Agora limpa pendência, fecha modal, atualiza posição (se <= 20m) e executa o teste
         pendenteAutoTesteWifiId = null;
         localStorage.removeItem('clickcontrol_autoteste_wifi_id');
         fecharModalQrCode();
-        const statusMapa = document.getElementById('mapGpsStatus');
-        if (statusMapa) statusMapa.textContent = "⚡ Medindo velocidade da rede em segundo plano...";
+        capturarGpsConexaoParaCentroide(idWifi);
+        if (statusMapa) statusMapa.textContent = `✅ Conectado em "${checkSsid.ssidAtual}"! Medindo velocidade da rede...`;
+
         try {
             await Promise.all([
                 fetch(`https://speed.cloudflare.com/__down?bytes=600000&_bw1=${Date.now()}`, { cache: "no-store" }).then(r => r.arrayBuffer()),
@@ -2370,6 +2605,13 @@
             const durUp = Math.max(0.18, (performance.now() - t0Up) / 1000);
             const upBg = Number(((chunkUp * numThreadsUp * 8) / durUp / 1000000).toFixed(2));
 
+            const ssidConfirmadoFinal = await obterNomeRedeWifiConectada(false);
+            if (normalizarSsidComparacao(ssidConfirmadoFinal) !== normalizarSsidComparacao(pontoBg.ssid)) {
+                if (statusMapa) statusMapa.textContent = `⚠️ A rede mudou durante o teste. Resultado descartado para não misturar pontos.`;
+                return;
+            }
+
+            const enviarCoordsBg = podeAtualizarPosicaoDoPino(pontoBg, ssidConfirmadoFinal, userLatAtual, userLngAtual);
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
@@ -2382,14 +2624,14 @@
                     upload_mbps: upBg,
                     down_mbps: downBg,
                     up_mbps: upBg,
-                    lat: userLatAtual,
-                    lng: userLngAtual
+                    lat: enviarCoordsBg ? userLatAtual : null,
+                    lng: enviarCoordsBg ? userLngAtual : null
                 })
             });
             await carregarListaWifis();
-            if (statusMapa) statusMapa.textContent = `✅ Teste em segundo plano concluído: ⬇️ ${downBg.toFixed(1)} Mbps / ⬆️ ${upBg.toFixed(1)} Mbps`;
+            if (statusMapa) statusMapa.textContent = `✅ Rede "${pontoBg.ssid}" validada! ⬇️ ${downBg.toFixed(1)} Mbps / ⬆️ ${upBg.toFixed(1)} Mbps`;
         } catch (e) {
-            if (statusMapa) statusMapa.textContent = "⚠️ Não foi possível concluir o teste em segundo plano.";
+            if (statusMapa) statusMapa.textContent = "⚠️ Não foi possível concluir o teste de velocidade.";
         }
     }
 
@@ -2406,17 +2648,86 @@
         }
     });
 
-    function acionarConexaoDiretaWifi(ssid, senha, targetId) {
-        iniciarConexaoEAutoTeste(targetId);
+    async function conectarAutomaticamenteRedeWifi(ssid, senha) {
+        const s = String(ssid || "").trim();
         const p = String(senha || "").trim();
         const isAberta = !p || p.toLowerCase() === "aberta";
+        const cap = window.Capacitor;
+        const plugins = cap && cap.Plugins ? cap.Plugins : {};
+        const wifiPlugin = plugins.CapacitorWifi || plugins.Wifi || plugins.WifiConnect || plugins.NetworkWifi;
+
+        if (wifiPlugin) {
+            if (typeof wifiPlugin.requestPermissions === 'function') {
+                try { await wifiPlugin.requestPermissions(); } catch (e) {}
+            }
+            const metodosConnect = ['connect', 'connectWifi', 'connectToWifi', 'addNetworkAndConnect'];
+            for (const m of metodosConnect) {
+                if (typeof wifiPlugin[m] === 'function') {
+                    try {
+                        await wifiPlugin[m]({
+                            ssid: s,
+                            SSID: s,
+                            password: isAberta ? "" : p,
+                            isHiddenSsid: false,
+                            saveNetwork: true
+                        });
+                        return true;
+                    } catch (e) {}
+                }
+            }
+        }
+
+        if (window.WifiWizard2) {
+            try {
+                if (isAberta && typeof window.WifiWizard2.connect === 'function') {
+                    await window.WifiWizard2.connect(s);
+                    return true;
+                } else if (!isAberta && typeof window.WifiWizard2.connect === 'function') {
+                    await window.WifiWizard2.connect(s, true, p, 'WPA');
+                    return true;
+                }
+            } catch (e) {}
+        }
+        return false;
+    }
+
+    async function acionarConexaoDiretaWifi(ssid, senha, targetId) {
+        const s = String(ssid || "").trim();
+        const p = String(senha || "").trim();
+        const isAberta = !p || p.toLowerCase() === "aberta";
+        const aviso = document.getElementById('avisoConexaoWifiModal');
+
+        if (aviso) {
+            aviso.style.display = "block";
+            aviso.innerHTML = `🔄 Solicitando permissão e conectando automaticamente em <strong>${s}</strong>...`;
+        }
+
+        // Solicita permissão de Localização/Wi-Fi em pop-up nativo antes de ler/conectar SSID
+        await solicitarPermissoesWifiELocalizacao(true);
+
         if (!isAberta && navigator.clipboard) {
             navigator.clipboard.writeText(p).catch(() => {});
         }
+
+        iniciarConexaoEAutoTeste(targetId);
+
+        const conectouNativo = await conectarAutomaticamenteRedeWifi(s, p);
+        if (conectouNativo) {
+            if (aviso) {
+                aviso.style.display = "block";
+                aviso.innerHTML = `📡 Conectando na rede <strong>${s}</strong>... Aguardando confirmação do SSID para iniciar o teste.`;
+            }
+            setTimeout(() => {
+                if (pendenteAutoTesteWifiId) {
+                    executarTesteEmBackground(pendenteAutoTesteWifiId);
+                }
+            }, 3200);
+            return;
+        }
+
         const isAndroid = /Android/i.test(navigator.userAgent || "");
         const isWindows = /Windows/i.test(navigator.userAgent || "");
         if (isAndroid) {
-            const s = String(ssid || "");
             const intentUrl = isAberta
                 ? `intent:#Intent;action=android.settings.WIFI_SETTINGS;S.ssid=${encodeURIComponent(s)};end`
                 : `intent:#Intent;action=android.settings.WIFI_SETTINGS;S.ssid=${encodeURIComponent(s)};S.password=${encodeURIComponent(p)};end`;
@@ -2424,12 +2735,11 @@
         } else if (isWindows) {
             window.location.href = "ms-availablenetworks:";
         }
-        const aviso = document.getElementById('avisoConexaoWifiModal');
         if (aviso) {
             aviso.style.display = "block";
             aviso.innerHTML = isAberta
-                ? `Selecione a rede <strong>${ssid}</strong> nas configurações de Wi-Fi.`
-                : `Senha <strong>${p}</strong> copiada! Selecione <strong>${ssid}</strong> no Wi-Fi e cole a senha.`;
+                ? `Selecione a rede <strong>${s}</strong> no painel Wi-Fi. Assim que conectar e voltar ao app, o SSID será conferido antes do teste.`
+                : `Senha <strong>${p}</strong> copiada! Conecte em <strong>${s}</strong> e volte ao app para conferir o SSID e medir.`;
         }
     }
 
@@ -2589,44 +2899,65 @@
 
 
     async function obterLocalizacaoAutomaticaApp(forcarAtualizacao = false) {
+        restaurarUltimaPosicaoUsuario();
+        iniciarRastreamentoPosicaoUsuario();
+        if (userLatAtual !== null && userLngAtual !== null) {
+            renderizarListaRedesMinimizadas();
+        }
         if (!forcarAtualizacao && userLatAtual !== null && userLngAtual !== null) return;
 
-        // 1. Tenta GPS / Location nativo do navegador (Android / Windows Location)
-        if (navigator.geolocation) {
-            const obteveGps = await new Promise((resolve) => {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    userLatAtual = pos.coords.latitude;
-                    userLngAtual = pos.coords.longitude;
-                    resolve(true);
-                }, () => resolve(false), { enableHighAccuracy: true, timeout: 7000, maximumAge: 60000 });
-            });
-            if (obteveGps) {
-                renderizarListaRedesMinimizadas();
-                return;
-            }
+        // Usa exclusivamente GPS / Location do dispositivo (nunca IP do provedor, que desvia >100km)
+        const pos = await obterPosicaoComFallbackAndroid(15000);
+        if (pos && pos.coords) {
+            salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
+            atualizarMarcadorUsuarioNoMapa(true);
+            iniciarRastreamentoPosicaoUsuario();
+            renderizarListaRedesMinimizadas();
         }
+    }
 
-        // 2. Fallback por geolocalização de rede/IP (essencial para Windows/PC sem GPS hardware ou permissão bloqueada)
-        try {
-            const resp = await fetch("https://ipapi.co/json/", { cache: "no-store" });
-            const geo = await resp.json();
-            if (geo && geo.latitude && geo.longitude) {
-                userLatAtual = Number(geo.latitude);
-                userLngAtual = Number(geo.longitude);
-                renderizarListaRedesMinimizadas();
-                return;
-            }
-        } catch (e) {}
+    async function atualizarPertoDadosRede() {
+        if (bloquearClickFantasma('perto_dados_rede', 450)) return;
+        const btn = document.getElementById('btnPertoDadosRede');
+        if (btn) btn.textContent = "⏳ GPS...";
+        const selEst = document.getElementById('selectEstadoDadosRede');
+        const selCid = document.getElementById('selectCidadeOffline');
+        if (selEst) selEst.value = "";
+        if (selCid) selCid.value = "";
 
-        try {
-            const resp2 = await fetch("https://get.geojs.io/v1/ip/geo.json", { cache: "no-store" });
-            const geo2 = await resp2.json();
-            if (geo2 && geo2.latitude && geo2.longitude) {
-                userLatAtual = Number(geo2.latitude);
-                userLngAtual = Number(geo2.longitude);
-                renderizarListaRedesMinimizadas();
+        const pos = await obterPosicaoComFallbackAndroid(15000);
+        if (pos && pos.coords) {
+            salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
+            atualizarMarcadorUsuarioNoMapa(true);
+            iniciarRastreamentoPosicaoUsuario();
+        }
+        renderizarListaRedesMinimizadas();
+        if (btn) btn.textContent = "📍 Perto";
+    }
+
+    function verRedeAtualNoMapaDoApp() {
+        if (bloquearClickFantasma('ver_no_mapa_app', 350)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        mudarAba('mapa', true);
+        setTimeout(() => {
+            const c = parseCoordenadasPonto(ponto);
+            if (c && mapInstance) {
+                mapInstance.invalidateSize();
+                mapInstance.setView([c.lat, c.lng], 17);
+                if (wifiMarkersLayer) {
+                    wifiMarkersLayer.eachLayer(layer => {
+                        if (layer.getLatLng) {
+                            const ll = layer.getLatLng();
+                            if (Math.abs(ll.lat - c.lat) < 0.0001 && Math.abs(ll.lng - c.lng) < 0.0001 && layer.openPopup) {
+                                layer.openPopup();
+                            }
+                        }
+                    });
+                }
             }
-        } catch (e) {}
+        }, 220);
     }
 
     function formatarDistanciaTexto(distKm) {
@@ -2853,6 +3184,22 @@
         const upEl = document.getElementById('upVal');
         const toast = document.getElementById('toastMsg');
 
+        const idWifiTeste = document.getElementById('selectWifi')?.value || document.getElementById('selectWifiMapa')?.value;
+        const pontoTeste = listaWifisCache.find(w => w.id === idWifiTeste);
+        if (pontoTeste && pontoTeste.ssid) {
+            statusText.textContent = `🔍 Conferindo se você está conectado em "${pontoTeste.ssid}"...`;
+            await solicitarPermissoesWifiELocalizacao(false);
+            const confManual = await verificarSsidAntesDeMedir(pontoTeste, 2);
+            if (!confManual.ok) {
+                const atualTxt = confManual.ssidAtual ? `"${confManual.ssidAtual}"` : "não identificada";
+                statusText.textContent = `⚠️ Conecte-se primeiro na rede "${pontoTeste.ssid}" (rede atual: ${atualTxt}).`;
+                toast.style.display = "block";
+                toast.className = "toast warning";
+                toast.textContent = `⚠️ O SSID conectado (${atualTxt}) não bate com o pino selecionado ("${pontoTeste.ssid}"). Conecte-se na rede correta antes de testar.`;
+                return;
+            }
+        }
+
         abortControllerTeste = new AbortController();
         const sig = abortControllerTeste.signal;
         testeEmAndamento = true;
@@ -2979,6 +3326,9 @@
         saveBtn.textContent = "Salvando na nuvem...";
 
         try {
+            const pontoManual = listaWifisCache.find(w => w.id === idWifi);
+            const ssidManual = await obterNomeRedeWifiConectada();
+            const enviarCoordsManual = podeAtualizarPosicaoDoPino(pontoManual, ssidManual, userLatAtual, userLngAtual);
             const res = await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
@@ -2991,8 +3341,8 @@
                     upload_mbps: ultimoUpMedido,
                     down_mbps: ultimoDownMedido,
                     up_mbps: ultimoUpMedido,
-                    lat: userLatAtual,
-                    lng: userLngAtual
+                    lat: enviarCoordsManual ? userLatAtual : null,
+                    lng: enviarCoordsManual ? userLngAtual : null
                 })
             });
             const data = await res.json();
@@ -3107,10 +3457,11 @@
         else pararAutoPreencherGps();
     }
 
-    function iniciarBuscaGpsCadastro() {
+    async function iniciarBuscaGpsCadastro() {
         const btn = document.getElementById('btnAcaoGpsToggle');
         const status = document.getElementById('gpsStatus');
-        if (!navigator.geolocation) {
+        const capGeo = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
+        if (!capGeo && !navigator.geolocation) {
             status.textContent = "GPS não suportado.";
             return;
         }
@@ -3122,7 +3473,8 @@
         btn.style.color = "#ffffff";
         status.textContent = "Buscando localização de alta precisão...";
 
-        watchIdBusca = navigator.geolocation.watchPosition(async (pos) => {
+        const aoReceberPos = async (pos) => {
+            if (!pos || !pos.coords) return;
             const lat = pos.coords.latitude.toFixed(6);
             const lng = pos.coords.longitude.toFixed(6);
             ultimaCoordGPS = `${lat}, ${lng}`;
@@ -3135,14 +3487,36 @@
             } else if (cadPinMarker) {
                 cadPinMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
             }
-        }, () => {
-            status.textContent = "Erro ao acessar o GPS.";
-        }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
+        };
+
+        const posInicial = await obterPosicaoComFallbackAndroid(10000);
+        if (posInicial) await aoReceberPos(posInicial);
+
+        if (capGeo && typeof capGeo.watchPosition === 'function') {
+            try {
+                watchIdBusca = await capGeo.watchPosition({ enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }, (pos, err) => {
+                    if (err && !jaCentralizouGpsCadastro) { status.textContent = "Erro ao acessar o GPS."; return; }
+                    aoReceberPos(pos);
+                });
+                return;
+            } catch (e) {}
+        }
+
+        if (navigator.geolocation) {
+            watchIdBusca = navigator.geolocation.watchPosition(aoReceberPos, () => {
+                if (!jaCentralizouGpsCadastro) status.textContent = "Erro ao acessar o GPS.";
+            }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
+        }
     }
 
     function pararAutoPreencherGps() {
         if (watchIdBusca !== null) {
-            navigator.geolocation.clearWatch(watchIdBusca);
+            const capGeo = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
+            if (capGeo && typeof capGeo.clearWatch === 'function' && typeof watchIdBusca === 'string') {
+                try { capGeo.clearWatch({ id: watchIdBusca }); } catch (e) {}
+            } else if (navigator.geolocation) {
+                navigator.geolocation.clearWatch(watchIdBusca);
+            }
             watchIdBusca = null;
         }
         gpsBuscaAtiva = false;
@@ -3242,9 +3616,9 @@
             }
 
             if (rua || numero || bairro) {
-                const ruaComNum = [rua, numero ? `nº ${numero}` : "s/n"].filter(Boolean).join(", ");
+                const ruaComNum = [rua, numero ? `nº ${numero} (aprox.)` : "s/n (aprox.)"].filter(Boolean).join(", ");
                 const endFormatado = [ruaComNum, bairro].filter(Boolean).join(" - ");
-                document.getElementById('cadLocalizacao').value = `${endFormatado} (${lat}, ${lng})`;
+                document.getElementById('cadLocalizacao').value = endFormatado;
 
                 if (cidade) {
                     document.getElementById('cadCidade').value = uf ? `${cidade} - ${uf}` : cidade;
@@ -3308,7 +3682,7 @@
 
         // Bloqueio anti-duplicidade: mesma rede (SSID) + mesmo nome/local ou coordenadas a menos de 40 metros
         const normTxt = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
-        const mNovaCoord = localizacao.match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
+        const mNovaCoord = (localizacao.match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/)) || (ultimaCoordGPS ? ultimaCoordGPS.match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/) : null);
         const duplicado = listaWifisCache.find(w => {
             const mesmoSsid = normTxt(w.ssid) === normTxt(ssid);
             const mesmoLocal = normTxt(w.local) === normTxt(local) && normTxt(w.cidade) === normTxt(cidade);
@@ -3342,10 +3716,10 @@
                     id_usuario: usuarioLogado?.email || "",
                     nome_local: local,
                     cidade_uf: cidade,
-                    lat_long: localizacao,
+                    lat_long: ultimaCoordGPS || localizacao,
                     ssid_rede: ssid,
                     local,
-                    localizacao,
+                    localizacao: ultimaCoordGPS || localizacao,
                     cidade,
                     ssid,
                     senha,
@@ -3364,8 +3738,8 @@
                 nome_local: local,
                 cidade: cidade,
                 cidade_uf: cidade,
-                lat_long: localizacao,
-                localizacao: localizacao,
+                lat_long: ultimaCoordGPS || localizacao,
+                localizacao: ultimaCoordGPS || localizacao,
                 ssid: ssid,
                 ssid_rede: ssid,
                 senha: senha,
@@ -3915,6 +4289,119 @@
         alert(`🚧 ${nomeModulo}\n\nEste módulo está em exibição ilustrativa na Tela Inicial e será ativado nas próximas versões. Toque em "Pontos de Wi-Fi" para acessar a área funcional.`);
     }
 
+
+    let ssidConectadoAtual = "";
+    let permissaoWifiSolicitadaSessao = false;
+
+    async function solicitarPermissoesWifiELocalizacao(forcarDialogo = false) {
+        try {
+            const cap = window.Capacitor;
+            const plugins = cap && cap.Plugins ? cap.Plugins : {};
+
+            // 1. Pop-up nativo de Localização (exigido pelo Android para ler SSID e redes próximas)
+            const capGeo = plugins.Geolocation;
+            if (capGeo && typeof capGeo.requestPermissions === 'function') {
+                try { await capGeo.requestPermissions({ permissions: ['location', 'coarseLocation'] }); } catch (e) {}
+            } else if (navigator.geolocation && (!permissaoWifiSolicitadaSessao || forcarDialogo)) {
+                await new Promise((resolve) => {
+                    navigator.geolocation.getCurrentPosition(() => resolve(), () => resolve(), { enableHighAccuracy: true, timeout: 5000 });
+                });
+            }
+
+            // 2. Pop-up nativo do Plugin de Wi-Fi (NEARBY_WIFI_DEVICES / ACCESS_WIFI_STATE)
+            const wifiPlugin = plugins.CapacitorWifi || plugins.Wifi || plugins.WifiConnect || plugins.NetworkWifi;
+            if (wifiPlugin && typeof wifiPlugin.requestPermissions === 'function') {
+                try { await wifiPlugin.requestPermissions(); } catch (e) {}
+            }
+
+            // 3. Caso esteja rodando sem plugin nativo de leitura de Wi-Fi e ainda não tenha sido autorizado na sessão, exibe pop-up informativo
+            if (forcarDialogo && !permissaoWifiSolicitadaSessao && !wifiPlugin && !window.WifiWizard2) {
+                permissaoWifiSolicitadaSessao = true;
+                const aceitou = confirm("📶 Permissão de Wi-Fi e Localização\n\nO Click Control precisa acessar o nome da rede Wi-Fi (SSID) e a localização para confirmar sua conexão e preencher os dados da rede.\n\nDeseja autorizar o acesso aos dados de conexão Wi-Fi?");
+                localStorage.setItem('clickcontrol_wifi_perm_ok', aceitou ? '1' : '0');
+            }
+            permissaoWifiSolicitadaSessao = true;
+        } catch (e) {}
+    }
+
+    async function obterNomeRedeWifiConectada(forcarLeitura = false) {
+        if (forcarLeitura) ssidConectadoAtual = "";
+        try {
+            const cap = window.Capacitor;
+            const plugins = cap && cap.Plugins ? cap.Plugins : {};
+
+            // 1. Tenta plugin CapacitorWifi / Wifi / WifiConnect
+            const wifiPlugin = plugins.CapacitorWifi || plugins.Wifi || plugins.WifiConnect || plugins.NetworkWifi;
+            if (wifiPlugin) {
+                if (typeof wifiPlugin.requestPermissions === 'function') {
+                    try { await wifiPlugin.requestPermissions(); } catch (e) {}
+                }
+                const metodos = ['getSSID', 'getConnectedSSID', 'getCurrentWifiInfo', 'getWifiInfo', 'getConnectionInfo'];
+                for (const m of metodos) {
+                    if (typeof wifiPlugin[m] === 'function') {
+                        try {
+                            const res = await wifiPlugin[m]();
+                            const rawSsid = res && (res.ssid || res.SSID || res.value || (typeof res === 'string' ? res : ""));
+                            const limpo = String(rawSsid || "").replace(/^"|"$/g, "").trim();
+                            if (limpo && limpo !== "<unknown ssid>" && limpo.toLowerCase() !== "unknown") {
+                                ssidConectadoAtual = limpo;
+                                return limpo;
+                            }
+                        } catch (e) {}
+                    }
+                }
+            }
+
+            // 2. Tenta cordova/WifiWizard2 se instalado no projeto Capacitor Android
+            if (window.WifiWizard2 && typeof window.WifiWizard2.getConnectedSSID === 'function') {
+                try {
+                    const ssidW2 = await window.WifiWizard2.getConnectedSSID();
+                    const limpo = String(ssidW2 || "").replace(/^"|"$/g, "").trim();
+                    if (limpo && limpo !== "<unknown ssid>" && limpo.toLowerCase() !== "unknown") {
+                        ssidConectadoAtual = limpo;
+                        return limpo;
+                    }
+                } catch (e) {}
+            }
+
+            // 3. Tenta Capacitor Network plugin (identifica se está em Wi-Fi)
+            if (plugins.Network && typeof plugins.Network.getStatus === 'function') {
+                const st = await plugins.Network.getStatus();
+                if (st && st.connected && st.connectionType === 'wifi') {
+                    const rawSsid = st.ssid || st.SSID || "";
+                    const limpo = String(rawSsid || "").replace(/^"|"$/g, "").trim();
+                    if (limpo && limpo !== "<unknown ssid>") {
+                        ssidConectadoAtual = limpo;
+                        return limpo;
+                    }
+                }
+            }
+        } catch (e) {}
+        return ssidConectadoAtual || "";
+    }
+
+    async function detectarSsidConectadoAtual(manual = false) {
+        if (manual && bloquearClickFantasma('detectar_ssid', 400)) return;
+        const stEl = document.getElementById('statusSsidConectadoCad');
+        if (stEl && manual) stEl.textContent = "🔍 Lendo nome da rede Wi-Fi conectada...";
+
+        // Garante permissão de localização ativa (exigida pelo Android para ler SSID)
+        await obterPosicaoComFallbackAndroid(6000);
+        const ssid = await obterNomeRedeWifiConectada();
+        if (ssid) {
+            const inputSsid = document.getElementById('cadSsid');
+            if (inputSsid && (!inputSsid.value.trim() || manual)) {
+                inputSsid.value = ssid;
+            }
+            const chk = document.getElementById('cadEstouConectado');
+            if (chk) chk.checked = true;
+            if (stEl) stEl.textContent = `✅ Rede Wi-Fi conectada detectada: ${ssid}`;
+        } else if (stEl && manual) {
+            stEl.textContent = "⚠️ Não foi possível ler o SSID automaticamente (verifique permissão de Localização/Wi-Fi no Android ou digite o nome acima).";
+        }
+        return ssid;
+    }
+
     function mostrarApp() {
         ativarEscudoTransicao(650);
         const mapEl = document.getElementById('miniMap');
@@ -3940,7 +4427,9 @@
         const greetEl = document.getElementById('homeGreetingName');
         if (greetEl) greetEl.textContent = `Olá, ${pName}`;
         atualizarVisibilidadeAdmin();
+        solicitarPermissoesWifiELocalizacao(false);
         obterLocalizacaoAutomaticaApp();
+        detectarSsidConectadoAtual(false);
         carregarListaWifis();
 
         setTimeout(() => {
@@ -3986,6 +4475,7 @@
             }
         }
         else if (aba === 'testar') atualizarBannerTesteAtual(document.getElementById('selectWifiMapa')?.value);
+        else if (aba === 'cadastrar') detectarSsidConectadoAtual(false);
     }
 
     async function carregarListaWifis() {
@@ -4558,6 +5048,70 @@
         return fotos;
     }
 
+    let galeriaIndiceAtual = 0;
+
+    function selecionarFotoGaleriaModal(idx, src) {
+        galeriaIndiceAtual = idx;
+        const img = document.getElementById('imgPrincipalGaleriaModal');
+        if (img) img.src = src;
+    }
+
+    async function adminExcluirFotoDaGaleriaAtual() {
+        if (!ehAdministrador()) return;
+        if (bloquearClickFantasma('adm_del_foto_gal', 400)) return;
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        const fotos = obterTodasFotosDoPonto(ponto);
+        const fotoAlvo = fotos[galeriaIndiceAtual];
+        if (!fotoAlvo) return;
+        if (!confirm("Deseja realmente apagar esta foto da galeria?")) return;
+
+        const eraPrincipal = (ponto.foto_base64 === fotoAlvo || ponto.foto_url === fotoAlvo);
+        if (ponto.foto_base64 === fotoAlvo) ponto.foto_base64 = "";
+        if (ponto.foto_url === fotoAlvo) ponto.foto_url = "";
+        if (Array.isArray(ponto.fotos)) {
+            ponto.fotos = ponto.fotos.filter(f => f !== fotoAlvo);
+        }
+
+        const coms = obterComentariosDoPonto(idWifi);
+        let alterouCom = false;
+        coms.forEach(c => {
+            if (Array.isArray(c.fotos) && c.fotos.includes(fotoAlvo)) {
+                c.fotos = c.fotos.filter(f => f !== fotoAlvo);
+                alterouCom = true;
+            }
+        });
+        if (alterouCom) salvarComentariosDoPonto(idWifi, coms);
+
+        const restantes = obterTodasFotosDoPonto(ponto);
+        if (!ponto.foto_base64 && restantes.length > 0) {
+            ponto.foto_base64 = restantes[0];
+        }
+
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+        atualizarCardQrDoMapa(idWifi);
+        fecharModalDinamico('modalAcaoRede');
+        if (restantes.length > 0) {
+            abrirModalGaleriaPonto(0);
+        }
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_excluir_foto_galeria",
+                    admin_email: usuarioLogado?.email || "",
+                    id_wifi: idWifi,
+                    foto_src: fotoAlvo,
+                    limpar_principal: eraPrincipal
+                })
+            });
+        } catch (e) {}
+    }
+
     function abrirModalGaleriaPonto(indiceInicial = 0) {
         if (bloquearClickFantasma('modal_galeria', 350)) return;
         const idWifi = document.getElementById('selectWifiMapa')?.value;
@@ -4569,14 +5123,19 @@
             return;
         }
         const idx = Math.max(0, Math.min(indiceInicial, fotos.length - 1));
+        galeriaIndiceAtual = idx;
+        const souAdmin = ehAdministrador();
         criarModalDinamico('modalAcaoRede', `
             <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:14px;max-width:400px;width:100%;color:#f8fafc;text-align:center;">
                 <div style="font-size:0.9rem;font-weight:900;color:#facc15;margin-bottom:8px;">🖼️ Galeria — ${ponto.local} (${fotos.length} foto(s))</div>
                 <img id="imgPrincipalGaleriaModal" src="${fotos[idx]}" style="width:100%;max-height:260px;object-fit:contain;background:#000;border-radius:10px;border:1px solid #3f3f46;margin-bottom:8px;">
                 <div style="display:flex;gap:6px;overflow-x:auto;justify-content:center;padding:4px 0;margin-bottom:10px;">
-                    ${fotos.map((src, i) => `<img src="${src}" onclick="document.getElementById('imgPrincipalGaleriaModal').src='${src}'" style="width:58px;height:46px;object-fit:cover;border-radius:6px;border:2px solid ${i === idx ? '#facc15' : '#3f3f46'};cursor:pointer;flex-shrink:0;">`).join("")}
+                    ${fotos.map((src, i) => `<img src="${src}" onclick="selecionarFotoGaleriaModal(${i}, '${src}')" style="width:58px;height:46px;object-fit:cover;border-radius:6px;border:2px solid ${i === idx ? '#facc15' : '#3f3f46'};cursor:pointer;flex-shrink:0;">`).join("")}
                 </div>
-                <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;border-radius:8px;padding:8px;width:100%;font-weight:700;cursor:pointer;">Fechar Galeria</button>
+                <div style="display:flex;gap:8px;">
+                    ${souAdmin ? `<button type="button" onclick="adminExcluirFotoDaGaleriaAtual()" style="flex:1;background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:8px;font-weight:800;cursor:pointer;">🗑️ Apagar Foto (Admin)</button>` : ""}
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="flex:1;background:#27272a;color:#f8fafc;border:1px solid #3f3f46;border-radius:8px;padding:8px;font-weight:700;cursor:pointer;">Fechar Galeria</button>
+                </div>
             </div>
         `);
     }
