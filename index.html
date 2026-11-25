@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control 1.011 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control 1.012 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1081,7 +1081,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.011</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.012</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1102,8 +1102,10 @@
 
         <div class="form-group">
             <label for="authSenha">Sua Senha *</label>
-            <input type="password" id="authSenha" placeholder="Digite sua senha de acesso" onkeydown="if(event.key==='Enter'){ event.preventDefault(); document.getElementById('authSubmitBtn').click(); }">
+            <input type="password" id="authSenha" placeholder="Digite sua senha de acesso" onkeydown="if(event.key==='Enter'){ event.preventDefault(); processarAuth(null); }">
         </div>
+
+        <div id="loginLockoutBox" class="hidden" style="background:#fee2e2; border:1.5px solid #dc2626; color:#991b1b; border-radius:8px; padding:8px 10px; font-size:0.76rem; font-weight:700; text-align:center; margin-bottom:10px;"></div>
 
         <button type="button" class="btn" id="authSubmitBtn" onclick="processarAuth(event)">Entrar no Aplicativo</button>
         <div style="text-align:center; margin-top:10px;">
@@ -1163,7 +1165,7 @@
                         <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                     </div>
                 </div>
-                <span class="app-version-corner">v1.011</span>
+                <span class="app-version-corner">v1.012</span>
                 </div>
             </div>
 
@@ -1215,7 +1217,7 @@
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                 </div>
             </div>
-            <span class="app-version-corner">v1.011</span>
+            <span class="app-version-corner">v1.012</span>
             </div>
         </div>
 
@@ -1345,13 +1347,13 @@
                     <div class="amenities-badges" id="mapaAmenities"></div>
 
                     <div class="gallery-strip" id="mapaGaleriaStrip"></div>
-                    <input type="file" id="inputAddFotoLocal" accept="image/*" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
+                    <input type="file" id="inputAddFotoLocal" accept="image/*" capture="environment" class="hidden" onchange="adicionarFotoAoLocalAtual(event)">
                     <div style="display:flex; gap:4px; justify-content:space-between; align-items:stretch; flex-wrap:nowrap; margin-top:8px;">
                         <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="copiarLinkQrMapa()">📋 Copiar Link</button>
                         <a id="mapaNavGpsLink" href="#" target="_blank" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15; text-decoration:none; background:var(--primary); color:var(--primary-text); font-weight:800; display:flex; align-items:center; justify-content:center; text-align:center;">🧭 Ir até lá</a>
                         <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="abrirModalQrCodeAtual()">🔗 QR Code</button>
                         <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="abrirModalRelatarProblema()">⚠️ Problema</button>
-                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Foto</button>
+                        <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="document.getElementById('inputAddFotoLocal').click()">📷 Câmera</button>
                         <button type="button" class="btn-mini" style="flex:1; margin-top:0; padding:6px 3px; font-size:0.65rem; line-height:1.15;" onclick="abrirModalGaleriaPonto()">🖼️ Galeria (<span id="qtdFotosGaleriaBtn">0</span>)</button>
                     </div>
                 </div>
@@ -1521,7 +1523,7 @@
                 <label for="cadSsid">Nome da Rede Wi-Fi (SSID) *</label>
                 <div class="gps-row">
                     <input type="text" id="cadSsid" placeholder="Nome exato">
-                    <button type="button" class="btn-gps" style="background:#111111; color:#facc15;" onclick="detectarSsidConectadoAtual(true)">📶 Detectar SSID</button>
+                    <button type="button" class="btn-gps" style="background:#111111; color:#facc15;" onclick="detectarSsidConectadoAtual(true)">📶 Detectar Rede</button>
                 </div>
                 <div class="helper-text" id="statusSsidConectadoCad"></div>
             </div>
@@ -1540,6 +1542,13 @@
                     <input type="checkbox" id="cadEstouConectado" style="width:18px; height:18px; accent-color:#111111; cursor:pointer;">
                 </label>
                 <div class="helper-text">Se marcado, fará o teste de velocidade automaticamente após cadastrar. Se desmarcado, ficará com alfinete roxo claro até a 1ª conexão/teste.</div>
+            </div>
+
+            <div class="form-group">
+                <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; background:#fef9c3; border:1.5px solid #111111; padding:10px 12px; border-radius:8px; color:#111111; font-size:0.8rem; font-weight:700; line-height:1.3;">
+                    <input type="checkbox" id="cadConfirmacaoComercial" style="width:18px; height:18px; margin-top:2px; accent-color:#111111; cursor:pointer; flex-shrink:0;">
+                    <span>🏢 Confirmo que esta rede <strong>NÃO é residencial</strong> e pertence a um <strong>estabelecimento comercial / público</strong>. *</span>
+                </label>
             </div>
 
             <div class="form-group">
@@ -1780,9 +1789,13 @@
                         </div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <strong style="font-size:0.84rem; color:var(--primary);">🚨 Problemas Relatados & Sugestões (<span id="adminQtdProblemas">0</span>)</strong>
-                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="atualizarTudoPainelAdmin()">🔄 Atualizar</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; flex-wrap:wrap;">
+                        <strong style="font-size:0.84rem; color:var(--primary);">🚨 Problemas & Sugestões (<span id="adminQtdProblemas">0</span>)</strong>
+                        <div style="display:flex; gap:4px;">
+                            <button type="button" id="btnFiltroProbAtivos" class="btn-mini" style="margin-top:0; padding:4px 8px; background:#111111; color:#facc15;" onclick="alternarFiltroProblemasAdmin('ativos')">📥 Ativos</button>
+                            <button type="button" id="btnFiltroProbArquivados" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="alternarFiltroProblemasAdmin('arquivados')">📦 Arquivados</button>
+                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="atualizarTudoPainelAdmin()">🔄</button>
+                        </div>
                     </div>
                     <div id="adminListaProblemas" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto;"></div>
                 </div>
@@ -1791,10 +1804,11 @@
                 <div id="admSecaoNotificacoes" class="hidden">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; flex-wrap:wrap;">
                         <strong style="font-size:0.84rem; color:var(--primary);">🔔 Central de Notificações (<span id="adminQtdNotificacoes">0</span>)</strong>
-                        <div style="display:flex; gap:4px;">
-                            <button type="button" id="btnFiltroNotifAtivas" class="btn-mini" style="margin-top:0; padding:4px 8px; background:#111111; color:#facc15;" onclick="alternarFiltroNotificacoesAdmin('ativas')">📥 Ativas</button>
-                            <button type="button" id="btnFiltroNotifArquivadas" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="alternarFiltroNotificacoesAdmin('arquivadas')">📦 Arquivadas</button>
-                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="atualizarTudoPainelAdmin()">🔄</button>
+                        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                            <button type="button" id="btnFiltroNotifAtivas" class="btn-mini" style="margin-top:0; padding:4px 7px; background:#111111; color:#facc15;" onclick="alternarFiltroNotificacoesAdmin('ativas')">📥 Ativas</button>
+                            <button type="button" id="btnFiltroNotifResolvidas" class="btn-mini" style="margin-top:0; padding:4px 7px;" onclick="alternarFiltroNotificacoesAdmin('resolvidas')">✅ Resolvidas</button>
+                            <button type="button" id="btnFiltroNotifArquivadas" class="btn-mini" style="margin-top:0; padding:4px 7px;" onclick="alternarFiltroNotificacoesAdmin('arquivadas')">📦 Arquivadas</button>
+                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 7px;" onclick="atualizarTudoPainelAdmin()">🔄</button>
                         </div>
                     </div>
                     <div id="adminListaNotificacoes" style="display:flex; flex-direction:column; gap:7px; max-height:340px; overflow-y:auto;"></div>
@@ -1828,7 +1842,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "1.011";
+    const APP_VERSION = "1.012";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com"];
 
@@ -1869,7 +1883,10 @@
     // Intercepta na fase de captura qualquer clique residual durante troca de tela,
     // fechamento de popups/menus ou rebote duplo de toque em menos de 340ms
     document.addEventListener('click', function(e) {
-        if (e.target && (e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION')) return;
+        if (!e.isTrusted) return;
+        if (e.target && (e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+        const loginScreenEl = document.getElementById('loginScreen');
+        if (loginScreenEl && !loginScreenEl.classList.contains('hidden')) return;
         const agora = Date.now();
         if (agora < escudoTransicaoAte) {
             e.preventDefault();
@@ -1877,7 +1894,7 @@
             e.stopImmediatePropagation();
             return false;
         }
-        if (ultimoEventoGlobalTarget === e.target && (agora - ultimoEventoGlobalTs < 340)) {
+        if (ultimoEventoGlobalTarget === e.target && (agora - ultimoEventoGlobalTs < 320)) {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -1887,9 +1904,9 @@
         ultimoEventoGlobalTarget = e.target;
     }, true);
 
-    function bloquearClickFantasma(chave = 'global', ms = 450) {
+    function bloquearClickFantasma(chave = 'global', ms = 350) {
         const agora = Date.now();
-        if (agora < escudoTransicaoAte) return true;
+        if (chave !== 'auth_submit' && chave !== 'modo_auth' && chave !== 'rec_senha' && agora < escudoTransicaoAte) return true;
         if (ultimoCliquePorId[chave] && (agora - ultimoCliquePorId[chave] < ms)) {
             return true;
         }
@@ -3578,6 +3595,8 @@
         if (selCid) selCid.innerHTML = `<option value="">Selecione a cidade</option>`;
         const chk = document.getElementById('cadEstouConectado');
         if (chk) chk.checked = false;
+        const chkCom = document.getElementById('cadConfirmacaoComercial');
+        if (chkCom) chkCom.checked = false;
         Object.keys(comodidadesCadastro).forEach(k => comodidadesCadastro[k] = false);
         ['cadPillEstac', 'cadPillMesas', 'cadPillTomadas', 'cadPillSinalRua'].forEach(id => {
             document.getElementById(id)?.classList.remove('active');
@@ -3600,10 +3619,10 @@
         criarModalDinamico('modalAcaoRede', `
             <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:340px;width:100%;color:#111111;text-align:center;">
                 <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">📷 Ler QR Code do Wi-Fi</div>
-                <div style="font-size:0.75rem;color:#3f3f46;margin-bottom:12px;">Escolha como deseja capturar o QR Code da rede:</div>
+                <div style="font-size:0.75rem;color:#3f3f46;margin-bottom:12px;">Toque em OK para abrir a câmera ou escolha da galeria:</div>
                 <div style="display:flex;flex-direction:column;gap:8px;">
-                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede'); document.getElementById('inputLerQrCamera').click();" style="background:#111111;color:#facc15;border:none;border-radius:10px;padding:11px;font-size:0.84rem;font-weight:800;cursor:pointer;">📸 Abrir Câmera Agora</button>
-                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede'); document.getElementById('inputLerQrGaleria').click();" style="background:#ffffff;color:#111111;border:1.5px solid #111111;border-radius:10px;padding:11px;font-size:0.84rem;font-weight:800;cursor:pointer;">🖼️ Escolher Foto da Galeria</button>
+                    <label for="inputLerQrCamera" onclick="setTimeout(() => fecharModalDinamico('modalAcaoRede'), 150)" style="display:block;background:#111111;color:#facc15;border:none;border-radius:10px;padding:11px;font-size:0.84rem;font-weight:800;cursor:pointer;">📸 OK — Abrir Câmera</label>
+                    <label for="inputLerQrGaleria" onclick="setTimeout(() => fecharModalDinamico('modalAcaoRede'), 150)" style="display:block;background:#ffffff;color:#111111;border:1.5px solid #111111;border-radius:10px;padding:11px;font-size:0.84rem;font-weight:800;cursor:pointer;">🖼️ Escolher da Galeria</label>
                     <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="background:#e4e4e7;color:#111111;border:none;border-radius:8px;padding:8px;font-size:0.78rem;font-weight:700;cursor:pointer;">Cancelar</button>
                 </div>
             </div>
@@ -3947,6 +3966,14 @@
             toast.style.display = "block";
             toast.className = "toast error";
             toast.textContent = "Preencha todos os campos obrigatórios (*).";
+            return;
+        }
+
+        const confirmouComercial = Boolean(document.getElementById('cadConfirmacaoComercial')?.checked);
+        if (!confirmouComercial) {
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = "⚠️ Marque a confirmação de que esta rede NÃO é residencial e pertence a um estabelecimento comercial.";
             return;
         }
 
@@ -4435,13 +4462,61 @@
         } catch (e) {}
     }
 
+    let timerLockoutLogin = null;
+
+    function obterEstadoLockoutLogin() {
+        try {
+            return JSON.parse(localStorage.getItem('clickcontrol_login_lockout') || '{"falhas":0,"bloqueadoAte":0}');
+        } catch (e) {
+            return { falhas: 0, bloqueadoAte: 0 };
+        }
+    }
+
+    function salvarEstadoLockoutLogin(st) {
+        try { localStorage.setItem('clickcontrol_login_lockout', JSON.stringify(st)); } catch (e) {}
+    }
+
+    function atualizarCountdownLockoutLogin() {
+        const box = document.getElementById('loginLockoutBox');
+        const btn = document.getElementById('authSubmitBtn');
+        const st = obterEstadoLockoutLogin();
+        const restanteMs = (st.bloqueadoAte || 0) - Date.now();
+
+        if (restanteMs > 0) {
+            const segs = Math.ceil(restanteMs / 1000);
+            if (box) {
+                box.classList.remove('hidden');
+                box.textContent = `⏳ Muitas tentativas incorretas (${st.falhas}x). Aguarde ${segs}s para tentar novamente.`;
+            }
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = `Aguarde ${segs}s...`;
+            }
+            if (!timerLockoutLogin) {
+                timerLockoutLogin = setInterval(atualizarCountdownLockoutLogin, 500);
+            }
+            return true;
+        } else {
+            if (timerLockoutLogin) {
+                clearInterval(timerLockoutLogin);
+                timerLockoutLogin = null;
+            }
+            if (box) box.classList.add('hidden');
+            if (btn && !autenticandoAgora) {
+                btn.disabled = false;
+                btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
+            }
+            return false;
+        }
+    }
+
     async function processarAuth(ev) {
         if (ev) {
             ev.preventDefault();
             ev.stopPropagation();
         }
         if (autenticandoAgora) return;
-        if (bloquearClickFantasma('auth_submit', 850)) return;
+        if (atualizarCountdownLockoutLogin()) return;
 
         const email = document.getElementById('authEmail').value.trim().toLowerCase();
         const senha = document.getElementById('authSenha').value.trim();
@@ -4504,14 +4579,28 @@
             }
 
             if (data && data.status === "ok") {
+                salvarEstadoLockoutLogin({ falhas: 0, bloqueadoAte: 0 });
+                atualizarCountdownLockoutLogin();
                 usuarioLogado = {
                     nome: data.nome || nome || "Usuário",
                     email: email,
                     isAdmin: ADMIN_EMAILS.includes(email)
                 };
                 localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
+                autenticandoAgora = false;
+                btn.disabled = false;
+                btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
                 mostrarApp();
+                return;
             } else {
+                const st = obterEstadoLockoutLogin();
+                st.falhas = (Number(st.falhas) || 0) + 1;
+                if (st.falhas >= 3) {
+                    // Tempo crescente: 30s na 3ª falha, 60s na 4ª, 120s na 5ª, 240s na 6ª...
+                    const segsBloqueio = 30 * Math.pow(2, st.falhas - 3);
+                    st.bloqueadoAte = Date.now() + (segsBloqueio * 1000);
+                }
+                salvarEstadoLockoutLogin(st);
                 toast.style.display = "block";
                 toast.className = "toast error";
                 toast.textContent = (data && data.message) ? data.message : "E-mail ou senha incorretos.";
@@ -4521,11 +4610,11 @@
             toast.className = "toast error";
             toast.textContent = "Erro de conexão com o servidor.";
         } finally {
-            setTimeout(() => {
-                autenticandoAgora = false;
+            autenticandoAgora = false;
+            if (!atualizarCountdownLockoutLogin()) {
                 btn.disabled = false;
                 btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
-            }, 500);
+            }
         }
     }
 
@@ -4723,7 +4812,8 @@
         const greetEl = document.getElementById('homeGreetingName');
         if (greetEl) greetEl.textContent = `Olá, ${pName}`;
         atualizarVisibilidadeAdmin();
-        verificarBloqueioApp(false);
+        atualizarCountdownLockoutLogin();
+    verificarBloqueioApp(false);
         solicitarPermissoesWifiELocalizacao(false);
         restaurarCacheWifisLocal();
         popularSelectWifis();
@@ -5025,12 +5115,27 @@
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
         if (!novaSenha || !ponto) return;
-        ponto.senha = novaSenha;
-        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
-        atualizarCardQrDoMapa(idWifi);
-        renderizarAlfinetesNoMapa();
-        document.getElementById('mapaLiveStatus').textContent = "🔑 Senha atualizada por você";
+
+        const novoProbId = "PRB-" + Date.now();
+        const descSenha = `Usuário informou que a senha mudou para: "${novaSenha}" (aguardando aprovação do Admin).`;
+        salvarProblemaLocalCache({
+            id: novoProbId,
+            tipo: "Nova Senha Informada",
+            id_wifi: idWifi,
+            nome_local: ponto.local,
+            cidade_uf: ponto.cidade || "",
+            descricao: descSenha,
+            nova_senha_sugerida: novaSenha,
+            usuario: usuarioLogado?.email || "Usuário",
+            data: new Date().toLocaleString("pt-BR"),
+            status_resolucao: "Pendente",
+            arquivado: ""
+        });
+
+        document.getElementById('mapaLiveStatus').textContent = "🔑 Nova senha enviada para aprovação do Admin";
         fecharModalDinamico('modalAcaoRede');
+        alert("✅ Nova senha enviada ao administrador! A alteração será aplicada assim que for confirmada.");
+
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -5042,7 +5147,7 @@
                     id_wifi: idWifi,
                     nome_local: ponto.local,
                     cidade_uf: ponto.cidade || "",
-                    descricao: `Nova senha informada pelo usuário: ${novaSenha}`,
+                    descricao: descSenha,
                     nova_senha: novaSenha,
                     id_usuario: usuarioLogado?.email || ""
                 })
@@ -5170,6 +5275,22 @@
     }
 
     let problemasAdminCache = [];
+    let filtroProblemasAdminModo = 'ativos';
+
+    function alternarFiltroProblemasAdmin(modo) {
+        filtroProblemasAdminModo = modo;
+        const bAt = document.getElementById('btnFiltroProbAtivos');
+        const bAr = document.getElementById('btnFiltroProbArquivados');
+        if (bAt) {
+            bAt.style.background = modo === 'ativos' ? '#111111' : '';
+            bAt.style.color = modo === 'ativos' ? '#facc15' : '';
+        }
+        if (bAr) {
+            bAr.style.background = modo === 'arquivados' ? '#111111' : '';
+            bAr.style.color = modo === 'arquivados' ? '#facc15' : '';
+        }
+        renderizarListaProblemasAdmin();
+    }
 
     function obterStatusProblemasLocal() {
         try { return JSON.parse(localStorage.getItem('clickcontrol_problemas_status') || '{}'); } catch (e) { return {}; }
@@ -5184,8 +5305,24 @@
     async function alterarStatusProblemaAdmin(idProb, novoStatus) {
         salvarStatusProblemaLocal(idProb, novoStatus);
         const item = problemasAdminCache.find(p => p.id === idProb);
-        if (item) item.status_resolucao = novoStatus;
+        if (item) {
+            item.status_resolucao = novoStatus;
+            if (String(novoStatus).toLowerCase() === "pendente" && String(item.arquivado || "").toLowerCase() === "arquivado") {
+                item.arquivado = "";
+                const stN = obterEstadoNotificacoesLocal();
+                stN[idProb] = "";
+                salvarEstadoNotificacoesLocal(stN);
+                alternarFiltroProblemasAdmin('ativos');
+            }
+        }
+        notificacoesAdminCache.forEach(n => {
+            if (n.id === idProb || n.id_problema === idProb) {
+                n.status_resolucao = novoStatus;
+                if (String(novoStatus).toLowerCase() === "pendente") n.arquivado = "";
+            }
+        });
         renderizarListaProblemasAdmin();
+        renderizarListaNotificacoesAdmin();
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -5201,49 +5338,124 @@
         } catch (e) {}
     }
 
+    async function aprovarNovaSenhaAdmin(idProblema, idWifi, novaSenha, idNotif = "") {
+        if (!ehAdministrador()) return;
+        if (bloquearClickFantasma('aprovar_senha_adm', 450)) return;
+        if (!confirm(`Confirmar alteração da senha deste ponto Wi-Fi para "${novaSenha}"?`)) return;
+
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (ponto) {
+            ponto.senha = novaSenha;
+            localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+            if (document.getElementById('selectWifiMapa')?.value === idWifi) {
+                atualizarCardQrDoMapa(idWifi);
+            }
+            renderizarAlfinetesNoMapa();
+        }
+        if (idProblema) {
+            await alterarStatusProblemaAdmin(idProblema, "Resolvido");
+        }
+        if (idNotif) {
+            const resMap = obterStatusResolucaoNotifLocal();
+            resMap[idNotif] = "Resolvido";
+            salvarStatusResolucaoNotifLocal(resMap);
+            const n = notificacoesAdminCache.find(item => item.id === idNotif);
+            if (n) n.status_resolucao = "Resolvido";
+            renderizarListaNotificacoesAdmin();
+        }
+        alert(`✅ Senha atualizada para "${novaSenha}"!`);
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_aprovar_nova_senha",
+                    admin_email: usuarioLogado?.email || "",
+                    id_problema: idProblema,
+                    id_wifi: idWifi,
+                    nova_senha: novaSenha
+                })
+            });
+        } catch (e) {}
+    }
+
+    function extrairSenhaSugerida(item) {
+        if (item && item.nova_senha_sugerida) return String(item.nova_senha_sugerida).trim();
+        const desc = String(item?.descricao || item?.detalhe || "");
+        const m1 = desc.match(/mudou para:\s*"([^"]+)"/i);
+        if (m1) return m1[1].trim();
+        const m2 = desc.match(/usuário:\s*([^
+•]+)/i);
+        if (m2) return m2[1].trim();
+        return "";
+    }
+
     function renderizarListaProblemasAdmin() {
         const box = document.getElementById('adminListaProblemas');
         const qtdEl = document.getElementById('adminQtdProblemas');
         if (!box) return;
         const statusLocal = obterStatusProblemasLocal();
-        problemasAdminCache.forEach(p => {
+        const stateNotif = obterEstadoNotificacoesLocal();
+
+        const validos = problemasAdminCache.filter(p => stateNotif[p.id] !== 'excluido').map(p => {
             if (statusLocal[p.id]) p.status_resolucao = statusLocal[p.id];
             else if (!p.status_resolucao) p.status_resolucao = "Pendente";
+            if (stateNotif[p.id] === 'arquivado') p.arquivado = 'Arquivado';
+            else if (stateNotif[p.id] === '') p.arquivado = '';
+            return p;
         });
 
-        // Pendentes sempre no topo, Resolvidos abaixo
-        const ordenados = [...problemasAdminCache].sort((a, b) => {
+        const filtrados = validos.filter(p => {
+            const isArq = String(p.arquivado || '').toLowerCase() === 'arquivado';
+            return filtroProblemasAdminModo === 'arquivados' ? isArq : !isArq;
+        });
+
+        const ordenados = [...filtrados].sort((a, b) => {
             const aRes = String(a.status_resolucao).toLowerCase() === "resolvido" ? 1 : 0;
             const bRes = String(b.status_resolucao).toLowerCase() === "resolvido" ? 1 : 0;
             return aRes - bRes;
         });
 
-        const qtdPendentes = ordenados.filter(p => String(p.status_resolucao).toLowerCase() !== "resolvido").length;
-        if (qtdEl) qtdEl.textContent = `${qtdPendentes} pendente(s) / ${ordenados.length} total`;
+        const qtdPendentes = validos.filter(p => String(p.status_resolucao).toLowerCase() !== "resolvido" && String(p.arquivado || '').toLowerCase() !== 'arquivado').length;
+        if (qtdEl) qtdEl.textContent = `${qtdPendentes} pendente(s)`;
 
         if (ordenados.length === 0) {
-            box.innerHTML = `<div style="font-size:0.76rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">Nenhum problema relatado até o momento.</div>`;
+            box.innerHTML = `<div style="font-size:0.76rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">${filtroProblemasAdminModo === 'arquivados' ? 'Nenhum problema arquivado.' : 'Nenhum problema relatado ativo no momento.'}</div>`;
             return;
         }
 
         box.innerHTML = ordenados.map(p => {
             const resolvido = String(p.status_resolucao).toLowerCase() === "resolvido";
-            const bgCard = resolvido ? "#dbeafe" : "#fee2e2";
-            const borderCard = resolvido ? "#1d4ed8" : "#dc2626";
-            const tituloColor = resolvido ? "#1e3a8a" : "#991b1b";
+            const isArq = String(p.arquivado || '').toLowerCase() === 'arquivado';
+            const bgCard = isArq ? "#f4f4f5" : (resolvido ? "#dbeafe" : "#fee2e2");
+            const borderCard = isArq ? "#52525b" : (resolvido ? "#1d4ed8" : "#dc2626");
+            const tituloColor = isArq ? "#27272a" : (resolvido ? "#1e3a8a" : "#991b1b");
+            const senhaSug = extrairSenhaSugerida(p);
+            const idEsc = String(p.id || '').replace(/'/g, "\'");
+            const senhaEsc = String(senhaSug || '').replace(/'/g, "\'");
+
             return `
             <div style="background:${bgCard}; border:2px solid ${borderCard}; border-radius:8px; padding:8px; font-size:0.75rem;">
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; font-weight:800; color:${tituloColor}; margin-bottom:4px;">
                     <span>${resolvido ? "🔵" : "🔴"} ${p.tipo || "Problema"} • ${p.nome_local || ""}</span>
-                    <select onchange="alterarStatusProblemaAdmin('${p.id}', this.value)" style="background:${resolvido ? '#1d4ed8' : '#dc2626'}; color:#ffffff; border:1px solid #111; border-radius:6px; padding:2px 6px; font-size:0.7rem; font-weight:800; cursor:pointer;">
+                    <select onchange="alterarStatusProblemaAdmin('${idEsc}', this.value)" style="background:${resolvido ? '#1d4ed8' : '#dc2626'}; color:#ffffff; border:1px solid #111; border-radius:6px; padding:2px 6px; font-size:0.7rem; font-weight:800; cursor:pointer;">
                         <option value="Pendente" ${!resolvido ? "selected" : ""}>🔴 Pendente</option>
                         <option value="Resolvido" ${resolvido ? "selected" : ""}>🔵 Resolvido</option>
                     </select>
                 </div>
                 <div style="color:#111111; margin-bottom:5px;">${p.descricao || ""}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#3f3f46;">
+                ${senhaSug && !resolvido ? `<div style="margin-bottom:6px;"><button type="button" onclick="aprovarNovaSenhaAdmin('${idEsc}', '${p.id_wifi || ''}', '${senhaEsc}')" style="background:#16a34a; color:#ffffff; border:none; border-radius:6px; padding:5px 9px; font-size:0.72rem; font-weight:800; cursor:pointer;">✅ Aprovar e Alterar Senha para "${senhaSug}"</button></div>` : ""}
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:5px; flex-wrap:wrap; font-size:0.68rem; color:#3f3f46;">
                     <span>Por: ${p.usuario || "Usuário"} • ${p.data || ""}</span>
-                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
+                    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                        ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
+                        ${isArq
+                            ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem; background:#2563eb; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', 'problema', 'desarquivar')">📤 Desarquivar</button>`
+                            : `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem; background:#52525b; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', 'problema', 'arquivar')">📦 Arquivar</button>`
+                        }
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem; background:#dc2626; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', 'problema', 'excluir')">🗑️ Excluir</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -5975,15 +6187,17 @@
     function alternarFiltroNotificacoesAdmin(modo) {
         filtroNotificacoesAdminModo = modo;
         const bAt = document.getElementById('btnFiltroNotifAtivas');
+        const bRes = document.getElementById('btnFiltroNotifResolvidas');
         const bAr = document.getElementById('btnFiltroNotifArquivadas');
-        if (bAt) {
-            bAt.style.background = modo === 'ativas' ? '#111111' : '';
-            bAt.style.color = modo === 'ativas' ? '#facc15' : '';
-        }
-        if (bAr) {
-            bAr.style.background = modo === 'arquivadas' ? '#111111' : '';
-            bAr.style.color = modo === 'arquivadas' ? '#facc15' : '';
-        }
+        [
+            [bAt, 'ativas'],
+            [bRes, 'resolvidas'],
+            [bAr, 'arquivadas']
+        ].forEach(([el, k]) => {
+            if (!el) return;
+            el.style.background = modo === k ? '#111111' : '';
+            el.style.color = modo === k ? '#facc15' : '';
+        });
         renderizarListaNotificacoesAdmin();
     }
 
@@ -5995,26 +6209,61 @@
         try { localStorage.setItem('clickcontrol_admin_notif_state', JSON.stringify(mapa)); } catch (e) {}
     }
 
+    function obterStatusResolucaoNotifLocal() {
+        try { return JSON.parse(localStorage.getItem('clickcontrol_admin_notif_res') || '{}'); } catch (e) { return {}; }
+    }
+
+    function salvarStatusResolucaoNotifLocal(mapa) {
+        try { localStorage.setItem('clickcontrol_admin_notif_res', JSON.stringify(mapa)); } catch (e) {}
+    }
+
+    function alterarStatusNotificacaoAdmin(idNotif, novoStatus) {
+        const resMap = obterStatusResolucaoNotifLocal();
+        resMap[idNotif] = novoStatus;
+        salvarStatusResolucaoNotifLocal(resMap);
+
+        const alvo = notificacoesAdminCache.find(n => n.id === idNotif);
+        if (alvo) {
+            alvo.status_resolucao = novoStatus;
+            if (alvo.id_problema) {
+                alterarStatusProblemaAdmin(alvo.id_problema, novoStatus);
+            }
+            if (String(novoStatus).toLowerCase() === 'pendente') {
+                alvo.arquivado = '';
+                const st = obterEstadoNotificacoesLocal();
+                st[idNotif] = '';
+                salvarEstadoNotificacoesLocal(st);
+                alternarFiltroNotificacoesAdmin('ativas');
+                return;
+            }
+        }
+        renderizarListaNotificacoesAdmin();
+    }
+
     async function gerenciarNotificacaoAdmin(idItem, origem, operacao) {
         if (bloquearClickFantasma('ger_notif_adm', 350)) return;
-        if (operacao === 'excluir' && !confirm("Deseja realmente excluir esta notificação?")) return;
+        if (operacao === 'excluir' && !confirm("Deseja realmente excluir este registro?")) return;
 
         const st = obterEstadoNotificacoesLocal();
         if (operacao === 'excluir') {
             st[idItem] = 'excluido';
-            notificacoesAdminCache = notificacoesAdminCache.filter(n => n.id !== idItem);
-            if (origem === 'problema') {
-                problemasAdminCache = problemasAdminCache.filter(p => p.id !== idItem);
-                renderizarListaProblemasAdmin();
-            }
+            notificacoesAdminCache = notificacoesAdminCache.filter(n => n.id !== idItem && n.id_problema !== idItem);
+            problemasAdminCache = problemasAdminCache.filter(p => p.id !== idItem);
+            renderizarListaProblemasAdmin();
         } else if (operacao === 'arquivar') {
             st[idItem] = 'arquivado';
-            const alvo = notificacoesAdminCache.find(n => n.id === idItem);
-            if (alvo) alvo.arquivado = 'Arquivado';
+            const alvoN = notificacoesAdminCache.find(n => n.id === idItem);
+            if (alvoN) alvoN.arquivado = 'Arquivado';
+            const alvoP = problemasAdminCache.find(p => p.id === idItem);
+            if (alvoP) alvoP.arquivado = 'Arquivado';
+            renderizarListaProblemasAdmin();
         } else if (operacao === 'desarquivar') {
             st[idItem] = '';
-            const alvo = notificacoesAdminCache.find(n => n.id === idItem);
-            if (alvo) alvo.arquivado = '';
+            const alvoN = notificacoesAdminCache.find(n => n.id === idItem);
+            if (alvoN) alvoN.arquivado = '';
+            const alvoP = problemasAdminCache.find(p => p.id === idItem);
+            if (alvoP) alvoP.arquivado = '';
+            renderizarListaProblemasAdmin();
         }
         salvarEstadoNotificacoesLocal(st);
         renderizarListaNotificacoesAdmin();
@@ -6050,12 +6299,26 @@
         return String(n?.verificado_admin || "").toLowerCase() === "verificado" ? "Verificado" : "Pendente";
     }
 
+    function ehNotificacaoResolvida(n, resMap) {
+        if (resMap && resMap[n.id]) {
+            return String(resMap[n.id]).toLowerCase() === 'resolvido';
+        }
+        if (n.status_resolucao) {
+            return String(n.status_resolucao).toLowerCase() === 'resolvido';
+        }
+        if (ehNotificacaoNovaWifi(n)) {
+            return obterStatusVerificacaoNotificacaoWifi(n) === 'Verificado';
+        }
+        return false;
+    }
+
     function renderizarListaNotificacoesAdmin() {
         const listaNotifEl = document.getElementById('adminListaNotificacoes');
         const qtdEl = document.getElementById('adminQtdNotificacoes');
         if (!listaNotifEl) return;
 
         const stLocal = obterEstadoNotificacoesLocal();
+        const resMap = obterStatusResolucaoNotifLocal();
         const validas = notificacoesAdminCache.filter(n => stLocal[n.id] !== 'excluido').map(n => {
             if (stLocal[n.id] === 'arquivado') n.arquivado = 'Arquivado';
             else if (stLocal[n.id] === '') n.arquivado = '';
@@ -6064,10 +6327,12 @@
 
         const filtradas = validas.filter(n => {
             const isArq = String(n.arquivado || '').toLowerCase() === 'arquivado';
-            return filtroNotificacoesAdminModo === 'arquivadas' ? isArq : !isArq;
+            const isRes = ehNotificacaoResolvida(n, resMap);
+            if (filtroNotificacoesAdminModo === 'arquivadas') return isArq;
+            if (filtroNotificacoesAdminModo === 'resolvidas') return !isArq && isRes;
+            return !isArq && !isRes;
         });
 
-        // Pendentes acima e verificados abaixo, respeitando a ordem de criação
         const ordenadas = filtradas
             .map((item, idx) => ({ item, idx }))
             .sort((a, b) => {
@@ -6086,21 +6351,27 @@
         if (qtdEl) qtdEl.textContent = ordenadas.length;
 
         if (ordenadas.length === 0) {
-            listaNotifEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">${filtroNotificacoesAdminModo === 'arquivadas' ? 'Nenhuma notificação arquivada.' : 'Nenhuma notificação ativa no momento.'}</div>`;
+            const msgVazia = filtroNotificacoesAdminModo === 'arquivadas'
+                ? 'Nenhuma notificação arquivada.'
+                : (filtroNotificacoesAdminModo === 'resolvidas' ? 'Nenhuma notificação resolvida.' : 'Nenhuma notificação ativa no momento.');
+            listaNotifEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">${msgVazia}</div>`;
             return;
         }
 
         listaNotifEl.innerHTML = ordenadas.map(n => {
             const isArq = String(n.arquivado || '').toLowerCase() === 'arquivado';
+            const isRes = ehNotificacaoResolvida(n, resMap);
             const idEsc = String(n.id || '').replace(/'/g, "\'");
             const origEsc = String(n.origem || 'sistema').replace(/'/g, "\'");
             const isNovaWifi = ehNotificacaoNovaWifi(n);
             const statusVer = isNovaWifi ? obterStatusVerificacaoNotificacaoWifi(n) : "";
             const isVerificado = statusVer === "Verificado";
+            const senhaSug = extrairSenhaSugerida(n);
+            const senhaEsc = String(senhaSug || '').replace(/'/g, "\'");
 
-            let bgCard = isArq ? '#f4f4f5' : '#ffffff';
-            let borderCard = '#111111';
-            let titleColor = '#111111';
+            let bgCard = isArq ? '#f4f4f5' : (isRes ? '#dbeafe' : '#ffffff');
+            let borderCard = isArq ? '#52525b' : (isRes ? '#1d4ed8' : '#111111');
+            let titleColor = isArq ? '#27272a' : (isRes ? '#1e3a8a' : '#111111');
             if (isNovaWifi && !isArq) {
                 bgCard = isVerificado ? '#dcfce7' : '#fee2e2';
                 borderCard = isVerificado ? '#16a34a' : '#dc2626';
@@ -6112,13 +6383,20 @@
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
                     <div style="min-width:0; flex:1;">
                         <div style="font-weight:800; color:${titleColor}; display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
-                            <span>${isNovaWifi ? (isVerificado ? '🟢' : '🔴') : '🔔'} ${n.categoria}: ${n.titulo}</span>
+                            <span>${isNovaWifi ? (isVerificado ? '🟢' : '🔴') : (isRes ? '🔵' : '🔔')} ${n.categoria}: ${n.titulo}</span>
                             ${isNovaWifi ? `<span style="background:${isVerificado ? '#16a34a' : '#dc2626'}; color:#ffffff; font-size:0.62rem; padding:1px 7px; border-radius:999px; font-weight:800;">${isVerificado ? 'Verificado' : 'Pendente'}</span>` : ''}
                         </div>
                         <div style="font-size:0.71rem; color:#1f2937; margin-top:2px;">${n.detalhe}</div>
                         ${n.data ? `<div style="font-size:0.65rem; color:#4b5563; margin-top:2px;">🕒 ${n.data}</div>` : ""}
                     </div>
+                    ${!isNovaWifi ? `
+                        <select onchange="alterarStatusNotificacaoAdmin('${idEsc}', this.value)" style="background:${isRes ? '#1d4ed8' : '#dc2626'}; color:#ffffff; border:1px solid #111; border-radius:6px; padding:2px 6px; font-size:0.68rem; font-weight:800; cursor:pointer; flex-shrink:0;">
+                            <option value="Pendente" ${!isRes ? "selected" : ""}>🔴 Pendente</option>
+                            <option value="Resolvido" ${isRes ? "selected" : ""}>🔵 Resolvido</option>
+                        </select>
+                    ` : ''}
                 </div>
+                ${senhaSug && !isRes ? `<div><button type="button" onclick="aprovarNovaSenhaAdmin('${n.id_problema || ''}', '${n.id_wifi || ''}', '${senhaEsc}', '${idEsc}')" style="background:#16a34a; color:#ffffff; border:none; border-radius:6px; padding:4px 8px; font-size:0.7rem; font-weight:800; cursor:pointer;">✅ Aprovar Nova Senha ("${senhaSug}")</button></div>` : ""}
                 <div style="display:flex; justify-content:flex-end; gap:5px; flex-wrap:wrap;">
                     ${n.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#111111; color:#facc15;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${n.id_wifi}')">📶 Gestão Wi-Fi</button>` : ""}
                     ${isArq
@@ -6172,6 +6450,8 @@
                         id_wifi: n.id_wifi || '',
                         data: n.data || '',
                         arquivado: n.arquivado || '',
+                        id_problema: n.id_problema || '',
+                        nova_senha_sugerida: n.nova_senha_sugerida || '',
                         verificado_admin: n.verificado_admin || '',
                         ordem_criacao: n.ordem_criacao !== undefined ? Number(n.ordem_criacao) : (notifs.length - idx)
                     });
@@ -6301,9 +6581,11 @@
         caches.keys().then(keys => keys.forEach(k => caches.delete(k))).catch(() => {});
     }
 
+    atualizarCountdownLockoutLogin();
     verificarBloqueioApp(false);
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') verificarBloqueioApp(false);
+        if (document.visibilityState === 'visible') atualizarCountdownLockoutLogin();
+    verificarBloqueioApp(false);
     });
 
     try {
