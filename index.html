@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control 1.008 (Web) - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control 1.011 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1067,11 +1067,21 @@
 </head>
 <body>
 
+<!-- TELA DE BLOQUEIO / MANUTENÇÃO DO ADMINISTRADOR -->
+<div id="appLockOverlay" class="hidden" style="position:fixed;inset:0;background:rgba(17,17,17,0.96);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fef08a;border:3px solid #facc15;border-radius:18px;padding:22px 18px;max-width:380px;width:100%;text-align:center;color:#111111;box-shadow:0 16px 40px rgba(0,0,0,0.85);">
+        <div style="font-size:2.4rem;margin-bottom:8px;">🔒</div>
+        <div style="font-size:1.1rem;font-weight:900;text-transform:uppercase;margin-bottom:8px;">Aviso do Administrador</div>
+        <div id="appLockMessageText" style="background:#ffffff;border:1.5px solid #111111;border-radius:12px;padding:12px;font-size:0.88rem;font-weight:700;line-height:1.45;margin-bottom:14px;white-space:pre-line;">Aplicativo temporariamente bloqueado.</div>
+        <button type="button" onclick="verificarBloqueioApp(true)" style="background:#111111;color:#facc15;border:none;border-radius:10px;padding:11px 16px;font-size:0.86rem;font-weight:800;width:100%;cursor:pointer;">🔄 Verificar Novamente</button>
+    </div>
+</div>
+
 <div class="container">
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.007</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.011</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1148,13 +1158,12 @@
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('dados_usuario')">👤 Dados do Usuário</button>
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('favoritos')">⭐ Favoritos</button>
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
-                        <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('meus_wifis')">📶 Meus Wi-Fis Cadastrados</button>
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('testar')">⚡ Testar Velocidade Manual</button>
                         <button type="button" class="user-menu-item hidden" id="homeMenuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                         <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                     </div>
                 </div>
-                <span class="app-version-corner">v1.008</span>
+                <span class="app-version-corner">v1.011</span>
                 </div>
             </div>
 
@@ -1201,13 +1210,12 @@
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('dados_usuario')">👤 Dados do Usuário</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('favoritos')">⭐ Favoritos</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
-                    <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('meus_wifis')">📶 Meus Wi-Fis Cadastrados</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('testar')">⚡ Testar Velocidade Manual</button>
                     <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                 </div>
             </div>
-            <span class="app-version-corner">v1.008</span>
+            <span class="app-version-corner">v1.011</span>
             </div>
         </div>
 
@@ -1301,7 +1309,10 @@
                 <div class="qr-card" id="mapaQrCard">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px; text-align:left;">
                         <div>
-                            <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">Conexão Wi-Fi</div>
+                            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary);" id="mapaQrTitle">Conexão Wi-Fi</div>
+                                <span id="badgeVerificadoRede" style="background:#dc2626; color:#ffffff; font-size:0.64rem; font-weight:800; padding:2px 7px; border-radius:999px; text-transform:uppercase;">Pendente</span>
+                            </div>
                             <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
                             <div class="hidden" style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
                         </div>
@@ -1419,9 +1430,10 @@
             <div class="quick-box">
                 <h4>⚡ Cadastro Expresso</h4>
                 <p>Puxe o endereço pelo GPS, leia o QR Code ou escolha da galeria:</p>
-                <div class="quick-actions">
+                <div class="quick-actions" style="grid-template-columns: 1.5fr 1fr 1fr;">
                     <button type="button" class="btn-quick" id="btnAcaoGpsToggle" onclick="toggleAutoPreencherGps()">📍 Auto-Preencher</button>
                     <button type="button" class="btn-quick alt" onclick="abrirOpcoesLerQr()">📷 Ler QR</button>
+                    <button type="button" class="btn-quick" style="background:#dc2626;color:#ffffff;" onclick="limparDadosNovoCadastro()">🧹 Limpar</button>
                 </div>
                 <input type="file" id="inputLerQrCamera" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
                 <input type="file" id="inputLerQrGaleria" accept="image/*" class="hidden" onchange="lerQrCodeDeImagem(event)">
@@ -1448,9 +1460,61 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="cadCidade">Cidade - UF *</label>
-                <input type="text" id="cadCidade" placeholder="Ex: São Bento do Sul - SC">
+            <div class="form-group" style="margin-bottom:10px;">
+                <label for="cadPais">País *</label>
+                <select id="cadPais" onchange="aoMudarPaisCadastro()">
+                    <option value="Brasil" selected>Brasil</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Paraguai">Paraguai</option>
+                    <option value="Uruguai">Uruguai</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="Espanha">Espanha</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+
+            <div class="gps-row" style="margin-bottom:12px;">
+                <div class="form-group" style="flex:0 0 110px; margin-bottom:0;">
+                    <label for="cadEstado">Estado (UF) *</label>
+                    <select id="cadEstado" onchange="aoMudarEstadoCadastro()">
+                        <option value="">UF</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1; margin-bottom:0;">
+                    <label for="cadCidade">Cidade *</label>
+                    <select id="cadCidade">
+                        <option value="">Selecione a cidade</option>
+                    </select>
+                </div>
             </div>
 
             <div class="form-group">
@@ -1567,117 +1631,192 @@
                 </div>
             </div>
 
-            <!-- PAINEL ADMIN COMPLETO RESTAURADO -->
+            <!-- PAINEL ADMIN SEPARADO POR ABAS -->
             <div id="adminPanelBox" class="hidden" style="padding:12px; background:#fef9c3; border:2px solid #111111; border-radius:12px;">
-                <div style="font-size:0.9rem; font-weight:800; color:var(--primary); margin-bottom:4px;">🛡️ Painel Administrador — Gestão de Wi-Fis</div>
-                <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">Filtre por País, Estado ou Cidade, gerencie pontos ou veja os problemas relatados pelos usuários.</p>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <div style="font-size:0.9rem; font-weight:800; color:var(--primary);">🛡️ Painel Administrador</div>
+                    <span id="adminBadgeNotifTopo" style="background:#dc2626; color:#ffffff; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:999px;">0 pendências</span>
+                </div>
 
-                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-bottom:8px;">
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="adminFiltroPais" style="font-size:0.7rem;">🌎 País</label>
-                        <select id="adminFiltroPais" onchange="aoMudarFiltroPaisAdmin()" style="padding:7px 6px; font-size:0.76rem;">
-                            <option value="">Todos</option>
-                        </select>
+                <!-- ABAS DO ADMIN: GESTÃO DE WI-FIS / USUÁRIOS / PROBLEMAS / NOTIFICAÇÕES / BLOQUEIO -->
+                <div class="tabs" style="grid-template-columns: repeat(5, 1fr); margin-bottom:12px;">
+                    <button type="button" class="tab-btn active" id="admTabWifisBtn" onclick="mudarAbaAdmin('wifis')" style="font-size:0.65rem; padding:7px 2px;">📶 Wi-Fis</button>
+                    <button type="button" class="tab-btn" id="admTabUsuariosBtn" onclick="mudarAbaAdmin('usuarios')" style="font-size:0.65rem; padding:7px 2px;">👥 Usuários</button>
+                    <button type="button" class="tab-btn" id="admTabProblemasBtn" onclick="mudarAbaAdmin('problemas')" style="font-size:0.65rem; padding:7px 2px;">🚨 Problemas</button>
+                    <button type="button" class="tab-btn" id="admTabNotificacoesBtn" onclick="mudarAbaAdmin('notificacoes')" style="font-size:0.65rem; padding:7px 2px;">🔔 Notif.</button>
+                    <button type="button" class="tab-btn" id="admTabBloqueioBtn" onclick="mudarAbaAdmin('bloqueio')" style="font-size:0.65rem; padding:7px 2px;">🔒 Bloqueio</button>
+                </div>
+
+                <!-- ABA ADMIN 1: GESTÃO DE WI-FIS -->
+                <div id="admSecaoWifis">
+                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-bottom:8px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="adminFiltroPais" style="font-size:0.7rem;">🌎 País</label>
+                            <select id="adminFiltroPais" onchange="aoMudarFiltroPaisAdmin()" style="padding:7px 6px; font-size:0.76rem;">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="adminFiltroEstado" style="font-size:0.7rem;">🗺️ Estado</label>
+                            <select id="adminFiltroEstado" onchange="aoMudarFiltroEstadoAdmin()" style="padding:7px 6px; font-size:0.76rem;">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label for="adminFiltroCidade" style="font-size:0.7rem;">🏙️ Cidade</label>
+                            <select id="adminFiltroCidade" onchange="popularSelectAdminWifis()" style="padding:7px 6px; font-size:0.76rem;">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="adminFiltroEstado" style="font-size:0.7rem;">🗺️ Estado</label>
-                        <select id="adminFiltroEstado" onchange="aoMudarFiltroEstadoAdmin()" style="padding:7px 6px; font-size:0.76rem;">
-                            <option value="">Todos</option>
-                        </select>
+
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label for="adminFiltroWifi">🔍 Filtrar Ponto (Nome, Cidade ou Rede)</label>
+                        <input type="text" id="adminFiltroWifi" placeholder="Digite para filtrar..." oninput="popularSelectAdminWifis()">
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label for="adminFiltroCidade" style="font-size:0.7rem;">🏙️ Cidade</label>
-                        <select id="adminFiltroCidade" onchange="popularSelectAdminWifis()" style="padding:7px 6px; font-size:0.76rem;">
-                            <option value="">Todas</option>
-                        </select>
+
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label for="adminSelectWifi">Selecione o Ponto Cadastrado</label>
+                        <select id="adminSelectWifi" onchange="carregarDadosAdminWifi()"></select>
                     </div>
-                </div>
 
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminFiltroWifi">🔍 Filtrar Ponto (Nome, Cidade ou Rede)</label>
-                    <input type="text" id="adminFiltroWifi" placeholder="Digite para filtrar..." oninput="popularSelectAdminWifis()">
-                </div>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminSelectWifi">Selecione o Ponto Cadastrado</label>
-                    <select id="adminSelectWifi" onchange="carregarDadosAdminWifi()"></select>
-                </div>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminWifiLocal">Nome do Local</label>
-                    <input type="text" id="adminWifiLocal">
-                </div>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminWifiEndereco">Endereço / Coordenadas</label>
-                    <input type="text" id="adminWifiEndereco">
-                </div>
-
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminWifiCidade">Cidade - UF</label>
-                    <input type="text" id="adminWifiCidade">
-                </div>
-
-                <div class="gps-row" style="margin-bottom:8px;">
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label for="adminWifiSsid">SSID (Rede)</label>
-                        <input type="text" id="adminWifiSsid">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #111111; border-radius:8px; padding:8px 10px; margin-bottom:8px;">
+                        <span style="font-size:0.78rem; font-weight:800; color:#111111;">Status de Verificação da Rede:</span>
+                        <button type="button" id="btnToggleVerificadoAdminWifi" onclick="alternarStatusVerificadoAdminWifi()" style="background:#dc2626; color:#ffffff; border:none; border-radius:999px; padding:5px 12px; font-size:0.74rem; font-weight:800; cursor:pointer;">🔴 Pendente</button>
                     </div>
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label for="adminWifiSenha">Senha</label>
-                        <input type="text" id="adminWifiSenha">
+
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label for="adminWifiLocal">Nome do Local</label>
+                        <input type="text" id="adminWifiLocal">
                     </div>
-                </div>
 
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label for="adminWifiHorario">Horário de Funcionamento</label>
-                    <input type="text" id="adminWifiHorario">
-                </div>
-
-                <div class="gps-row" style="margin-bottom:8px;">
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label for="adminWifiDown">⬇️ Download Estimado (Mbps)</label>
-                        <input type="number" id="adminWifiDown" min="0" step="0.1" placeholder="Ex: 50">
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label for="adminWifiEndereco">Endereço / Coordenadas</label>
+                        <input type="text" id="adminWifiEndereco">
                     </div>
-                    <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label for="adminWifiUp">⬆️ Upload Estimado (Mbps)</label>
-                        <input type="number" id="adminWifiUp" min="0" step="0.1" placeholder="Ex: 25">
+
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label for="adminWifiCidade">Cidade - UF</label>
+                        <input type="text" id="adminWifiCidade">
                     </div>
-                </div>
 
-                <div class="form-group" style="margin-bottom:10px;">
-                    <label>Estrutura do Local</label>
-                    <div class="filter-pills">
-                        <div class="filter-pill" id="admPillEstac" onclick="alternarComodidadeAdmin('estacionamento')">🚗 Estacionamento</div>
-                        <div class="filter-pill" id="admPillMesas" onclick="alternarComodidadeAdmin('mesas')">🪑 Mesas</div>
-                        <div class="filter-pill" id="admPillTomadas" onclick="alternarComodidadeAdmin('tomadas')">🔌 Tomadas</div>
-                        <div class="filter-pill" id="admPillSinalRua" onclick="alternarComodidadeAdmin('sinal_rua')">📡 Sinal no Carro</div>
+                    <div class="gps-row" style="margin-bottom:8px;">
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label for="adminWifiSsid">SSID (Rede)</label>
+                            <input type="text" id="adminWifiSsid">
+                        </div>
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label for="adminWifiSenha">Senha</label>
+                            <input type="text" id="adminWifiSenha">
+                        </div>
                     </div>
+
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label for="adminWifiHorario">Horário de Funcionamento</label>
+                        <input type="text" id="adminWifiHorario">
+                    </div>
+
+                    <div class="gps-row" style="margin-bottom:8px;">
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label for="adminWifiDown">⬇️ Download Estimado (Mbps)</label>
+                            <input type="number" id="adminWifiDown" min="0" step="0.1" placeholder="Ex: 50">
+                        </div>
+                        <div class="form-group" style="flex:1; margin-bottom:0;">
+                            <label for="adminWifiUp">⬆️ Upload Estimado (Mbps)</label>
+                            <input type="number" id="adminWifiUp" min="0" step="0.1" placeholder="Ex: 25">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label>Estrutura do Local</label>
+                        <div class="filter-pills">
+                            <div class="filter-pill" id="admPillEstac" onclick="alternarComodidadeAdmin('estacionamento')">🚗 Estacionamento</div>
+                            <div class="filter-pill" id="admPillMesas" onclick="alternarComodidadeAdmin('mesas')">🪑 Mesas</div>
+                            <div class="filter-pill" id="admPillTomadas" onclick="alternarComodidadeAdmin('tomadas')">🔌 Tomadas</div>
+                            <div class="filter-pill" id="admPillSinalRua" onclick="alternarComodidadeAdmin('sinal_rua')">📡 Sinal no Carro</div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="btn" id="btnSalvarAdminWifi" style="flex:2;" onclick="salvarEdicaoAdminWifi()">💾 Salvar Alterações</button>
+                        <button type="button" class="btn" id="btnExcluirAdminWifi" style="flex:1; background:#dc2626; color:#ffffff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir</button>
+                    </div>
+                    <div class="toast" id="adminToast"></div>
                 </div>
 
-                <div style="display:flex; gap:8px;">
-                    <button type="button" class="btn" id="btnSalvarAdminWifi" style="flex:2;" onclick="salvarEdicaoAdminWifi()">💾 Salvar Alterações</button>
-                    <button type="button" class="btn" id="btnExcluirAdminWifi" style="flex:1; background:#dc2626; color:#ffffff;" onclick="excluirPontoAdminWifi()">🗑️ Excluir</button>
-                </div>
-                <div class="toast" id="adminToast"></div>
-
-                <div style="margin-top:14px; padding-top:12px; border-top:2px solid #111111;">
+                <!-- ABA ADMIN 2: USUÁRIOS -->
+                <div id="admSecaoUsuarios" class="hidden">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                         <strong style="font-size:0.86rem; color:var(--primary);">👥 Usuários & Créditos (<span id="adminQtdUsuarios">0</span>)</strong>
-                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px; background:#111111; color:#facc15;" onclick="alternarListaUsuariosAdmin()">👥 Ver / Editar Usuários</button>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px; background:#111111; color:#facc15;" onclick="carregarUsuariosAdmin()">🔄 Atualizar</button>
                     </div>
-                    <div id="adminBoxUsuarios" class="hidden" style="background:#ffffff; border:1px solid #111111; border-radius:10px; padding:8px; margin-bottom:10px;">
+                    <div style="background:#ffffff; border:1px solid #111111; border-radius:10px; padding:8px;">
                         <input type="text" id="adminBuscaUsuario" placeholder="Filtrar usuário por nome ou e-mail..." oninput="renderizarListaUsuariosAdmin()" style="width:100%; padding:7px 9px; border:1px solid #111; border-radius:7px; font-size:0.78rem; margin-bottom:8px;">
-                        <div id="adminListaUsuarios" style="display:flex; flex-direction:column; gap:6px; max-height:240px; overflow-y:auto;"></div>
+                        <div id="adminListaUsuarios" style="display:flex; flex-direction:column; gap:6px; max-height:320px; overflow-y:auto;"></div>
                     </div>
                 </div>
 
-                <div style="margin-top:10px; padding-top:12px; border-top:2px solid #111111;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <strong style="font-size:0.86rem; color:var(--primary);">🚨 Problemas Relatados & Sugestões (<span id="adminQtdProblemas">0</span>)</strong>
-                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="carregarProblemasAdmin()">🔄 Atualizar</button>
+                <!-- ABA ADMIN 3: PROBLEMAS, SUGESTÕES, NOTIFICAÇÕES E RELATÓRIOS INTERNOS -->
+                <div id="admSecaoProblemas" class="hidden">
+                    <div style="background:#111111; color:#facc15; border-radius:10px; padding:10px; margin-bottom:10px;">
+                        <div style="font-size:0.78rem; font-weight:800; margin-bottom:6px;">📊 Relatório Geral do App (Tempo Real)</div>
+                        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; text-align:center;">
+                            <div style="background:#18181b; border-radius:8px; padding:6px 4px;">
+                                <div style="font-size:0.62rem; color:#fef08a;">Wi-Fis</div>
+                                <div id="relAdmTotalWifis" style="font-size:0.95rem; font-weight:900;">0</div>
+                            </div>
+                            <div style="background:#18181b; border-radius:8px; padding:6px 4px;">
+                                <div style="font-size:0.62rem; color:#fef08a;">Usuários</div>
+                                <div id="relAdmTotalUsers" style="font-size:0.95rem; font-weight:900;">0</div>
+                            </div>
+                            <div style="background:#18181b; border-radius:8px; padding:6px 4px;">
+                                <div style="font-size:0.62rem; color:#fef08a;">Testes</div>
+                                <div id="relAdmTotalTestes" style="font-size:0.95rem; font-weight:900;">0</div>
+                            </div>
+                            <div style="background:#18181b; border-radius:8px; padding:6px 4px;">
+                                <div style="font-size:0.62rem; color:#fef08a;">Pendentes</div>
+                                <div id="relAdmPendentes" style="font-size:0.95rem; font-weight:900; color:#ef4444;">0</div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="adminListaProblemas" style="display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto;"></div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong style="font-size:0.84rem; color:var(--primary);">🚨 Problemas Relatados & Sugestões (<span id="adminQtdProblemas">0</span>)</strong>
+                        <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="atualizarTudoPainelAdmin()">🔄 Atualizar</button>
+                    </div>
+                    <div id="adminListaProblemas" style="display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- ABA ADMIN 4: NOTIFICAÇÕES SEPARADA (COM ARQUIVAR E EXCLUIR) -->
+                <div id="admSecaoNotificacoes" class="hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px; flex-wrap:wrap;">
+                        <strong style="font-size:0.84rem; color:var(--primary);">🔔 Central de Notificações (<span id="adminQtdNotificacoes">0</span>)</strong>
+                        <div style="display:flex; gap:4px;">
+                            <button type="button" id="btnFiltroNotifAtivas" class="btn-mini" style="margin-top:0; padding:4px 8px; background:#111111; color:#facc15;" onclick="alternarFiltroNotificacoesAdmin('ativas')">📥 Ativas</button>
+                            <button type="button" id="btnFiltroNotifArquivadas" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="alternarFiltroNotificacoesAdmin('arquivadas')">📦 Arquivadas</button>
+                            <button type="button" class="btn-mini" style="margin-top:0; padding:4px 8px;" onclick="atualizarTudoPainelAdmin()">🔄</button>
+                        </div>
+                    </div>
+                    <div id="adminListaNotificacoes" style="display:flex; flex-direction:column; gap:7px; max-height:340px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- ABA ADMIN 5: BLOQUEIO DO APLICATIVO E AVISO AOS USUÁRIOS -->
+                <div id="admSecaoBloqueio" class="hidden">
+                    <div style="background:#ffffff; border:1.5px solid #111111; border-radius:10px; padding:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <strong style="font-size:0.84rem; color:#111111;">🔒 Bloqueio Global do Aplicativo</strong>
+                            <span id="statusBloqueioAdminBadge" style="background:#16a34a; color:#ffffff; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:999px;">🟢 Liberado</span>
+                        </div>
+                        <p style="font-size:0.72rem; color:#3f3f46; margin-bottom:8px; line-height:1.35;">Quando ativado, todos os usuários (exceto Admin) verão a mensagem abaixo em tela cheia e não poderão usar o app até você liberar.</p>
+                        <div class="form-group" style="margin-bottom:8px;">
+                            <label for="adminMsgBloqueioApp" style="font-size:0.74rem;">Mensagem exibida ao abrir o app *</label>
+                            <textarea id="adminMsgBloqueioApp" rows="3" placeholder="Ex: Nova versão disponível! Atualize o aplicativo Click Control para continuar usando." style="width:100%; border:1px solid #111111; border-radius:8px; padding:8px; font-size:0.8rem; background:#fef9c3; color:#111111;"></textarea>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button type="button" id="btnAtivarBloqueioApp" class="btn" style="flex:1; background:#dc2626; color:#ffffff; padding:10px; font-size:0.8rem;" onclick="salvarConfigBloqueioApp(true)">🔒 Bloquear App</button>
+                            <button type="button" id="btnLiberarBloqueioApp" class="btn" style="flex:1; background:#16a34a; color:#ffffff; padding:10px; font-size:0.8rem;" onclick="salvarConfigBloqueioApp(false)">🔓 Liberar App</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1689,9 +1828,9 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "1.008";
+    const APP_VERSION = "1.011";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
-    const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com", "toevideo@gmail.com", "admin@clickcontrol.com"];
+    const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com"];
 
     let modoAuth = 'login';
     let usuarioLogado = null;
@@ -1730,6 +1869,7 @@
     // Intercepta na fase de captura qualquer clique residual durante troca de tela,
     // fechamento de popups/menus ou rebote duplo de toque em menos de 340ms
     document.addEventListener('click', function(e) {
+        if (e.target && (e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION')) return;
         const agora = Date.now();
         if (agora < escudoTransicaoAte) {
             e.preventDefault();
@@ -1760,7 +1900,7 @@
     function ehAdministrador() {
         if (!usuarioLogado || !usuarioLogado.email) return false;
         const em = usuarioLogado.email.toLowerCase().trim();
-        return usuarioLogado.isAdmin === true || ADMIN_EMAILS.includes(em) || em.includes("everton") || em.includes("toevideo");
+        return ADMIN_EMAILS.includes(em);
     }
 
     function atualizarVisibilidadeAdmin() {
@@ -1839,9 +1979,10 @@
             renderizarMeusWifis();
         } else if (opcao === 'admin') {
             document.getElementById('adminPanelBox').classList.remove('hidden');
+            mudarAbaAdmin('wifis', true);
             popularFiltrosLocalizacaoAdmin();
             popularSelectAdminWifis();
-            carregarProblemasAdmin();
+            atualizarTudoPainelAdmin();
         }
     }
 
@@ -2107,7 +2248,7 @@
                     if (pos && pos.coords) {
                         salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
                         atualizarMarcadorUsuarioNoMapa(false);
-                        renderizarListaRedesMinimizadas();
+                        renderizarListaRedesMinimizadas(false);
                     }
                 });
                 watchIdMapaUsuario = wid || "cap_active";
@@ -2124,7 +2265,7 @@
             watchIdMapaUsuario = navigator.geolocation.watchPosition((pos) => {
                 salvarUltimaPosicaoUsuario(pos.coords.latitude, pos.coords.longitude);
                 atualizarMarcadorUsuarioNoMapa(false);
-                renderizarListaRedesMinimizadas();
+                renderizarListaRedesMinimizadas(false);
             }, () => {}, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
         } catch (e) {
             watchIdMapaUsuario = null;
@@ -2150,6 +2291,10 @@
 
         if (userLatAtual !== null && userLngAtual !== null) {
             atualizarMarcadorUsuarioNoMapa(!mapaJaCentralizouNoUsuario);
+        }
+        if (listaWifisCache.length === 0) {
+            restaurarCacheWifisLocal();
+            popularSelectWifis();
         }
         atualizarPosicaoMapa(false, true);
         iniciarRastreamentoPosicaoUsuario();
@@ -2779,6 +2924,13 @@
         linkQrAtualMapa = gerarPayloadWifiQR(ponto.ssid, ponto.senha);
         document.getElementById('mapaQrTitle').textContent = `${ponto.local} (Rede: ${ponto.ssid})`;
         document.getElementById('mapaQrSub').textContent = ponto.senha ? `Senha: ${ponto.senha}` : `Rede Aberta`;
+        const badgeVer = document.getElementById('badgeVerificadoRede');
+        if (badgeVer) {
+            const isVerif = String(ponto.verificado_admin || "").toLowerCase() === "verificado";
+            badgeVer.textContent = isVerif ? "✓ Verificado" : "Pendente";
+            badgeVer.style.background = isVerif ? "#16a34a" : "#dc2626";
+            badgeVer.style.color = "#ffffff";
+        }
         const horarioEl = document.getElementById('mapaHorarioInfo');
         const hTxt = String(ponto.horario_sinal || "").trim();
         if (hTxt && hTxt.toLowerCase() !== "não informado" && hTxt.toLowerCase() !== "horário não informado") {
@@ -3003,10 +3155,15 @@
         renderizarListaRedesMinimizadas();
     }
 
-    function renderizarListaRedesMinimizadas() {
+    function renderizarListaRedesMinimizadas(atualizarSelects = true) {
         const container = document.getElementById('listaRedesMinimizadas');
         if (!container) return;
-        popularFiltrosEstadoCidadeDadosRede();
+        const selEstEl = document.getElementById('selectEstadoDadosRede');
+        const selCidEl = document.getElementById('selectCidadeOffline');
+        const selectEmFoco = (document.activeElement === selEstEl || document.activeElement === selCidEl);
+        if (atualizarSelects && !selectEmFoco) {
+            popularFiltrosEstadoCidadeDadosRede();
+        }
 
         const filtroEst = document.getElementById('selectEstadoDadosRede')?.value || "";
         const filtroCid = document.getElementById('selectCidadeOffline')?.value || "";
@@ -3056,7 +3213,7 @@
                 <div class="rede-accordion-item" data-wifi-id="${w.id}">
                     <div onclick="expandirDetalhesRede('${w.id}')" style="background:${corCaixa}; color:${corTexto}; border:2px solid #111111; border-radius:12px; padding:10px 12px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; box-shadow:0 3px 8px rgba(0,0,0,0.18);">
                         <div style="min-width:0; flex:1;">
-                            <div style="font-weight:900; font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${estrelaFav}${w.local || "Ponto Wi-Fi"}</div>
+                            <div style="display:flex; align-items:center; gap:5px; min-width:0;"><span style="font-weight:900; font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${estrelaFav}${w.local || "Ponto Wi-Fi"}</span><span style="background:${String(w.verificado_admin || '').toLowerCase() === 'verificado' ? '#16a34a' : '#dc2626'}; color:#fff; font-size:0.58rem; font-weight:800; padding:1px 6px; border-radius:999px; flex-shrink:0;">${String(w.verificado_admin || '').toLowerCase() === 'verificado' ? 'Verificado' : 'Pendente'}</span></div>
                             <div style="font-size:0.74rem; opacity:0.92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">📍 ${enderecoTxt || "Endereço não informado"}</div>
                         </div>
                         <div style="background:rgba(17,17,17,0.85); color:#facc15; padding:4px 8px; border-radius:999px; font-size:0.72rem; font-weight:800; white-space:nowrap; flex-shrink:0;">
@@ -3406,41 +3563,136 @@
         reader.readAsDataURL(file);
     }
 
+    function limparDadosNovoCadastro() {
+        if (bloquearClickFantasma('limpar_cad_novo', 350)) return;
+        pararAutoPreencherGps();
+        ultimaCoordGPS = null;
+        fotoCadastroBase64 = "";
+        ['cadNomeLocal', 'cadLocalizacao', 'cadSsid', 'cadSenha'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+        const selUf = document.getElementById('cadEstado');
+        if (selUf) selUf.value = "";
+        const selCid = document.getElementById('cadCidade');
+        if (selCid) selCid.innerHTML = `<option value="">Selecione a cidade</option>`;
+        const chk = document.getElementById('cadEstouConectado');
+        if (chk) chk.checked = false;
+        Object.keys(comodidadesCadastro).forEach(k => comodidadesCadastro[k] = false);
+        ['cadPillEstac', 'cadPillMesas', 'cadPillTomadas', 'cadPillSinalRua'].forEach(id => {
+            document.getElementById(id)?.classList.remove('active');
+        });
+        document.getElementById('cadFotoPreviewContainer')?.classList.add('hidden');
+        const imgPrev = document.getElementById('cadFotoPreviewImg');
+        if (imgPrev) imgPrev.src = "";
+        document.getElementById('cadMiniMapWrap')?.classList.add('hidden');
+        const stSsid = document.getElementById('statusSsidConectadoCad');
+        if (stSsid) stSsid.textContent = "";
+        const stGps = document.getElementById('gpsStatus');
+        if (stGps) stGps.textContent = "Campos limpos! Pronto para novo cadastro.";
+        const toast = document.getElementById('cadToast');
+        if (toast) toast.style.display = "none";
+        selecionarNotaCadastro(5);
+    }
+
     function abrirOpcoesLerQr() {
-        if (bloquearClickFantasma('ler_qr_btn', 400)) return;
-        if (confirm("Deseja abrir a câmera para fotografar o QR Code?\n(Clique em Cancelar para escolher uma foto da galeria)")) {
-            document.getElementById('inputLerQrCamera').click();
-        } else {
-            document.getElementById('inputLerQrGaleria').click();
+        if (bloquearClickFantasma('ler_qr_btn', 350)) return;
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:340px;width:100%;color:#111111;text-align:center;">
+                <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">📷 Ler QR Code do Wi-Fi</div>
+                <div style="font-size:0.75rem;color:#3f3f46;margin-bottom:12px;">Escolha como deseja capturar o QR Code da rede:</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede'); document.getElementById('inputLerQrCamera').click();" style="background:#111111;color:#facc15;border:none;border-radius:10px;padding:11px;font-size:0.84rem;font-weight:800;cursor:pointer;">📸 Abrir Câmera Agora</button>
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede'); document.getElementById('inputLerQrGaleria').click();" style="background:#ffffff;color:#111111;border:1.5px solid #111111;border-radius:10px;padding:11px;font-size:0.84rem;font-weight:800;cursor:pointer;">🖼️ Escolher Foto da Galeria</button>
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="background:#e4e4e7;color:#111111;border:none;border-radius:8px;padding:8px;font-size:0.78rem;font-weight:700;cursor:pointer;">Cancelar</button>
+                </div>
+            </div>
+        `);
+    }
+
+    function decodificarPayloadWifiQr(rawText) {
+        const txt = String(rawText || "").trim();
+        if (!txt) return null;
+        const mSsid = txt.match(/(?:^|;)S:((?:\;|[^;])*)/i);
+        const mPass = txt.match(/(?:^|;)P:((?:\;|[^;])*)/i);
+        const mType = txt.match(/(?:^|;)T:([^;]*)/i);
+        if (mSsid && mSsid[1]) {
+            const unesc = s => s.replace(/\([\;,:"])/g, "$1");
+            const ssid = unesc(mSsid[1]).trim();
+            const tipo = mType ? mType[1].toLowerCase() : "";
+            const pass = (mPass && mPass[1]) ? unesc(mPass[1]) : (tipo === "nopass" ? "Aberta" : "Aberta");
+            return { ssid, senha: pass };
         }
+        return null;
+    }
+
+    async function decodificarQrDeImagemElement(img) {
+        if ('BarcodeDetector' in window) {
+            try {
+                const detector = new BarcodeDetector({ formats: ['qr_code'] });
+                const barcodes = await detector.detect(img);
+                if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+                    return barcodes[0].rawValue;
+                }
+            } catch (e) {}
+        }
+
+        if (typeof jsQR === 'function') {
+            const escalas = [1200, 800, 500];
+            for (const maxDim of escalas) {
+                const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+                const w = Math.max(1, Math.round(img.width * scale));
+                const h = Math.max(1, Math.round(img.height * scale));
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                const imgData = ctx.getImageData(0, 0, w, h);
+                const code = jsQR(imgData.data, w, h, { inversionAttempts: "attemptBoth" });
+                if (code && code.data) return code.data;
+            }
+        }
+        return "";
     }
 
     function lerQrCodeDeImagem(event) {
-        const file = event.target.files[0];
+        const inputEl = event.target;
+        const file = inputEl && inputEl.files ? inputEl.files[0] : null;
         if (!file) return;
+        const statusEl = document.getElementById('gpsStatus');
+        if (statusEl) statusEl.textContent = "🔍 Lendo QR Code da imagem...";
+
         const reader = new FileReader();
         reader.onload = (e) => {
             const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
-                if (code) {
-                    const mSsid = code.data.match(/S:([^;]+)/i);
-                    const mPass = code.data.match(/P:([^;]+)/i);
-                    if (mSsid) {
-                        document.getElementById('cadSsid').value = mSsid[1];
-                        document.getElementById('cadSenha').value = mPass ? mPass[1] : "Aberta";
-                                        alert("✅ Dados do Wi-Fi lidos com sucesso!");
+            img.onload = async () => {
+                try {
+                    const rawData = await decodificarQrDeImagemElement(img);
+                    if (rawData) {
+                        const wifiDados = decodificarPayloadWifiQr(rawData);
+                        if (wifiDados && wifiDados.ssid) {
+                            document.getElementById('cadSsid').value = wifiDados.ssid;
+                            document.getElementById('cadSenha').value = wifiDados.senha;
+                            if (statusEl) statusEl.textContent = `✅ QR Code lido: Rede "${wifiDados.ssid}" preenchida!`;
+                            alert(`✅ Dados do Wi-Fi lidos com sucesso!\nRede: ${wifiDados.ssid}`);
+                        } else {
+                            if (statusEl) statusEl.textContent = "⚠️ QR Code lido, mas não é um QR Code de Wi-Fi.";
+                            alert("QR Code lido, mas sem formato de Wi-Fi:\n" + rawData);
+                        }
                     } else {
-                        alert("QR Code lido, mas sem formato de Wi-Fi.");
+                        if (statusEl) statusEl.textContent = "⚠️ QR Code não encontrado na foto. Tente aproximar e focar bem.";
+                        alert("Não foi possível encontrar QR Code na imagem. Tente aproximar a câmera e deixar o QR bem iluminado.");
                     }
-                } else {
-                    alert("Não foi possível encontrar QR Code na imagem.");
+                } finally {
+                    inputEl.value = "";
                 }
+            };
+            img.onerror = () => {
+                inputEl.value = "";
+                if (statusEl) statusEl.textContent = "⚠️ Erro ao carregar imagem do QR Code.";
             };
             img.src = e.target.result;
         };
@@ -3478,9 +3730,9 @@
             const lat = pos.coords.latitude.toFixed(6);
             const lng = pos.coords.longitude.toFixed(6);
             ultimaCoordGPS = `${lat}, ${lng}`;
-            document.getElementById('cadLocalizacao').value = ultimaCoordGPS;
 
             if (!jaCentralizouGpsCadastro) {
+                document.getElementById('cadLocalizacao').value = "Buscando endereço completo...";
                 renderizarMinimapaCadastro(pos.coords.latitude, pos.coords.longitude);
                 jaCentralizouGpsCadastro = true;
                 await preencherEnderecoCompletoPorCoords(pos.coords.latitude, pos.coords.longitude);
@@ -3606,6 +3858,22 @@
             const bairro = a.suburb || a.neighbourhood || a.quarter || a.district || (bdcResp && bdcResp.locality) || "";
             const cidade = a.city || a.town || a.village || a.municipality || (bdcResp && bdcResp.city) || "";
             const uf = abreviarEstadoBr(a.state_code || a.state || (bdcResp && bdcResp.principalSubdivisionCode) || (bdcResp && bdcResp.principalSubdivision) || "");
+            const paisRaw = a.country || (bdcResp && bdcResp.countryName) || "Brasil";
+            const paisNormalizado = /brazil|brasil/i.test(paisRaw) ? "Brasil" : paisRaw;
+
+            if (paisNormalizado) {
+                definirPaisNoSelectCadastro(paisNormalizado);
+            }
+            if (uf) {
+                const selUf = document.getElementById('cadEstado');
+                if (selUf) {
+                    selUf.value = uf.toUpperCase();
+                    await aoMudarEstadoCadastro(cidade);
+                }
+            }
+            if (cidade) {
+                definirCidadeNoSelectCadastro(cidade);
+            }
 
             if (!numero) {
                 const maisProx = await buscarNumeroPredialMaisProximo(lat, lng, rua);
@@ -3619,19 +3887,18 @@
                 const ruaComNum = [rua, numero ? `nº ${numero} (aprox.)` : "s/n (aprox.)"].filter(Boolean).join(", ");
                 const endFormatado = [ruaComNum, bairro].filter(Boolean).join(" - ");
                 document.getElementById('cadLocalizacao').value = endFormatado;
-
-                if (cidade) {
-                    document.getElementById('cadCidade').value = uf ? `${cidade} - ${uf}` : cidade;
-                }
-                if (nomResp && nomResp.name && !document.getElementById('cadNomeLocal').value.trim()) {
-                    document.getElementById('cadNomeLocal').value = nomResp.name;
+                const nomeLugar = (nomResp && nomResp.name) ? String(nomResp.name).trim() : "";
+                const ehMesmoQueRua = nomeLugar && rua && (nomeLugar.toLowerCase() === String(rua).trim().toLowerCase() || String(rua).toLowerCase().includes(nomeLugar.toLowerCase()));
+                const tipoPoiValido = nomResp && nomResp.category && !["highway", "place", "boundary", "landuse"].includes(String(nomResp.category).toLowerCase());
+                if (nomeLugar && !ehMesmoQueRua && tipoPoiValido && !document.getElementById('cadNomeLocal').value.trim()) {
+                    document.getElementById('cadNomeLocal').value = nomeLugar;
                 }
                 if (status) status.textContent = `✅ Endereço detectado: ${endFormatado}`;
                 return;
             }
         } catch (e) {}
-        document.getElementById('cadLocalizacao').value = ultimaCoordGPS;
-        if (status) status.textContent = `📍 Coordenadas capturadas: ${ultimaCoordGPS}`;
+        document.getElementById('cadLocalizacao').value = "";
+        if (status) status.textContent = "⚠️ Endereço da rua não localizado automaticamente. Digite o endereço ou arraste o pino.";
     }
 
     let cadPinMap = null, cadPinMarker = null;
@@ -3666,14 +3933,17 @@
         if (bloquearClickFantasma('salvar_novo_wifi', 700)) return;
         const local = document.getElementById('cadNomeLocal').value.trim();
         const localizacao = document.getElementById('cadLocalizacao').value.trim();
-        const cidade = document.getElementById('cadCidade').value.trim();
+        const paisNome = (document.getElementById('cadPais')?.value || "Brasil").trim();
+        const estadoUf = (document.getElementById('cadEstado')?.value || "").trim().toUpperCase();
+        const cidadeNome = (document.getElementById('cadCidade')?.value || "").trim();
+        const cidade = (cidadeNome && estadoUf) ? `${cidadeNome} - ${estadoUf}${paisNome && paisNome !== 'Brasil' ? ' - ' + paisNome : ''}` : cidadeNome;
         const ssid = document.getElementById('cadSsid').value.trim();
         const senha = document.getElementById('cadSenha').value.trim();
         const horario = "";
         const btn = document.getElementById('cadSaveBtn');
         const toast = document.getElementById('cadToast');
 
-        if (!local || !localizacao || !cidade || !ssid || !senha) {
+        if (!local || !localizacao || !estadoUf || !cidadeNome || !ssid || !senha) {
             toast.style.display = "block";
             toast.className = "toast error";
             toast.textContent = "Preencha todos os campos obrigatórios (*).";
@@ -3746,6 +4016,7 @@
                 down_mbps: 0,
                 up_mbps: 0,
                 status: "Funcionando",
+                verificado_admin: "Pendente",
                 comodidades: comsSelecionadas,
                 horario_sinal: horario,
                 nota: notaCadastro,
@@ -3939,6 +4210,7 @@
         document.getElementById('adminWifiHorario').value = ponto.horario_sinal || "";
         document.getElementById('adminWifiDown').value = Number(ponto.down_mbps) || "";
         document.getElementById('adminWifiUp').value = Number(ponto.up_mbps) || "";
+        atualizarBotaoVerificadoAdminUI(ponto.verificado_admin || "Pendente");
 
         const coms = String(ponto.comodidades || "").toLowerCase();
         ['estacionamento', 'mesas', 'tomadas', 'sinal_rua'].forEach(k => {
@@ -3982,7 +4254,8 @@
                     horario_sinal: document.getElementById('adminWifiHorario').value.trim(),
                     down_mbps: Number(document.getElementById('adminWifiDown').value) || 0,
                     up_mbps: Number(document.getElementById('adminWifiUp').value) || 0,
-                    comodidades: coms
+                    comodidades: coms,
+                    verificado_admin: (listaWifisCache.find(w => w.id === idWifi)?.verificado_admin) || "Pendente" 
                 })
             });
             const data = await res.json();
@@ -4234,7 +4507,7 @@
                 usuarioLogado = {
                     nome: data.nome || nome || "Usuário",
                     email: email,
-                    isAdmin: data.isAdmin === true || data.is_admin === true || ADMIN_EMAILS.includes(email)
+                    isAdmin: ADMIN_EMAILS.includes(email)
                 };
                 localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
                 mostrarApp();
@@ -4308,14 +4581,19 @@
                 });
             }
 
-            // 2. Pop-up nativo do Plugin de Wi-Fi (NEARBY_WIFI_DEVICES / ACCESS_WIFI_STATE)
+            // 2. Bridge nativa AndroidWifiBridge (MainActivity.java)
+            if (window.AndroidWifiBridge && typeof window.AndroidWifiBridge.requestPermissions === 'function') {
+                try { window.AndroidWifiBridge.requestPermissions(); } catch (e) {}
+            }
+
+            // 3. Pop-up nativo do Plugin de Wi-Fi (NEARBY_WIFI_DEVICES / ACCESS_WIFI_STATE)
             const wifiPlugin = plugins.CapacitorWifi || plugins.Wifi || plugins.WifiConnect || plugins.NetworkWifi;
             if (wifiPlugin && typeof wifiPlugin.requestPermissions === 'function') {
                 try { await wifiPlugin.requestPermissions(); } catch (e) {}
             }
 
-            // 3. Caso esteja rodando sem plugin nativo de leitura de Wi-Fi e ainda não tenha sido autorizado na sessão, exibe pop-up informativo
-            if (forcarDialogo && !permissaoWifiSolicitadaSessao && !wifiPlugin && !window.WifiWizard2) {
+            // 4. Caso esteja rodando sem bridge/plugin nativo de leitura de Wi-Fi e ainda não tenha sido autorizado na sessão, exibe pop-up informativo
+            if (forcarDialogo && !permissaoWifiSolicitadaSessao && !window.AndroidWifiBridge && !wifiPlugin && !window.WifiWizard2) {
                 permissaoWifiSolicitadaSessao = true;
                 const aceitou = confirm("📶 Permissão de Wi-Fi e Localização\n\nO Click Control precisa acessar o nome da rede Wi-Fi (SSID) e a localização para confirmar sua conexão e preencher os dados da rede.\n\nDeseja autorizar o acesso aos dados de conexão Wi-Fi?");
                 localStorage.setItem('clickcontrol_wifi_perm_ok', aceitou ? '1' : '0');
@@ -4327,6 +4605,23 @@
     async function obterNomeRedeWifiConectada(forcarLeitura = false) {
         if (forcarLeitura) ssidConectadoAtual = "";
         try {
+            // 0. Tenta bridge nativa injetada no MainActivity.java
+            if (window.AndroidWifiBridge) {
+                if (typeof window.AndroidWifiBridge.hasPermissions === 'function' && !window.AndroidWifiBridge.hasPermissions()) {
+                    if (typeof window.AndroidWifiBridge.requestPermissions === 'function') {
+                        window.AndroidWifiBridge.requestPermissions();
+                    }
+                }
+                if (typeof window.AndroidWifiBridge.getSSID === 'function') {
+                    const rawBridge = window.AndroidWifiBridge.getSSID();
+                    const limpoBridge = String(rawBridge || "").replace(/^"|"$/g, "").trim();
+                    if (limpoBridge && limpoBridge !== "<unknown ssid>" && limpoBridge.toLowerCase() !== "unknown") {
+                        ssidConectadoAtual = limpoBridge;
+                        return limpoBridge;
+                    }
+                }
+            }
+
             const cap = window.Capacitor;
             const plugins = cap && cap.Plugins ? cap.Plugins : {};
 
@@ -4385,9 +4680,10 @@
         const stEl = document.getElementById('statusSsidConectadoCad');
         if (stEl && manual) stEl.textContent = "🔍 Lendo nome da rede Wi-Fi conectada...";
 
-        // Garante permissão de localização ativa (exigida pelo Android para ler SSID)
+        // Solicita permissões nativas de Wi-Fi e Localização antes de ler o SSID
+        await solicitarPermissoesWifiELocalizacao(manual);
         await obterPosicaoComFallbackAndroid(6000);
-        const ssid = await obterNomeRedeWifiConectada();
+        const ssid = await obterNomeRedeWifiConectada(true);
         if (ssid) {
             const inputSsid = document.getElementById('cadSsid');
             if (inputSsid && (!inputSsid.value.trim() || manual)) {
@@ -4427,7 +4723,12 @@
         const greetEl = document.getElementById('homeGreetingName');
         if (greetEl) greetEl.textContent = `Olá, ${pName}`;
         atualizarVisibilidadeAdmin();
+        verificarBloqueioApp(false);
         solicitarPermissoesWifiELocalizacao(false);
+        restaurarCacheWifisLocal();
+        popularSelectWifis();
+        renderizarAlfinetesNoMapa();
+        renderizarListaRedesMinimizadas();
         obterLocalizacaoAutomaticaApp();
         detectarSsidConectadoAtual(false);
         carregarListaWifis();
@@ -4475,14 +4776,31 @@
             }
         }
         else if (aba === 'testar') atualizarBannerTesteAtual(document.getElementById('selectWifiMapa')?.value);
-        else if (aba === 'cadastrar') detectarSsidConectadoAtual(false);
+        else if (aba === 'cadastrar') { detectarSsidConectadoAtual(false); detectarPaisAtualUsuario(); }
+    }
+
+    function restaurarCacheWifisLocal() {
+        try {
+            const salvo = localStorage.getItem('clickcontrol_wifis_cache');
+            if (salvo) {
+                const parsed = JSON.parse(salvo);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    listaWifisCache = parsed.map(normalizarPontoWifi);
+                    return true;
+                }
+            }
+        } catch (e) {}
+        return false;
     }
 
     async function carregarListaWifis() {
+        if (listaWifisCache.length === 0) {
+            restaurarCacheWifisLocal();
+        }
         try {
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_wifis&_=${Date.now()}`);
             const data = await res.json();
-            if (data.wifis && Array.isArray(data.wifis)) {
+            if (data && Array.isArray(data.wifis) && data.wifis.length > 0) {
                 const cacheAnterior = {};
                 listaWifisCache.forEach(item => { if (item && item.id) cacheAnterior[item.id] = item; });
                 const chavesVistas = new Set();
@@ -4508,15 +4826,20 @@
                     return true;
                 });
                 localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+            } else if (listaWifisCache.length === 0) {
+                restaurarCacheWifisLocal();
             }
         } catch (e) {
-            const salvo = localStorage.getItem('clickcontrol_wifis_cache');
-            if (salvo) listaWifisCache = JSON.parse(salvo);
+            if (listaWifisCache.length === 0) {
+                restaurarCacheWifisLocal();
+            }
         }
         popularSelectWifis();
         renderizarAlfinetesNoMapa();
         renderizarListaRedesMinimizadas();
-        resolverCoordenadasFaltantes();
+        if (navigator.onLine !== false) {
+            resolverCoordenadasFaltantes();
+        }
         if (ehAdministrador()) popularSelectAdminWifis();
     }
 
@@ -4612,15 +4935,49 @@
         expandirDetalhesRede(idWifi);
     }
 
-    function validarStatusAoVivo(tipo) {
+    async function validarStatusAoVivo(tipo) {
         if (bloquearClickFantasma('status_vivo', 450)) return;
         const el = document.getElementById('mapaLiveStatus');
+        const idWifi = document.getElementById('selectWifiMapa')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+
         if (tipo === 'conectou') {
             el.textContent = "🟢 Confirmado agora por você";
             el.style.color = "#22c55e";
         } else if (tipo === 'nao_conectou') {
-            el.textContent = "🔴 Não conectou (reportado)";
+            el.textContent = "🔴 Não conectou (notificação enviada ao Admin)";
             el.style.color = "#ef4444";
+            if (ponto) {
+                const descNaoConectou = `Usuário clicou em "Não conectou" na rede "${ponto.ssid || ""}" (${ponto.local || ""}).`;
+                salvarProblemaLocalCache({
+                    id: "PRB-" + Date.now(),
+                    tipo: "Falha de Conexão (Não conectou)",
+                    id_wifi: ponto.id,
+                    nome_local: ponto.local || "",
+                    cidade_uf: ponto.cidade || "",
+                    descricao: descNaoConectou,
+                    usuario: usuarioLogado?.email || "Usuário",
+                    data: new Date().toLocaleString("pt-BR"),
+                    status_resolucao: "Pendente",
+                    arquivado: ""
+                });
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: "POST",
+                        redirect: "follow",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({
+                            acao: "relatar_problema",
+                            tipo: "Falha de Conexão (Não conectou)",
+                            id_wifi: ponto.id,
+                            nome_local: ponto.local || "",
+                            cidade_uf: ponto.cidade || "",
+                            descricao: descNaoConectou,
+                            id_usuario: usuarioLogado?.email || ""
+                        })
+                    });
+                } catch (e) {}
+            }
         } else {
             el.textContent = "⚠️ Alerta de senha enviada";
             el.style.color = "#facc15";
@@ -4886,7 +5243,7 @@
                 <div style="color:#111111; margin-bottom:5px;">${p.descricao || ""}</div>
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#3f3f46;">
                     <span>Por: ${p.usuario || "Usuário"} • ${p.data || ""}</span>
-                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
+                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:2px 6px; font-size:0.68rem;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
                 </div>
             </div>
         `;
@@ -4934,18 +5291,22 @@
             listaEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px;">Nenhum usuário encontrado.</div>`;
             return;
         }
-        listaEl.innerHTML = filtrados.map((u, idx) => `
+        listaEl.innerHTML = filtrados.map((u, idx) => {
+            const emEsc = String(u.email || "").replace(/'/g, "\'");
+            const temNota = Boolean(String(u.nota_admin || "").trim());
+            return `
             <div style="background:#fef9c3; border:1px solid #111111; border-radius:8px; padding:7px 8px; font-size:0.75rem; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                <div style="min-width:0; flex:1;">
-                    <div style="font-weight:800; color:#111111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">👤 ${u.nome || "Sem nome"}</div>
-                    <div style="font-size:0.7rem; color:#3f3f46; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">✉️ ${u.email}</div>
+                <div onclick="abrirModalDetalhesUsuarioAdmin('${emEsc}')" style="min-width:0; flex:1; cursor:pointer;" title="Clique para ver todos os dados e anotações privadas deste usuário">
+                    <div style="font-weight:800; color:#111111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">👤 ${u.nome || "Sem nome"} ${temNota ? '📝' : ''}</div>
+                    <div style="font-size:0.7rem; color:#3f3f46; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">✉️ ${u.email} • <span style="text-decoration:underline; font-weight:700;">Ver ficha</span></div>
                 </div>
                 <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
                     <input type="number" id="admPtsUser_${idx}" value="${Number(u.saldo) || 0}" style="width:62px; padding:4px 6px; border:1px solid #111; border-radius:6px; font-size:0.76rem; font-weight:800; text-align:center;">
-                    <button type="button" onclick="salvarPontosUsuarioAdmin('${u.email}', 'admPtsUser_${idx}')" style="background:#111111; color:#facc15; border:none; border-radius:6px; padding:5px 8px; font-size:0.7rem; font-weight:800; cursor:pointer;">💾</button>
+                    <button type="button" onclick="salvarPontosUsuarioAdmin('${emEsc}', 'admPtsUser_${idx}')" style="background:#111111; color:#facc15; border:none; border-radius:6px; padding:5px 8px; font-size:0.7rem; font-weight:800; cursor:pointer;">💾</button>
                 </div>
             </div>
-        `).join("");
+        `;
+        }).join("");
     }
 
     async function salvarPontosUsuarioAdmin(emailAlvo, inputId) {
@@ -5337,10 +5698,613 @@
         reader.readAsDataURL(file);
     }
 
+
+    /* ============================================================
+       PAÍS ATUAL & CIDADES POR ESTADO (IBGE + CACHE LOCAL)
+    ============================================================ */
+    const cacheCidadesPorUf = {};
+
+    function definirPaisNoSelectCadastro(paisNome) {
+        const selPais = document.getElementById('cadPais');
+        if (!selPais || !paisNome) return;
+        const alvo = String(paisNome).trim();
+        let existe = Array.from(selPais.options).some(o => o.value.toLowerCase() === alvo.toLowerCase());
+        if (!existe) {
+            const opt = document.createElement('option');
+            opt.value = alvo;
+            opt.textContent = alvo;
+            selPais.insertBefore(opt, selPais.lastElementChild);
+        }
+        const match = Array.from(selPais.options).find(o => o.value.toLowerCase() === alvo.toLowerCase());
+        if (match) selPais.value = match.value;
+    }
+
+    function definirCidadeNoSelectCadastro(cidadeNome) {
+        const selCid = document.getElementById('cadCidade');
+        if (!selCid || !cidadeNome) return;
+        const alvo = normalizarTextoCidade(cidadeNome);
+        const alvoKey = chaveNormalizadaCidade(alvo);
+        let match = Array.from(selCid.options).find(o => chaveNormalizadaCidade(o.value) === alvoKey);
+        if (!match) {
+            const opt = document.createElement('option');
+            opt.value = alvo;
+            opt.textContent = alvo;
+            selCid.appendChild(opt);
+            match = opt;
+        }
+        selCid.value = match.value;
+    }
+
+    async function aoMudarEstadoCadastro(cidadePreSelecionar = "") {
+        const uf = (document.getElementById('cadEstado')?.value || "").trim().toUpperCase();
+        const selCid = document.getElementById('cadCidade');
+        if (!selCid) return;
+        if (!uf) {
+            selCid.innerHTML = `<option value="">Selecione a cidade</option>`;
+            return;
+        }
+        selCid.innerHTML = `<option value="">Carregando cidades...</option>`;
+        let cidades = cacheCidadesPorUf[uf];
+        if (!cidades) {
+            try {
+                const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`);
+                const lista = await resp.json();
+                if (Array.isArray(lista) && lista.length > 0) {
+                    cidades = lista.map(m => m.nome);
+                    cacheCidadesPorUf[uf] = cidades;
+                }
+            } catch (e) {}
+        }
+        if (!cidades) {
+            const doCache = new Set();
+            listaWifisCache.forEach(w => {
+                const loc = extrairLocalizacaoPonto(w);
+                if (loc.estado === uf && loc.cidade) doCache.add(loc.cidade);
+            });
+            cidades = Array.from(doCache).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        }
+        selCid.innerHTML = `<option value="">Selecione a cidade</option>` +
+            cidades.map(c => `<option value="${c}">${c}</option>`).join("");
+        if (cidadePreSelecionar) {
+            definirCidadeNoSelectCadastro(cidadePreSelecionar);
+        }
+    }
+
+    function aoMudarPaisCadastro() {
+        const pais = document.getElementById('cadPais')?.value || "Brasil";
+        if (pais !== "Brasil") {
+            const selCid = document.getElementById('cadCidade');
+            if (selCid && selCid.options.length <= 1) {
+                selCid.innerHTML = `<option value="">Use Auto-Preencher GPS</option>`;
+            }
+        }
+    }
+
+    async function detectarPaisAtualUsuario() {
+        try {
+            if (userLatAtual !== null && userLngAtual !== null) {
+                const bdc = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${userLatAtual}&longitude=${userLngAtual}&localityLanguage=pt`)
+                    .then(r => r.json()).catch(() => null);
+                if (bdc && bdc.countryName) {
+                    const pNorm = /brazil|brasil/i.test(bdc.countryName) ? "Brasil" : bdc.countryName;
+                    definirPaisNoSelectCadastro(pNorm);
+                    return;
+                }
+            }
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+            if (tz.startsWith("America/Sao_Paulo") || tz.startsWith("America/Fortaleza") || tz.startsWith("America/Manaus") || tz.startsWith("America/Belem") || tz.startsWith("America/Cuiaba")) {
+                definirPaisNoSelectCadastro("Brasil");
+            }
+        } catch (e) {}
+    }
+
+    /* ============================================================
+       PAINEL ADMIN POR ABAS + VERIFICAÇÃO + FICHA USUÁRIO + NOTIFICAÇÕES
+    ============================================================ */
+    let notificacoesAdminCache = [];
+    let filtroNotificacoesAdminModo = 'ativas';
+
+    function atualizarBotaoVerificadoAdminUI(statusVer) {
+        const btn = document.getElementById('btnToggleVerificadoAdminWifi');
+        if (!btn) return;
+        const isVerif = String(statusVer || "").toLowerCase() === "verificado";
+        btn.textContent = isVerif ? "🟢 Verificado" : "🔴 Pendente";
+        btn.style.background = isVerif ? "#16a34a" : "#dc2626";
+        btn.style.color = "#ffffff";
+    }
+
+    async function alternarStatusVerificadoAdminWifi() {
+        if (bloquearClickFantasma('toggle_verif_wifi', 400)) return;
+        const idWifi = document.getElementById('adminSelectWifi')?.value;
+        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        if (!ponto) return;
+        const atualVerif = String(ponto.verificado_admin || "").toLowerCase() === "verificado";
+        const novoStatus = atualVerif ? "Pendente" : "Verificado";
+        ponto.verificado_admin = novoStatus;
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+        atualizarBotaoVerificadoAdminUI(novoStatus);
+        if (document.getElementById('selectWifiMapa')?.value === idWifi) {
+            atualizarCardQrDoMapa(idWifi);
+        }
+        renderizarListaRedesMinimizadas();
+        renderizarListaNotificacoesAdmin();
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_alternar_verificado_wifi",
+                    admin_email: usuarioLogado?.email || "",
+                    id_wifi: idWifi,
+                    verificado_admin: novoStatus
+                })
+            });
+        } catch (e) {}
+    }
+
+    function abrirModalDetalhesUsuarioAdmin(emailAlvo) {
+        if (!ehAdministrador()) return;
+        if (bloquearClickFantasma('modal_user_adm', 350)) return;
+        const u = usuariosAdminCache.find(item => String(item.email || "").toLowerCase() === String(emailAlvo || "").toLowerCase());
+        if (!u) return;
+
+        const wifisDoUser = listaWifisCache.filter(w => String(w.cadastrado_por || w.id_usuario || "").toLowerCase() === String(u.email || "").toLowerCase());
+        const notasLocais = JSON.parse(localStorage.getItem('clickcontrol_admin_notas_usuarios') || '{}');
+        const notaAtual = u.nota_admin || notasLocais[u.email.toLowerCase()] || "";
+        const emEsc = String(u.email || "").replace(/'/g, "\'");
+
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:390px;width:100%;color:#111111;max-height:88dvh;overflow-y:auto;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <div style="font-size:0.96rem;font-weight:900;">👤 Ficha Completa do Usuário</div>
+                    <span style="background:#111111;color:#facc15;font-size:0.66rem;font-weight:800;padding:2px 8px;border-radius:999px;">${u.plano || "Gratuito"}</span>
+                </div>
+
+                <div style="background:#ffffff;border:1px solid #111111;border-radius:10px;padding:10px;font-size:0.78rem;margin-bottom:10px;line-height:1.45;">
+                    <div><strong>E-mail:</strong> ${u.email}</div>
+                    <div><strong>Data Cadastro:</strong> ${u.data_cadastro || "Não registrada"}</div>
+                    <div><strong>Senha Atual:</strong> ${u.senha || "—"}</div>
+                    <div><strong>Wi-Fis Cadastrados:</strong> ${u.qtd_wifis ?? wifisDoUser.length} • <strong>Testes:</strong> ${u.qtd_testes ?? 0}</div>
+                </div>
+
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;font-size:0.74rem;font-weight:800;margin-bottom:3px;">Nome / @Instagram</label>
+                    <input type="text" id="admModalUserNome" value="${String(u.nome || '').replace(/"/g, '&quot;')}" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;background:#fff;">
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                    <div>
+                        <label style="display:block;font-size:0.74rem;font-weight:800;margin-bottom:3px;">Saldo (Créditos)</label>
+                        <input type="number" id="admModalUserSaldo" value="${Number(u.saldo) || 0}" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;background:#fff;">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:0.74rem;font-weight:800;margin-bottom:3px;">Plano</label>
+                        <select id="admModalUserPlano" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;background:#fff;">
+                            <option value="Gratuito" ${String(u.plano || '').toLowerCase() !== 'pro' ? 'selected' : ''}>Gratuito</option>
+                            <option value="Pro" ${String(u.plano || '').toLowerCase() === 'pro' ? 'selected' : ''}>Pro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    <label style="display:block;font-size:0.74rem;font-weight:800;margin-bottom:3px;">🔒 Anotação Privada (Visível somente para Admin)</label>
+                    <textarea id="admModalUserNota" rows="3" placeholder="Escreva observações internas sobre este usuário (visível apenas para você)..." style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.8rem;background:#fff;resize:vertical;">${notaAtual}</textarea>
+                </div>
+
+                <div style="display:flex;gap:8px;">
+                    <button type="button" onclick="salvarFichaUsuarioAdmin('${emEsc}')" style="flex:2;background:#111111;color:#facc15;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">💾 Salvar Dados e Nota</button>
+                    <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="flex:1;background:#e4e4e7;color:#111111;border:1px solid #111111;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">Fechar</button>
+                </div>
+            </div>
+        `);
+    }
+
+    async function salvarFichaUsuarioAdmin(emailAlvo) {
+        if (bloquearClickFantasma('save_ficha_user_adm', 450)) return;
+        const novoNome = document.getElementById('admModalUserNome')?.value.trim();
+        const novoSaldo = Number(document.getElementById('admModalUserSaldo')?.value);
+        const novoPlano = document.getElementById('admModalUserPlano')?.value || "Gratuito";
+        const notaAdmin = document.getElementById('admModalUserNota')?.value || "";
+
+        const u = usuariosAdminCache.find(item => String(item.email || "").toLowerCase() === String(emailAlvo || "").toLowerCase());
+        if (u) {
+            if (novoNome) u.nome = novoNome;
+            if (!isNaN(novoSaldo)) u.saldo = novoSaldo;
+            u.plano = novoPlano;
+            u.nota_admin = notaAdmin;
+        }
+        try {
+            const notasLocais = JSON.parse(localStorage.getItem('clickcontrol_admin_notas_usuarios') || '{}');
+            notasLocais[String(emailAlvo).toLowerCase()] = notaAdmin;
+            localStorage.setItem('clickcontrol_admin_notas_usuarios', JSON.stringify(notasLocais));
+        } catch (e) {}
+
+        renderizarListaUsuariosAdmin();
+        fecharModalDinamico('modalAcaoRede');
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_gerenciar_usuario",
+                    admin_email: usuarioLogado?.email || "",
+                    id_usuario: emailAlvo,
+                    novo_nome: novoNome,
+                    novo_saldo: isNaN(novoSaldo) ? undefined : novoSaldo,
+                    novo_plano: novoPlano,
+                    nota_admin: notaAdmin
+                })
+            });
+            alert("✅ Ficha e anotação privada do usuário salvas!");
+        } catch (e) {
+            alert("Anotação salva localmente. Erro ao sincronizar com a planilha.");
+        }
+    }
+
+    function mudarAbaAdmin(abaAdm, ignorarTrava = false) {
+        if (!ignorarTrava && bloquearClickFantasma('adm_aba_' + abaAdm, 300)) return;
+        const mapSec = {
+            'wifis': 'admSecaoWifis',
+            'usuarios': 'admSecaoUsuarios',
+            'problemas': 'admSecaoProblemas',
+            'notificacoes': 'admSecaoNotificacoes',
+            'bloqueio': 'admSecaoBloqueio'
+        };
+        const mapBtn = {
+            'wifis': 'admTabWifisBtn',
+            'usuarios': 'admTabUsuariosBtn',
+            'problemas': 'admTabProblemasBtn',
+            'notificacoes': 'admTabNotificacoesBtn',
+            'bloqueio': 'admTabBloqueioBtn'
+        };
+        Object.keys(mapSec).forEach(k => {
+            const sec = document.getElementById(mapSec[k]);
+            const btn = document.getElementById(mapBtn[k]);
+            if (sec) sec.classList.toggle('hidden', k !== abaAdm);
+            if (btn) btn.classList.toggle('active', k === abaAdm);
+        });
+        if (abaAdm === 'usuarios') carregarUsuariosAdmin();
+        if (abaAdm === 'problemas' || abaAdm === 'notificacoes') atualizarTudoPainelAdmin();
+        if (abaAdm === 'bloqueio') carregarConfigBloqueioAdmin();
+    }
+
+    function alternarFiltroNotificacoesAdmin(modo) {
+        filtroNotificacoesAdminModo = modo;
+        const bAt = document.getElementById('btnFiltroNotifAtivas');
+        const bAr = document.getElementById('btnFiltroNotifArquivadas');
+        if (bAt) {
+            bAt.style.background = modo === 'ativas' ? '#111111' : '';
+            bAt.style.color = modo === 'ativas' ? '#facc15' : '';
+        }
+        if (bAr) {
+            bAr.style.background = modo === 'arquivadas' ? '#111111' : '';
+            bAr.style.color = modo === 'arquivadas' ? '#facc15' : '';
+        }
+        renderizarListaNotificacoesAdmin();
+    }
+
+    function obterEstadoNotificacoesLocal() {
+        try { return JSON.parse(localStorage.getItem('clickcontrol_admin_notif_state') || '{}'); } catch (e) { return {}; }
+    }
+
+    function salvarEstadoNotificacoesLocal(mapa) {
+        try { localStorage.setItem('clickcontrol_admin_notif_state', JSON.stringify(mapa)); } catch (e) {}
+    }
+
+    async function gerenciarNotificacaoAdmin(idItem, origem, operacao) {
+        if (bloquearClickFantasma('ger_notif_adm', 350)) return;
+        if (operacao === 'excluir' && !confirm("Deseja realmente excluir esta notificação?")) return;
+
+        const st = obterEstadoNotificacoesLocal();
+        if (operacao === 'excluir') {
+            st[idItem] = 'excluido';
+            notificacoesAdminCache = notificacoesAdminCache.filter(n => n.id !== idItem);
+            if (origem === 'problema') {
+                problemasAdminCache = problemasAdminCache.filter(p => p.id !== idItem);
+                renderizarListaProblemasAdmin();
+            }
+        } else if (operacao === 'arquivar') {
+            st[idItem] = 'arquivado';
+            const alvo = notificacoesAdminCache.find(n => n.id === idItem);
+            if (alvo) alvo.arquivado = 'Arquivado';
+        } else if (operacao === 'desarquivar') {
+            st[idItem] = '';
+            const alvo = notificacoesAdminCache.find(n => n.id === idItem);
+            if (alvo) alvo.arquivado = '';
+        }
+        salvarEstadoNotificacoesLocal(st);
+        renderizarListaNotificacoesAdmin();
+
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_gerenciar_notificacao",
+                    admin_email: usuarioLogado?.email || "",
+                    id_item: idItem,
+                    origem: origem,
+                    operacao: operacao
+                })
+            });
+        } catch (e) {}
+    }
+
+    function ehNotificacaoNovaWifi(n) {
+        const cat = String(n?.categoria || "").toLowerCase();
+        return cat.includes("nova rede") || cat.includes("rede cadastrada") || cat.includes("wi-fi") || String(n?.id || "").startsWith("NOT-WFI-");
+    }
+
+    function obterStatusVerificacaoNotificacaoWifi(n) {
+        if (n && n.id_wifi) {
+            const p = listaWifisCache.find(w => w.id === n.id_wifi);
+            if (p && p.verificado_admin) {
+                return String(p.verificado_admin).toLowerCase() === "verificado" ? "Verificado" : "Pendente";
+            }
+        }
+        return String(n?.verificado_admin || "").toLowerCase() === "verificado" ? "Verificado" : "Pendente";
+    }
+
+    function renderizarListaNotificacoesAdmin() {
+        const listaNotifEl = document.getElementById('adminListaNotificacoes');
+        const qtdEl = document.getElementById('adminQtdNotificacoes');
+        if (!listaNotifEl) return;
+
+        const stLocal = obterEstadoNotificacoesLocal();
+        const validas = notificacoesAdminCache.filter(n => stLocal[n.id] !== 'excluido').map(n => {
+            if (stLocal[n.id] === 'arquivado') n.arquivado = 'Arquivado';
+            else if (stLocal[n.id] === '') n.arquivado = '';
+            return n;
+        });
+
+        const filtradas = validas.filter(n => {
+            const isArq = String(n.arquivado || '').toLowerCase() === 'arquivado';
+            return filtroNotificacoesAdminModo === 'arquivadas' ? isArq : !isArq;
+        });
+
+        // Pendentes acima e verificados abaixo, respeitando a ordem de criação
+        const ordenadas = filtradas
+            .map((item, idx) => ({ item, idx }))
+            .sort((a, b) => {
+                const stA = ehNotificacaoNovaWifi(a.item) ? obterStatusVerificacaoNotificacaoWifi(a.item) : "Verificado";
+                const stB = ehNotificacaoNovaWifi(b.item) ? obterStatusVerificacaoNotificacaoWifi(b.item) : "Verificado";
+                const pendA = stA === "Pendente" ? 0 : 1;
+                const pendB = stB === "Pendente" ? 0 : 1;
+                if (pendA !== pendB) return pendA - pendB;
+                const ordA = Number(a.item.ordem_criacao);
+                const ordB = Number(b.item.ordem_criacao);
+                if (!isNaN(ordA) && !isNaN(ordB) && ordA !== ordB) return ordB - ordA;
+                return a.idx - b.idx;
+            })
+            .map(x => x.item);
+
+        if (qtdEl) qtdEl.textContent = ordenadas.length;
+
+        if (ordenadas.length === 0) {
+            listaNotifEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">${filtroNotificacoesAdminModo === 'arquivadas' ? 'Nenhuma notificação arquivada.' : 'Nenhuma notificação ativa no momento.'}</div>`;
+            return;
+        }
+
+        listaNotifEl.innerHTML = ordenadas.map(n => {
+            const isArq = String(n.arquivado || '').toLowerCase() === 'arquivado';
+            const idEsc = String(n.id || '').replace(/'/g, "\'");
+            const origEsc = String(n.origem || 'sistema').replace(/'/g, "\'");
+            const isNovaWifi = ehNotificacaoNovaWifi(n);
+            const statusVer = isNovaWifi ? obterStatusVerificacaoNotificacaoWifi(n) : "";
+            const isVerificado = statusVer === "Verificado";
+
+            let bgCard = isArq ? '#f4f4f5' : '#ffffff';
+            let borderCard = '#111111';
+            let titleColor = '#111111';
+            if (isNovaWifi && !isArq) {
+                bgCard = isVerificado ? '#dcfce7' : '#fee2e2';
+                borderCard = isVerificado ? '#16a34a' : '#dc2626';
+                titleColor = isVerificado ? '#14532d' : '#991b1b';
+            }
+
+            return `
+            <div style="background:${bgCard}; border:2px solid ${borderCard}; border-radius:8px; padding:8px 9px; font-size:0.74rem; display:flex; flex-direction:column; gap:5px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
+                    <div style="min-width:0; flex:1;">
+                        <div style="font-weight:800; color:${titleColor}; display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+                            <span>${isNovaWifi ? (isVerificado ? '🟢' : '🔴') : '🔔'} ${n.categoria}: ${n.titulo}</span>
+                            ${isNovaWifi ? `<span style="background:${isVerificado ? '#16a34a' : '#dc2626'}; color:#ffffff; font-size:0.62rem; padding:1px 7px; border-radius:999px; font-weight:800;">${isVerificado ? 'Verificado' : 'Pendente'}</span>` : ''}
+                        </div>
+                        <div style="font-size:0.71rem; color:#1f2937; margin-top:2px;">${n.detalhe}</div>
+                        ${n.data ? `<div style="font-size:0.65rem; color:#4b5563; margin-top:2px;">🕒 ${n.data}</div>` : ""}
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:5px; flex-wrap:wrap;">
+                    ${n.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#111111; color:#facc15;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${n.id_wifi}')">📶 Gestão Wi-Fi</button>` : ""}
+                    ${isArq
+                        ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#2563eb; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'desarquivar')">📤 Desarquivar</button>`
+                        : `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#52525b; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'arquivar')">📦 Arquivar</button>`
+                    }
+                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#dc2626; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'excluir')">🗑️ Excluir</button>
+                </div>
+            </div>
+        `;
+        }).join("");
+    }
+
+    async function atualizarTudoPainelAdmin() {
+        await Promise.all([
+            carregarProblemasAdmin(),
+            carregarNotificacoesERelatorioAdmin()
+        ]);
+    }
+
+    async function carregarNotificacoesERelatorioAdmin() {
+        const combinadas = [];
+        const vistos = new Set();
+
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=listar_notificacoes_admin&admin_email=${encodeURIComponent(usuarioLogado?.email || "")}&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && data.status === "ok") {
+                const rel = data.relatorio || {};
+                const elW = document.getElementById('relAdmTotalWifis');
+                const elU = document.getElementById('relAdmTotalUsers');
+                const elT = document.getElementById('relAdmTotalTestes');
+                const elP = document.getElementById('relAdmPendentes');
+                const badgeTopo = document.getElementById('adminBadgeNotifTopo');
+                if (elW) elW.textContent = rel.total_wifis ?? listaWifisCache.length;
+                if (elU) elU.textContent = rel.total_usuarios ?? 0;
+                if (elT) elT.textContent = rel.total_testes ?? 0;
+                if (elP) elP.textContent = rel.problemas_pendentes ?? 0;
+                if (badgeTopo) badgeTopo.textContent = `${rel.problemas_pendentes ?? 0} pendência(s)`;
+
+                const notifs = Array.isArray(data.notificacoes) ? data.notificacoes : [];
+                notifs.forEach((n, idx) => {
+                    if (!n || !n.id || vistos.has(n.id)) return;
+                    vistos.add(n.id);
+                    combinadas.push({
+                        id: n.id,
+                        origem: 'sistema',
+                        categoria: n.categoria || 'Sistema',
+                        titulo: n.titulo || '',
+                        detalhe: n.detalhe || '',
+                        id_wifi: n.id_wifi || '',
+                        data: n.data || '',
+                        arquivado: n.arquivado || '',
+                        verificado_admin: n.verificado_admin || '',
+                        ordem_criacao: n.ordem_criacao !== undefined ? Number(n.ordem_criacao) : (notifs.length - idx)
+                    });
+                });
+            }
+        } catch (e) {}
+
+        for (let i = listaWifisCache.length - 1; i >= 0; i--) {
+            const w = listaWifisCache[i];
+            if (!w || !w.id) continue;
+            const notId = "NOT-WFI-" + w.id;
+            if (vistos.has(notId)) continue;
+            if (combinadas.some(c => c.id_wifi === w.id && ehNotificacaoNovaWifi(c))) continue;
+            vistos.add(notId);
+            combinadas.push({
+                id: notId,
+                origem: 'sistema',
+                categoria: 'Nova Rede Wi-Fi',
+                titulo: w.local || w.id,
+                detalhe: `Rede: ${w.ssid || ""} • Local: ${w.cidade || ""} • Por: ${w.cadastrado_por || "Anônimo"}`,
+                id_wifi: w.id,
+                data: w.ultima_validacao || '',
+                arquivado: '',
+                verificado_admin: w.verificado_admin || 'Pendente',
+                ordem_criacao: i + 1
+            });
+        }
+
+        notificacoesAdminCache = combinadas;
+        renderizarListaNotificacoesAdmin();
+    }
+
+    /* ============================================================
+       BLOQUEIO DO APP PELO ADMINISTRADOR (COM MENSAGEM PERSONALIZADA)
+    ============================================================ */
+    function aplicarEstadoBloqueioNaTela(bloqueado, mensagem) {
+        const overlay = document.getElementById('appLockOverlay');
+        const msgEl = document.getElementById('appLockMessageText');
+        const badgeAdm = document.getElementById('statusBloqueioAdminBadge');
+        const txtAdm = document.getElementById('adminMsgBloqueioApp');
+        const msgFinal = String(mensagem || "").trim() || "O aplicativo está temporariamente bloqueado pelo administrador. Atualize o app para continuar.";
+
+        if (txtAdm && !txtAdm.value.trim()) {
+            txtAdm.value = msgFinal;
+        }
+        if (badgeAdm) {
+            badgeAdm.textContent = bloqueado ? "🔴 Bloqueado" : "🟢 Liberado";
+            badgeAdm.style.background = bloqueado ? "#dc2626" : "#16a34a";
+        }
+
+        if (bloqueado && !ehAdministrador()) {
+            if (msgEl) msgEl.textContent = msgFinal;
+            if (overlay) overlay.classList.remove('hidden');
+        } else {
+            if (overlay) overlay.classList.add('hidden');
+        }
+    }
+
+    async function verificarBloqueioApp(manual = false) {
+        try {
+            const salvo = JSON.parse(localStorage.getItem('clickcontrol_app_lock') || 'null');
+            if (salvo) aplicarEstadoBloqueioNaTela(Boolean(salvo.bloqueado), salvo.mensagem);
+        } catch (e) {}
+
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=status_bloqueio_app&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && data.status === "ok") {
+                const blq = Boolean(data.bloqueado);
+                const msg = data.mensagem || "";
+                localStorage.setItem('clickcontrol_app_lock', JSON.stringify({ bloqueado: blq, mensagem: msg }));
+                aplicarEstadoBloqueioNaTela(blq, msg);
+                if (manual && !blq) {
+                    alert("✅ O aplicativo já está liberado!");
+                }
+            }
+        } catch (e) {}
+    }
+
+    async function carregarConfigBloqueioAdmin() {
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=status_bloqueio_app&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && data.status === "ok") {
+                const txtAdm = document.getElementById('adminMsgBloqueioApp');
+                if (txtAdm && data.mensagem) txtAdm.value = data.mensagem;
+                aplicarEstadoBloqueioNaTela(Boolean(data.bloqueado), data.mensagem || "");
+            }
+        } catch (e) {}
+    }
+
+    async function salvarConfigBloqueioApp(bloquear) {
+        if (!ehAdministrador()) return;
+        if (bloquearClickFantasma('save_lock_app', 500)) return;
+        const msg = document.getElementById('adminMsgBloqueioApp')?.value.trim() || "Atualize o aplicativo Click Control para continuar usando.";
+        if (bloquear && !msg) {
+            alert("Digite a mensagem que aparecerá para os usuários.");
+            return;
+        }
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_configurar_bloqueio_app",
+                    admin_email: usuarioLogado?.email || "",
+                    bloqueado: bloquear,
+                    mensagem: msg
+                })
+            });
+            const data = await res.json();
+            if (data && data.status === "ok") {
+                localStorage.setItem('clickcontrol_app_lock', JSON.stringify({ bloqueado: bloquear, mensagem: msg }));
+                aplicarEstadoBloqueioNaTela(bloquear, msg);
+                alert(bloquear ? "🔒 Aplicativo bloqueado! Todos os usuários verão sua mensagem." : "🔓 Aplicativo liberado para todos os usuários!");
+            } else {
+                alert(data?.message || "Erro ao atualizar bloqueio.");
+            }
+        } catch (e) {
+            alert("Erro de conexão ao salvar configuração de bloqueio.");
+        }
+    }
+
     // Limpeza de caches antigos do navegador antes de iniciar
     if ('caches' in window) {
         caches.keys().then(keys => keys.forEach(k => caches.delete(k))).catch(() => {});
     }
+
+    verificarBloqueioApp(false);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') verificarBloqueioApp(false);
+    });
 
     try {
         const u = localStorage.getItem('clickcontrol_user');
