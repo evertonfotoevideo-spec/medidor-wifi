@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control 1.012 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control 1.018 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1068,7 +1068,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.011</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.018</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1145,11 +1145,12 @@
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('favoritos')">⭐ Favoritos</button>
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
                         <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('testar')">⚡ Testar Velocidade Manual</button>
+                        <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('termos_uso')">📄 Termos de Uso</button>
                         <button type="button" class="user-menu-item hidden" id="homeMenuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                         <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                     </div>
                 </div>
-                <span class="app-version-corner">v1.012</span>
+                <span class="app-version-corner">v1.018</span>
                 </div>
             </div>
 
@@ -1196,11 +1197,12 @@
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('favoritos')">⭐ Favoritos</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('carteira')">💳 Carteira & Pontos</button>
                     <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('testar')">⚡ Testar Velocidade Manual</button>
+                        <button type="button" class="user-menu-item" onclick="abrirOpcaoMenuUsuario('termos_uso')">📄 Termos de Uso</button>
                     <button type="button" class="user-menu-item hidden" id="menuAdminItem" onclick="abrirOpcaoMenuUsuario('admin')">🛡️ Painel Admin</button>
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                 </div>
             </div>
-            <span class="app-version-corner">v1.012</span>
+            <span class="app-version-corner">v1.018</span>
             </div>
         </div>
 
@@ -1297,6 +1299,7 @@
                                 <span class="hidden" id="badgeVerificadoRede" style="background:#dc2626; color:#ffffff; font-size:0.64rem; font-weight:800; padding:2px 7px; border-radius:999px; text-transform:uppercase; width:82px; text-align:center; white-space:nowrap; display:inline-block; flex-shrink:0;">Pendente</span>
                             </div>
                             <div style="font-size: 0.74rem; color: var(--text-muted);" id="mapaQrSub">Clique para abrir o QR Code ou conectar</div>
+                            <div style="font-size: 0.74rem; font-weight: 800; color: #111111; margin-top: 3px;" id="mapaVelocidadeInfo">⬇️ -- Mbps • ⬆️ -- Mbps</div>
                             <div class="hidden" style="font-size: 0.72rem; color: #111111; margin-top: 3px;" id="mapaHorarioInfo"></div>
                         </div>
                         <div style="background:#fef9c3; border:1px solid rgba(17,17,17,0.25); border-radius:8px; padding:4px 8px; text-align:center; flex-shrink:0;">
@@ -1410,9 +1413,8 @@
             <div class="quick-box">
                 <h4>⚡ Cadastro Expresso</h4>
                 <p>Puxe o endereço pelo GPS, leia o QR Code ou escolha da galeria:</p>
-                <div class="quick-actions">
+                <div class="quick-actions" style="grid-template-columns: 1fr;">
                     <button type="button" class="btn-quick" id="btnAcaoGpsToggle" onclick="toggleAutoPreencherGps()">📍 Auto-Preencher</button>
-                    <button type="button" class="btn-quick alt" onclick="abrirOpcoesLerQr()">📷 Ler QR</button>
                 </div>
                 <input type="file" id="inputLerQrCamera" accept="image/*" capture="environment" class="hidden" onchange="lerQrCodeDeImagem(event)">
                 <input type="file" id="inputLerQrGaleria" accept="image/*" class="hidden" onchange="lerQrCodeDeImagem(event)">
@@ -1482,7 +1484,7 @@
                 <label for="cadSsid">Nome da Rede Wi-Fi (SSID) *</label>
                 <div class="gps-row">
                     <input type="text" id="cadSsid" placeholder="Nome exato">
-                    <button type="button" class="btn-gps" style="background:#111111; color:#facc15;" onclick="detectarSsidConectadoAtual(true)">📶 Detectar SSID</button>
+                    <button type="button" class="btn-gps" style="background:#111111; color:#facc15;" onclick="detectarSsidConectadoAtual(true)">📶 Detectar Rede</button>
                 </div>
                 <div class="helper-text" id="statusSsidConectadoCad"></div>
             </div>
@@ -1516,7 +1518,7 @@
             <div class="form-group">
                 <label>Foto do Local / Ambiente (Opcional)</label>
                 <div style="display:flex; gap:6px; margin-bottom:6px;">
-                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="document.getElementById('inputFotoCamera').click()">📷 Câmera</button>
+                    <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="abrirCameraCadastroLocal()">📷 Câmera</button>
                     <button type="button" class="btn-mini" style="flex:1; margin-top:0;" onclick="document.getElementById('inputFotoGaleria').click()">🖼️ Galeria</button>
                 </div>
                 <input type="file" id="inputFotoCamera" accept="image/*" capture="environment" class="hidden" onchange="processarFotoCadastro(event)">
@@ -1539,7 +1541,7 @@
                 </div>
             </div>
 
-            <button type="button" class="btn" id="cadSaveBtn" onclick="cadastrarNovoWifi()">Salvar Novo Wi-Fi (+10 Créditos)</button>
+            <button type="button" class="btn" id="cadSaveBtn" onclick="cadastrarNovoWifi()">Salvar Novo Wi-Fi</button>
             <div class="toast" id="cadToast"></div>
         </div>
 
@@ -1588,6 +1590,13 @@
                 <div class="form-group">
                     <label>Meus Pontos de Wi-Fi Cadastrados</label>
                     <div class="my-wifi-list" id="meusWifisLista"></div>
+                </div>
+            </div>
+
+            <div id="secaoTermosUso" class="hidden">
+                <div class="profile-card" id="conteudoTermosUso">
+                    <div style="font-size:0.86rem; font-weight:800; color:var(--primary); margin-bottom:8px;">📄 Termos de Uso</div>
+                    <div id="textoTermosUso" style="font-size:0.78rem; color:var(--text-main); line-height:1.45; white-space:pre-line;">Adicione aqui o texto dos seus Termos de Uso.</div>
                 </div>
             </div>
 
@@ -1756,14 +1765,18 @@
 
                 <div id="admSecaoBloqueio" class="hidden">
                     <div style="background:#ffffff; border:1.5px solid #111111; border-radius:10px; padding:10px;">
-                        <strong style="font-size:0.84rem; color:var(--primary); display:block; margin-bottom:8px;">🔒 Bloqueio do Aplicativo para Usuários</strong>
+                        <strong style="font-size:0.84rem; color:var(--primary); display:block; margin-bottom:8px;">🔒 Bloqueio para Versões Desatualizadas</strong>
                         <label style="display:flex; align-items:center; gap:8px; font-size:0.8rem; font-weight:800; color:#111111; margin-bottom:8px; cursor:pointer;">
                             <input type="checkbox" id="adminAppBloqueadoCheck" style="width:18px; height:18px;">
-                            <span>Bloquear acesso ao aplicativo para usuários (não-ADM)</span>
+                            <span>Bloquear somente usuários com versões desatualizadas</span>
                         </label>
                         <div class="form-group" style="margin-bottom:8px;">
-                            <label for="adminMsgBloqueio">Mensagem exibida aos usuários ao tentar acessar</label>
-                            <textarea id="adminMsgBloqueio" rows="3" placeholder="Ex: Aplicativo em manutenção. Voltamos em breve!" style="width:100%; border:1px solid var(--border); border-radius:8px; padding:8px; font-size:0.8rem; background:#fef9c3; color:#111111;"></textarea>
+                            <label for="adminVersaoAtualApp">Versão atual permitida (versões menores serão bloqueadas)</label>
+                            <input type="text" id="adminVersaoAtualApp" value="1.018" placeholder="Ex: 1.018">
+                        </div>
+                        <div class="form-group" style="margin-bottom:8px;">
+                            <label for="adminMsgBloqueio">Mensagem exibida para usuários com versão desatualizada</label>
+                            <textarea id="adminMsgBloqueio" rows="3" placeholder="Ex: Seu app está desatualizado. Atualize para continuar usando normalmente." style="width:100%; border:1px solid var(--border); border-radius:8px; padding:8px; font-size:0.8rem; background:#fef9c3; color:#111111;"></textarea>
                         </div>
                         <button type="button" class="btn" id="btnSalvarBloqueioApp" onclick="salvarConfigBloqueioAdmin()">💾 Salvar Status de Bloqueio</button>
                         <div class="toast" id="adminBloqueioToast"></div>
@@ -1779,7 +1792,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "1.012";
+    const APP_VERSION = "1.018";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com"];
 
@@ -1894,7 +1907,7 @@
         if (bloquearClickFantasma('opcao_menu', 350)) return;
         fecharMenuUsuario();
         mudarAba('perfil', true);
-        ['secaoDadosUsuario', 'secaoFavoritos', 'secaoCarteiraPontos', 'secaoMeusWifis', 'adminPanelBox'].forEach(id => {
+        ['secaoDadosUsuario', 'secaoFavoritos', 'secaoCarteiraPontos', 'secaoMeusWifis', 'secaoTermosUso', 'adminPanelBox'].forEach(id => {
             document.getElementById(id).classList.add('hidden');
         });
         const titulos = {
@@ -1902,6 +1915,7 @@
             'favoritos': '⭐ Redes Favoritas',
             'carteira': '💳 Carteira & Pontos',
             'meus_wifis': '📶 Meus Wi-Fis Cadastrados',
+            'termos_uso': '📄 Termos de Uso',
             'admin': '🛡️ Painel Administrador'
         };
         document.getElementById('tituloSecaoUsuario').textContent = titulos[opcao] || '👤 Perfil';
@@ -1923,6 +1937,8 @@
         } else if (opcao === 'meus_wifis') {
             document.getElementById('secaoMeusWifis').classList.remove('hidden');
             renderizarMeusWifis();
+        } else if (opcao === 'termos_uso') {
+            document.getElementById('secaoTermosUso').classList.remove('hidden');
         } else if (opcao === 'admin') {
             document.getElementById('adminPanelBox').classList.remove('hidden');
             mudarAbaAdmin('wifis', true);
@@ -2049,7 +2065,7 @@
         if (ponto.lat && ponto.lng && !isNaN(parseFloat(ponto.lat)) && !isNaN(parseFloat(ponto.lng))) {
             return { lat: parseFloat(ponto.lat), lng: parseFloat(ponto.lng) };
         }
-        const texto = String(ponto.lat_long || ponto.localizacao || ponto.endereco || "");
+        const texto = String(ponto.lat_long || ponto.localizacao || ponto.endereco || ponto.cidade || "");
         const m = texto.match(/(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)/);
         if (m) {
             return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
@@ -2121,8 +2137,17 @@
     let mapaJaCentralizouNoUsuario = false;
     let watchIdMapaUsuario = null;
 
+    function coordenadaValida(lat, lng) {
+        const la = Number(lat);
+        const ln = Number(lng);
+        if (!isFinite(la) || !isFinite(ln)) return false;
+        if (Math.abs(la) < 0.0001 && Math.abs(ln) < 0.0001) return false;
+        if (la < -90 || la > 90 || ln < -180 || ln > 180) return false;
+        return true;
+    }
+
     function salvarUltimaPosicaoUsuario(lat, lng) {
-        if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) return;
+        if (!coordenadaValida(lat, lng)) return;
         userLatAtual = Number(lat);
         userLngAtual = Number(lng);
         try {
@@ -2131,14 +2156,16 @@
     }
 
     function restaurarUltimaPosicaoUsuario() {
-        if (userLatAtual !== null && userLngAtual !== null) return true;
+        if (coordenadaValida(userLatAtual, userLngAtual)) return true;
+        userLatAtual = null;
+        userLngAtual = null;
         try {
             const raw = localStorage.getItem('clickcontrol_last_user_pos');
             if (raw) {
                 const p = JSON.parse(raw);
-                if (p && typeof p.lat === 'number' && typeof p.lng === 'number') {
-                    userLatAtual = p.lat;
-                    userLngAtual = p.lng;
+                if (p && coordenadaValida(p.lat, p.lng)) {
+                    userLatAtual = Number(p.lat);
+                    userLngAtual = Number(p.lng);
                     return true;
                 }
             }
@@ -2389,7 +2416,7 @@
                 timeout: timeoutMs,
                 maximumAge: 15000
             });
-            if (pos && pos.coords) return pos;
+            if (pos && pos.coords && coordenadaValida(pos.coords.latitude, pos.coords.longitude)) return pos;
         } catch (e) {
             try {
                 const capGeo = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Geolocation;
@@ -2398,7 +2425,7 @@
                     timeout: 8000,
                     maximumAge: 60000
                 });
-                if (posLow && posLow.coords) return posLow;
+                if (posLow && posLow.coords && coordenadaValida(posLow.coords.latitude, posLow.coords.longitude)) return posLow;
             } catch (e2) {}
         }
         return null;
@@ -2414,10 +2441,10 @@
                 return;
             }
             navigator.geolocation.getCurrentPosition(
-                (pos) => resolve(pos),
+                (pos) => resolve(pos && pos.coords && coordenadaValida(pos.coords.latitude, pos.coords.longitude) ? pos : null),
                 () => {
                     navigator.geolocation.getCurrentPosition(
-                        (posLow) => resolve(posLow),
+                        (posLow) => resolve(posLow && posLow.coords && coordenadaValida(posLow.coords.latitude, posLow.coords.longitude) ? posLow : null),
                         () => resolve(null),
                         { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
                     );
@@ -2841,7 +2868,6 @@
                 <img src="${gerarUrlImagemQR(ssid, senha, 210)}" style="width:210px;height:210px;background:#fff;padding:8px;border-radius:10px;margin:0 auto 10px;display:block;">
                 <button type="button" onclick="acionarConexaoDiretaWifi('${ssidEsc}', '${senhaEsc}', '${targetId}')" style="background:#facc15;color:#111111;border:none;font-weight:800;font-size:0.85rem;padding:10px;border-radius:8px;cursor:pointer;width:100%;margin-bottom:8px;">⚡ Conectar</button>
                 <div id="avisoConexaoWifiModal" style="display:none;background:#27272a;border:1px solid #facc15;border-radius:8px;padding:8px;font-size:0.75rem;color:#fef08a;margin-bottom:8px;line-height:1.35;"></div>
-                <button type="button" onclick="enviarQrCodeAtual('${ssidEsc}', '${senhaEsc}')" style="background:#2563eb;color:#ffffff;border:none;font-weight:800;font-size:0.82rem;padding:9px;border-radius:8px;cursor:pointer;width:100%;margin-bottom:8px;">📤 Enviar QR Code</button>
                 <button type="button" onclick="fecharModalQrCode()" style="background:#27272a;color:#f8fafc;border:1px solid #3f3f46;font-size:0.8rem;padding:8px;border-radius:8px;cursor:pointer;width:100%;">Fechar</button>
             </div>
         `;
@@ -2859,6 +2885,14 @@
         linkQrAtualMapa = gerarPayloadWifiQR(ponto.ssid, ponto.senha);
         document.getElementById('mapaQrTitle').textContent = `${ponto.local} (Rede: ${ponto.ssid})`;
         document.getElementById('mapaQrSub').textContent = ponto.senha ? `Senha: ${ponto.senha}` : `Rede Aberta`;
+        const velInfoEl = document.getElementById('mapaVelocidadeInfo');
+        if (velInfoEl) {
+            const dVal = Number(ponto.down_mbps) || 0;
+            const uVal = Number(ponto.up_mbps) || 0;
+            velInfoEl.textContent = (dVal > 0 || uVal > 0)
+                ? `⬇️ ${dVal.toFixed(1)} Mbps • ⬆️ ${uVal.toFixed(1)} Mbps`
+                : `🟣 Ainda não testado`;
+        }
         const badgeVer = document.getElementById('badgeVerificadoRede');
         if (badgeVer) {
             badgeVer.classList.toggle('hidden', !ehAdministrador());
@@ -3167,13 +3201,13 @@
         }
     }
 
-    function expandirDetalhesRede(idWifi) {
-        if (bloquearClickFantasma('expandir_rede', 300)) return;
+    function expandirDetalhesRede(idWifi, forcarAbertura = false) {
+        if (!forcarAbertura && bloquearClickFantasma('expandir_rede', 300)) return;
         const detalhesEl = document.getElementById('detalhesRedeExpandida');
         const slot = document.getElementById('slotDetalhes_' + idWifi);
         if (!detalhesEl) return;
 
-        if (slot && slot.contains(detalhesEl) && !detalhesEl.classList.contains('hidden')) {
+        if (!forcarAbertura && slot && slot.contains(detalhesEl) && !detalhesEl.classList.contains('hidden')) {
             minimizarDetalhesRede();
             return;
         }
@@ -3190,7 +3224,10 @@
         }
         detalhesEl.classList.remove('hidden');
         detalhesEl.style.marginTop = "6px";
-        detalhesEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => {
+            const targetScroll = slot?.parentElement || detalhesEl;
+            targetScroll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
     }
 
     function minimizarDetalhesRede() {
@@ -3253,7 +3290,7 @@
         if (statusText) statusText.textContent = "🛑 Teste cancelado pelo usuário.";
     }
 
-    async function iniciarTeste(ev, salvarAutomatico = false) {
+    async function iniciarTeste(ev, salvarAutomatico = false, pularVerificacaoSsid = false) {
         if (ev) {
             ev.preventDefault();
             ev.stopPropagation();
@@ -3272,7 +3309,7 @@
 
         const idWifiTeste = document.getElementById('selectWifi')?.value || document.getElementById('selectWifiMapa')?.value;
         const pontoTeste = listaWifisCache.find(w => w.id === idWifiTeste);
-        if (pontoTeste && pontoTeste.ssid) {
+        if (!pularVerificacaoSsid && pontoTeste && pontoTeste.ssid) {
             statusText.textContent = `🔍 Conferindo se você está conectado em "${pontoTeste.ssid}"...`;
             await solicitarPermissoesWifiELocalizacao(false);
             const confManual = await verificarSsidAntesDeMedir(pontoTeste, 2);
@@ -3348,7 +3385,7 @@
             const numThreadsUp = 3;
             const payloadUp = new Uint8Array(chunkUp);
             const t0Up = performance.now();
-            await Promise.all(Array.from({ length: numThreadsUp }, (_, idx) =>
+            await Promise.all(Array.from({ length: numThreadsUp }, async (_, idx) =>
                 fetch(`https://speed.cloudflare.com/__up?_tu=${idx}_${Date.now()}`, {
                     method: "POST",
                     body: payloadUp,
@@ -3429,6 +3466,18 @@
                 })
             });
             const data = await res.json();
+            if (pontoManual) {
+                const qtdAnt = Number(pontoManual.qtd_testes) || 0;
+                const somaDownAnt = (Number(pontoManual.soma_down) || (Number(pontoManual.down_mbps) || 0) * qtdAnt);
+                const somaUpAnt = (Number(pontoManual.soma_up) || (Number(pontoManual.up_mbps) || 0) * qtdAnt);
+                const novaQtd = qtdAnt + 1;
+                pontoManual.qtd_testes = novaQtd;
+                pontoManual.soma_down = somaDownAnt + ultimoDownMedido;
+                pontoManual.soma_up = somaUpAnt + ultimoUpMedido;
+                pontoManual.down_mbps = Number((pontoManual.soma_down / novaQtd).toFixed(2));
+                pontoManual.up_mbps = Number((pontoManual.soma_up / novaQtd).toFixed(2));
+                localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+            }
             toast.style.display = "block";
             toast.className = "toast";
             toast.textContent = automatico
@@ -3436,8 +3485,11 @@
                 : (data.message || "✅ Resultado salvo na média do ponto! +2 Créditos adicionados.");
             saveBtn.style.display = "none";
             await carregarListaWifis();
+            document.getElementById('selectWifiMapa').value = idWifi;
+            document.getElementById('selectWifi').value = idWifi;
             atualizarCardQrDoMapa(idWifi);
             renderizarAlfinetesNoMapa();
+            renderizarListaRedesMinimizadas();
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast error";
@@ -3463,6 +3515,43 @@
             'sinal_rua': 'cadPillSinalRua'
         };
         document.getElementById(ids[chave]).classList.toggle('active', comodidadesCadastro[chave]);
+    }
+
+    async function abrirCameraCadastroLocal() {
+        try {
+            const capCam = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Camera;
+            if (capCam && typeof capCam.getPhoto === 'function') {
+                const photo = await capCam.getPhoto({
+                    quality: 75,
+                    allowEditing: false,
+                    resultType: 'DataUrl',
+                    source: 'CAMERA',
+                    direction: 'REAR'
+                });
+                if (photo && photo.dataUrl) {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const scale = Math.min(1, 640 / img.width);
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        fotoCadastroBase64 = canvas.toDataURL('image/jpeg', 0.72);
+                        document.getElementById('cadFotoPreviewImg').src = fotoCadastroBase64;
+                        document.getElementById('cadFotoPreviewContainer').classList.remove('hidden');
+                    };
+                    img.src = photo.dataUrl;
+                    return;
+                }
+            }
+        } catch (e) {}
+        const inp = document.getElementById('inputFotoCamera');
+        if (inp) {
+            inp.setAttribute('accept', 'image/*');
+            inp.setAttribute('capture', 'environment');
+            inp.value = '';
+            inp.click();
+        }
     }
 
     function processarFotoCadastro(event) {
@@ -3665,6 +3754,36 @@
         }
     }
 
+    async function buscarEstabelecimentoProximoGps(lat, lng, ruaAlvo = "") {
+        try {
+            const query = `[out:json][timeout:6];(node(around:35,${lat},${lng})["name"]["amenity|shop|tourism|leisure|office|craft"];way(around:35,${lat},${lng})["name"]["amenity|shop|tourism|leisure|office|craft"];);out center 10;`;
+            const resp = await fetch("https://overpass-api.de/api/interpreter", {
+                method: "POST",
+                body: "data=" + encodeURIComponent(query)
+            });
+            const data = await resp.json();
+            if (!data || !Array.isArray(data.elements) || data.elements.length === 0) return "";
+            let melhorNome = "";
+            let menorDist = Infinity;
+            data.elements.forEach(el => {
+                const tags = el.tags || {};
+                const nome = String(tags.name || "").trim();
+                if (!nome) return;
+                const elLat = el.lat !== undefined ? el.lat : el.center?.lat;
+                const elLng = el.lon !== undefined ? el.lon : el.center?.lon;
+                if (elLat === undefined || elLng === undefined) return;
+                const dist = calcularDistanciaKm(Number(lat), Number(lng), Number(elLat), Number(elLng));
+                if (dist < menorDist) {
+                    menorDist = dist;
+                    melhorNome = nome;
+                }
+            });
+            return melhorNome;
+        } catch (e) {
+            return "";
+        }
+    }
+
     async function preencherEnderecoCompletoPorCoords(latNum, lngNum) {
         const lat = Number(latNum).toFixed(6);
         const lng = Number(lngNum).toFixed(6);
@@ -3715,11 +3834,21 @@
                 const ruaComNum = [rua, numero ? `nº ${numero} (aprox.)` : "s/n (aprox.)"].filter(Boolean).join(", ");
                 const endFormatado = [ruaComNum, bairro].filter(Boolean).join(" - ");
                 document.getElementById('cadLocalizacao').value = endFormatado;
-                const nomeLugar = (nomResp && nomResp.name) ? String(nomResp.name).trim() : "";
+                const candNome = (nomResp && (nomResp.name || (nomResp.namedetails && nomResp.namedetails.name)))
+                    || a.amenity || a.shop || a.tourism || a.leisure || a.office || a.craft || a.healthcare || a.building || "";
+                const nomeLugar = String(candNome || "").trim();
                 const ehMesmoQueRua = nomeLugar && rua && (nomeLugar.toLowerCase() === String(rua).trim().toLowerCase() || String(rua).toLowerCase().includes(nomeLugar.toLowerCase()));
-                const tipoPoiValido = nomResp && nomResp.category && !["highway", "place", "boundary", "landuse"].includes(String(nomResp.category).toLowerCase());
-                if (nomeLugar && !ehMesmoQueRua && tipoPoiValido && !document.getElementById('cadNomeLocal').value.trim()) {
-                    document.getElementById('cadNomeLocal').value = nomeLugar;
+                const ehMesmoQueBairro = nomeLugar && bairro && nomeLugar.toLowerCase() === String(bairro).trim().toLowerCase();
+                const tipoPoiValido = !nomResp || !nomResp.category || !["highway", "place", "boundary", "landuse"].includes(String(nomResp.category).toLowerCase());
+                const inputNomeLocal = document.getElementById('cadNomeLocal');
+                if (nomeLugar && !ehMesmoQueRua && !ehMesmoQueBairro && tipoPoiValido && inputNomeLocal && !inputNomeLocal.value.trim()) {
+                    inputNomeLocal.value = nomeLugar;
+                } else if (inputNomeLocal && !inputNomeLocal.value.trim()) {
+                    buscarEstabelecimentoProximoGps(lat, lng, rua).then(estNome => {
+                        if (estNome && !inputNomeLocal.value.trim()) {
+                            inputNomeLocal.value = estNome;
+                        }
+                    }).catch(() => {});
                 }
                 if (status) status.textContent = `✅ Endereço detectado: ${endFormatado}`;
                 return;
@@ -3862,7 +3991,7 @@
             toast.className = "toast";
             toast.textContent = estouConectado
                 ? "✅ Ponto cadastrado! Iniciando teste de velocidade da rede conectada..."
-                : (data.message || "✅ Ponto salvo com sucesso! +10 Créditos (alfinete roxo até o 1º teste).");
+                : (data.message || "✅ Ponto salvo com sucesso! (alfinete roxo até o 1º teste).");
             pararAutoPreencherGps();
             buscarHorarioGoogleMapsPosCadastro(novoPontoLocal.id, local, localizacao, cidade).catch(() => {});
             await carregarListaWifis();
@@ -3873,9 +4002,11 @@
             const cNovo = parseCoordenadasPonto(novoPontoLocal);
             if (estouConectado) {
                 setTimeout(() => {
+                    document.getElementById('selectWifiMapa').value = novoPontoLocal.id;
+                    document.getElementById('selectWifi').value = novoPontoLocal.id;
                     atualizarBannerTesteAtual(novoPontoLocal.id);
                     mudarAba('testar', true);
-                    setTimeout(() => iniciarTeste(null, true), 500);
+                    setTimeout(() => iniciarTeste(null, true, true), 500);
                 }, 700);
             } else {
                 setTimeout(() => {
@@ -3889,7 +4020,7 @@
             toast.textContent = "Erro ao salvar novo ponto.";
         } finally {
             btn.disabled = false;
-            btn.textContent = "Salvar Novo Wi-Fi (+10 Créditos)";
+            btn.textContent = "Salvar Novo Wi-Fi";
         }
     }
 
@@ -4050,13 +4181,23 @@
     }
 
     async function salvarEdicaoAdminWifi() {
-        if (bloquearClickFantasma('salvar_admin', 600)) return;
-        const idWifi = document.getElementById('adminSelectWifi').value;
+        const idWifi = String(document.getElementById('adminSelectWifi')?.value || "").trim();
         const toast = document.getElementById('adminToast');
         const btn = document.getElementById('btnSalvarAdminWifi');
         if (!idWifi) return;
 
+        const novoLocal = document.getElementById('adminWifiLocal').value.trim();
+        const novoEnd = document.getElementById('adminWifiEndereco').value.trim();
+        const novaCid = document.getElementById('adminWifiCidade').value.trim();
+        const novoSsid = document.getElementById('adminWifiSsid').value.trim();
+        const novaSenha = document.getElementById('adminWifiSenha').value.trim();
+        const novoHor = document.getElementById('adminWifiHorario').value.trim();
+        const novoDown = Number(document.getElementById('adminWifiDown').value) || 0;
+        const novoUp = Number(document.getElementById('adminWifiUp').value) || 0;
         const coms = Object.keys(comodidadesAdmin).filter(k => comodidadesAdmin[k]).join(", ");
+        const pontoAtual = listaWifisCache.find(w => String(w.id).trim() === idWifi);
+        const verifAtual = pontoAtual?.verificado_admin || "Pendente";
+
         btn.disabled = true;
         btn.textContent = "Salvando...";
 
@@ -4070,23 +4211,41 @@
                     admin_email: usuarioLogado?.email || "",
                     id_usuario: usuarioLogado?.email || "",
                     id_wifi: idWifi,
-                    nome_local: document.getElementById('adminWifiLocal').value.trim(),
-                    lat_long: document.getElementById('adminWifiEndereco').value.trim(),
-                    cidade_uf: document.getElementById('adminWifiCidade').value.trim(),
-                    ssid_rede: document.getElementById('adminWifiSsid').value.trim(),
-                    senha: document.getElementById('adminWifiSenha').value.trim(),
-                    horario_sinal: document.getElementById('adminWifiHorario').value.trim(),
-                    down_mbps: Number(document.getElementById('adminWifiDown').value) || 0,
-                    up_mbps: Number(document.getElementById('adminWifiUp').value) || 0,
+                    nome_local: novoLocal,
+                    lat_long: novoEnd,
+                    cidade_uf: novaCid,
+                    ssid_rede: novoSsid,
+                    senha: novaSenha,
+                    horario_sinal: novoHor,
+                    down_mbps: novoDown,
+                    up_mbps: novoUp,
                     comodidades: coms,
-                    verificado_admin: (listaWifisCache.find(w => w.id === idWifi)?.verificado_admin) || "Pendente"
+                    verificado_admin: verifAtual
                 })
             });
             const data = await res.json();
+            if (pontoAtual) {
+                pontoAtual.local = novoLocal;
+                pontoAtual.nome_local = novoLocal;
+                pontoAtual.lat_long = novoEnd;
+                pontoAtual.localizacao = novoEnd;
+                pontoAtual.cidade = novaCid;
+                pontoAtual.cidade_uf = novaCid;
+                pontoAtual.ssid = novoSsid;
+                pontoAtual.ssid_rede = novoSsid;
+                pontoAtual.senha = novaSenha;
+                pontoAtual.horario_sinal = novoHor;
+                pontoAtual.down_mbps = novoDown;
+                pontoAtual.up_mbps = novoUp;
+                pontoAtual.comodidades = coms;
+                localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+            }
             toast.style.display = "block";
             toast.className = "toast";
-            toast.textContent = data.message || "✅ Ponto atualizado pelo Administrador!";
-            await carregarListaWifis();
+            toast.textContent = (data && data.message) ? data.message : "✅ Ponto atualizado pelo Administrador!";
+            popularSelectWifis();
+            renderizarAlfinetesNoMapa();
+            renderizarListaRedesMinimizadas();
             popularSelectAdminWifis();
         } catch (e) {
             toast.style.display = "block";
@@ -4099,11 +4258,10 @@
     }
 
     async function excluirPontoAdminWifi() {
-        if (bloquearClickFantasma('excluir_admin', 600)) return;
-        const idWifi = document.getElementById('adminSelectWifi').value;
+        const idWifi = String(document.getElementById('adminSelectWifi')?.value || "").trim();
         const toast = document.getElementById('adminToast');
         if (!idWifi) return;
-        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        const ponto = listaWifisCache.find(w => String(w.id).trim() === idWifi);
         if (!confirm(`Tem certeza que deseja excluir o ponto "${ponto?.local || ""}"?`)) return;
 
         try {
@@ -4119,10 +4277,14 @@
                 })
             });
             const data = await res.json();
+            listaWifisCache = listaWifisCache.filter(w => String(w.id).trim() !== idWifi);
+            localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
             toast.style.display = "block";
             toast.className = "toast";
-            toast.textContent = data.message || "🗑️ Ponto excluído com sucesso.";
-            await carregarListaWifis();
+            toast.textContent = (data && data.message) ? data.message : "🗑️ Ponto excluído com sucesso.";
+            popularSelectWifis();
+            renderizarAlfinetesNoMapa();
+            renderizarListaRedesMinimizadas();
             popularSelectAdminWifis();
         } catch (e) {
             toast.style.display = "block";
@@ -4287,7 +4449,8 @@
             acao: acaoAtual,
             id_usuario: email,
             senha: senha,
-            nome: nome
+            nome: nome,
+            versao_app: APP_VERSION
         };
 
         try {
@@ -4320,6 +4483,11 @@
                 });
                 const textoGet = await resGet.text();
                 data = JSON.parse(textoGet);
+            }
+
+            if (data && data.status === "blocked") {
+                exibirModalContaBloqueada(data.message);
+                return;
             }
 
             if (data && data.status === "ok") {
@@ -4628,7 +4796,11 @@
                     }
                     return norm;
                 }).filter(w => {
-                    const chaveUnica = `${String(w.local || "").toLowerCase().trim()}|${String(w.ssid || "").toLowerCase().trim()}|${String(w.cidade || "").toLowerCase().trim()}`;
+                    const l = String(w.local || "").toLowerCase().trim();
+                    const s = String(w.ssid || "").toLowerCase().trim();
+                    const c = String(w.cidade || "").toLowerCase().trim();
+                    if (!l && !s && !c) return true;
+                    const chaveUnica = `${l}|${s}|${c}`;
                     if (chavesVistas.has(chaveUnica)) return false;
                     chavesVistas.add(chaveUnica);
                     return true;
@@ -4738,11 +4910,15 @@
 
     function abrirDadosRedeDoPopup(idWifi) {
         if (bloquearClickFantasma('dados_popup', 350)) return;
+        const selEst = document.getElementById('selectEstadoDadosRede');
+        const selCid = document.getElementById('selectCidadeOffline');
+        if (selEst) selEst.value = "";
+        if (selCid) selCid.value = "";
         const sel = document.getElementById('selectWifiMapa');
         if (sel) sel.value = idWifi;
         document.getElementById('selectWifi').value = idWifi;
         mudarAba('dadosRede', true);
-        expandirDetalhesRede(idWifi);
+        expandirDetalhesRede(idWifi, true);
     }
 
     async function validarStatusAoVivo(tipo) {
@@ -4835,12 +5011,8 @@
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
         if (!novaSenha || !ponto) return;
-        ponto.senha = novaSenha;
-        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
-        atualizarCardQrDoMapa(idWifi);
-        renderizarAlfinetesNoMapa();
-        document.getElementById('mapaLiveStatus').textContent = "🔑 Senha atualizada por você";
         fecharModalDinamico('modalAcaoRede');
+        alert("✅ Nova senha enviada para o administrador!");
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -4895,11 +5067,11 @@
             nome_local: ponto.local,
             cidade_uf: ponto.cidade || "",
             descricao: resumo,
-            usuario: usuarioLogado?.email || "Anônimo",
-            data: new Date().toLocaleString("pt-BR")
+            usuario: usuarioLogado?.email || "Usuário",
+            data: new Date().toLocaleString("pt-BR"),
+            status_resolucao: "Pendente",
+            arquivado: ""
         });
-        fecharModalDinamico('modalAcaoRede');
-        alert("✅ Sugestão enviada para o administrador!");
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -4916,51 +5088,53 @@
                 })
             });
         } catch (e) {}
+        fecharModalDinamico('modalAcaoRede');
+        alert("✅ Sugestão enviada ao administrador!");
     }
 
     function abrirModalRelatarProblema() {
-        if (bloquearClickFantasma('modal_problema', 350)) return;
+        if (bloquearClickFantasma('modal_prob', 350)) return;
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
         if (!ponto) return;
         criarModalDinamico('modalAcaoRede', `
             <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:360px;width:100%;color:#111111;">
-                <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">⚠️ Relatar Problema</div>
-                <div style="font-size:0.76rem;color:#3f3f46;margin-bottom:10px;">Ponto: <strong>${ponto.local}</strong></div>
-                <textarea id="inputTextoProblema" rows="4" placeholder="Descreva o problema encontrado neste ponto Wi-Fi..." style="width:100%;padding:10px;border:1px solid #111111;border-radius:8px;font-size:0.84rem;margin-bottom:10px;background:#fff;"></textarea>
+                <div style="font-size:0.95rem;font-weight:900;margin-bottom:4px;">⚠️ Relatar Problema no Ponto</div>
+                <div style="font-size:0.76rem;color:#3f3f46;margin-bottom:8px;">${ponto.local} (${ponto.cidade || ""})</div>
+                <select id="tipoProblemaModal" style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;margin-bottom:8px;background:#fff;">
+                    <option value="Sem internet / fora do ar">Sem internet / fora do ar</option>
+                    <option value="Senha incorreta">Senha incorreta</option>
+                    <option value="Sinal muito fraco / instável">Sinal muito fraco / instável</option>
+                    <option value="Local fechado ou não existe">Local fechado ou não existe</option>
+                    <option value="Outro problema">Outro problema</option>
+                </select>
+                <textarea id="descProblemaModal" rows="3" placeholder="Descreva o problema encontrado..." style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;margin-bottom:10px;background:#fff;"></textarea>
                 <div style="display:flex;gap:8px;">
-                    <button type="button" onclick="enviarRelatoProblema()" style="flex:2;background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">🚨 Enviar Problema</button>
+                    <button type="button" onclick="enviarRelatoProblemaModal()" style="flex:2;background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">🚨 Enviar Relato</button>
                     <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="flex:1;background:#e4e4e7;color:#111111;border:1px solid #111111;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">Cancelar</button>
                 </div>
             </div>
         `);
     }
 
-    function salvarProblemaLocalCache(item) {
-        try {
-            const lista = JSON.parse(localStorage.getItem('clickcontrol_problemas_cache') || '[]');
-            lista.unshift(item);
-            localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(lista.slice(0, 100)));
-        } catch (e) {}
-    }
-
-    async function enviarRelatoProblema() {
-        const desc = document.getElementById('inputTextoProblema')?.value.trim();
+    async function enviarRelatoProblemaModal() {
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
-        if (!desc || !ponto) return;
+        const tipoProb = document.getElementById('tipoProblemaModal')?.value || "Problema";
+        const descProb = document.getElementById('descProblemaModal')?.value.trim() || tipoProb;
+        if (!ponto) return;
         salvarProblemaLocalCache({
             id: "PRB-" + Date.now(),
-            tipo: "Problema Relatado",
+            tipo: tipoProb,
             id_wifi: idWifi,
             nome_local: ponto.local,
             cidade_uf: ponto.cidade || "",
-            descricao: desc,
-            usuario: usuarioLogado?.email || "Anônimo",
-            data: new Date().toLocaleString("pt-BR")
+            descricao: descProb,
+            usuario: usuarioLogado?.email || "Usuário",
+            data: new Date().toLocaleString("pt-BR"),
+            status_resolucao: "Pendente",
+            arquivado: ""
         });
-        fecharModalDinamico('modalAcaoRede');
-        alert("✅ Problema registrado e enviado para análise!");
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -4968,149 +5142,115 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
                     acao: "relatar_problema",
-                    tipo: "Problema Relatado",
+                    tipo: tipoProb,
                     id_wifi: idWifi,
                     nome_local: ponto.local,
                     cidade_uf: ponto.cidade || "",
-                    descricao: desc,
+                    descricao: descProb,
                     id_usuario: usuarioLogado?.email || ""
                 })
             });
         } catch (e) {}
+        fecharModalDinamico('modalAcaoRede');
+        alert("✅ Problema relatado ao administrador!");
     }
 
-    function obterFotosExtrasDoPonto(idWifi) {
+    function obterFotosExtrasLocal(idWifi) {
         try {
-            const mapa = JSON.parse(localStorage.getItem('clickcontrol_fotos_pontos') || '{}');
-            return Array.isArray(mapa[idWifi]) ? mapa[idWifi] : [];
+            const obj = JSON.parse(localStorage.getItem('clickcontrol_fotos_locais') || '{}');
+            return Array.isArray(obj[idWifi]) ? obj[idWifi] : [];
         } catch (e) { return []; }
     }
 
-    function salvarFotoExtraDoPonto(idWifi, fotoDataUrl) {
-        try {
-            const mapa = JSON.parse(localStorage.getItem('clickcontrol_fotos_pontos') || '{}');
-            if (!Array.isArray(mapa[idWifi])) mapa[idWifi] = [];
-            if (!mapa[idWifi].includes(fotoDataUrl)) {
-                mapa[idWifi].push(fotoDataUrl);
-            }
-            localStorage.setItem('clickcontrol_fotos_pontos', JSON.stringify(mapa));
-        } catch (e) {}
+    function salvarFotoExtraLocal(idWifi, base64) {
+        const obj = JSON.parse(localStorage.getItem('clickcontrol_fotos_locais') || '{}');
+        if (!Array.isArray(obj[idWifi])) obj[idWifi] = [];
+        obj[idWifi].push(base64);
+        localStorage.setItem('clickcontrol_fotos_locais', JSON.stringify(obj));
     }
 
     function obterTodasFotosDoPonto(ponto) {
-        if (!ponto) return [];
         const fotos = [];
-        const base = String(ponto.foto_base64 || "").trim();
-        if (base) fotos.push(base);
-        const extras = obterFotosExtrasDoPonto(ponto.id);
-        extras.forEach(src => {
-            if (src && !fotos.includes(src)) fotos.push(src);
-        });
+        if (ponto?.foto_base64) fotos.push(ponto.foto_base64);
+        const extras = obterFotosExtrasLocal(ponto?.id);
+        extras.forEach(f => { if (f && !fotos.includes(f)) fotos.push(f); });
         return fotos;
     }
 
     function adicionarFotoAoLocalAtual(event) {
-        const file = event?.target?.files?.[0];
+        const file = event.target.files[0];
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         if (!file || !idWifi) return;
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             const img = new Image();
-            img.onload = () => {
+            img.onload = async () => {
                 const canvas = document.createElement('canvas');
-                const scale = Math.min(1, 720 / Math.max(img.width || 1, img.height || 1));
-                canvas.width = Math.max(1, Math.round(img.width * scale));
-                canvas.height = Math.max(1, Math.round(img.height * scale));
+                const scale = Math.min(1, 640 / img.width);
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
                 canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                const fotoComprimida = canvas.toDataURL('image/jpeg', 0.72);
-                salvarFotoExtraDoPonto(idWifi, fotoComprimida);
-                const ponto = listaWifisCache.find(w => w.id === idWifi);
-                if (ponto && !ponto.foto_base64) {
-                    ponto.foto_base64 = fotoComprimida;
-                    localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
-                }
+                const b64 = canvas.toDataURL('image/jpeg', 0.72);
+                salvarFotoExtraLocal(idWifi, b64);
                 atualizarCardQrDoMapa(idWifi);
-                alert("📷 Foto adicionada ao local!");
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: "POST",
+                        redirect: "follow",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({
+                            acao: "adicionar_foto_wifi",
+                            id_wifi: idWifi,
+                            foto_base64: b64,
+                            id_usuario: usuarioLogado?.email || ""
+                        })
+                    });
+                } catch (err) {}
+                alert("✅ Foto adicionada à galeria do local!");
             };
             img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-        event.target.value = "";
     }
 
-    function abrirModalGaleriaPonto(indiceInicial = 0) {
+    function abrirModalGaleriaPonto(idxInicial = 0) {
         if (bloquearClickFantasma('modal_galeria', 350)) return;
         const idWifi = document.getElementById('selectWifiMapa')?.value;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
         const fotos = obterTodasFotosDoPonto(ponto);
-        if (!fotos.length) {
-            alert("Este ponto ainda não possui fotos cadastradas.");
+        if (fotos.length === 0) {
+            alert("Este local ainda não possui fotos. Toque em 📷 Foto para adicionar!");
             return;
         }
-        const safeIdx = Math.max(0, Math.min(fotos.length - 1, indiceInicial));
-        criarModalDinamico('modalGaleriaPonto', `
-            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:14px;max-width:420px;width:100%;color:#f8fafc;text-align:center;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                    <strong style="color:#facc15;font-size:0.9rem;">🖼️ Fotos do Local (${safeIdx + 1}/${fotos.length})</strong>
-                    <button type="button" onclick="fecharModalDinamico('modalGaleriaPonto')" style="background:#27272a;color:#fff;border:1px solid #52525b;border-radius:6px;padding:4px 9px;font-size:0.75rem;cursor:pointer;">✕</button>
+        const safeIdx = Math.max(0, Math.min(fotos.length - 1, Number(idxInicial) || 0));
+        criarModalDinamico('modalAcaoRede', `
+            <div style="background:#141416;border:2px solid #facc15;border-radius:16px;padding:14px;max-width:380px;width:100%;color:#fff;text-align:center;">
+                <div style="font-size:0.9rem;font-weight:900;color:#facc15;margin-bottom:8px;">🖼️ Fotos do Local (${fotos.length})</div>
+                <img id="imgGaleriaAmpliada" src="${fotos[safeIdx]}" style="width:100%;max-height:260px;object-fit:contain;border-radius:10px;background:#000;margin-bottom:10px;">
+                <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;">
+                    ${fotos.map((src, i) => `<img src="${src}" onclick="document.getElementById('imgGaleriaAmpliada').src=this.src" style="width:60px;height:46px;object-fit:cover;border-radius:6px;border:1px solid #facc15;cursor:pointer;flex-shrink:0;">`).join("")}
                 </div>
-                <img id="imgGaleriaAmpliada" src="${fotos[safeIdx]}" style="width:100%;max-height:300px;object-fit:contain;border-radius:10px;background:#000;margin-bottom:10px;">
-                <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;">
-                    ${fotos.map((src, i) => `<img src="${src}" onclick="document.getElementById('imgGaleriaAmpliada').src='${src}'" style="width:58px;height:46px;object-fit:cover;border-radius:6px;border:2px solid ${i === safeIdx ? '#facc15' : '#3f3f46'};cursor:pointer;flex-shrink:0;">`).join("")}
-                </div>
-                <button type="button" onclick="fecharModalDinamico('modalGaleriaPonto')" style="width:100%;background:#facc15;color:#111;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">Fechar Galeria</button>
+                <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="width:100%;background:#facc15;color:#111;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">Fechar Galeria</button>
             </div>
         `);
     }
 
-    let fotosComentarioRascunho = [];
-
-    function obterComentariosLocalPonto(idWifi) {
-        try {
-            const mapa = JSON.parse(localStorage.getItem('clickcontrol_comentarios_pontos') || '{}');
-            return Array.isArray(mapa[idWifi]) ? mapa[idWifi] : [];
-        } catch (e) { return []; }
-    }
-
-    function salvarComentarioLocalPonto(idWifi, comentarioObj) {
-        try {
-            const mapa = JSON.parse(localStorage.getItem('clickcontrol_comentarios_pontos') || '{}');
-            if (!Array.isArray(mapa[idWifi])) mapa[idWifi] = [];
-            mapa[idWifi].unshift(comentarioObj);
-            localStorage.setItem('clickcontrol_comentarios_pontos', JSON.stringify(mapa));
-        } catch (e) {}
-    }
-
-    function renderizarPreviewFotosComentario() {
-        const box = document.getElementById('previewFotosComentario');
-        if (!box) return;
-        box.innerHTML = fotosComentarioRascunho.map((src, idx) => `
-            <div style="position:relative;width:54px;height:44px;">
-                <img src="${src}" style="width:54px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #111;">
-                <button type="button" onclick="removerFotoComentarioRascunho(${idx})" style="position:absolute;top:-5px;right:-5px;background:#dc2626;color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:0.65rem;line-height:1;cursor:pointer;">×</button>
-            </div>
-        `).join("");
-    }
-
-    function removerFotoComentarioRascunho(idx) {
-        fotosComentarioRascunho.splice(idx, 1);
-        renderizarPreviewFotosComentario();
-    }
+    let fotosComentarioPendentes = [];
 
     function adicionarFotoComentario(event) {
-        const files = Array.from(event?.target?.files || []);
+        const files = Array.from(event.target.files || []);
         if (!files.length) return;
-        files.slice(0, 4 - fotosComentarioRascunho.length).forEach(file => {
+        files.forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const scale = Math.min(1, 640 / Math.max(img.width || 1, img.height || 1));
-                    canvas.width = Math.max(1, Math.round(img.width * scale));
-                    canvas.height = Math.max(1, Math.round(img.height * scale));
+                    const scale = Math.min(1, 640 / img.width);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    fotosComentarioRascunho.push(canvas.toDataURL('image/jpeg', 0.7));
+                    fotosComentarioPendentes.push(canvas.toDataURL('image/jpeg', 0.72));
                     renderizarPreviewFotosComentario();
                 };
                 img.src = e.target.result;
@@ -5120,37 +5260,67 @@
         event.target.value = "";
     }
 
+    function renderizarPreviewFotosComentario() {
+        const wrap = document.getElementById('previewFotosComentario');
+        if (!wrap) return;
+        wrap.innerHTML = fotosComentarioPendentes.map((src, i) => `
+            <div style="position:relative;display:inline-block;">
+                <img src="${src}" style="width:56px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #111;">
+                <button type="button" onclick="removerFotoComentarioPendente(${i})" style="position:absolute;top:-5px;right:-5px;background:#dc2626;color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:0.65rem;font-weight:900;cursor:pointer;">×</button>
+            </div>
+        `).join("");
+    }
+
+    function removerFotoComentarioPendente(idx) {
+        fotosComentarioPendentes.splice(idx, 1);
+        renderizarPreviewFotosComentario();
+    }
+
+    function obterComentariosLocais(idWifi) {
+        try {
+            const obj = JSON.parse(localStorage.getItem('clickcontrol_comentarios_locais') || '{}');
+            return Array.isArray(obj[idWifi]) ? obj[idWifi] : [];
+        } catch (e) { return []; }
+    }
+
+    function salvarComentarioLocalCache(idWifi, item) {
+        const obj = JSON.parse(localStorage.getItem('clickcontrol_comentarios_locais') || '{}');
+        if (!Array.isArray(obj[idWifi])) obj[idWifi] = [];
+        obj[idWifi].unshift(item);
+        localStorage.setItem('clickcontrol_comentarios_locais', JSON.stringify(obj));
+    }
+
     function renderizarComentariosDoPonto(idWifi) {
         const listaEl = document.getElementById('listaComentariosLocal');
         const contEl = document.getElementById('contadorComentariosLocal');
-        if (!listaEl || !idWifi) return;
-        const comentarios = obterComentariosLocalPonto(idWifi);
-        if (contEl) contEl.textContent = `${comentarios.length} comentário(s)`;
-        if (!comentarios.length) {
-            listaEl.innerHTML = `<div style="font-size:0.74rem;color:var(--text-muted);text-align:center;padding:8px;">Ainda não há comentários neste local. Seja o primeiro a avaliar!</div>`;
+        if (!listaEl) return;
+        const itens = obterComentariosLocais(idWifi);
+        if (contEl) contEl.textContent = `${itens.length} comentário(s)`;
+        if (itens.length === 0) {
+            listaEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:0.75rem;padding:10px;">Ainda não há comentários neste local. Seja o primeiro a avaliar!</div>`;
             return;
         }
-        listaEl.innerHTML = comentarios.map(c => `
-            <div style="background:#fef9c3;border:1px solid rgba(17,17,17,0.22);border-radius:8px;padding:8px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.7rem;color:#3f3f46;margin-bottom:4px;">
-                    <strong>👤 ${c.autor || "Usuário"}</strong>
-                    <span>${c.data || ""}</span>
+        listaEl.innerHTML = itens.map(c => `
+            <div style="background:#fef9c3;border:1px solid rgba(17,17,17,0.25);border-radius:10px;padding:8px 10px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                    <strong style="font-size:0.76rem;color:#111111;">${c.autor || "Usuário"}</strong>
+                    <span style="font-size:0.68rem;color:#52525b;">${c.data || ""}</span>
                 </div>
-                <div style="font-size:0.78rem;color:#111111;line-height:1.35;">${c.texto || ""}</div>
-                ${Array.isArray(c.fotos) && c.fotos.length ? `
+                ${c.texto ? `<div style="font-size:0.78rem;color:#111111;line-height:1.35;">${c.texto}</div>` : ""}
+                ${Array.isArray(c.fotos) && c.fotos.length > 0 ? `
                     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
-                        ${c.fotos.map(src => `<img src="${src}" onclick="abrirFotoComentarioAmpliada('${src}')" style="width:64px;height:50px;object-fit:cover;border-radius:6px;border:1px solid #111;cursor:pointer;">`).join("")}
+                        ${c.fotos.map(f => `<img src="${f}" onclick="abrirImagemAmpliada('${f}')" style="width:68px;height:52px;object-fit:cover;border-radius:6px;border:1px solid #111;cursor:pointer;">`).join("")}
                     </div>
                 ` : ""}
             </div>
         `).join("");
     }
 
-    function abrirFotoComentarioAmpliada(src) {
-        criarModalDinamico('modalFotoComentario', `
+    function abrirImagemAmpliada(src) {
+        criarModalDinamico('modalAcaoRede', `
             <div style="background:#141416;border:2px solid #facc15;border-radius:14px;padding:12px;max-width:380px;width:100%;text-align:center;">
-                <img src="${src}" style="width:100%;max-height:340px;object-fit:contain;border-radius:8px;margin-bottom:10px;">
-                <button type="button" onclick="fecharModalDinamico('modalFotoComentario')" style="width:100%;background:#facc15;color:#111;border:none;border-radius:8px;padding:8px;font-weight:800;cursor:pointer;">Fechar</button>
+                <img src="${src}" style="width:100%;max-height:70vh;object-fit:contain;border-radius:8px;margin-bottom:10px;">
+                <button type="button" onclick="fecharModalDinamico('modalAcaoRede')" style="width:100%;background:#facc15;color:#111;border:none;border-radius:8px;padding:9px;font-weight:800;cursor:pointer;">Fechar</button>
             </div>
         `);
     }
@@ -5158,25 +5328,31 @@
     async function enviarComentarioComFotos() {
         if (bloquearClickFantasma('enviar_comentario', 450)) return;
         const idWifi = document.getElementById('selectWifiMapa')?.value;
-        const textarea = document.getElementById('inputComentarioLocal');
-        const texto = (textarea?.value || "").trim();
+        const txtEl = document.getElementById('inputComentarioLocal');
+        const texto = (txtEl?.value || "").trim();
         if (!idWifi) return;
-        if (!texto && fotosComentarioRascunho.length === 0) {
+        if (!texto && fotosComentarioPendentes.length === 0) {
             alert("Escreva um comentário ou anexe uma foto antes de publicar.");
             return;
         }
-        const novoCom = {
+        const novoItem = {
             id: "CMT-" + Date.now(),
             autor: usuarioLogado?.nome || usuarioLogado?.email || "Usuário",
-            texto: texto,
-            fotos: [...fotosComentarioRascunho],
+            email: usuarioLogado?.email || "",
+            texto,
+            fotos: [...fotosComentarioPendentes],
             data: new Date().toLocaleString("pt-BR")
         };
-        salvarComentarioLocalPonto(idWifi, novoCom);
-        if (textarea) textarea.value = "";
-        fotosComentarioRascunho = [];
+        salvarComentarioLocalCache(idWifi, novoItem);
+        if (Array.isArray(novoItem.fotos) && novoItem.fotos.length > 0) {
+            novoItem.fotos.forEach(f => salvarFotoExtraLocal(idWifi, f));
+            atualizarCardQrDoMapa(idWifi);
+        } else {
+            renderizarComentariosDoPonto(idWifi);
+        }
+        txtEl.value = "";
+        fotosComentarioPendentes = [];
         renderizarPreviewFotosComentario();
-        renderizarComentariosDoPonto(idWifi);
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
@@ -5186,78 +5362,54 @@
                     acao: "comentar_wifi",
                     id_wifi: idWifi,
                     id_usuario: usuarioLogado?.email || "",
-                    autor: novoCom.autor,
+                    autor: novoItem.autor,
                     comentario: texto,
-                    fotos_count: novoCom.fotos.length
+                    fotos: novoItem.fotos
                 })
             });
         } catch (e) {}
     }
 
+    let abaAdminAtiva = 'wifis';
+    let filtroNotifAdmin = 'ativas';
     let usuariosAdminCache = [];
     let problemasAdminCache = [];
-    let notificacoesAdminCache = [];
-    let abaAdminAtiva = 'wifis';
-    let filtroNotificacoesAdminModo = 'ativas';
-
-    function obterEstadoNotificacoesLocal() {
-        try {
-            return JSON.parse(localStorage.getItem('clickcontrol_admin_notif_estado') || '{}');
-        } catch (e) { return {}; }
-    }
-
-    function salvarEstadoNotificacoesLocal(estadoObj) {
-        try {
-            localStorage.setItem('clickcontrol_admin_notif_estado', JSON.stringify(estadoObj));
-        } catch (e) {}
-    }
+    let configBloqueioCache = {
+        bloqueado: false,
+        versao_atual: "1.014",
+        mensagem: "Seu aplicativo está desatualizado. Atualize para a versão mais recente para continuar usando."
+    };
 
     function mudarAbaAdmin(aba, ignorarTrava = false) {
         if (!ignorarTrava && bloquearClickFantasma('adm_aba_' + aba, 250)) return;
         abaAdminAtiva = aba;
-        const mapa = {
-            'wifis': { sec: 'admSecaoWifis', btn: 'admTabWifisBtn' },
-            'usuarios': { sec: 'admSecaoUsuarios', btn: 'admTabUsuariosBtn' },
-            'problemas': { sec: 'admSecaoProblemas', btn: 'admTabProblemasBtn' },
-            'notificacoes': { sec: 'admSecaoNotificacoes', btn: 'admTabNotificacoesBtn' },
-            'bloqueio': { sec: 'admSecaoBloqueio', btn: 'admTabBloqueioBtn' }
+        const mapaSecoes = {
+            'wifis': 'admSecaoWifis',
+            'usuarios': 'admSecaoUsuarios',
+            'problemas': 'admSecaoProblemas',
+            'notificacoes': 'admSecaoNotificacoes',
+            'bloqueio': 'admSecaoBloqueio'
         };
-        Object.keys(mapa).forEach(k => {
-            document.getElementById(mapa[k].sec)?.classList.toggle('hidden', k !== aba);
-            document.getElementById(mapa[k].btn)?.classList.toggle('active', k === aba);
+        const mapaBotoes = {
+            'wifis': 'admTabWifisBtn',
+            'usuarios': 'admTabUsuariosBtn',
+            'problemas': 'admTabProblemasBtn',
+            'notificacoes': 'admTabNotificacoesBtn',
+            'bloqueio': 'admTabBloqueioBtn'
+        };
+        Object.keys(mapaSecoes).forEach(k => {
+            document.getElementById(mapaSecoes[k])?.classList.toggle('hidden', k !== aba);
+            document.getElementById(mapaBotoes[k])?.classList.toggle('active', k === aba);
         });
         if (aba === 'usuarios') carregarUsuariosAdmin();
-        if (aba === 'problemas') {
-            renderizarRelatorioGeralAdmin();
-            renderizarListaProblemasAdmin();
-        }
-        if (aba === 'notificacoes') {
-            renderizarListaNotificacoesAdmin();
-        }
-        if (aba === 'bloqueio') {
-            carregarConfigBloqueioAdmin();
-        }
+        if (aba === 'problemas' || aba === 'notificacoes') atualizarTudoPainelAdmin();
+        if (aba === 'bloqueio') carregarConfigBloqueioAdmin();
     }
 
-    function alternarFiltroNotificacoesAdmin(modo) {
-        filtroNotificacoesAdminModo = modo;
-        const bAt = document.getElementById('btnFiltroNotifAtivas');
-        const bAr = document.getElementById('btnFiltroNotifArquivadas');
-        if (bAt) {
-            bAt.style.background = modo === 'ativas' ? '#111111' : '#e4e4e7';
-            bAt.style.color = modo === 'ativas' ? '#facc15' : '#111111';
-        }
-        if (bAr) {
-            bAr.style.background = modo === 'arquivadas' ? '#111111' : '#e4e4e7';
-            bAr.style.color = modo === 'arquivadas' ? '#facc15' : '#111111';
-        }
-        renderizarListaNotificacoesAdmin();
-    }
-
-    function atualizarBotaoVerificadoAdminUI(statusVerif) {
+    function atualizarBotaoVerificadoAdminUI(status) {
         const btn = document.getElementById('btnToggleVerificadoAdminWifi');
         if (!btn) return;
-        const isVerif = String(statusVerif || "").toLowerCase() === "verificado";
+        const isVerif = String(status || "").toLowerCase() === "verificado";
         btn.textContent = isVerif ? "🟢 Verificado" : "🔴 Pendente";
         btn.style.background = isVerif ? "#16a34a" : "#dc2626";
         btn.style.color = "#ffffff";
@@ -5266,25 +5418,23 @@
     async function alternarStatusVerificadoAdminWifi() {
         if (bloquearClickFantasma('toggle_verif_wifi', 400)) return;
         const idWifi = document.getElementById('adminSelectWifi')?.value;
+        if (!idWifi) return;
         const ponto = listaWifisCache.find(w => w.id === idWifi);
-        if (!ponto) return;
-        const atualVerif = String(ponto.verificado_admin || "").toLowerCase() === "verificado";
+        const atualVerif = String(ponto?.verificado_admin || "").toLowerCase() === "verificado";
         const novoStatus = atualVerif ? "Pendente" : "Verificado";
-        ponto.verificado_admin = novoStatus;
-        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
+        if (ponto) ponto.verificado_admin = novoStatus;
         atualizarBotaoVerificadoAdminUI(novoStatus);
+        localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
         if (document.getElementById('selectWifiMapa')?.value === idWifi) {
             atualizarCardQrDoMapa(idWifi);
         }
-        renderizarListaRedesMinimizadas();
-        renderizarRelatorioGeralAdmin();
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "admin_editar_wifi",
+                    acao: "admin_definir_verificado",
                     admin_email: usuarioLogado?.email || "",
                     id_usuario: usuarioLogado?.email || "",
                     id_wifi: idWifi,
@@ -5294,64 +5444,125 @@
         } catch (e) {}
     }
 
+    function obterProblemasLocalCache() {
+        try {
+            return JSON.parse(localStorage.getItem('clickcontrol_problemas_cache') || '[]');
+        } catch (e) { return []; }
+    }
+
+    function salvarProblemaLocalCache(item) {
+        const lista = obterProblemasLocalCache();
+        lista.unshift(item);
+        localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(lista));
+    }
+
     async function carregarUsuariosAdmin() {
-        const listaEl = document.getElementById('adminListaUsuarios');
-        const qtdEl = document.getElementById('adminQtdUsuarios');
-        if (!listaEl) return;
-        listaEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px;">Carregando usuários...</div>`;
         try {
             const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=admin_listar_usuarios&admin_email=${encodeURIComponent(usuarioLogado?.email || "")}&_=${Date.now()}`);
             const data = await res.json();
             if (data && Array.isArray(data.usuarios)) {
                 usuariosAdminCache = data.usuarios;
-                if (qtdEl) qtdEl.textContent = usuariosAdminCache.length;
-                renderizarListaUsuariosAdmin();
-                return;
             }
         } catch (e) {}
-        if (!usuariosAdminCache.length && usuarioLogado?.email) {
-            usuariosAdminCache = [{ nome: usuarioLogado.nome || "Usuário", email: usuarioLogado.email, saldo: "--" }];
+        if (usuariosAdminCache.length === 0 && usuarioLogado) {
+            usuariosAdminCache = [{ nome: usuarioLogado.nome, email: usuarioLogado.email, creditos: 0 }];
         }
-        if (qtdEl) qtdEl.textContent = usuariosAdminCache.length;
         renderizarListaUsuariosAdmin();
     }
 
     function renderizarListaUsuariosAdmin() {
         const listaEl = document.getElementById('adminListaUsuarios');
-        if (!listaEl) return;
-        const busca = (document.getElementById('adminBuscaUsuario')?.value || "").toLowerCase().trim();
+        const qtdEl = document.getElementById('adminQtdUsuarios');
+        const relUsers = document.getElementById('relAdmTotalUsers');
+        const termo = (document.getElementById('adminBuscaUsuario')?.value || "").toLowerCase().trim();
         const filtrados = usuariosAdminCache.filter(u => {
-            if (!busca) return true;
-            return `${u.nome || ""} ${u.email || ""}`.toLowerCase().includes(busca);
+            if (!termo) return true;
+            return `${u.nome || ""} ${u.email || ""}`.toLowerCase().includes(termo);
         });
-        if (!filtrados.length) {
-            listaEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:8px;">Nenhum usuário encontrado.</div>`;
+        if (qtdEl) qtdEl.textContent = filtrados.length;
+        if (relUsers) relUsers.textContent = usuariosAdminCache.length;
+        if (!listaEl) return;
+        if (filtrados.length === 0) {
+            listaEl.innerHTML = `<div style="text-align:center;color:#52525b;font-size:0.76rem;padding:10px;">Nenhum usuário encontrado.</div>`;
             return;
         }
-        listaEl.innerHTML = filtrados.map(u => {
+        listaEl.innerHTML = filtrados.map((u, idx) => {
+            const isBloq = Boolean(u.bloqueado);
             const emailEsc = String(u.email || "").replace(/'/g, "\\'");
+            const versaoTxt = u.versao_app ? `v${u.versao_app}` : "Não registrada";
+            const loginTxt = u.ultimo_login || "Sem registro";
             return `
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 8px; background:#fef9c3; border:1px solid rgba(17,17,17,0.2); border-radius:7px; font-size:0.75rem;">
-                <div style="min-width:0; flex:1;">
-                    <div style="font-weight:800; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.nome || "Sem nome"}</div>
-                    <div style="font-size:0.69rem; color:#3f3f46; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.email || ""}</div>
+            <div style="border:1.5px solid ${isBloq ? '#dc2626' : '#d4d4d8'};border-radius:8px;padding:8px;background:${isBloq ? '#fef2f2' : '#fefce8'};">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+                    <div style="min-width:0;">
+                        <div style="font-size:0.8rem;font-weight:800;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${isBloq ? '🚫 ' : ''}${u.nome || "Usuário"}</div>
+                        <div style="font-size:0.7rem;color:#3f3f46;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.email || ""}</div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0;">
+                        <span style="background:#111;color:#facc15;font-size:0.72rem;font-weight:800;padding:2px 7px;border-radius:999px;">💳 ${Number(u.creditos || 0)}</span>
+                    </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:5px; flex-shrink:0;">
-                    <span style="background:#111; color:#facc15; font-weight:800; padding:3px 7px; border-radius:999px; font-size:0.7rem;">💳 ${u.saldo !== undefined ? u.saldo : 0}</span>
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem;" onclick="ajustarSaldoUsuarioAdmin('${emailEsc}', 10)">+10</button>
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#dc2626; color:#fff;" onclick="ajustarSaldoUsuarioAdmin('${emailEsc}', -10)">-10</button>
+                <div style="display:flex;justify-content:space-between;gap:6px;margin-top:5px;font-size:0.68rem;color:#3f3f46;background:#ffffff;border:1px solid #e4e4e7;border-radius:6px;padding:4px 7px;">
+                    <span>📱 Versão: <strong>${versaoTxt}</strong></span>
+                    <span>🕒 Último login: <strong>${loginTxt}</strong></span>
                 </div>
-            </div>
-        `;
+                ${isBloq && u.mensagem_bloqueio ? `<div style="font-size:0.68rem;color:#b91c1c;margin-top:4px;">💬 Aviso: ${u.mensagem_bloqueio}</div>` : ''}
+                <div style="display:flex;gap:5px;margin-top:6px;">
+                    <input type="number" id="creditoInput_${idx}" value="${Number(u.creditos || 0)}" style="width:76px;padding:4px 6px;border:1px solid #111;border-radius:6px;font-size:0.74rem;background:#fff;">
+                    <button type="button" onclick="salvarCreditosUsuarioAdmin(${idx}, '${emailEsc}')" style="background:#111;color:#facc15;border:none;border-radius:6px;padding:4px 8px;font-size:0.7rem;font-weight:800;cursor:pointer;">Salvar Créditos</button>
+                    <button type="button" onclick="abrirModalBloquearUsuarioAdmin('${emailEsc}')" style="margin-left:auto;background:${isBloq ? '#16a34a' : '#dc2626'};color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:0.7rem;font-weight:800;cursor:pointer;">${isBloq ? '🔓 Desbloquear' : '🚫 Bloquear'}</button>
+                </div>
+            </div>`;
         }).join("");
     }
 
-    async function ajustarSaldoUsuarioAdmin(emailUsuario, delta) {
-        if (bloquearClickFantasma('saldo_adm_' + emailUsuario, 400)) return;
-        const u = usuariosAdminCache.find(item => String(item.email).toLowerCase() === String(emailUsuario).toLowerCase());
-        const saldoAtual = Number(u?.saldo) || 0;
-        const novoSaldo = Math.max(0, saldoAtual + Number(delta));
-        if (u) u.saldo = novoSaldo;
+    function exibirModalContaBloqueada(mensagem) {
+        criarModalDinamico('modalContaBloqueadaUsuario', `
+            <div style="background:#141416;border:2px solid #ef4444;border-radius:16px;padding:20px;max-width:350px;width:100%;text-align:center;color:#ffffff;">
+                <div style="font-size:2rem;margin-bottom:6px;">🚫</div>
+                <div style="font-size:1.05rem;font-weight:900;color:#ef4444;margin-bottom:8px;">Acesso Bloqueado</div>
+                <div style="font-size:0.84rem;color:#f8fafc;line-height:1.45;background:#27272a;border:1px solid #3f3f46;border-radius:10px;padding:12px;margin-bottom:14px;">${mensagem || "Sua conta foi bloqueada pelo administrador."}</div>
+                <button type="button" onclick="fecharModalDinamico('modalContaBloqueadaUsuario')" style="width:100%;background:#facc15;color:#111111;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">Entendi</button>
+            </div>
+        `);
+    }
+
+    function abrirModalBloquearUsuarioAdmin(email) {
+        const u = usuariosAdminCache.find(item => item.email === email);
+        if (!u) return;
+        const isBloq = Boolean(u.bloqueado);
+        const emailEsc = String(email || "").replace(/'/g, "\\'");
+        if (isBloq) {
+            if (!confirm(`Deseja desbloquear o usuário ${u.nome || email}?`)) return;
+            confirmarBloqueioUsuarioAdmin(email, false, "");
+            return;
+        }
+        criarModalDinamico('modalBloquearUsuarioAdm', `
+            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:16px;max-width:360px;width:100%;color:#111111;">
+                <div style="font-size:0.95rem;font-weight:900;color:#dc2626;margin-bottom:4px;">🚫 Bloquear Usuário</div>
+                <div style="font-size:0.76rem;color:#3f3f46;margin-bottom:10px;">Usuário: <strong>${u.nome || ""}</strong> (${email})</div>
+                <label style="display:block;font-size:0.76rem;font-weight:800;margin-bottom:4px;">Notificação exibida quando tentar fazer login *</label>
+                <textarea id="inputMsgBloqueioUsuarioAdm" rows="3" placeholder="Digite o motivo ou aviso que aparecerá para este usuário..." style="width:100%;padding:8px;border:1px solid #111111;border-radius:8px;font-size:0.82rem;margin-bottom:10px;background:#fff;"></textarea>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" onclick="confirmarBloqueioUsuarioAdmin('${emailEsc}', true)" style="flex:2;background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">🚫 Confirmar Bloqueio</button>
+                    <button type="button" onclick="fecharModalDinamico('modalBloquearUsuarioAdm')" style="flex:1;background:#e4e4e7;color:#111111;border:1px solid #111111;border-radius:8px;padding:10px;font-weight:700;cursor:pointer;">Cancelar</button>
+                </div>
+            </div>
+        `);
+    }
+
+    async function confirmarBloqueioUsuarioAdmin(email, bloquear, msgDireta = null) {
+        const msg = msgDireta !== null ? msgDireta : (document.getElementById('inputMsgBloqueioUsuarioAdm')?.value || "").trim();
+        if (bloquear && !msg) {
+            alert("Digite a mensagem de notificação que será exibida ao usuário.");
+            return;
+        }
+        fecharModalDinamico('modalBloquearUsuarioAdm');
+        const u = usuariosAdminCache.find(item => item.email === email);
+        if (u) {
+            u.bloqueado = bloquear;
+            u.mensagem_bloqueio = bloquear ? msg : "";
+        }
         renderizarListaUsuariosAdmin();
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
@@ -5359,452 +5570,403 @@
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "admin_atualizar_saldo",
+                    acao: "admin_bloquear_usuario",
                     admin_email: usuarioLogado?.email || "",
-                    id_usuario: emailUsuario,
-                    novo_saldo: novoSaldo
+                    id_usuario: email,
+                    bloqueado: bloquear,
+                    mensagem_bloqueio: msg
                 })
             });
+            alert(bloquear ? "✅ Usuário bloqueado e notificação salva!" : "✅ Usuário desbloqueado!");
         } catch (e) {}
     }
 
-    function renderizarRelatorioGeralAdmin() {
-        const totalWifisEl = document.getElementById('relAdmTotalWifis');
-        const totalUsersEl = document.getElementById('relAdmTotalUsers');
-        const totalTestesEl = document.getElementById('relAdmTotalTestes');
-        const pendentesEl = document.getElementById('relAdmPendentes');
-        if (totalWifisEl) totalWifisEl.textContent = listaWifisCache.length;
-        if (totalUsersEl) totalUsersEl.textContent = usuariosAdminCache.length || "--";
-        const qtdTestes = listaWifisCache.reduce((acc, w) => acc + ((Number(w.down_mbps) > 0 || Number(w.up_mbps) > 0) ? 1 : 0), 0);
-        if (totalTestesEl) totalTestesEl.textContent = qtdTestes;
-        const qtdPend = listaWifisCache.filter(w => String(w.verificado_admin || "").toLowerCase() !== "verificado").length;
-        if (pendentesEl) pendentesEl.textContent = qtdPend;
-    }
-
-    async function atualizarTudoPainelAdmin() {
-        renderizarRelatorioGeralAdmin();
-        let probsLocais = [];
-        try {
-            probsLocais = JSON.parse(localStorage.getItem('clickcontrol_problemas_cache') || '[]');
-        } catch (e) {}
-
-        let probsRemotos = [];
-        let notifsRemotas = [];
-        try {
-            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=admin_listar_notificacoes&admin_email=${encodeURIComponent(usuarioLogado?.email || "")}&_=${Date.now()}`);
-            const data = await res.json();
-            if (data && data.status === "ok") {
-                if (Array.isArray(data.problemas)) probsRemotos = data.problemas;
-                if (Array.isArray(data.notificacoes)) notifsRemotas = data.notificacoes;
-            }
-        } catch (e) {}
-
-        const mapaProbs = new Map();
-        [...probsRemotos, ...probsLocais].forEach((p, idx) => {
-            const chave = p.id || `${p.tipo || ""}_${p.id_wifi || ""}_${p.descricao || ""}_${idx}`;
-            if (!mapaProbs.has(chave)) {
-                mapaProbs.set(chave, {
-                    id: p.id || chave,
-                    tipo: p.tipo || "Problema",
-                    id_wifi: p.id_wifi || "",
-                    nome_local: p.nome_local || "",
-                    cidade_uf: p.cidade_uf || "",
-                    descricao: p.descricao || "",
-                    usuario: p.usuario || p.id_usuario || "",
-                    data: p.data || ""
-                });
-            }
-        });
-        problemasAdminCache = Array.from(mapaProbs.values());
-
-        const mapaNotif = new Map();
-        notifsRemotas.forEach((n, idx) => {
-            const idN = n.id || ("NTF_" + idx);
-            if (!mapaNotif.has(idN)) {
-                mapaNotif.set(idN, {
-                    id: idN,
-                    origem: n.origem || "notificacao",
-                    categoria: n.categoria || "Aviso",
-                    titulo: n.titulo || "",
-                    detalhe: n.detalhe || "",
-                    id_wifi: n.id_wifi || "",
-                    verificado: Boolean(n.verificado),
-                    arquivado: n.arquivado || "",
-                    data: n.data || ""
-                });
-            }
-        });
-
-        listaWifisCache.forEach(w => {
-            const idN = "WIFI_" + w.id;
-            const isVerif = String(w.verificado_admin || "").toLowerCase() === "verificado";
-            if (!mapaNotif.has(idN)) {
-                mapaNotif.set(idN, {
-                    id: idN,
-                    origem: "wifi",
-                    categoria: "Nova Rede",
-                    titulo: `${w.local || "Ponto Wi-Fi"} (${w.ssid || ""})`,
-                    detalhe: `${w.cidade || ""} • Cadastrado por ${w.cadastrado_por || "Usuário"}`,
-                    id_wifi: w.id,
-                    verificado: isVerif,
-                    arquivado: isVerif ? "Arquivado" : "",
-                    data: ""
-                });
-            } else {
-                const existente = mapaNotif.get(idN);
-                existente.verificado = isVerif;
-                if (isVerif && !existente.arquivado) existente.arquivado = "Arquivado";
-                if (!isVerif && existente.arquivado === "Arquivado") existente.arquivado = "";
-            }
-        });
-
-        notificacoesAdminCache = Array.from(mapaNotif.values());
-        const badgeTopo = document.getElementById('adminBadgeNotifTopo');
-        const pendentesWifis = listaWifisCache.filter(w => String(w.verificado_admin || "").toLowerCase() !== "verificado").length;
-        const totalPendencias = pendentesWifis + problemasAdminCache.length;
-        if (badgeTopo) {
-            badgeTopo.textContent = `${totalPendencias} pendência(s)`;
-            badgeTopo.style.background = totalPendencias > 0 ? "#dc2626" : "#16a34a";
-        }
-
-        renderizarListaProblemasAdmin();
-        renderizarListaNotificacoesAdmin();
-    }
-
-    async function gerenciarNotificacaoAdmin(idItem, origem, operacao) {
-        if (bloquearClickFantasma('ger_notif_adm', 350)) return;
-        if (operacao === 'excluir' && !confirm("Deseja realmente excluir esta notificação?")) return;
-        const st = obterEstadoNotificacoesLocal();
-        if (operacao === 'excluir') {
-            st[idItem] = 'excluido';
-            notificacoesAdminCache = notificacoesAdminCache.filter(n => n.id !== idItem);
-        } else if (operacao === 'arquivar') {
-            st[idItem] = 'arquivado';
-            const n = notificacoesAdminCache.find(item => item.id === idItem);
-            if (n) n.arquivado = 'Arquivado';
-        } else if (operacao === 'desarquivar') {
-            st[idItem] = '';
-            const n = notificacoesAdminCache.find(item => item.id === idItem);
-            if (n) n.arquivado = '';
-        } else if (operacao === 'resolvido' || operacao === 'pendente') {
-            const novoSt = operacao === 'resolvido' ? 'Resolvido' : 'Pendente';
-            const n = notificacoesAdminCache.find(item => item.id === idItem);
-            if (n) n.status_resolucao = novoSt;
-            if (n && n.id_wifi) {
-                const wP = listaWifisCache.find(w => w.id === n.id_wifi);
-                if (wP) {
-                    wP.verificado_admin = operacao === 'resolvido' ? 'Verificado' : 'Pendente';
-                    localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
-                }
-            }
-        }
-        salvarEstadoNotificacoesLocal(st);
-        renderizarListaNotificacoesAdmin();
+    async function salvarCreditosUsuarioAdmin(idx, email) {
+        const val = Number(document.getElementById('creditoInput_' + idx)?.value);
+        if (isNaN(val)) return;
+        const u = usuariosAdminCache.find(item => item.email === email);
+        if (u) u.creditos = val;
+        renderizarListaUsuariosAdmin();
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "admin_gerenciar_notificacao",
+                    acao: "admin_atualizar_creditos",
                     admin_email: usuarioLogado?.email || "",
-                    id_item: idItem,
-                    origem: origem,
-                    operacao: operacao
+                    id_usuario: email,
+                    creditos: val
+                })
+            });
+            alert("✅ Créditos do usuário atualizados!");
+        } catch (e) {}
+    }
+
+    async function excluirUsuarioAdmin(email) {
+        if (!email || !confirm(`Excluir o usuário ${email}?`)) return;
+        usuariosAdminCache = usuariosAdminCache.filter(u => u.email !== email);
+        renderizarListaUsuariosAdmin();
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_excluir_usuario",
+                    admin_email: usuarioLogado?.email || "",
+                    id_usuario: email
                 })
             });
         } catch (e) {}
     }
 
-    function selecionarPontoNoAdmin(idWifi) {
+    function alternarFiltroNotificacoesAdmin(modo) {
+        filtroNotifAdmin = modo;
+        document.getElementById('btnFiltroNotifAtivas').style.background = modo === 'ativas' ? '#111111' : '';
+        document.getElementById('btnFiltroNotifAtivas').style.color = modo === 'ativas' ? '#facc15' : '';
+        document.getElementById('btnFiltroNotifArquivadas').style.background = modo === 'arquivadas' ? '#111111' : '';
+        document.getElementById('btnFiltroNotifArquivadas').style.color = modo === 'arquivadas' ? '#facc15' : '';
+        renderizarNotificacoesEProblemasAdmin();
+    }
+
+    async function atualizarTudoPainelAdmin() {
+        const locais = obterProblemasLocalCache();
+        let remotos = [];
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=admin_listar_problemas&admin_email=${encodeURIComponent(usuarioLogado?.email || "")}&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && Array.isArray(data.problemas)) remotos = data.problemas;
+        } catch (e) {}
+
+        const mapaUnico = new Map();
+        [...remotos, ...locais].forEach((p, idx) => {
+            const chave = String(p.id || `${p.tipo || ""}_${p.id_wifi || ""}_${p.descricao || ""}_${idx}`);
+            if (!mapaUnico.has(chave)) {
+                mapaUnico.set(chave, {
+                    id: p.id || chave,
+                    tipo: p.tipo || "Relato",
+                    id_wifi: p.id_wifi || "",
+                    nome_local: p.nome_local || "",
+                    cidade_uf: p.cidade_uf || "",
+                    descricao: p.descricao || "",
+                    usuario: p.usuario || p.id_usuario || "Usuário",
+                    data: p.data || "",
+                    status_resolucao: p.status_resolucao || "Pendente",
+                    arquivado: p.arquivado || ""
+                });
+            }
+        });
+        problemasAdminCache = Array.from(mapaUnico.values());
+        localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(problemasAdminCache));
+
+        const pendentesQtd = listaWifisCache.filter(w => String(w.verificado_admin || "").toLowerCase() !== "verificado").length;
+        const notifAtivasQtd = problemasAdminCache.filter(p => String(p.arquivado || "").toLowerCase() !== "sim").length;
+        const badgeTopo = document.getElementById('adminBadgeNotifTopo');
+        if (badgeTopo) badgeTopo.textContent = `${pendentesQtd + notifAtivasQtd} pendências`;
+
+        const relWifis = document.getElementById('relAdmTotalWifis');
+        const relTestes = document.getElementById('relAdmTotalTestes');
+        const relPend = document.getElementById('relAdmPendentes');
+        if (relWifis) relWifis.textContent = listaWifisCache.length;
+        if (relTestes) relTestes.textContent = listaWifisCache.reduce((acc, w) => acc + (Number(w.qtd_testes) || (pontoNuncaTestado(w) ? 0 : 1)), 0);
+        if (relPend) relPend.textContent = pendentesQtd;
+
+        renderizarNotificacoesEProblemasAdmin();
+    }
+
+    function renderizarNotificacoesEProblemasAdmin() {
+        const listProbEl = document.getElementById('adminListaProblemas');
+        const qtdProbEl = document.getElementById('adminQtdProblemas');
+        const listNotifEl = document.getElementById('adminListaNotificacoes');
+        const qtdNotifEl = document.getElementById('adminQtdNotificacoes');
+
+        const ativas = problemasAdminCache.filter(p => String(p.arquivado || "").toLowerCase() !== "sim");
+        const arquivadas = problemasAdminCache.filter(p => String(p.arquivado || "").toLowerCase() === "sim");
+        const exibidasNotif = filtroNotifAdmin === 'arquivadas' ? arquivadas : ativas;
+
+        if (qtdProbEl) qtdProbEl.textContent = ativas.length;
+        if (qtdNotifEl) qtdNotifEl.textContent = exibidasNotif.length;
+
+        const montarCard = (p, isNotifTab = false) => {
+            const isArquivado = String(p.arquivado || "").toLowerCase() === "sim";
+            const isResolvido = String(p.status_resolucao || "").toLowerCase() === "resolvido";
+            const idSafe = String(p.id || "").replace(/'/g, "\\'");
+            return `
+                <div style="background:#ffffff;border:1px solid #111111;border-radius:10px;padding:8px 10px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
+                        <strong style="font-size:0.78rem;color:#111;">${p.tipo || "Notificação"} — ${p.nome_local || "Local"}</strong>
+                        <span style="background:${isResolvido ? '#16a34a' : '#dc2626'};color:#fff;font-size:0.64rem;font-weight:800;padding:2px 7px;border-radius:999px;">${isResolvido ? "Resolvido" : "Pendente"}</span>
+                    </div>
+                    <div style="font-size:0.75rem;color:#27272a;margin-bottom:4px;">${p.descricao || ""}</div>
+                    <div style="font-size:0.68rem;color:#52525b;margin-bottom:6px;">Por: ${p.usuario || ""} ${p.data ? "• " + p.data : ""}</div>
+                    <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                        ${p.id_wifi ? `<button type="button" onclick="abrirPontoNoPainelAdmin('${String(p.id_wifi).replace(/'/g, "\\'")}')" style="background:#111;color:#facc15;border:none;border-radius:6px;padding:4px 8px;font-size:0.68rem;font-weight:800;cursor:pointer;">Abrir Ponto</button>` : ""}
+                        <button type="button" onclick="alternarStatusProblemaAdmin('${idSafe}')" style="background:#2563eb;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:0.68rem;font-weight:800;cursor:pointer;">${isResolvido ? "Marcar Pendente" : "Marcar Resolvido"}</button>
+                        <button type="button" onclick="alternarArquivarNotificacaoAdmin('${idSafe}')" style="background:#52525b;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:0.68rem;font-weight:800;cursor:pointer;">${isArquivado ? "Desarquivar" : "Arquivar"}</button>
+                        ${isNotifTab ? `<button type="button" onclick="excluirNotificacaoAdmin('${idSafe}')" style="margin-left:auto;background:#dc2626;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:0.68rem;font-weight:800;cursor:pointer;">Excluir</button>` : ""}
+                    </div>
+                </div>
+            `;
+        };
+
+        if (listProbEl) {
+            listProbEl.innerHTML = ativas.length
+                ? ativas.map(p => montarCard(p, false)).join("")
+                : `<div style="text-align:center;color:#52525b;font-size:0.76rem;padding:12px;">Nenhum problema pendente no momento.</div>`;
+        }
+        if (listNotifEl) {
+            listNotifEl.innerHTML = exibidasNotif.length
+                ? exibidasNotif.map(p => montarCard(p, true)).join("")
+                : `<div style="text-align:center;color:#52525b;font-size:0.76rem;padding:12px;">Nenhuma notificação nesta aba.</div>`;
+        }
+    }
+
+    function abrirPontoNoPainelAdmin(idWifi) {
+        mudarAbaAdmin('wifis', true);
         const sel = document.getElementById('adminSelectWifi');
-        if (sel && Array.from(sel.options).some(o => o.value === idWifi)) {
+        if (sel && listaWifisCache.some(w => w.id === idWifi)) {
             sel.value = idWifi;
             carregarDadosAdminWifi();
         }
     }
 
-    let filtroProblemasAdminModo = 'ativos';
-
-    function obterEstadoProblemasLocal() {
-        try {
-            return JSON.parse(localStorage.getItem('clickcontrol_admin_prob_estado') || '{}');
-        } catch (e) { return {}; }
-    }
-
-    function salvarEstadoProblemasLocal(stObj) {
-        try {
-            localStorage.setItem('clickcontrol_admin_prob_estado', JSON.stringify(stObj));
-        } catch (e) {}
-    }
-
-    async function alterarStatusProblemaAdmin(idProb, novoStatus) {
-        if (bloquearClickFantasma('st_prob_' + idProb, 300)) return;
-        const st = obterEstadoProblemasLocal();
-        if (!st[idProb] || typeof st[idProb] !== 'object') st[idProb] = {};
-        st[idProb].status = novoStatus;
-        salvarEstadoProblemasLocal(st);
-        const item = problemasAdminCache.find(p => p.id === idProb);
-        if (item) item.status_resolucao = novoStatus;
-        renderizarListaProblemasAdmin();
+    async function alternarStatusProblemaAdmin(idProb) {
+        const item = problemasAdminCache.find(p => String(p.id) === String(idProb));
+        if (!item) return;
+        item.status_resolucao = String(item.status_resolucao || "").toLowerCase() === "resolvido" ? "Pendente" : "Resolvido";
+        localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(problemasAdminCache));
+        renderizarNotificacoesEProblemasAdmin();
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "admin_gerenciar_problema",
+                    acao: "admin_atualizar_problema",
                     admin_email: usuarioLogado?.email || "",
                     id_problema: idProb,
-                    operacao: "status",
-                    status_resolucao: novoStatus
+                    status_resolucao: item.status_resolucao,
+                    arquivado: item.arquivado || ""
                 })
             });
         } catch (e) {}
     }
 
-    async function gerenciarProblemaAdmin(idProb, operacao) {
-        if (bloquearClickFantasma('ger_prob_' + idProb, 300)) return;
-        if (operacao === 'excluir' && !confirm("Deseja realmente excluir este registro?")) return;
-        const st = obterEstadoProblemasLocal();
-        if (!st[idProb] || typeof st[idProb] !== 'object') st[idProb] = {};
-        if (operacao === 'arquivar') {
-            st[idProb].arquivado = 'Arquivado';
-        } else if (operacao === 'desarquivar') {
-            st[idProb].arquivado = '';
-        } else if (operacao === 'excluir') {
-            st[idProb].arquivado = 'excluido';
-            problemasAdminCache = problemasAdminCache.filter(p => p.id !== idProb);
-        }
-        salvarEstadoProblemasLocal(st);
-        renderizarListaProblemasAdmin();
+    async function alternarArquivarNotificacaoAdmin(idProb) {
+        const item = problemasAdminCache.find(p => String(p.id) === String(idProb));
+        if (!item) return;
+        item.arquivado = String(item.arquivado || "").toLowerCase() === "sim" ? "" : "sim";
+        localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(problemasAdminCache));
+        renderizarNotificacoesEProblemasAdmin();
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify({
-                    acao: "admin_gerenciar_problema",
+                    acao: "admin_atualizar_problema",
                     admin_email: usuarioLogado?.email || "",
                     id_problema: idProb,
-                    operacao: operacao
+                    status_resolucao: item.status_resolucao || "Pendente",
+                    arquivado: item.arquivado
                 })
             });
         } catch (e) {}
     }
 
-    function alternarFiltroProblemasAdmin(modo) {
-        filtroProblemasAdminModo = modo;
-        renderizarListaProblemasAdmin();
+    async function excluirNotificacaoAdmin(idProb) {
+        if (!confirm("Excluir esta notificação?")) return;
+        problemasAdminCache = problemasAdminCache.filter(p => String(p.id) !== String(idProb));
+        localStorage.setItem('clickcontrol_problemas_cache', JSON.stringify(problemasAdminCache));
+        renderizarNotificacoesEProblemasAdmin();
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_excluir_problema",
+                    admin_email: usuarioLogado?.email || "",
+                    id_problema: idProb
+                })
+            });
+        } catch (e) {}
     }
 
-    function renderizarListaProblemasAdmin() {
-        const listaEl = document.getElementById('adminListaProblemas');
-        const qtdEl = document.getElementById('adminQtdProblemas');
-        if (!listaEl) return;
-        const stMap = obterEstadoProblemasLocal();
-        const listaEnriquecida = problemasAdminCache
-            .filter(p => (stMap[p.id]?.arquivado || p.arquivado) !== 'excluido')
-            .map(p => {
-                const extra = stMap[p.id] || {};
-                return {
-                    ...p,
-                    status_resolucao: extra.status || p.status_resolucao || 'Pendente',
-                    arquivado: extra.arquivado !== undefined ? extra.arquivado : (p.arquivado || '')
-                };
-            });
-        const filtrados = listaEnriquecida.filter(p => {
-            const isArq = String(p.arquivado || '').toLowerCase() === 'arquivado';
-            return filtroProblemasAdminModo === 'arquivadas' ? isArq : !isArq;
-        });
-        if (qtdEl) qtdEl.textContent = filtrados.length;
-        const barraFiltroHtml = `
-            <div style="display:flex; gap:5px; margin-bottom:6px;">
-                <button type="button" class="btn-mini" style="margin-top:0; padding:3px 8px; font-size:0.68rem; background:${filtroProblemasAdminModo === 'ativos' ? '#111111' : '#e4e4e7'}; color:${filtroProblemasAdminModo === 'ativos' ? '#facc15' : '#111111'};" onclick="alternarFiltroProblemasAdmin('ativos')">📥 Ativos</button>
-                <button type="button" class="btn-mini" style="margin-top:0; padding:3px 8px; font-size:0.68rem; background:${filtroProblemasAdminModo === 'arquivadas' ? '#111111' : '#e4e4e7'}; color:${filtroProblemasAdminModo === 'arquivadas' ? '#facc15' : '#111111'};" onclick="alternarFiltroProblemasAdmin('arquivadas')">📦 Arquivados</button>
-            </div>
-        `;
-        if (!filtrados.length) {
-            listaEl.innerHTML = barraFiltroHtml + `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">Nenhum problema ou sugestão nesta aba.</div>`;
-            return;
+    function compararVersoesApp(vUsuario, vMinima) {
+        const p1 = String(vUsuario || "0").split(".").map(n => parseInt(n, 10) || 0);
+        const p2 = String(vMinima || "0").split(".").map(n => parseInt(n, 10) || 0);
+        const len = Math.max(p1.length, p2.length);
+        for (let i = 0; i < len; i++) {
+            const a = p1[i] || 0;
+            const b = p2[i] || 0;
+            if (a < b) return -1;
+            if (a > b) return 1;
         }
-        listaEl.innerHTML = barraFiltroHtml + filtrados.map(p => {
-            const isResolvido = String(p.status_resolucao || '').toLowerCase() === 'resolvido';
-            const isArq = String(p.arquivado || '').toLowerCase() === 'arquivado';
-            const idEsc = String(p.id || '').replace(/'/g, "\'");
-            return `
-            <div style="background:#ffffff; border:1.5px solid #111111; border-radius:8px; padding:8px 9px; font-size:0.75rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap;">
-                    <strong style="color:#dc2626;">⚠️ ${p.tipo || "Problema"}: ${p.nome_local || "Ponto Wi-Fi"}</strong>
-                    <span style="background:${isResolvido ? '#16a34a' : '#dc2626'}; color:#fff; font-size:0.64rem; font-weight:800; padding:1px 7px; border-radius:999px;">${isResolvido ? 'Resolvido' : 'Pendente'}</span>
-                </div>
-                <div style="color:#111111; margin-bottom:4px;">${p.descricao || ""}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.68rem; color:#3f3f46; margin-bottom:6px;">
-                    <span>${p.cidade_uf || ""} • Por: ${p.usuario || "Usuário"}</span>
-                    <span>${p.data || ""}</span>
-                </div>
-                <div style="display:flex; justify-content:flex-end; gap:4px; flex-wrap:wrap;">
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:${isResolvido ? '#e4e4e7' : '#16a34a'}; color:${isResolvido ? '#111' : '#fff'};" onclick="alterarStatusProblemaAdmin('${idEsc}', 'Resolvido')">✅ Resolvido</button>
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:${!isResolvido ? '#dc2626' : '#e4e4e7'}; color:${!isResolvido ? '#fff' : '#111'};" onclick="alterarStatusProblemaAdmin('${idEsc}', 'Pendente')">⏳ Pendente</button>
-                    ${isArq
-                        ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#2563eb; color:#fff;" onclick="gerenciarProblemaAdmin('${idEsc}', 'desarquivar')">📤 Desarquivar</button>`
-                        : `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#52525b; color:#fff;" onclick="gerenciarProblemaAdmin('${idEsc}', 'arquivar')">📦 Arquivar</button>`
-                    }
-                    ${p.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${p.id_wifi}')">Abrir Ponto</button>` : ""}
-                </div>
-            </div>
-        `;
-        }).join("");
+        return 0;
     }
 
-    function renderizarListaNotificacoesAdmin() {
-        const listaNotifEl = document.getElementById('adminListaNotificacoes');
-        const qtdEl = document.getElementById('adminQtdNotificacoes');
-        if (!listaNotifEl) return;
+    async function carregarConfigBloqueioAdmin() {
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=obter_config_bloqueio&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && data.config) {
+                configBloqueioCache = { ...configBloqueioCache, ...data.config };
+            }
+        } catch (e) {}
+        const chk = document.getElementById('adminAppBloqueadoCheck');
+        const verInp = document.getElementById('adminVersaoAtualApp');
+        const msgInp = document.getElementById('adminMsgBloqueio');
+        if (chk) chk.checked = Boolean(configBloqueioCache.bloqueado);
+        if (verInp) verInp.value = configBloqueioCache.versao_atual || APP_VERSION;
+        if (msgInp) msgInp.value = configBloqueioCache.mensagem || "";
+    }
 
-        const stLocal = obterEstadoNotificacoesLocal();
-        const enriquecidas = notificacoesAdminCache
-            .filter(n => stLocal[n.id] !== 'excluido')
-            .map((n, idx) => {
-                const copy = { ...n, _ordemCriacao: n._ordemCriacao !== undefined ? n._ordemCriacao : idx };
-                if (stLocal[n.id] === 'arquivado') copy.arquivado = 'Arquivado';
-                else if (stLocal[n.id] === '') copy.arquivado = '';
-                if (copy.id_wifi) {
-                    const wPonto = listaWifisCache.find(w => w.id === copy.id_wifi);
-                    if (wPonto) {
-                        copy.verificado = String(wPonto.verificado_admin || '').toLowerCase() === 'verificado';
-                    }
-                }
-                return copy;
+    async function salvarConfigBloqueioAdmin() {
+        if (bloquearClickFantasma('salvar_bloqueio_app', 450)) return;
+        const bloqueado = Boolean(document.getElementById('adminAppBloqueadoCheck')?.checked);
+        const versaoAtual = (document.getElementById('adminVersaoAtualApp')?.value || APP_VERSION).trim();
+        const mensagem = (document.getElementById('adminMsgBloqueio')?.value || "").trim();
+        const toast = document.getElementById('adminBloqueioToast');
+        configBloqueioCache = { bloqueado, versao_atual: versaoAtual, mensagem };
+        localStorage.setItem('clickcontrol_config_bloqueio', JSON.stringify(configBloqueioCache));
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    acao: "admin_salvar_bloqueio",
+                    admin_email: usuarioLogado?.email || "",
+                    bloqueado,
+                    versao_atual: versaoAtual,
+                    mensagem
+                })
             });
-
-        enriquecidas.sort((a, b) => {
-            const aPend = a.verificado === true ? 1 : 0;
-            const bPend = b.verificado === true ? 1 : 0;
-            if (aPend !== bPend) return aPend - bPend;
-            return a._ordemCriacao - b._ordemCriacao;
-        });
-
-        const filtradas = enriquecidas.filter(n => {
-            const isArq = String(n.arquivado || '').toLowerCase() === 'arquivado';
-            return filtroNotificacoesAdminModo === 'arquivadas' ? isArq : !isArq;
-        });
-
-        if (qtdEl) qtdEl.textContent = filtradas.length;
-
-        if (filtradas.length === 0) {
-            listaNotifEl.innerHTML = `<div style="font-size:0.75rem; color:var(--text-muted); text-align:center; padding:10px; background:#fff; border-radius:8px; border:1px solid var(--border);">${filtroNotificacoesAdminModo === 'arquivadas' ? 'Nenhuma notificação arquivada.' : 'Nenhuma notificação ativa no momento.'}</div>`;
-            return;
+        } catch (e) {}
+        if (toast) {
+            toast.style.display = "block";
+            toast.className = "toast";
+            toast.textContent = bloqueado
+                ? `✅ Bloqueio ativo para versões anteriores à ${versaoAtual}!`
+                : "✅ Bloqueio de versões desativado.";
         }
+    }
 
-        listaNotifEl.innerHTML = filtradas.map(n => {
-            const isArq = String(n.arquivado || '').toLowerCase() === 'arquivado';
-            const isNovaWifi = String(n.categoria || '').toLowerCase().includes('nova rede') || Boolean(n.id_wifi);
-            const isVerif = isNovaWifi ? Boolean(n.verificado) : false;
-            const bgCard = isArq ? '#f4f4f5' : (isNovaWifi ? (isVerif ? '#dcfce7' : '#fee2e2') : '#ffffff');
-            const borderCard = isNovaWifi ? (isVerif ? '#16a34a' : '#dc2626') : '#111111';
-            const idEsc = String(n.id || '').replace(/'/g, "\'");
-            const origEsc = String(n.origem || 'sistema').replace(/'/g, "\'");
-            return `
-            <div style="background:${bgCard}; border:1.5px solid ${borderCard}; border-radius:8px; padding:8px 9px; font-size:0.74rem; display:flex; flex-direction:column; gap:5px;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:6px;">
-                    <div style="min-width:0; flex:1;">
-                        <div style="font-weight:800; color:#111111;">${isNovaWifi ? (isVerif ? '🟢' : '🔴') : '🔔'} ${n.categoria}: ${n.titulo} ${isNovaWifi ? `<span style="font-size:0.65rem; padding:1px 6px; border-radius:999px; color:#fff; background:${isVerif ? '#16a34a' : '#dc2626'};">${isVerif ? 'Verificado' : 'Pendente'}</span>` : ''}</div>
-                        <div style="font-size:0.71rem; color:#3f3f46; margin-top:2px;">${n.detalhe}</div>
-                        ${n.data ? `<div style="font-size:0.65rem; color:#52525b; margin-top:2px;">🕒 ${n.data}</div>` : ""}
-                    </div>
+    async function verificarBloqueioAppParaUsuario() {
+        if (ehAdministrador()) return false;
+        let cfg = configBloqueioCache;
+        try {
+            const salvo = localStorage.getItem('clickcontrol_config_bloqueio');
+            if (salvo) cfg = { ...cfg, ...JSON.parse(salvo) };
+        } catch (e) {}
+        try {
+            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=obter_config_bloqueio&_=${Date.now()}`);
+            const data = await res.json();
+            if (data && data.config) {
+                cfg = { ...cfg, ...data.config };
+                localStorage.setItem('clickcontrol_config_bloqueio', JSON.stringify(cfg));
+            }
+        } catch (e) {}
+
+        const versaoMinima = cfg.versao_atual || APP_VERSION;
+        const appDesatualizado = compararVersoesApp(APP_VERSION, versaoMinima) < 0;
+        if (cfg.bloqueado && appDesatualizado) {
+            criarModalDinamico('modalBloqueioApp', `
+                <div style="background:#141416;border:2px solid #ef4444;border-radius:16px;padding:20px;max-width:350px;width:100%;text-align:center;color:#ffffff;">
+                    <div style="font-size:1.8rem;margin-bottom:6px;">🔒</div>
+                    <div style="font-size:1rem;font-weight:900;color:#facc15;margin-bottom:8px;">Aplicativo Desatualizado</div>
+                    <div style="font-size:0.82rem;color:#e4e4e7;line-height:1.45;margin-bottom:14px;">${cfg.mensagem || "Seu aplicativo está desatualizado. Atualize para continuar usando."}</div>
+                    <div style="font-size:0.72rem;color:#a1a1aa;">Sua versão: v${APP_VERSION} • Versão necessária: v${versaoMinima}</div>
                 </div>
-                <div style="display:flex; justify-content:flex-end; gap:5px; flex-wrap:wrap;">
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#16a34a; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'resolvido')">✅ Resolvido</button>
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#dc2626; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'pendente')">⏳ Pendente</button>
-                    ${n.id_wifi ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem;" onclick="mudarAbaAdmin('wifis', true); selecionarPontoNoAdmin('${n.id_wifi}')">📶 Abrir Ponto</button>` : ""}
-                    ${isArq
-                        ? `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#2563eb; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'desarquivar')">📤 Desarquivar</button>`
-                        : `<button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#52525b; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'arquivar')">📦 Arquivar</button>`
-                    }
-                    <button type="button" class="btn-mini" style="margin-top:0; padding:3px 7px; font-size:0.68rem; background:#dc2626; color:#fff;" onclick="gerenciarNotificacaoAdmin('${idEsc}', '${origEsc}', 'excluir')">🗑️ Excluir</button>
-                </div>
-            </div>
-        `;
-        }).join("");
+            `);
+            return true;
+        }
+        return false;
     }
 
     const CIDADES_POR_UF = {
-        AC: ["Rio Branco", "Cruzeiro do Sul"],
-        AL: ["Maceió", "Arapiraca"],
-        AP: ["Macapá", "Santana"],
-        AM: ["Manaus", "Parintins"],
-        BA: ["Salvador", "Feira de Santana", "Vitória da Conquista", "Porto Seguro", "Ilhéus"],
-        CE: ["Fortaleza", "Caucaia", "Juazeiro do Norte", "Sobral"],
-        DF: ["Brasília"],
-        ES: ["Vitória", "Vila Velha", "Serra", "Cariacica"],
-        GO: ["Goiânia", "Aparecida de Goiânia", "Anápolis"],
-        MA: ["São Luís", "Imperatriz"],
-        MT: ["Cuiabá", "Várzea Grande", "Rondonópolis"],
-        MS: ["Campo Grande", "Dourados"],
-        MG: ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora", "Betim"],
-        PA: ["Belém", "Ananindeua", "Santarém"],
-        PB: ["João Pessoa", "Campina Grande"],
-        PR: ["Curitiba", "Londrina", "Maringá", "Ponta Grossa", "Cascavel", "São José dos Pinhais", "Foz do Iguaçu", "Rio Negro", "Lapa", "Campo Largo", "Pinhais", "Colombo", "Araucária"],
-        PE: ["Recife", "Jaboatão dos Guararapes", "Olinda", "Caruaru"],
-        PI: ["Teresina", "Parnaíba"],
-        RJ: ["Rio de Janeiro", "São Gonçalo", "Duque de Caxias", "Niterói", "Nova Iguaçu"],
-        RN: ["Natal", "Mossoró", "Parnamirim"],
-        RS: ["Porto Alegre", "Caxias do Sul", "Canoas", "Pelotas", "Santa Maria", "Passo Fundo"],
-        RO: ["Porto Velho", "Ji-Paraná"],
-        RR: ["Boa Vista"],
-        SC: ["São Bento do Sul", "Rio Negrinho", "Mafra", "Joinville", "Florianópolis", "Blumenau", "Balneário Camboriú", "Itajaí", "Chapecó", "Jaraguá do Sul", "Lages", "Criciúma", "Tubarão", "Navegantes", "Penha", "Barra Velha", "São Francisco do Sul", "Itapoá", "Canoinhas", "Porto União", "Três Barras", "Campo Alegre"],
-        SP: ["São Paulo", "Guarulhos", "Campinas", "São Bernardo do Campo", "Santo André", "Osasco", "São José dos Campos", "Ribeirão Preto", "Sorocaba", "Santos", "Mauá", "Carapicuíba", "Mogi das Cruzes", "Piracicaba", "Bauru", "Jundiaí"],
-        SE: ["Aracaju", "Nossa Senhora do Socorro"],
-        TO: ["Palmas", "Araguaína"]
+        "AC": ["Rio Branco", "Cruzeiro do Sul", "Sena Madureira", "Tarauacá", "Feijó"],
+        "AL": ["Maceió", "Arapiraca", "Rio Largo", "Palmeira dos Índios", "Penedo"],
+        "AP": ["Macapá", "Santana", "Laranjal do Jari", "Oiapoque", "Mazagão"],
+        "AM": ["Manaus", "Parintins", "Itacoatiara", "Manacapuru", "Coari"],
+        "BA": ["Salvador", "Feira de Santana", "Vitória da Conquista", "Camaçari", "Itabuna", "Ilhéus", "Juazeiro", "Barreiras"],
+        "CE": ["Fortaleza", "Caucaia", "Juazeiro do Norte", "Maracanaú", "Sobral", "Crato", "Itapipoca"],
+        "DF": ["Brasília", "Taguatinga", "Ceilândia", "Samambaia", "Gama"],
+        "ES": ["Vitória", "Vila Velha", "Serra", "Cariacica", "Linhares", "São Mateus", "Colatina"],
+        "GO": ["Goiânia", "Aparecida de Goiânia", "Anápolis", "Rio Verde", "Luziânia", "Águas Lindas de Goiás"],
+        "MA": ["São Luís", "Imperatriz", "São José de Ribamar", "Timon", "Caxias", "Codó"],
+        "MT": ["Cuiabá", "Várzea Grande", "Rondonópolis", "Sinop", "Tangará da Serra", "Cáceres"],
+        "MS": ["Campo Grande", "Dourados", "Três Lagoas", "Corumbá", "Ponta Porã"],
+        "MG": ["Belo Horizonte", "Uberlândia", "Contagem", "Juiz de Fora", "Betim", "Montes Claros", "Ribeirão das Neves", "Uberaba", "Governador Valadares", "Ipatinga"],
+        "PA": ["Belém", "Ananindeua", "Santarém", "Marabá", "Castanhal", "Parauapebas"],
+        "PB": ["João Pessoa", "Campina Grande", "Santa Rita", "Patos", "Bayeux"],
+        "PR": ["Curitiba", "Londrina", "Maringá", "Ponta Grossa", "Cascavel", "São José dos Pinhais", "Foz do Iguaçu", "Colombo", "Guarapuava", "Araucária"],
+        "PE": ["Recife", "Jaboatão dos Guararapes", "Olinda", "Caruaru", "Petrolina", "Paulista"],
+        "PI": ["Teresina", "Parnaíba", "Picos", "Piripiri", "Floriano"],
+        "RJ": ["Rio de Janeiro", "São Gonçalo", "Duque de Caxias", "Nova Iguaçu", "Niterói", "Belford Roxo", "Campos dos Goytacazes", "São João de Meriti", "Petrópolis", "Volta Redonda"],
+        "RN": ["Natal", "Mossoró", "Parnamirim", "São Gonçalo do Amarante", "Macaíba"],
+        "RS": ["Porto Alegre", "Caxias do Sul", "Canoas", "Pelotas", "Santa Maria", "Gravataí", "Viamão", "Novo Hamburgo", "São Leopoldo", "Passo Fundo"],
+        "RO": ["Porto Velho", "Ji-Paraná", "Ariquemes", "Vilhena", "Cacoal"],
+        "RR": ["Boa Vista", "Rorainópolis", "Caracaraí", "Mucajaí"],
+        "SC": ["Joinville", "Florianópolis", "Blumenau", "São Bento do Sul", "Itajaí", "Chapecó", "Criciúma", "Jaraguá do Sul", "Palhoça", "Lages", "Balneário Camboriú", "Brusque", "Tubarão", "São José", "Navegantes", "Penha", "Mafra", "Canoinhas", "Rio Negrinho", "Concordia"],
+        "SP": ["São Paulo", "Guarulhos", "Campinas", "São Bernardo do Campo", "Santo André", "Osasco", "São José dos Campos", "Ribeirão Preto", "Sorocaba", "Mauá", "São José do Rio Preto", "Santos", "Mogi das Cruzes", "Diadema", "Jundiaí", "Piracicaba", "Carapicuíba", "Bauru", "Itaquaquecetuba", "Franca"],
+        "SE": ["Aracaju", "Nossa Senhora do Socorro", "Lagarto", "Itabaiana", "São Cristóvão"],
+        "TO": ["Palmas", "Araguaína", "Gurupi", "Paraíso do Tocantins", "Porto Nacional"]
     };
 
-    const CIDADES_POR_PAIS_ESTRANGEIRO = {
-        "Argentina": { "Buenos Aires": ["Buenos Aires", "La Plata", "Mar del Plata"], "Córdoba": ["Córdoba", "Villa Carlos Paz"], "Santa Fe": ["Rosario", "Santa Fe"] },
-        "Paraguai": { "Alto Paraná": ["Ciudad del Este", "Hernandarias"], "Central": ["Asunción", "Luque", "San Lorenzo"] },
-        "Uruguai": { "Montevideo": ["Montevideo"], "Maldonado": ["Punta del Este", "Maldonado"] },
-        "Chile": { "Santiago": ["Santiago"], "Valparaíso": ["Valparaíso", "Viña del Mar"] },
-        "Estados Unidos": { "FL": ["Miami", "Orlando", "Fort Lauderdale"], "NY": ["New York"], "CA": ["Los Angeles", "San Francisco"] },
-        "Portugal": { "Lisboa": ["Lisboa", "Sintra", "Cascais"], "Porto": ["Porto", "Vila Nova de Gaia"] },
-        "Espanha": { "Madrid": ["Madrid"], "Cataluña": ["Barcelona"] }
-    };
+    const cidadesIbgeCarregadasPorUf = {};
 
-    const UF_POR_ESTADO_NOME = {
-        "acre": "AC", "alagoas": "AL", "amapa": "AP", "amapá": "AP", "amazonas": "AM",
-        "bahia": "BA", "ceara": "CE", "ceará": "CE", "distrito federal": "DF",
-        "espirito santo": "ES", "espírito santo": "ES", "goias": "GO", "goiás": "GO",
-        "maranhao": "MA", "maranhão": "MA", "mato grosso": "MT",
-        "mato grosso do sul": "MS", "minas gerais": "MG", "para": "PA", "pará": "PA",
-        "paraiba": "PB", "paraíba": "PB", "parana": "PR", "paraná": "PR",
-        "pernambuco": "PE", "piaui": "PI", "piauí": "PI", "rio de janeiro": "RJ",
-        "rio grande do norte": "RN", "rio grande do sul": "RS", "rondonia": "RO", "rondônia": "RO",
-        "roraima": "RR", "santa catarina": "SC", "sao paulo": "SP", "são paulo": "SP",
-        "sergipe": "SE", "tocantins": "TO"
-    };
-
-    function normalizarUf(ufOuEstado) {
-        const s = String(ufOuEstado || "").trim();
-        if (!s) return "";
-        if (s.length === 2) return s.toUpperCase();
-        const chave = s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        return UF_POR_ESTADO_NOME[chave] || s.toUpperCase();
+    async function carregarMunicipiosIbgePorUf(uf) {
+        if (!uf) return [];
+        const ufUpper = uf.toUpperCase();
+        if (cidadesIbgeCarregadasPorUf[ufUpper]) {
+            return cidadesIbgeCarregadasPorUf[ufUpper];
+        }
+        try {
+            const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${encodeURIComponent(ufUpper)}/municipios?orderBy=nome`);
+            if (resp.ok) {
+                const lista = await resp.json();
+                if (Array.isArray(lista) && lista.length > 0) {
+                    const nomes = lista.map(m => m.nome).filter(Boolean);
+                    cidadesIbgeCarregadasPorUf[ufUpper] = nomes;
+                    return nomes;
+                }
+            }
+        } catch (e) {}
+        return CIDADES_POR_UF[ufUpper] || [];
     }
 
     function definirPaisNoSelectCadastro(paisNome) {
         const selPais = document.getElementById('cadPais');
         if (!selPais || !paisNome) return;
         const pLimpo = String(paisNome).trim();
-        const optExistente = Array.from(selPais.options).find(o => o.value.toLowerCase() === pLimpo.toLowerCase());
-        if (optExistente) {
-            selPais.value = optExistente.value;
+        const opMatch = Array.from(selPais.options).find(o => o.value.toLowerCase() === pLimpo.toLowerCase() || o.text.toLowerCase() === pLimpo.toLowerCase());
+        if (opMatch) {
+            selPais.value = opMatch.value;
         } else {
-            const novaOpt = document.createElement('option');
-            novaOpt.value = pLimpo;
-            novaOpt.textContent = pLimpo;
-            selPais.appendChild(novaOpt);
+            const optNovo = document.createElement('option');
+            optNovo.value = pLimpo;
+            optNovo.textContent = pLimpo;
+            selPais.appendChild(optNovo);
             selPais.value = pLimpo;
         }
-        aoMudarPaisCadastro();
+    }
+
+    async function detectarPaisAtualUsuario() {
+        const selPais = document.getElementById('cadPais');
+        if (!selPais) return;
+        try {
+            const resp = await fetch("https://ipapi.co/json/").catch(() => null);
+            if (resp && resp.ok) {
+                const d = await resp.json();
+                if (d && d.country_name) {
+                    const pNome = /brazil|brasil/i.test(d.country_name) ? "Brasil" : d.country_name;
+                    definirPaisNoSelectCadastro(pNome);
+                }
+            }
+        } catch (e) {}
     }
 
     function aoMudarPaisCadastro() {
@@ -5812,273 +5974,70 @@
         const selUf = document.getElementById('cadEstado');
         const selCid = document.getElementById('cadCidade');
         if (!selUf || !selCid) return;
-
-        if (pais === "Brasil") {
-            const ufsBr = ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
-            const ufAtual = selUf.value;
-            selUf.innerHTML = `<option value="">UF</option>` + ufsBr.map(u => `<option value="${u}">${u}</option>`).join("");
-            if (ufsBr.includes(ufAtual)) selUf.value = ufAtual;
-            aoMudarEstadoCadastro();
-        } else {
-            const mapaEstr = CIDADES_POR_PAIS_ESTRANGEIRO[pais] || {};
-            const estadosEstr = Object.keys(mapaEstr);
-            selUf.innerHTML = `<option value="">Região/UF</option>` + estadosEstr.map(e => `<option value="${e}">${e}</option>`).join("");
+        if (pais !== "Brasil") {
+            selUf.innerHTML = `<option value="EX">EX</option><option value="INT">INT</option>`;
             selCid.innerHTML = `<option value="">Selecione ou digite a cidade</option>`;
-        }
-    }
-
-    async function aoMudarEstadoCadastro(cidadePreSelecionada = "") {
-        const pais = document.getElementById('cadPais')?.value || "Brasil";
-        const ufRaw = document.getElementById('cadEstado')?.value || "";
-        const uf = pais === "Brasil" ? normalizarUf(ufRaw) : ufRaw;
-        const selCid = document.getElementById('cadCidade');
-        if (!selCid) return;
-
-        selCid.innerHTML = `<option value="">Selecione a cidade</option>`;
-        if (!uf) return;
-
-        let cidades = [];
-        if (pais === "Brasil") {
-            const cacheKey = `clickcontrol_cidades_uf_${uf}`;
-            try {
-                const salvo = JSON.parse(localStorage.getItem(cacheKey) || "null");
-                if (Array.isArray(salvo) && salvo.length > 0) cidades = salvo;
-            } catch (e) {}
-
-            if (!cidades.length) {
-                try {
-                    const resp = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
-                    const dadosIbge = await resp.json();
-                    if (Array.isArray(dadosIbge) && dadosIbge.length > 0) {
-                        cidades = dadosIbge.map(m => m.nome).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-                        localStorage.setItem(cacheKey, JSON.stringify(cidades));
-                    }
-                } catch (e) {}
-            }
-            if (!cidades.length && CIDADES_POR_UF[uf]) {
-                cidades = CIDADES_POR_UF[uf];
-            }
-        } else {
-            cidades = (CIDADES_POR_PAIS_ESTRANGEIRO[pais] && CIDADES_POR_PAIS_ESTRANGEIRO[pais][uf]) || [];
-        }
-
-        cidades.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c;
-            opt.textContent = c;
-            selCid.appendChild(opt);
-        });
-
-        if (cidadePreSelecionada) {
-            definirCidadeNoSelectCadastro(cidadePreSelecionada);
+        } else if (selUf.options.length < 10) {
+            selUf.innerHTML = `<option value="">UF</option>` + ["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(u => `<option value="${u}">${u}</option>`).join("");
+            selCid.innerHTML = `<option value="">Selecione a cidade</option>`;
         }
     }
 
     function definirCidadeNoSelectCadastro(cidadeNome) {
         const selCid = document.getElementById('cadCidade');
         if (!selCid || !cidadeNome) return;
-        const alvo = String(cidadeNome).trim();
-        const chaveAlvo = chaveNormalizadaCidade(alvo);
-        const opt = Array.from(selCid.options).find(o => chaveNormalizadaCidade(o.value) === chaveAlvo);
-        if (opt) {
-            selCid.value = opt.value;
+        const cLimpa = String(cidadeNome).trim();
+        const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const alvoNorm = norm(cLimpa);
+        let match = Array.from(selCid.options).find(o => norm(o.value) === alvoNorm || norm(o.text) === alvoNorm);
+        if (!match) {
+            match = Array.from(selCid.options).find(o => o.value && (norm(o.value).includes(alvoNorm) || alvoNorm.includes(norm(o.value))));
+        }
+        if (match) {
+            selCid.value = match.value;
         } else {
-            const novaOpt = document.createElement('option');
-            novaOpt.value = alvo;
-            novaOpt.textContent = alvo;
-            selCid.appendChild(novaOpt);
-            selCid.value = alvo;
+            const optNovo = document.createElement('option');
+            optNovo.value = cLimpa;
+            optNovo.textContent = cLimpa;
+            selCid.appendChild(optNovo);
+            selCid.value = cLimpa;
         }
     }
 
-    async function detectarPaisAtualUsuario() {
-        const selPais = document.getElementById('cadPais');
-        if (!selPais) return;
-        if (userLatAtual !== null && userLngAtual !== null) {
-            try {
-                const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=5&lat=${userLatAtual}&lon=${userLngAtual}`, {
-                    headers: { "Accept-Language": "pt-BR" }
-                });
-                const data = await resp.json();
-                const paisDetectado = data?.address?.country;
-                if (paisDetectado) {
-                    const pNorm = /brazil|brasil/i.test(paisDetectado) ? "Brasil" : paisDetectado;
-                    definirPaisNoSelectCadastro(pNorm);
-                    return;
-                }
-            } catch (e) {}
+    async function aoMudarEstadoCadastro(cidadePreSelecionada = "") {
+        const selUf = document.getElementById('cadEstado');
+        const selCid = document.getElementById('cadCidade');
+        if (!selUf || !selCid) return;
+        const uf = selUf.value;
+        const cidadeAtual = cidadePreSelecionada || selCid.value;
+        const baseLocal = CIDADES_POR_UF[uf] || [];
+        selCid.innerHTML = `<option value="">Selecione a cidade</option>` + baseLocal.map(c => `<option value="${c}">${c}</option>`).join("");
+        if (cidadeAtual) definirCidadeNoSelectCadastro(cidadeAtual);
+
+        if (uf && uf !== "EX" && uf !== "INT") {
+            const todasCidades = await carregarMunicipiosIbgePorUf(uf);
+            if (todasCidades && todasCidades.length > 0 && selUf.value === uf) {
+                const cidadeRef = cidadePreSelecionada || selCid.value;
+                selCid.innerHTML = `<option value="">Selecione a cidade</option>` + todasCidades.map(c => `<option value="${c}">${c}</option>`).join("");
+                if (cidadeRef) definirCidadeNoSelectCadastro(cidadeRef);
+            }
         }
-        const idioma = navigator.language || "";
-        if (/-(AR)\b/i.test(idioma)) definirPaisNoSelectCadastro("Argentina");
-        else if (/-(PY)\b/i.test(idioma)) definirPaisNoSelectCadastro("Paraguai");
-        else if (/-(UY)\b/i.test(idioma)) definirPaisNoSelectCadastro("Uruguai");
-        else if (/-(CL)\b/i.test(idioma)) definirPaisNoSelectCadastro("Chile");
-        else if (/-(PT)\b/i.test(idioma)) definirPaisNoSelectCadastro("Portugal");
-        else if (/-(ES)\b/i.test(idioma)) definirPaisNoSelectCadastro("Espanha");
-        else if (/-(US)\b/i.test(idioma)) definirPaisNoSelectCadastro("Estados Unidos");
-        else definirPaisNoSelectCadastro("Brasil");
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        restaurarCacheWifisLocal();
+        aoMudarEstadoCadastro();
         detectarPaisAtualUsuario();
         const salvo = localStorage.getItem('clickcontrol_user');
         if (salvo) {
             try {
                 usuarioLogado = JSON.parse(salvo);
                 if (usuarioLogado && usuarioLogado.email) {
+                    usuarioLogado.isAdmin = ADMIN_EMAILS.includes(usuarioLogado.email.toLowerCase().trim());
                     mostrarApp();
                 }
             } catch (e) {}
         }
     });
-
-    let configBloqueioApp = { bloqueado: false, mensagem: "Aplicativo temporariamente bloqueado para usuários pelo administrador." };
-
-    async function verificarBloqueioAppParaUsuario() {
-        if (ehAdministrador()) return false;
-        try {
-            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=status_bloqueio_app&_=${Date.now()}`);
-            const data = await res.json();
-            if (data && data.status === "ok") {
-                configBloqueioApp = {
-                    bloqueado: Boolean(data.bloqueado),
-                    mensagem: data.mensagem || "Aplicativo temporariamente bloqueado para usuários pelo administrador."
-                };
-                localStorage.setItem('clickcontrol_bloqueio_app', JSON.stringify(configBloqueioApp));
-            }
-        } catch (e) {
-            try {
-                const salvo = JSON.parse(localStorage.getItem('clickcontrol_bloqueio_app') || 'null');
-                if (salvo) configBloqueioApp = salvo;
-            } catch (err) {}
-        }
-        if (configBloqueioApp.bloqueado && !ehAdministrador()) {
-            exibirTelaBloqueioUsuario(configBloqueioApp.mensagem);
-            return true;
-        }
-        return false;
-    }
-
-    function exibirTelaBloqueioUsuario(mensagem) {
-        criarModalDinamico('modalBloqueioUsuario', `
-            <div style="background:#fef9c3;border:2px solid #111111;border-radius:16px;padding:20px;max-width:360px;width:100%;text-align:center;color:#111111;">
-                <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
-                <div style="font-size:1.05rem;font-weight:900;margin-bottom:8px;">Acesso Temporariamente Bloqueado</div>
-                <div style="font-size:0.84rem;color:#27272a;line-height:1.45;background:#ffffff;border:1px solid #111111;border-radius:10px;padding:12px;margin-bottom:14px;">${mensagem || "Aplicativo desativado para usuários."}</div>
-                <button type="button" onclick="sair(); fecharModalDinamico('modalBloqueioUsuario');" style="width:100%;background:#111111;color:#facc15;border:none;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;">Voltar ao Login</button>
-            </div>
-        `);
-    }
-
-    async function carregarConfigBloqueioAdmin() {
-        const chk = document.getElementById('adminAppBloqueadoCheck');
-        const txt = document.getElementById('adminMsgBloqueio');
-        try {
-            const res = await fetch(`${GOOGLE_SCRIPT_URL}?acao=status_bloqueio_app&_=${Date.now()}`);
-            const data = await res.json();
-            if (data && data.status === "ok") {
-                configBloqueioApp = {
-                    bloqueado: Boolean(data.bloqueado),
-                    mensagem: data.mensagem || ""
-                };
-            }
-        } catch (e) {}
-        if (chk) chk.checked = Boolean(configBloqueioApp.bloqueado);
-        if (txt) txt.value = configBloqueioApp.mensagem || "";
-    }
-
-    async function salvarConfigBloqueioAdmin() {
-        if (bloquearClickFantasma('salvar_bloqueio_app', 400)) return;
-        const chk = document.getElementById('adminAppBloqueadoCheck');
-        const txt = document.getElementById('adminMsgBloqueio');
-        const toast = document.getElementById('adminBloqueioToast');
-        const bloqueado = Boolean(chk?.checked);
-        const mensagem = (txt?.value || "").trim() || "Aplicativo temporariamente desativado para usuários.";
-        configBloqueioApp = { bloqueado, mensagem };
-        localStorage.setItem('clickcontrol_bloqueio_app', JSON.stringify(configBloqueioApp));
-        try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_salvar_bloqueio_app",
-                    admin_email: usuarioLogado?.email || "",
-                    bloqueado: bloqueado,
-                    mensagem: mensagem
-                })
-            });
-            if (toast) {
-                toast.style.display = "block";
-                toast.className = "toast";
-                toast.textContent = bloqueado ? "✅ Bloqueio ativado para usuários!" : "✅ Aplicativo liberado para usuários!";
-            }
-        } catch (e) {
-            if (toast) {
-                toast.style.display = "block";
-                toast.className = "toast";
-                toast.textContent = "✅ Configuração salva localmente!";
-            }
-        }
-    }
-
-    async function enviarQrCodeAtual(ssid, senha) {
-        if (bloquearClickFantasma('enviar_qr_atual', 400)) return;
-        const payloadStr = gerarPayloadWifiQR(ssid, senha);
-        const qrUrl = gerarUrlImagemQR(ssid, senha, 300);
-        const aviso = document.getElementById('avisoConexaoWifiModal');
-        try {
-            const resp = await fetch(qrUrl);
-            const blob = await resp.blob();
-            const file = new File([blob], `qrcode-${ssid || 'wifi'}.png`, { type: 'image/png' });
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    title: `QR Code Wi-Fi - ${ssid}`,
-                    text: `Rede Wi-Fi: ${ssid}
-Senha: ${senha || 'Aberta'}
-${payloadStr}`,
-                    files: [file]
-                });
-                if (aviso) {
-                    aviso.style.display = "block";
-                    aviso.innerHTML = "✅ QR Code compartilhado!";
-                }
-                return;
-            }
-            if (navigator.share) {
-                await navigator.share({
-                    title: `QR Code Wi-Fi - ${ssid}`,
-                    text: `Rede Wi-Fi: ${ssid}
-Senha: ${senha || 'Aberta'}
-QR Code: ${qrUrl}`,
-                    url: qrUrl
-                });
-                if (aviso) {
-                    aviso.style.display = "block";
-                    aviso.innerHTML = "✅ Dados e link do QR Code enviados!";
-                }
-                return;
-            }
-        } catch (e) {}
-
-        try {
-            if (navigator.clipboard) {
-                await navigator.clipboard.writeText(`Rede: ${ssid} | Senha: ${senha || 'Aberta'} | QR: ${qrUrl}`);
-            }
-        } catch (e) {}
-
-        const linkWpp = `https://wa.me/?text=${encodeURIComponent(`📶 Wi-Fi: ${ssid}
-🔑 Senha: ${senha || 'Aberta'}
-🔗 QR Code: ${qrUrl}`)}`;
-        window.open(linkWpp, '_blank');
-        if (aviso) {
-            aviso.style.display = "block";
-            aviso.innerHTML = `📤 Link do QR Code copiado e aberto para envio (Rede: <strong>${ssid}</strong>).`;
-        }
-    }
-
 </script>
-
 </body>
 </html>
