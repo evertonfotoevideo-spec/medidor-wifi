@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Click Control 1.018 - Gestão & Rede Colaborativa de Wi-Fi</title>
+    <title>Click Control 1.020 - Gestão & Rede Colaborativa de Wi-Fi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <style>
         :root {
@@ -1068,7 +1068,7 @@
     <!-- TELA 1: LOGIN E CADASTRO -->
     <div id="loginScreen">
         <div style="text-align:center; margin-bottom:14px;">
-            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.018</h1>
+            <h1 style="color:var(--primary); font-size:1.45rem; font-weight:900; letter-spacing:0.6px;">CLICK CONTROL 1.020</h1>
             <p style="color:var(--text-muted); font-size:0.78rem; margin-top:3px;">Gestão & Rede Colaborativa de Wi-Fi • Foco Radical</p>
         </div>
 
@@ -1150,7 +1150,7 @@
                         <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                     </div>
                 </div>
-                <span class="app-version-corner">v1.018</span>
+                <span class="app-version-corner">v1.020</span>
                 </div>
             </div>
 
@@ -1202,7 +1202,7 @@
                     <button type="button" class="user-menu-item danger" onclick="sair()">🚪 Sair da Conta</button>
                 </div>
             </div>
-            <span class="app-version-corner">v1.018</span>
+            <span class="app-version-corner">v1.020</span>
             </div>
         </div>
 
@@ -1530,14 +1530,13 @@
             </div>
 
             <div class="form-group">
-                <label>Nota do Local (1 a 5 estrelas) *</label>
-                <div id="cadStarsSelect" style="display:flex; gap:6px; font-size:1.5rem; cursor:pointer; align-items:center; margin-bottom:6px;">
-                    <span onclick="selecionarNotaCadastro(1)" id="cstar1">⭐</span>
-                    <span onclick="selecionarNotaCadastro(2)" id="cstar2">⭐</span>
-                    <span onclick="selecionarNotaCadastro(3)" id="cstar3">⭐</span>
-                    <span onclick="selecionarNotaCadastro(4)" id="cstar4">⭐</span>
-                    <span onclick="selecionarNotaCadastro(5)" id="cstar5">⭐</span>
-                    <span id="cadNotaTexto" style="font-size:0.8rem; font-weight:700; color:var(--primary); margin-left:8px;">5.0 estrelas</span>
+                <label>Avaliação do Local (1 a 5) *</label>
+                <div id="cadStarsSelect" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; margin-bottom:6px;">
+                    <button type="button" onclick="selecionarNotaCadastro(1)" id="cstar1" style="background:#ffffff; color:#111111; border:1.5px solid #111111; border-radius:10px; padding:7px 4px; font-size:0.78rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;">1 ⭐</button>
+                    <button type="button" onclick="selecionarNotaCadastro(2)" id="cstar2" style="background:#ffffff; color:#111111; border:1.5px solid #111111; border-radius:10px; padding:7px 4px; font-size:0.78rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;">2 ⭐</button>
+                    <button type="button" onclick="selecionarNotaCadastro(3)" id="cstar3" style="background:#ffffff; color:#111111; border:1.5px solid #111111; border-radius:10px; padding:7px 4px; font-size:0.78rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;">3 ⭐</button>
+                    <button type="button" onclick="selecionarNotaCadastro(4)" id="cstar4" style="background:#ffffff; color:#111111; border:1.5px solid #111111; border-radius:10px; padding:7px 4px; font-size:0.78rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;">4 ⭐</button>
+                    <button type="button" onclick="selecionarNotaCadastro(5)" id="cstar5" style="background:#111111; color:#facc15; border:1.5px solid #111111; border-radius:10px; padding:7px 4px; font-size:0.78rem; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:3px;">5 ⭐</button>
                 </div>
             </div>
 
@@ -1595,8 +1594,24 @@
 
             <div id="secaoTermosUso" class="hidden">
                 <div class="profile-card" id="conteudoTermosUso">
-                    <div style="font-size:0.86rem; font-weight:800; color:var(--primary); margin-bottom:8px;">📄 Termos de Uso</div>
-                    <div id="textoTermosUso" style="font-size:0.78rem; color:var(--text-main); line-height:1.45; white-space:pre-line;">Adicione aqui o texto dos seus Termos de Uso.</div>
+                    <div style="font-size:0.88rem; font-weight:900; color:var(--primary); margin-bottom:8px;">📄 Termos de Uso — Click Control</div>
+                    <div id="textoTermosUso" style="font-size:0.77rem; color:var(--text-main); line-height:1.48; white-space:pre-line;">1. OBJETO E FINALIDADE
+O aplicativo Click Control é uma plataforma colaborativa destinada ao mapeamento, compartilhamento e avaliação de pontos de acesso Wi-Fi disponíveis em estabelecimentos comerciais, espaços públicos e pontos de apoio.
+
+2. CADASTRO E RESPONSABILIDADE PELAS INFORMAÇÕES
+2.1. O usuário declara que possui autorização ou acesso legítimo às redes Wi-Fi que cadastrar na plataforma, comprometendo-se a não publicar redes residenciais privadas sem consentimento ou dados falsos.
+2.2. As informações de velocidade (Download/Upload), horário de funcionamento e estrutura do local são colaborativas e podem variar conforme a operadora, horário e distância do roteador.
+
+3. SEGURANÇA DIGITAL EM REDES PÚBLICAS
+3.1. Ao conectar-se a redes Wi-Fi públicas ou compartilhadas, o usuário reconhece os riscos inerentes a ambientes abertos e compromete-se a adotar boas práticas de segurança, como o uso de conexão VPN e evitar transações financeiras sensíveis.
+3.2. O Click Control atua exclusivamente como guia informativo e ferramenta de medição, não se responsabilizando pela disponibilidade, estabilidade ou políticas internas dos estabelecimentos provedores do sinal.
+
+4. SISTEMA DE CRÉDITOS E BOA CONDUTA
+4.1. O sistema de pontos/créditos recompensa contribuições reais (cadastros válidos, testes de velocidade e avaliações autênticas).
+4.2. Tentativas de fraude, cadastros duplicados intencionais ou uso abusivo da plataforma poderão resultar na suspensão ou bloqueio da conta pela administração.
+
+5. PRIVACIDADE E PERMISSÕES
+O aplicativo utiliza a localização (GPS) e dados da rede Wi-Fi conectada exclusivamente para localizar pontos próximos, confirmar a rede durante os testes de velocidade e melhorar a precisão dos alfinetes no mapa.</div>
                 </div>
             </div>
 
@@ -1772,7 +1787,7 @@
                         </label>
                         <div class="form-group" style="margin-bottom:8px;">
                             <label for="adminVersaoAtualApp">Versão atual permitida (versões menores serão bloqueadas)</label>
-                            <input type="text" id="adminVersaoAtualApp" value="1.018" placeholder="Ex: 1.018">
+                            <input type="text" id="adminVersaoAtualApp" value="1.020" placeholder="Ex: 1.020">
                         </div>
                         <div class="form-group" style="margin-bottom:8px;">
                             <label for="adminMsgBloqueio">Mensagem exibida para usuários com versão desatualizada</label>
@@ -1792,12 +1807,28 @@
 <script src="https://cdn.jsdelivr.net/npm/jsQR@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
-    const APP_VERSION = "1.018";
+    const APP_VERSION = "1.021";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxzOa9tP7xmSgrOX84uodpBvTqXkYTlo2048XRvULtVFMAoG00kpHnTJh8tOobgGmnKA/exec";
     const ADMIN_EMAILS = ["everton.fotoevideo@gmail.com"];
 
     let modoAuth = 'login';
     let usuarioLogado = null;
+    // Integração das sessões do backend: somente solicitações ao Apps Script.
+    const ccNativeFetch=window.fetch.bind(window);
+    window.fetch=function(input,options){
+      let url=typeof input==='string'?input:(input&&input.url)||'';
+      if(!url.startsWith(GOOGLE_SCRIPT_URL))return ccNativeFetch(input,options);
+      const token=localStorage.getItem('clickcontrol_session')||'';
+      if(!token)return ccNativeFetch(input,options);
+      options=Object.assign({},options||{});
+      if(options.body && typeof options.body==='string'){
+        try{const data=JSON.parse(options.body);data.token=token;options.body=JSON.stringify(data);}catch(e){}
+      }else{
+        const u=new URL(url);u.searchParams.set('token',token);input=u.toString();
+      }
+      return ccNativeFetch(input,options);
+    };
+
     let listaWifisCache = [];
     let userLatAtual = null;
     let userLngAtual = null;
@@ -3878,12 +3909,16 @@
     }
 
     function selecionarNotaCadastro(n) {
-        if (bloquearClickFantasma('nota_cad', 250)) return;
+        if (bloquearClickFantasma('nota_cad', 200)) return;
         notaCadastro = n;
         for (let i = 1; i <= 5; i++) {
-            document.getElementById('cstar' + i).style.filter = i <= n ? "none" : "grayscale(100%)";
+            const btn = document.getElementById('cstar' + i);
+            if (!btn) continue;
+            const ativo = (i === n);
+            btn.style.background = ativo ? "#111111" : "#ffffff";
+            btn.style.color = ativo ? "#facc15" : "#111111";
+            btn.style.fontWeight = ativo ? "900" : "700";
         }
-        document.getElementById('cadNotaTexto').textContent = n.toFixed(1) + " estrelas";
     }
 
     async function cadastrarNovoWifi() {
@@ -4180,12 +4215,41 @@
         });
     }
 
+    async function enviarRequisicaoAppsScript(payload) {
+        try {
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            });
+            const txt = await res.text();
+            return JSON.parse(txt);
+        } catch (errPost) {
+            throw errPost;
+            const qs = new URLSearchParams();
+            Object.keys(payload || {}).forEach(k => {
+                if (payload[k] !== undefined && payload[k] !== null && typeof payload[k] !== 'object') {
+                    qs.append(k, String(payload[k]));
+                }
+            });
+            qs.append("_", String(Date.now()));
+            const resGet = await fetch(`${GOOGLE_SCRIPT_URL}?${qs.toString()}`, {
+                method: "GET",
+                redirect: "follow"
+            });
+            const txtGet = await resGet.text();
+            return JSON.parse(txtGet);
+        }
+    }
+
     async function salvarEdicaoAdminWifi() {
         const idWifi = String(document.getElementById('adminSelectWifi')?.value || "").trim();
         const toast = document.getElementById('adminToast');
         const btn = document.getElementById('btnSalvarAdminWifi');
         if (!idWifi) return;
 
+        const pontoAtual = listaWifisCache.find(w => String(w.id).trim() === idWifi);
         const novoLocal = document.getElementById('adminWifiLocal').value.trim();
         const novoEnd = document.getElementById('adminWifiEndereco').value.trim();
         const novaCid = document.getElementById('adminWifiCidade').value.trim();
@@ -4195,35 +4259,30 @@
         const novoDown = Number(document.getElementById('adminWifiDown').value) || 0;
         const novoUp = Number(document.getElementById('adminWifiUp').value) || 0;
         const coms = Object.keys(comodidadesAdmin).filter(k => comodidadesAdmin[k]).join(", ");
-        const pontoAtual = listaWifisCache.find(w => String(w.id).trim() === idWifi);
         const verifAtual = pontoAtual?.verificado_admin || "Pendente";
 
         btn.disabled = true;
         btn.textContent = "Salvando...";
 
         try {
-            const res = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_editar_wifi",
-                    admin_email: usuarioLogado?.email || "",
-                    id_usuario: usuarioLogado?.email || "",
-                    id_wifi: idWifi,
-                    nome_local: novoLocal,
-                    lat_long: novoEnd,
-                    cidade_uf: novaCid,
-                    ssid_rede: novoSsid,
-                    senha: novaSenha,
-                    horario_sinal: novoHor,
-                    down_mbps: novoDown,
-                    up_mbps: novoUp,
-                    comodidades: coms,
-                    verificado_admin: verifAtual
-                })
+            const data = await enviarRequisicaoAppsScript({
+                acao: "admin_editar_wifi",
+                admin_email: usuarioLogado?.email || "",
+                id_usuario: usuarioLogado?.email || "",
+                id_wifi: idWifi,
+                nome_local: novoLocal,
+                local_orig: pontoAtual?.local || "",
+                ssid_orig: pontoAtual?.ssid || "",
+                lat_long: novoEnd,
+                cidade_uf: novaCid,
+                ssid_rede: novoSsid,
+                senha: novaSenha,
+                horario_sinal: novoHor,
+                down_mbps: novoDown,
+                up_mbps: novoUp,
+                comodidades: coms,
+                verificado_admin: verifAtual
             });
-            const data = await res.json();
             if (pontoAtual) {
                 pontoAtual.local = novoLocal;
                 pontoAtual.nome_local = novoLocal;
@@ -4241,7 +4300,7 @@
                 localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
             }
             toast.style.display = "block";
-            toast.className = "toast";
+            toast.className = (data && data.status === "error") ? "toast error" : "toast";
             toast.textContent = (data && data.message) ? data.message : "✅ Ponto atualizado pelo Administrador!";
             popularSelectWifis();
             renderizarAlfinetesNoMapa();
@@ -4250,7 +4309,7 @@
         } catch (e) {
             toast.style.display = "block";
             toast.className = "toast error";
-            toast.textContent = "Erro ao salvar edição.";
+            toast.textContent = "Erro ao salvar edição na planilha.";
         } finally {
             btn.disabled = false;
             btn.textContent = "💾 Salvar Alterações";
@@ -4260,27 +4319,29 @@
     async function excluirPontoAdminWifi() {
         const idWifi = String(document.getElementById('adminSelectWifi')?.value || "").trim();
         const toast = document.getElementById('adminToast');
+        const btn = document.getElementById('btnExcluirAdminWifi');
         if (!idWifi) return;
         const ponto = listaWifisCache.find(w => String(w.id).trim() === idWifi);
         if (!confirm(`Tem certeza que deseja excluir o ponto "${ponto?.local || ""}"?`)) return;
 
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = "Excluindo...";
+        }
+
         try {
-            const res = await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_excluir_wifi",
-                    admin_email: usuarioLogado?.email || "",
-                    id_usuario: usuarioLogado?.email || "",
-                    id_wifi: idWifi
-                })
+            const data = await enviarRequisicaoAppsScript({
+                acao: "admin_excluir_wifi",
+                admin_email: usuarioLogado?.email || "",
+                id_usuario: usuarioLogado?.email || "",
+                id_wifi: idWifi,
+                nome_local: ponto?.local || "",
+                ssid_rede: ponto?.ssid || ""
             });
-            const data = await res.json();
             listaWifisCache = listaWifisCache.filter(w => String(w.id).trim() !== idWifi);
             localStorage.setItem('clickcontrol_wifis_cache', JSON.stringify(listaWifisCache));
             toast.style.display = "block";
-            toast.className = "toast";
+            toast.className = (data && data.status === "error") ? "toast error" : "toast";
             toast.textContent = (data && data.message) ? data.message : "🗑️ Ponto excluído com sucesso.";
             popularSelectWifis();
             renderizarAlfinetesNoMapa();
@@ -4290,6 +4351,11 @@
             toast.style.display = "block";
             toast.className = "toast error";
             toast.textContent = "Erro ao excluir ponto.";
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = "🗑️ Excluir";
+            }
         }
     }
 
@@ -4337,10 +4403,12 @@
                     acao: "atualizar_dados_usuario",
                     id_usuario: usuarioLogado.email,
                     nome: novoNome,
-                    nova_senha: novaSenha
+                    nova_senha: novaSenha,
+                    senha_atual: document.getElementById('editUserSenhaAtual')?.value || ''
                 })
             });
             const data = await res.json();
+            if(data.status!=='ok')throw new Error(data.message||'Não foi possível atualizar.');
             usuarioLogado.nome = novoNome;
             localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
             const pNovo = novoNome.split(" ")[0];
@@ -4411,11 +4479,89 @@
                 body: JSON.stringify({ acao: "redefinir_senha_codigo", id_usuario: email, codigo, nova_senha: novaSenha })
             });
             const data = await res.json();
+            if (data && data.status === "ok") {
+                salvarEstadoBloqueioLoginLocal(email, 0, 0);
+            }
             toast.style.display = "block";
             toast.className = "toast";
             toast.textContent = data.message || "Senha redefinida!";
             alternarRecuperacaoSenha(false);
         } catch (e) {}
+    }
+
+    let timerBloqueioLoginInterval = null;
+
+    function obterEstadoBloqueioLoginLocal(email) {
+        try {
+            const obj = JSON.parse(localStorage.getItem('clickcontrol_login_lockouts') || '{}');
+            return obj[email] || { falhas: 0, bloqueadoAte: 0 };
+        } catch (e) {
+            return { falhas: 0, bloqueadoAte: 0 };
+        }
+    }
+
+    function salvarEstadoBloqueioLoginLocal(email, falhas, bloqueadoAte) {
+        try {
+            const obj = JSON.parse(localStorage.getItem('clickcontrol_login_lockouts') || '{}');
+            if (!falhas && !bloqueadoAte) {
+                delete obj[email];
+            } else {
+                obj[email] = { falhas: Number(falhas) || 0, bloqueadoAte: Number(bloqueadoAte) || 0 };
+            }
+            localStorage.setItem('clickcontrol_login_lockouts', JSON.stringify(obj));
+        } catch (e) {}
+    }
+
+    function calcularMinutosBloqueioLoginClient(falhas) {
+        if (falhas < 3) return 0;
+        const minutos = 5 * Math.pow(2, falhas - 3);
+        return Math.min(60, minutos);
+    }
+
+    function formatarContagemBloqueioLogin(msRestante) {
+        const totalSeg = Math.max(1, Math.ceil(msRestante / 1000));
+        const min = Math.floor(totalSeg / 60);
+        const seg = totalSeg % 60;
+        if (min >= 60) return "1 hora";
+        if (min > 0) return `${min}m ${String(seg).padStart(2, '0')}s`;
+        return `${seg}s`;
+    }
+
+    function iniciarContagemBloqueioLogin(email, bloqueadoAte, falhas) {
+        if (timerBloqueioLoginInterval) {
+            clearInterval(timerBloqueioLoginInterval);
+            timerBloqueioLoginInterval = null;
+        }
+        const toast = document.getElementById('loginToast');
+        const btn = document.getElementById('authSubmitBtn');
+        const atualizar = () => {
+            if (modoAuth !== 'login') {
+                clearInterval(timerBloqueioLoginInterval);
+                timerBloqueioLoginInterval = null;
+                btn.disabled = false;
+                btn.textContent = "Criar Conta e Entrar";
+                return;
+            }
+            const restante = bloqueadoAte - Date.now();
+            if (restante <= 0) {
+                clearInterval(timerBloqueioLoginInterval);
+                timerBloqueioLoginInterval = null;
+                btn.disabled = false;
+                btn.textContent = "Entrar no Aplicativo";
+                toast.style.display = "block";
+                toast.className = "toast warning";
+                toast.textContent = "⏳ Tempo concluído. Você já pode tentar entrar novamente.";
+                return;
+            }
+            const txtTempo = formatarContagemBloqueioLogin(restante);
+            btn.disabled = true;
+            btn.textContent = `Aguarde ${txtTempo}`;
+            toast.style.display = "block";
+            toast.className = "toast error";
+            toast.textContent = `🔒 Muitas tentativas incorretas (${falhas} falha(s)). Tente novamente em ${txtTempo}.`;
+        };
+        atualizar();
+        timerBloqueioLoginInterval = setInterval(atualizar, 1000);
     }
 
     async function processarAuth(ev) {
@@ -4439,6 +4585,14 @@
             return;
         }
 
+        if (modoAuth === 'login') {
+            const estadoLocal = obterEstadoBloqueioLoginLocal(email);
+            if (estadoLocal.bloqueadoAte && Date.now() < estadoLocal.bloqueadoAte) {
+                iniciarContagemBloqueioLogin(email, estadoLocal.bloqueadoAte, estadoLocal.falhas || 3);
+                return;
+            }
+        }
+
         autenticandoAgora = true;
         btn.disabled = true;
         btn.textContent = "Conectando...";
@@ -4452,6 +4606,8 @@
             nome: nome,
             versao_app: APP_VERSION
         };
+
+        let emBloqueioTempo = false;
 
         try {
             let data = null;
@@ -4469,7 +4625,7 @@
                 data = null;
             }
 
-            if (!data || !data.status) {
+            if (false && (!data || !data.status)) {
                 const params = new URLSearchParams({
                     acao: acaoAtual,
                     id_usuario: email,
@@ -4490,7 +4646,19 @@
                 return;
             }
 
+            if (data && data.status === "rate_limited") {
+                emBloqueioTempo = true;
+                const falhasSrv = Number(data.falhas) || 3;
+                const bloqAte = Number(data.bloqueado_ate) || (Date.now() + calcularMinutosBloqueioLoginClient(falhasSrv) * 60 * 1000);
+                salvarEstadoBloqueioLoginLocal(email, falhasSrv, bloqAte);
+                iniciarContagemBloqueioLogin(email, bloqAte, falhasSrv);
+                return;
+            }
+
             if (data && data.status === "ok") {
+                salvarEstadoBloqueioLoginLocal(email, 0, 0);
+                if(!data.token)throw new Error('Servidor sem autenticação segura. Atualize o Apps Script.');
+                localStorage.setItem('clickcontrol_session',data.token);
                 usuarioLogado = {
                     nome: data.nome || nome || "Usuário",
                     email: email,
@@ -4499,9 +4667,24 @@
                 localStorage.setItem('clickcontrol_user', JSON.stringify(usuarioLogado));
                 mostrarApp();
             } else {
+                const msgSrv = (data && data.message) ? String(data.message) : "E-mail ou senha incorretos.";
+                if (modoAuth === 'login' && msgSrv.toLowerCase().includes("senha incorreta")) {
+                    const estAnt = obterEstadoBloqueioLoginLocal(email);
+                    const falhasAtual = Number(data && data.falhas) || ((Number(estAnt.falhas) || 0) + 1);
+                    const minBloq = calcularMinutosBloqueioLoginClient(falhasAtual);
+                    if (minBloq > 0) {
+                        emBloqueioTempo = true;
+                        const bloqAte = Date.now() + minBloq * 60 * 1000;
+                        salvarEstadoBloqueioLoginLocal(email, falhasAtual, bloqAte);
+                        iniciarContagemBloqueioLogin(email, bloqAte, falhasAtual);
+                        return;
+                    } else {
+                        salvarEstadoBloqueioLoginLocal(email, falhasAtual, 0);
+                    }
+                }
                 toast.style.display = "block";
                 toast.className = "toast error";
-                toast.textContent = (data && data.message) ? data.message : "E-mail ou senha incorretos.";
+                toast.textContent = msgSrv;
             }
         } catch (e) {
             toast.style.display = "block";
@@ -4510,8 +4693,10 @@
         } finally {
             setTimeout(() => {
                 autenticandoAgora = false;
-                btn.disabled = false;
-                btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
+                if (!emBloqueioTempo) {
+                    btn.disabled = false;
+                    btn.textContent = modoAuth === 'register' ? "Criar Conta e Entrar" : "Entrar no Aplicativo";
+                }
             }, 500);
         }
     }
@@ -4718,6 +4903,7 @@
         if (bloquearClickFantasma('sair', 400)) return;
         ativarEscudoTransicao(550);
         localStorage.removeItem('clickcontrol_user');
+        localStorage.removeItem('clickcontrol_session');
         usuarioLogado = null;
         document.body.classList.remove('mapa-fit-screen');
         document.getElementById('appScreen').classList.add('hidden');
@@ -5300,20 +5486,44 @@
             listaEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:0.75rem;padding:10px;">Ainda não há comentários neste local. Seja o primeiro a avaliar!</div>`;
             return;
         }
-        listaEl.innerHTML = itens.map(c => `
-            <div style="background:#fef9c3;border:1px solid rgba(17,17,17,0.25);border-radius:10px;padding:8px 10px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                    <strong style="font-size:0.76rem;color:#111111;">${c.autor || "Usuário"}</strong>
-                    <span style="font-size:0.68rem;color:#52525b;">${c.data || ""}</span>
-                </div>
-                ${c.texto ? `<div style="font-size:0.78rem;color:#111111;line-height:1.35;">${c.texto}</div>` : ""}
-                ${Array.isArray(c.fotos) && c.fotos.length > 0 ? `
-                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
-                        ${c.fotos.map(f => `<img src="${f}" onclick="abrirImagemAmpliada('${f}')" style="width:68px;height:52px;object-fit:cover;border-radius:6px;border:1px solid #111;cursor:pointer;">`).join("")}
-                    </div>
-                ` : ""}
-            </div>
-        `).join("");
+        // Renderização segura: conteúdo de usuários nunca é interpretado como HTML.
+        listaEl.replaceChildren();
+        itens.forEach(c => {
+            const card = document.createElement('div');
+            card.style.cssText = 'background:#fef9c3;border:1px solid rgba(17,17,17,0.25);border-radius:10px;padding:8px 10px;';
+            const topo = document.createElement('div');
+            topo.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;';
+            const autor = document.createElement('strong');
+            autor.style.cssText = 'font-size:0.76rem;color:#111111;';
+            autor.textContent = String(c.autor || 'Usuário');
+            const data = document.createElement('span');
+            data.style.cssText = 'font-size:0.68rem;color:#52525b;';
+            data.textContent = String(c.data || '');
+            topo.append(autor, data);
+            card.appendChild(topo);
+            if (c.texto) {
+                const texto = document.createElement('div');
+                texto.style.cssText = 'font-size:0.78rem;color:#111111;line-height:1.35;white-space:pre-wrap;';
+                texto.textContent = String(c.texto);
+                card.appendChild(texto);
+            }
+            if (Array.isArray(c.fotos) && c.fotos.length) {
+                const galeria = document.createElement('div');
+                galeria.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;';
+                c.fotos.forEach(foto => {
+                    const url = String(foto || '');
+                    if (!/^data:image\/(png|jpeg|jpg|webp);base64,/i.test(url) && !/^https:\/\//i.test(url)) return;
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Foto do comentário';
+                    img.style.cssText = 'width:68px;height:52px;object-fit:cover;border-radius:6px;border:1px solid #111;cursor:pointer;';
+                    img.addEventListener('click', () => abrirImagemAmpliada(url));
+                    galeria.appendChild(img);
+                });
+                card.appendChild(galeria);
+            }
+            listaEl.appendChild(card);
+        });
     }
 
     function abrirImagemAmpliada(src) {
@@ -5416,10 +5626,10 @@
     }
 
     async function alternarStatusVerificadoAdminWifi() {
-        if (bloquearClickFantasma('toggle_verif_wifi', 400)) return;
-        const idWifi = document.getElementById('adminSelectWifi')?.value;
+        if (bloquearClickFantasma('toggle_verif_wifi', 300)) return;
+        const idWifi = String(document.getElementById('adminSelectWifi')?.value || "").trim();
         if (!idWifi) return;
-        const ponto = listaWifisCache.find(w => w.id === idWifi);
+        const ponto = listaWifisCache.find(w => String(w.id).trim() === idWifi);
         const atualVerif = String(ponto?.verificado_admin || "").toLowerCase() === "verificado";
         const novoStatus = atualVerif ? "Pendente" : "Verificado";
         if (ponto) ponto.verificado_admin = novoStatus;
@@ -5428,18 +5638,16 @@
         if (document.getElementById('selectWifiMapa')?.value === idWifi) {
             atualizarCardQrDoMapa(idWifi);
         }
+        renderizarListaRedesMinimizadas();
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_definir_verificado",
-                    admin_email: usuarioLogado?.email || "",
-                    id_usuario: usuarioLogado?.email || "",
-                    id_wifi: idWifi,
-                    verificado_admin: novoStatus
-                })
+            await enviarRequisicaoAppsScript({
+                acao: "admin_definir_verificado",
+                admin_email: usuarioLogado?.email || "",
+                id_usuario: usuarioLogado?.email || "",
+                id_wifi: idWifi,
+                nome_local: ponto?.local || "",
+                ssid_rede: ponto?.ssid || "",
+                verificado_admin: novoStatus
             });
         } catch (e) {}
     }
@@ -5565,19 +5773,16 @@
         }
         renderizarListaUsuariosAdmin();
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_bloquear_usuario",
-                    admin_email: usuarioLogado?.email || "",
-                    id_usuario: email,
-                    bloqueado: bloquear,
-                    mensagem_bloqueio: msg
-                })
+            const data = await enviarRequisicaoAppsScript({
+                acao: "admin_bloquear_usuario",
+                admin_email: usuarioLogado?.email || "",
+                id_usuario: email,
+                bloqueado: bloquear,
+                mensagem_bloqueio: msg
             });
-            alert(bloquear ? "✅ Usuário bloqueado e notificação salva!" : "✅ Usuário desbloqueado!");
+            if (data && data.status === "ok") {
+                alert(bloquear ? "✅ Usuário bloqueado e notificação salva!" : "✅ Usuário desbloqueado!");
+            }
         } catch (e) {}
     }
 
@@ -5588,18 +5793,15 @@
         if (u) u.creditos = val;
         renderizarListaUsuariosAdmin();
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_atualizar_creditos",
-                    admin_email: usuarioLogado?.email || "",
-                    id_usuario: email,
-                    creditos: val
-                })
+            const data = await enviarRequisicaoAppsScript({
+                acao: "admin_atualizar_creditos",
+                admin_email: usuarioLogado?.email || "",
+                id_usuario: email,
+                creditos: val
             });
-            alert("✅ Créditos do usuário atualizados!");
+            if (data && data.status === "ok") {
+                alert("✅ Créditos do usuário atualizados!");
+            }
         } catch (e) {}
     }
 
@@ -5832,17 +6034,12 @@
         configBloqueioCache = { bloqueado, versao_atual: versaoAtual, mensagem };
         localStorage.setItem('clickcontrol_config_bloqueio', JSON.stringify(configBloqueioCache));
         try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({
-                    acao: "admin_salvar_bloqueio",
-                    admin_email: usuarioLogado?.email || "",
-                    bloqueado,
-                    versao_atual: versaoAtual,
-                    mensagem
-                })
+            await enviarRequisicaoAppsScript({
+                acao: "admin_salvar_bloqueio",
+                admin_email: usuarioLogado?.email || "",
+                bloqueado,
+                versao_atual: versaoAtual,
+                mensagem
             });
         } catch (e) {}
         if (toast) {
